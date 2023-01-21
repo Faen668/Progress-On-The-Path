@@ -43,6 +43,7 @@ The following mods that add custom items are supported:
 **Compatibility**
 - [Brothers in Arms - TW3 Bug Fix and Restored Content Collection - Next-Gen](https://www.nexusmods.com/witcher3/mods/7329 "Click to visit this mod on Nexus Mods") 
 - [DLC - Events - Next-Gen](https://www.nexusmods.com/witcher3/mods/7488 "Click to visit this mod on Nexus Mods") 
+
 The above mods are have conflicting "Bundled" files which can not be merged or patched using script merger. Both mods are fully supported and all fixes / changes implemented in them have been carried over to Progress on the Path. This means you can easily use all these mods together by letting Progress on the Path win any conflicts in the **Bundled Non-text - Not Mergeable** section of script merger.
 
 # Installation
