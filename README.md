@@ -23,6 +23,7 @@ This mod dynamically tracks the acquisition of rare and unique items as well as 
 
 # Mod Support
 The following mods that add custom items are supported:
+
 **Journal**
 - Ciri's Sole Memento
 - DLC Armor Quests
