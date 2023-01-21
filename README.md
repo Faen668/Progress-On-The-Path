@@ -45,5 +45,5 @@ Download the main file from **Releases**, extract the files from the archive and
 Open up script merger and merge any scripts that require merging, they should in most cases automerge
 
 # Uninstallation
-Remove modProgressOnThePath and dlcProgressOnThePath from your mods and DLC folder then remove modProgressOnThepath.xml from
+Remove modProgressOnThePath and dlcProgressOnThePath from your mods and DLC folder then remove modProgressOnThePath.xml from
 The Witcher 3\bin\config\r4game\user_config_matrix\pc
