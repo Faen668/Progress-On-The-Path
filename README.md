@@ -47,9 +47,9 @@ The following mods that add custom items are supported:
 The above mods are have conflicting "Bundled" files which can not be merged or patched using script merger. Both mods are fully supported and all fixes / changes implemented in them have been carried over to Progress on the Path. This means you can easily use all these mods together by letting Progress on the Path win any conflicts in the **Bundled Non-text - Not Mergeable** section of script merger.
 
 # Installation
-Download the main file from **Releases**, extract the files from the archive and place them in your mods and DLC folders
-
-Open up script merger and merge any scripts that require merging, they should in most cases automerge
+- Download the main file from **Releases**, extract the files from the archive and place the folders **Mods** **DLC** and **Bin** in your main Witcher 3 directory.
+- Please follow all guidance in the **Installation Instructions** file within the archive.
+- Open up script merger and merge any scripts that require merging, they should in most cases automerge
 
 # Uninstallation
 Remove modProgressOnThePath and dlcProgressOnThePath from your mods and DLC folder then remove modProgressOnThePath.xml from
