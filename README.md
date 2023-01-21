@@ -1,13 +1,13 @@
 # Introduction
-This mod dynamically tracks the acquisition of items as well as the completion of any quests or worldmap activities. Whenever something is acquired or completed it is marked in its mod menu as well as in an optional companion book
+This mod dynamically tracks the acquisition of rare and unique items as well as the completion of all quests and most worldmap activities. Whenever something is acquired or completed, it is marked as such in the relevent Progress Preview.
 
 ### Currently tracked:
 **Journal**
 - All Main Story Quests
 - All Side Quests
 - All Treasure Hunts and Scavenger Hunts
-- All Monster Contracts
-- All Random Events and NPC Interactions (Note: This is currently non-functional as it relies on DLC - Events to function which is currently not updated for v4.00)
+- All Monster Hunt Contracts
+- All Random Events and NPC Interactions
 
 **Collectables**
 - All Gwent Cards
@@ -45,4 +45,5 @@ Download the main file from **Releases**, extract the files from the archive and
 Open up script merger and merge any scripts that require merging, they should in most cases automerge
 
 # Uninstallation
-Remove modProgressOnThePath and dlcProgressOnThePath from your mods and DLC folder
+Remove modProgressOnThePath and dlcProgressOnThePath from your mods and DLC folder then remove modProgressOnThepath.xml from
+The Witcher 3\bin\config\r4game\user_config_matrix\pc
