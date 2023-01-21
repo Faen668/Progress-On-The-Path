@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="utf-8"?>
+<UserConfig>	
+	<Group id="ProgressOnThePath_GeneralSettings" displayName="Mods.QT_Name.QT_Page_General">
+		<VisibleVars>
+
+<!--///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////-->
+			
+			<Var id="ProgressOnThePath_MeditationUpdate"		displayName="ProgressOnThePath_MeditationUpdate" 	displayType="TOGGLE"/>
+			<Var id="ProgressOnThePath_EnableHotKey"		 	displayName="ProgressOnThePath_EnableHotKey" 		displayType="TOGGLE"/>
+
+<!--///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////-->
+
+			<Var id="Separator" 								displayName="" 										displayType="SUBTLE_SEPARATOR"/>
+			<Var id="ProgressOnThePath_BGProcessing_Qust" 		displayName="ProgressOnThePath_BGProcessing_Qust" 	displayType="SLIDER;5;60;55"/>
+			<Var id="ProgressOnThePath_BGProcessing_Item" 		displayName="ProgressOnThePath_BGProcessing_Item" 	displayType="SLIDER;5;60;55"/>
+			<Var id="ProgressOnThePath_BGProcessing_WMap" 		displayName="ProgressOnThePath_BGProcessing_WMap" 	displayType="SLIDER;5;60;55"/>
+			
+<!--///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////-->
+
+			<Var id="Separator" 											displayName="" 													displayType="SUBTLE_SEPARATOR"/>
+			<Var id="ProgressOnThePath_EventMapPins_ShowMapPins"			displayName="ProgressOnThePath_EventMapPins_ShowMapPins" 		displayType="TOGGLE"/>
+			<Var id="ProgressOnThePath_EventMapPins_MapPinDescription"		displayName="ProgressOnThePath_EventMapPins_MapPinDescription" 	displayType="TOGGLE"/>
+			<Var id="ProgressOnThePath_EventMapPins_MapPinRadius"			displayName="ProgressOnThePath_EventMapPins_MapPinRadius" 		displayType="SLIDER;5;60;55"/>
+			<Var id="ProgressOnThePath_EventMapPins_MapPinType"				displayName="ProgressOnThePath_EventMapPins_MapPinType"			displayType="OPTIONS">
+				<OptionsArray>
+					<Option id="0" displayName="QT_Option_EventIconType_0">	<Entry varId="ProgressOnThePath_EventMapPins_MapPinType" value="0"/></Option>
+					<Option id="1" displayName="QT_Option_EventIconType_1">	<Entry varId="ProgressOnThePath_EventMapPins_MapPinType" value="1"/></Option>
+					<Option id="2" displayName="QT_Option_EventIconType_2">	<Entry varId="ProgressOnThePath_EventMapPins_MapPinType" value="2"/></Option>
+					<Option id="3" displayName="QT_Option_EventIconType_3">	<Entry varId="ProgressOnThePath_EventMapPins_MapPinType" value="3"/></Option>
+					<Option id="4" displayName="QT_Option_EventIconType_4">	<Entry varId="ProgressOnThePath_EventMapPins_MapPinType" value="4"/></Option>
+				</OptionsArray>
+			</Var>
+
+<!--///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////-->
+
+			<Var id="Separator" 											displayName="" 														displayType="SUBTLE_SEPARATOR"/>
+			<Var id="ProgressOnThePath_EventMapPins_ShowMiniMap"			displayName="ProgressOnThePath_EventMapPins_ShowMiniMap" 			displayType="TOGGLE"/>
+			<Var id="ProgressOnThePath_EventMapPins_ArrowPointers"			displayName="ProgressOnThePath_EventMapPins_ArrowPointers" 			displayType="TOGGLE"/>
+			<Var id="ProgressOnThePath_EventMapPins_HighlightedPointers"	displayName="ProgressOnThePath_EventMapPins_HighlightedPointers" 	displayType="TOGGLE"/>
+			
+<!--///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////-->
+
+			<Var id="Separator" 								displayName="" 										displayType="SUBTLE_SEPARATOR"/>
+			<Var id="ProgressOnThePath_Notification_Size" 		displayName="ProgressOnThePath_Notification_Size" 	displayType="SLIDER;14;34;20"/>	
+			<Var id="ProgressOnThePath_Notification_Time" 		displayName="ProgressOnThePath_Notification_Time" 	displayType="SLIDER;1;15;14"/>
+			<Var id="ProgressOnThePath_Notification_Font"		displayName="ProgressOnThePath_Notification_Font"	displayType="OPTIONS">
+				<OptionsArray>
+					<Option id="0" displayName="QT_Option_NotificationColour_0">	<Entry varId="ProgressOnThePath_Notification_Font" value="0"/></Option>
+					<Option id="1" displayName="QT_Option_NotificationColour_1">	<Entry varId="ProgressOnThePath_Notification_Font" value="1"/></Option>
+					<Option id="2" displayName="QT_Option_NotificationColour_2">	<Entry varId="ProgressOnThePath_Notification_Font" value="2"/></Option>
+					<Option id="3" displayName="QT_Option_NotificationColour_3">	<Entry varId="ProgressOnThePath_Notification_Font" value="3"/></Option>
+					<Option id="4" displayName="QT_Option_NotificationColour_4">	<Entry varId="ProgressOnThePath_Notification_Font" value="4"/></Option>
+				</OptionsArray>
+			</Var>
+			
+<!--///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////-->
+
+			<Var id="Separator" 								displayName="" 										displayType="SUBTLE_SEPARATOR"/>
+			<Var id="ProgressOnThePath_Notification_Qust" 		displayName="ProgressOnThePath_Notification_Qust" 	displayType="TOGGLE"/>
+			<Var id="ProgressOnThePath_Notification_Item" 		displayName="ProgressOnThePath_Notification_Item" 	displayType="TOGGLE"/>
+			<Var id="ProgressOnThePath_Notification_WMap" 		displayName="ProgressOnThePath_Notification_WMap" 	displayType="TOGGLE"/>
+			<Var id="ProgressOnThePath_Notification_Null" 		displayName="ProgressOnThePath_Notification_Null" 	displayType="TOGGLE"/>
+		</VisibleVars>
+	</Group>
+
+<!--///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////-->
+<!--///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////-->
+<!--///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////-->
+<!--///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////-->
+
+	<Group id="ProgressOnThePath_PreviewSettings" displayName="Mods.QT_Name.QT_Page_ProgressPreview">
+		<VisibleVars>
+
+<!--///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////-->
+		
+			<Var id="ProgressOnThePath_Preview"					displayName="ProgressOnThePath_Preview"		displayType="OPTIONS">
+				<OptionsArray>
+					<Option id="0" displayName="QT_Option_Preview_0">	<Entry varId="ProgressOnThePath_Preview" value="0"/></Option>
+					<Option id="1" displayName="QT_Option_Preview_1">	<Entry varId="ProgressOnThePath_Preview" value="1"/></Option>
+					<Option id="2" displayName="QT_Option_Preview_2">	<Entry varId="ProgressOnThePath_Preview" value="2"/></Option>
+					<Option id="3" displayName="QT_Option_Preview_3">	<Entry varId="ProgressOnThePath_Preview" value="3"/></Option>
+					<Option id="4" displayName="QT_Option_Preview_4">	<Entry varId="ProgressOnThePath_Preview" value="4"/></Option>
+				</OptionsArray>
+			</Var>
+			<Var id="ProgressOnThePath_Preview_Hide" 			displayName="ProgressOnThePath_Preview_Hide" 		displayType="TOGGLE"/>
+			<Var id="ProgressOnThePath_Preview_Comp" 			displayName="ProgressOnThePath_Preview_Comp" 		displayType="TOGGLE"/>
+			<Var id="ProgressOnThePath_Preview_Igno" 			displayName="ProgressOnThePath_Preview_Igno" 		displayType="TOGGLE"/>
+			<Var id="ProgressOnThePath_Preview_Iden" 			displayName="ProgressOnThePath_Preview_Iden" 		displayType="TOGGLE"/>
+
+<!--///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////-->
+			
+			<Var id="Separator" 								displayName="" 										displayType="SUBTLE_SEPARATOR"/>
+			<Var id="ProgressOnThePath_Preview_QType"			displayName="ProgressOnThePath_Preview_QType"		displayType="OPTIONS">
+				<OptionsArray>
+					<Option id="0"  displayName="QT_Option_QType_0">	<Entry varId="ProgressOnThePath_Preview_QType" value="0"/></Option>
+					<Option id="1"  displayName="QT_Option_QType_1">	<Entry varId="ProgressOnThePath_Preview_QType" value="1"/></Option>
+					<Option id="2"  displayName="QT_Option_QType_2">	<Entry varId="ProgressOnThePath_Preview_QType" value="2"/></Option>
+					<Option id="3"  displayName="QT_Option_QType_3">	<Entry varId="ProgressOnThePath_Preview_QType" value="3"/></Option>
+					<Option id="4"  displayName="QT_Option_QType_4">	<Entry varId="ProgressOnThePath_Preview_QType" value="4"/></Option>
+					<Option id="5"  displayName="QT_Option_QType_5">	<Entry varId="ProgressOnThePath_Preview_QType" value="5"/></Option>
+					<Option id="6"  displayName="QT_Option_QType_6">	<Entry varId="ProgressOnThePath_Preview_QType" value="6"/></Option>
+				</OptionsArray>
+			</Var>
+			
+			<Var id="ProgressOnThePath_Preview_QArea"			displayName="ProgressOnThePath_Preview_QArea"		displayType="OPTIONS">
+				<OptionsArray>
+					<Option id="0" displayName="QT_Option_QArea_0">	<Entry varId="ProgressOnThePath_Preview_QArea" value="0"/></Option>
+					<Option id="1" displayName="QT_Option_QArea_1">	<Entry varId="ProgressOnThePath_Preview_QArea" value="1"/></Option>
+					<Option id="2" displayName="QT_Option_QArea_2">	<Entry varId="ProgressOnThePath_Preview_QArea" value="2"/></Option>
+					<Option id="3" displayName="QT_Option_QArea_3">	<Entry varId="ProgressOnThePath_Preview_QArea" value="3"/></Option>
+					<Option id="4" displayName="QT_Option_QArea_4">	<Entry varId="ProgressOnThePath_Preview_QArea" value="4"/></Option>
+					<Option id="5" displayName="QT_Option_QArea_5">	<Entry varId="ProgressOnThePath_Preview_QArea" value="5"/></Option>
+					<Option id="6" displayName="QT_Option_QArea_6">	<Entry varId="ProgressOnThePath_Preview_QArea" value="6"/></Option>
+					<Option id="7" displayName="QT_Option_QArea_7">	<Entry varId="ProgressOnThePath_Preview_QArea" value="7"/></Option>
+				</OptionsArray>
+			</Var>
+
+<!--///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////-->
+
+			<Var id="Separator" 								displayName="" 										displayType="SUBTLE_SEPARATOR"/>
+			<Var id="ProgressOnThePath_Preview_IType"			displayName="ProgressOnThePath_Preview_IType"		displayType="OPTIONS">
+				<OptionsArray>
+					<Option id="0"  displayName="QT_Option_IType_0">	<Entry varId="ProgressOnThePath_Preview_IType" value="0"/></Option>
+					<Option id="1"  displayName="QT_Option_IType_1">	<Entry varId="ProgressOnThePath_Preview_IType" value="1"/></Option>
+					<Option id="2"  displayName="QT_Option_IType_2">	<Entry varId="ProgressOnThePath_Preview_IType" value="2"/></Option>
+					<Option id="3"  displayName="QT_Option_IType_3">	<Entry varId="ProgressOnThePath_Preview_IType" value="3"/></Option>
+					<Option id="4"  displayName="QT_Option_IType_4">	<Entry varId="ProgressOnThePath_Preview_IType" value="4"/></Option>
+					<Option id="5"  displayName="QT_Option_IType_5">	<Entry varId="ProgressOnThePath_Preview_IType" value="5"/></Option>
+					<Option id="6"  displayName="QT_Option_IType_6">	<Entry varId="ProgressOnThePath_Preview_IType" value="6"/></Option>
+					<Option id="7"  displayName="QT_Option_IType_7">	<Entry varId="ProgressOnThePath_Preview_IType" value="7"/></Option>
+					<Option id="8"  displayName="QT_Option_IType_8">	<Entry varId="ProgressOnThePath_Preview_IType" value="8"/></Option>
+					<Option id="9"  displayName="QT_Option_IType_9">	<Entry varId="ProgressOnThePath_Preview_IType" value="9"/></Option>
+				</OptionsArray>
+			</Var>
+
+<!--///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////-->
+			
+			<Var id="Separator"									displayName="" 										displayType="SUBTLE_SEPARATOR"/>
+			<Var id="ProgressOnThePath_Preview_GType"			displayName="ProgressOnThePath_Preview_GType"		displayType="OPTIONS">
+				<OptionsArray>
+					<Option id="0"  displayName="QT_Option_GType_0">	<Entry varId="ProgressOnThePath_Preview_GType" value="0"/></Option>
+					<Option id="1"  displayName="QT_Option_GType_1">	<Entry varId="ProgressOnThePath_Preview_GType" value="1"/></Option>
+					<Option id="2"  displayName="QT_Option_GType_2">	<Entry varId="ProgressOnThePath_Preview_GType" value="2"/></Option>
+					<Option id="3"  displayName="QT_Option_GType_3">	<Entry varId="ProgressOnThePath_Preview_GType" value="3"/></Option>
+					<Option id="4"  displayName="QT_Option_GType_4">	<Entry varId="ProgressOnThePath_Preview_GType" value="4"/></Option>
+					<Option id="5"  displayName="QT_Option_GType_5">	<Entry varId="ProgressOnThePath_Preview_GType" value="5"/></Option>
+					<Option id="6"  displayName="QT_Option_GType_6">	<Entry varId="ProgressOnThePath_Preview_GType" value="6"/></Option>
+				</OptionsArray>
+			</Var>
+
+			<Var id="ProgressOnThePath_Preview_GArea"			displayName="ProgressOnThePath_Preview_GArea"		displayType="OPTIONS">
+				<OptionsArray>
+					<Option id="0" displayName="QT_Option_GArea_0">	<Entry varId="ProgressOnThePath_Preview_WArea" value="0"/></Option>
+					<Option id="1" displayName="QT_Option_GArea_1">	<Entry varId="ProgressOnThePath_Preview_WArea" value="1"/></Option>
+					<Option id="2" displayName="QT_Option_GArea_2">	<Entry varId="ProgressOnThePath_Preview_WArea" value="2"/></Option>
+					<Option id="3" displayName="QT_Option_GArea_3">	<Entry varId="ProgressOnThePath_Preview_WArea" value="3"/></Option>
+					<Option id="4" displayName="QT_Option_GArea_4">	<Entry varId="ProgressOnThePath_Preview_WArea" value="4"/></Option>
+					<Option id="5" displayName="QT_Option_GArea_5">	<Entry varId="ProgressOnThePath_Preview_WArea" value="5"/></Option>
+					<Option id="6" displayName="QT_Option_GArea_6">	<Entry varId="ProgressOnThePath_Preview_WArea" value="6"/></Option>
+				</OptionsArray>
+			</Var>
+			
+<!--///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////-->
+			
+			<Var id="Separator" 								displayName="" 										displayType="SUBTLE_SEPARATOR"/>
+			<Var id="ProgressOnThePath_Preview_WType"			displayName="ProgressOnThePath_Preview_WType"		displayType="OPTIONS">
+				<OptionsArray>
+					<Option id="0" displayName="QT_Option_WType_0">	<Entry varId="ProgressOnThePath_Preview_WType" value="0"/></Option>
+					<Option id="1" displayName="QT_Option_WType_1">	<Entry varId="ProgressOnThePath_Preview_WType" value="1"/></Option>
+					<Option id="2" displayName="QT_Option_WType_2">	<Entry varId="ProgressOnThePath_Preview_WType" value="2"/></Option>
+					<Option id="3" displayName="QT_Option_WType_3">	<Entry varId="ProgressOnThePath_Preview_WType" value="3"/></Option>
+					<Option id="4" displayName="QT_Option_WType_4">	<Entry varId="ProgressOnThePath_Preview_WType" value="4"/></Option>
+					<Option id="5" displayName="QT_Option_WType_5">	<Entry varId="ProgressOnThePath_Preview_WType" value="5"/></Option>
+				</OptionsArray>
+			</Var>	
+			
+			<Var id="ProgressOnThePath_Preview_WArea"			displayName="ProgressOnThePath_Preview_WArea"		displayType="OPTIONS">
+				<OptionsArray>
+					<Option id="0" displayName="QT_Option_WArea_0">	<Entry varId="ProgressOnThePath_Preview_WArea" value="0"/></Option>
+					<Option id="1" displayName="QT_Option_WArea_1">	<Entry varId="ProgressOnThePath_Preview_WArea" value="1"/></Option>
+					<Option id="2" displayName="QT_Option_WArea_2">	<Entry varId="ProgressOnThePath_Preview_WArea" value="2"/></Option>
+					<Option id="3" displayName="QT_Option_WArea_3">	<Entry varId="ProgressOnThePath_Preview_WArea" value="3"/></Option>
+					<Option id="4" displayName="QT_Option_WArea_4">	<Entry varId="ProgressOnThePath_Preview_WArea" value="4"/></Option>
+					<Option id="5" displayName="QT_Option_WArea_5">	<Entry varId="ProgressOnThePath_Preview_WArea" value="5"/></Option>
+					<Option id="6" displayName="QT_Option_WArea_6">	<Entry varId="ProgressOnThePath_Preview_WArea" value="6"/></Option>
+				</OptionsArray>
+			</Var>
+		</VisibleVars>
+	</Group>
+</UserConfig>

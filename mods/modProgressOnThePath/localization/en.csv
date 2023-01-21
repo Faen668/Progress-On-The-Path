@@ -1,0 +1,2300 @@
+;meta[language=en]
+; id      |key(hex)|key(str)| text
+;
+; comment lines use ; as first character
+; all comment lines (except the two line header) will be ignored
+; This file is used to create translations using https://www.nexusmods.com/witcher3/mods/1055 all credits go to rmemr
+;
+2116568000||panel_Mods|Mods
+2116568001||panel_QT_Name|Progress on the Path
+2116568002||panel_glossary_potp_tutorial|Progress on the Path - Tutorials
+2116568003||panel_glossary_potp_previews|Progress on the Path - Previews
+;
+2116568004||PotP_PreviewBook_Quest_Name|Quest Progress
+2116568005||PotP_PreviewBook_World_Name|World Map Progress
+2116568006||PotP_PreviewBook_Items_Name|Collectable Items Progress
+2116568007||PotP_PreviewBook_Missa_Name|Missable Quest Progress
+2116568008||PotP_PreviewBook_Gwent_Name|Gwent Card Progress
+;
+2116568009||PotP_InstallMessage|Thank you for installing Progress on the Path.<br/><br/>Please make sure to check the Glossary pages for helpful hints and tips about using the mod!
+2116568010||PotP_UpdatedMessage|Mod Updated To Version: 
+;
+2116568011||PotP_Completed|Completed:
+2116568012||PotP_NullMessage|Nothing To Update...
+;
+2116568013||PotP_NotificationHeader|Progress on the Path: 
+2116568014||PotP_NotificationLine_Quest| Quest(DYNAMC_REPLACE)
+2116568015||PotP_NotificationLine_Event| Event(DYNAMC_REPLACE)
+2116568016||PotP_NotificationLine_Place| Place(DYNAMC_REPLACE) of Power
+2116568017||PotP_NotificationLine_MoNes| Monster Nest(DYNAMC_REPLACE)
+2116568018||PotP_NotificationLine_MoDen| Monster Den(DYNAMC_REPLACE)
+2116568019||PotP_NotificationLine_Gwent| Gwent Card(DYNAMC_REPLACE)
+2116568020||PotP_NotificationLine_SignP| Signpost(DYNAMC_REPLACE)
+2116568021||PotP_NotificationLine_Camps| Bandit Camp(DYNAMC_REPLACE)
+2116568022||PotP_NotificationLine_Relic| Relic(DYNAMC_REPLACE)
+2116568023||PotP_NotificationLine_Quest_Mai1| Main Quest(DYNAMC_REPLACE)
+2116568024||PotP_NotificationLine_Quest_Mai2| Main Quest(DYNAMC_REPLACE) (HOS)
+2116568025||PotP_NotificationLine_Quest_Mai3| Main Quest(DYNAMC_REPLACE) (B&W)
+2116568026||PotP_NotificationLine_Quest_Sid1| Side Quest(DYNAMC_REPLACE)
+2116568027||PotP_NotificationLine_Quest_Sid2| Side Quest(DYNAMC_REPLACE) (HOS)
+2116568028||PotP_NotificationLine_Quest_Sid3| Side Quest(DYNAMC_REPLACE) (B&W)
+2116568029||PotP_NotificationLine_Quest_Tre1| Treasure Hunt(DYNAMC_REPLACE)
+2116568030||PotP_NotificationLine_Quest_Tre2| Treasure Hunt(DYNAMC_REPLACE) (HOS)
+2116568031||PotP_NotificationLine_Quest_Tre3| Treasure Hunt(DYNAMC_REPLACE) (B&W)
+2116568032||PotP_NotificationLine_Quest_Con1| Monster Hunt Contract(DYNAMC_REPLACE)
+2116568033||PotP_NotificationLine_Quest_Con2| Monster Hunt Contract(DYNAMC_REPLACE) (HOS)
+2116568034||PotP_NotificationLine_Quest_Con3| Monster Hunt Contract(DYNAMC_REPLACE) (B&W)
+2116568035||PotP_NotificationLine_Quest_Scav| Scavenger Hunt(DYNAMC_REPLACE)
+2116568036||PotP_NotificationLine_GearSet| Gear Set Item(DYNAMC_REPLACE)
+2116568037||PotP_NotificationLine_Updated|Updated: 
+2116568038||PotP_NotificationLine_BanditC|Updated Bandit Camp: 
+2116568039||PotP_NotificationLine_QuestUpdated|(QUESTNAME)
+;
+2116568040||PotP_QUESTCOMPLETE| (Complete)
+2116568041||PotP_QUESTINPROGRESS| (In Progress)
+2116568042||PotP_NotificationLine_Troph| Troph(DYNAMC_REPLACE_TROPHY)
+2116568043||PotP_TROPHY_REPLACER1|ies
+2116568044||PotP_TROPHY_REPLACER2|y
+2116568045||PotP_PLURAL_REPLACER|s
+;
+2116568046||option_ProgressOnThePath_MeditationUpdate|<font color="#479c9d">Perform A Full Update       :    When Meditating</font>
+2116568047||option_ProgressOnThePath_EnableHotKey|<font color="#479c9d">Perform A Full Update       :    Via Hotkey:</font> <font size="16"> (Default 'F7')</font>
+2116568048||option_ProgressOnThePath_BGProcessing_Qust|<font color="#A3CFA7">Background Monitoring     :   Quest Completion</font> <font size="16">(Freq in seconds)</font>
+2116568049||option_ProgressOnThePath_BGProcessing_Item|<font color="#A3CFA7">Background Monitoring     :   Item Acquisition</font> <font size="16">(Freq in seconds)</font>
+2116568050||option_ProgressOnThePath_BGProcessing_WMap|<font color="#A3CFA7">Background Monitoring     :   Map Completion</font> <font size="16">(Freq in seconds)</font>
+2116568051||option_ProgressOnThePath_Notification_Size|<font color="#FFE194">Notification Settings           :   Font Size</font>
+2116568052||option_ProgressOnThePath_Notification_Time|<font color="#FFE194">Notification Settings           :   Display Time</font> <font size="16">(Freq in seconds)</font>
+2116568053||option_ProgressOnThePath_Notification_Font|<font color="#FFE194">Notification Settings           :   Text Colour</font>
+2116568054||option_ProgressOnThePath_Notification_Qust|<font color="#FF7D63">Notification Catagories       :   Quest Updates</font>
+2116568055||option_ProgressOnThePath_Notification_Item|<font color="#FF7D63">Notification Catagories       :   Item Updates</font>
+2116568056||option_ProgressOnThePath_Notification_WMap|<font color="#FF7D63">Notification Catagories       :   Map Pin Updates</font>
+2116568057||option_ProgressOnThePath_Notification_Null|<font color="#FF7D63">Notification Catagories       :   Null Updates</font> <font size="16">(Nothing To Update...)</font>
+;
+2116568058||ProgressOnThePath_FilterError|<br/><br/><br/><br/><br/><br/>Nothing to show<br/><br/>Check the active filters for this preview to show any incomplete entries
+2116568059||ProgressOnThePath_FilterComplete|<br/><br/><br/><br/><br/><br/>All entries complete for this preview
+;
+2116568060||PotP_QuestPreviewMessage_T|~~ Quest Progress REPLACECOUNT ~~
+2116568061||PotP_WorldPreviewMessage_T|~~ World Map Progress REPLACECOUNT ~~
+2116568062||PotP_ItemsPreviewMessage_T|~~ Collectable Items Progress REPLACECOUNT ~~
+2116568063||PotP_GwentPreviewMessage_T|~~ Gwent Card Progress REPLACECOUNT ~~
+2116568064||PotP_MissablePreviewMessage_T|~~ Missable Quest Progress REPLACECOUNT ~~
+;
+2116568065||option_ProgressOnThePath_Preview_Comp|<font color="#7FD8BE">Global             :   Show Completed Entries</font>
+2116568066||option_ProgressOnThePath_Preview_Igno|<font color="#7FD8BE">Global             :   Show Ignored Entries</font>
+2116568067||option_ProgressOnThePath_Preview_Iden|<font color="#7FD8BE">Global             :   Show Entry UUID's</font>
+2116568068||option_ProgressOnThePath_Preview_Hide|<font color="#7FD8BE">Global             :   Spoiler Mode</font> <font size="16"> (Hide Entry Names)</font>
+;
+2116568069||option_ProgressOnThePath_Preview_WArea|<font color="#8EA4C8">World Map     :   Filter By Region</font>
+2116568070||preset_value_QT_Option_WArea_0|All
+2116568071||preset_value_QT_Option_WArea_1|White Orchard
+2116568072||preset_value_QT_Option_WArea_2|Velen
+2116568073||preset_value_QT_Option_WArea_3|Novigrad
+2116568074||preset_value_QT_Option_WArea_4|Skellige
+2116568075||preset_value_QT_Option_WArea_5|Toussaint
+2116568076||preset_value_QT_Option_WArea_6|Kaer Morhen
+;
+2116568077||option_ProgressOnThePath_Preview|<font color="#7FD8BE">Global             :   Hotkey Opens
+2116568078||preset_value_QT_Option_Preview_0|Quest Progress
+2116568079||preset_value_QT_Option_Preview_1|World Map Progress
+2116568080||preset_value_QT_Option_Preview_2|Collectable Items Progress
+2116568081||preset_value_QT_Option_Preview_3|Gwent Card Progress
+2116568082||preset_value_QT_Option_Preview_4|Missable Quest Progress
+;
+2116568083||option_ProgressOnThePath_Preview_QArea|<font color="#C8566B">Quests             :   Filter By Region</font>
+2116568084||preset_value_QT_Option_QArea_0|All
+2116568085||preset_value_QT_Option_QArea_1|White Orchard
+2116568086||preset_value_QT_Option_QArea_2|Velen
+2116568087||preset_value_QT_Option_QArea_3|Novigrad
+2116568088||preset_value_QT_Option_QArea_4|Skellige
+2116568089||preset_value_QT_Option_QArea_5|Toussaint
+2116568090||preset_value_QT_Option_QArea_6|Kaer Morhen
+2116568091||preset_value_QT_Option_QArea_7|Vizima
+;
+2116568092||option_ProgressOnThePath_Preview_IType|<font color="#DE8971">Items              :   Filter By Type</font>
+2116568093||preset_value_QT_Option_IType_0|All
+2116568094||preset_value_QT_Option_IType_1|Armor
+2116568095||preset_value_QT_Option_IType_2|Boots
+2116568096||preset_value_QT_Option_IType_3|Trousers
+2116568097||preset_value_QT_Option_IType_4|Gloves
+2116568098||preset_value_QT_Option_IType_5|Headgear
+2116568099||preset_value_QT_Option_IType_6|Steel Swords
+2116568100||preset_value_QT_Option_IType_7|Silver Swords
+2116568101||preset_value_QT_Option_IType_8|Crossbows
+2116568102||preset_value_QT_Option_IType_9|Trophies
+;
+2116568103||option_ProgressOnThePath_Preview_WType|<font color="#8EA4C8">World Map     :   Filter By Type</font>
+2116568104||preset_value_QT_Option_WType_0|All
+2116568105||preset_value_QT_Option_WType_1|Bandit Camps
+2116568106||preset_value_QT_Option_WType_2|Monster Dens
+2116568107||preset_value_QT_Option_WType_3|Monster Nests
+2116568108||preset_value_QT_Option_WType_4|Places of Power
+2116568109||preset_value_QT_Option_WType_5|Signposts
+;
+2116568110||option_ProgressOnThePath_Preview_QType|<font color="#C8566B">Quests             :   Filter By Type</font>
+2116568111||preset_value_QT_Option_QType_0|All
+2116568112||preset_value_QT_Option_QType_1|Random Events
+2116568113||preset_value_QT_Option_QType_2|Main Quests
+2116568114||preset_value_QT_Option_QType_3|Side Quests
+2116568115||preset_value_QT_Option_QType_4|Contracts
+2116568116||preset_value_QT_Option_QType_5|Scavenger Hunts
+2116568117||preset_value_QT_Option_QType_6|Treasure Hunts
+;
+2116568118||option_ProgressOnThePath_Preview_GType|<font color="#DE8971">Gwent              :   Filter By Faction</font>
+2116568119||preset_value_QT_Option_GType_0|All
+2116568120||preset_value_QT_Option_GType_1|Monsters
+2116568121||preset_value_QT_Option_GType_2|Nilfgaard
+2116568122||preset_value_QT_Option_GType_3|Northern Realms
+2116568123||preset_value_QT_Option_GType_4|Scoia'tael
+2116568124||preset_value_QT_Option_GType_5|Skellige
+2116568125||preset_value_QT_Option_GType_6|Neutral Cards
+;
+2116568126||option_ProgressOnThePath_Preview_GArea|<font color="#DE8971">Gwent              :   Filter By Region</font>
+2116568127||preset_value_QT_Option_GArea_0|All
+2116568128||preset_value_QT_Option_GArea_1|White Orchard
+2116568129||preset_value_QT_Option_GArea_2|Velen
+2116568130||preset_value_QT_Option_GArea_3|Novigrad
+2116568131||preset_value_QT_Option_GArea_4|Skellige
+2116568132||preset_value_QT_Option_GArea_5|Toussaint
+2116568133||preset_value_QT_Option_GArea_6|Kaer Morhen
+2116568134||preset_value_QT_Option_GArea_7|Vizima
+;
+2116568135||option_ProgressOnThePath_EventMapPins_ShowMiniMap			|<font color="#F56C77">Mini Map Pins          :   Show On Minimap</font>
+2116568136||option_ProgressOnThePath_EventMapPins_ArrowPointers			|<font color="#F56C77">Mini Map Pins          :   Arrow Pointers</font>
+2116568137||option_ProgressOnThePath_EventMapPins_HighlightedPointers	|<font color="#F56C77">Mini Map Pins          :   Highlighted Arrows</font>
+2116568138||option_ProgressOnThePath_EventMapPins_ShowMapPins			|<font color="#F56C77">World Map Pins          :   Show Map Pins</font>
+2116568139||option_ProgressOnThePath_EventMapPins_MapPinDescription		|<font color="#F56C77">World Map Pins          :   Show Descriptions</font>
+2116568140||option_ProgressOnThePath_EventMapPins_MapPinRadius			|<font color="#F56C77">World Map Pins          :   Map Pin Radius</font>
+2116568141||option_ProgressOnThePath_EventMapPins_MapPinType			|<font color="#F56C77">World Map Pins          :   Map Pin Type</font>
+;
+2116568142||preset_value_QT_Option_EventIconType_0|Quest Giver
+2116568143||preset_value_QT_Option_EventIconType_1|Quest Giver (HOS)
+2116568144||preset_value_QT_Option_EventIconType_2|Quest Giver (B&W)
+2116568145||preset_value_QT_Option_EventIconType_3|Main Story Quest
+2116568146||preset_value_QT_Option_EventIconType_4|Question Mark
+;
+2116568147||ProgressOnThePath_Default_MapPin_Name				|Random Event
+2116568148||ProgressOnThePath_Default_MapPin_Description		|A Random Event Is Available At This Location
+;
+2116568149||preset_value_QT_Option_NotificationColour_0|Black (Default)
+2116568150||preset_value_QT_Option_NotificationColour_1|<font color="#233067">Blue</font>
+2116568151||preset_value_QT_Option_NotificationColour_2|<font color="#630F0F">Red</font>
+2116568152||preset_value_QT_Option_NotificationColour_3|<font color="#084A23">Green</font>
+2116568153||preset_value_QT_Option_NotificationColour_4|<font color="#431C53">Purple</font>
+;
+2116568154||UpdateProgressOnThePath|PotP: Update Progress Tracker
+2116568155||DisplayProgressPreview|PotP: Preview Key
+;
+2116568156||panel_QT_Page_General|General
+2116568157||panel_QT_Page_ProgressPreview|Preview
+;
+2116568158||ProgressOnTheBath_TutorialBook1_Name|Updating The Tracker
+2116568159||ProgressOnTheBath_TutorialBook1_Desc|<font color="#CD7D03">Updating The Tracker:</font><br/>Progress on the Path is fully automatic and monitors gameplay completion using a system of background monitors while you are getting on with your whirling, twirling and bee hive burning.<br/><br/>Background monitoring comes with a few options in the Mod Menu for you to play with and customize to your liking. You are able to customize the frequency with which the background monitor will update the player and also suppress / enable notifications for the different tracking categories you are interested in being updated about. There are also several other ways Progress on the Path can be updated:<br/><br/><font color="#18B3F1">While Meditating</font> - With the 'Perform A Full Update When Meditating' option enabled, the tracker will perform a full update automatically when the player starts meditation, the update will only run once per meditation session.<br/><br/><font color="#18B3F1">Hotkey</font> - The update hotkey (Default NumPad 5) can be used to run a full update whenever you like, a notification will display on-screen after the update which can also be customized in the mod menu.
+2116568160||ProgressOnTheBath_TutorialBook2_Name|Progress Previews
+2116568161||ProgressOnTheBath_TutorialBook2_Desc|Progress Previews:</font><br/>You can preview your current completion progress by hitting one of the three hotkeys built into the mod (default NumPad7, NumPad8, NumPad9).<br/><br/>Each hotkey will open a customisable and dynamic message showing you the current status of the tracked entries for that catagory.<br/><br/>NumPad7 will open the preview for 'Quest Progress'<br/>NumPad8 Will open the preview for 'World Map Progress'<br/>NumPad9 will open the preview for 'Collectables Progress'<br/><br/>Depending on your settings in the mod menu, the previews will display the tracked entries as follows:<br/><br/>'Missable' <font color="#D79D3A">(*)</font><br/>'Mod Added' <font color="#26CAD6">(*)</font><br/>'In Progress' <font color="#C8566B">(*)</font><br/><font color="#A1EF7A">~ Completed ~</font><br/><font color="#D7D23A">~ Ignored ~</font><br/><br/>The previews will also display how many tracked entries are being hidden by the filters you have enabled in the mod menu.
+2116568162||ProgressOnTheBath_TutorialBook3_Name|Item Tracking
+2116568163||ProgressOnTheBath_TutorialBook3_Desc|<font color="#CD7D03">Item Tracking:</font><br/>Progress on the Path supports dynamic tracking of over 350 rare, unique or otherwise difficult to find items as well as hundreds of Mod Added items available from the different supported mods.<br/><br/>The background monitoring system will evaluate all items as they are added to your inventory or stash and update them accordingly in the previews if they are collectable.<br/><br/>Dropping or selling collectable items will not affect their completion status in the tracker so feel free to do whatever you want with them after collecting them for the first time.
+2116568164||ProgressOnTheBath_TutorialBook4_Name|Quest Tracking
+2116568165||ProgressOnTheBath_TutorialBook4_Desc|<font color="#CD7D03">Quest Tracking:</font><br/>Quest tracking is quite simple under the hood. The background monitoring system will automatically update tracked quests to their correct status as you start and complete them in the game.<br/><br/>If there is a quest you are not able to do due to in-game decisions or some other reason, you can manually toggle the quest as 'Completed' or 'Ignored' using console commands which will be explained in the 'Console Commands' Section.
+2116568166||ProgressOnTheBath_TutorialBook5_Name|World Map Tracking
+2116568167||ProgressOnTheBath_TutorialBook5_Desc|<font color="#CD7D03">World Map Tracking:</font><br/>World Map Tracking does exactly what the name suggests, as you play and discover signposts, blow up monster nests and gorge on places of power, the background monitoring system will update them and show periodic notifications (if enabled) telling you what's updating as your playing.
+2116568168||ProgressOnTheBath_TutorialBook6_Name|Notifications
+2116568169||ProgressOnTheBath_TutorialBook6_Desc|<font color="#CD7D03">Notifications:</font><br/>Progress on the Path comes with quite a sophisticated Notification system. You can configure the text colour, font size and a few other things in the mod menu or just disable notifications all together if you're not interested in what's being updated.
+2116568170||ProgressOnTheBath_TutorialBook7_Name|Console Commands
+2116568171||ProgressOnTheBath_TutorialBook7_Desc|<font color="#CD7D03">Console Commands:</font><br/>Progress on the Path comes with a very handy console command to aid you as you are playing, the command is:<br/><br/>pt_changestatus()<br/><br/>As the name suggests, this command will allow you to change the status of any entry in any of the preview messages by simply passing a couple of parameters with the command.<br/><br/>The first parameter is the 'Unique Identifier' of the entry. This can be seen by enabling the 'Show Entry UUID's' option in the Mod Menu.<br/><br/>The second parameter is the new 'Status' you want the entry to adopt, you write this is an enum so it should be typed as completed, ignored, or left blank to restore the entry to its default 'Not Completed' status.<br/><br/>As an example:<br/><font color="#18B3F1">pt_changestatus(XD1452, ignored)</font> would update the entry to 'Ignored'<br/><font color="#18B3F1">pt_changestatus(XD1452, completed)</font> would update the entry to 'Completed'<br/><font color="#18B3F1">pt_changestatus(XD1452)</font> would revert the entry to 'Not Started'.
+;
+;-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+;-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+;-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+;-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+;
+2116568172||option_PotP_TrackingGroup_MainQuests_Prologue_01|Kaer Morhen
+2116568173||option_PotP_TrackingGroup_MainQuests_Prologue_02|Lilac and Gooseberries
+2116568174||option_PotP_TrackingGroup_MainQuests_Prologue_03|The Beast of White Orchard
+2116568175||option_PotP_TrackingGroup_MainQuests_Prologue_04|The Incident at White Orchard
+;
+2116568176||option_PotP_TrackingGroup_MainQuests_Vizima_01|Imperial Audience
+;
+2116568177||option_PotP_TrackingGroup_MainQuests_VelenAct1_01|The Nilfgaardian Connection
+2116568178||option_PotP_TrackingGroup_MainQuests_VelenAct1_02|Bloody Baron
+2116568179||option_PotP_TrackingGroup_MainQuests_VelenAct1_03|Ciri's Story: The King of the Wolves
+2116568180||option_PotP_TrackingGroup_MainQuests_VelenAct1_04|Family Matters
+2116568181||option_PotP_TrackingGroup_MainQuests_VelenAct1_05|A Princess in Distress
+2116568182||option_PotP_TrackingGroup_MainQuests_VelenAct1_06|Ciri's Story: The Race
+2116568183||option_PotP_TrackingGroup_MainQuests_VelenAct1_07|Ciri's Story: Out of the Shadows
+2116568184||option_PotP_TrackingGroup_MainQuests_VelenAct1_08|Hunting a Witch
+2116568185||option_PotP_TrackingGroup_MainQuests_VelenAct1_09|Wandering in the Dark
+2116568186||option_PotP_TrackingGroup_MainQuests_VelenAct1_10|Ladies of the Wood
+2116568187||option_PotP_TrackingGroup_MainQuests_VelenAct1_11|The Whispering Hillock
+2116568188||option_PotP_TrackingGroup_MainQuests_VelenAct1_12|Ciri's Story: Fleeing the Bog
+;
+2116568189||option_PotP_TrackingGroup_MainQuests_NovigradAct1_01|Pyres of Novigrad
+2116568190||option_PotP_TrackingGroup_MainQuests_NovigradAct1_02|Novigrad Dreaming
+2116568191||option_PotP_TrackingGroup_MainQuests_NovigradAct1_03|Broken Flowers
+2116568192||option_PotP_TrackingGroup_MainQuests_NovigradAct1_04|Get Junior
+2116568193||option_PotP_TrackingGroup_MainQuests_NovigradAct1_05|Ciri's Story: Visiting Junior
+2116568194||option_PotP_TrackingGroup_MainQuests_NovigradAct1_06|Count Reuven's Treasure
+2116568195||option_PotP_TrackingGroup_MainQuests_NovigradAct1_07|A Favor for Radovid
+2116568196||option_PotP_TrackingGroup_MainQuests_NovigradAct1_08|The Play's the Thing
+2116568197||option_PotP_TrackingGroup_MainQuests_NovigradAct1_09|A Poet Under Pressure
+2116568198||option_PotP_TrackingGroup_MainQuests_NovigradAct1_10|Ciri's Story: Breakneck Speed
+;
+2116568199||option_PotP_TrackingGroup_MainQuests_SkelligeAct1_01|Destination: Skellige
+2116568200||option_PotP_TrackingGroup_MainQuests_SkelligeAct1_02|The King is Dead – Long Live the King
+2116568201||option_PotP_TrackingGroup_MainQuests_SkelligeAct1_03|Echoes of the Past
+2116568202||option_PotP_TrackingGroup_MainQuests_SkelligeAct1_04|Missing Persons
+2116568203||option_PotP_TrackingGroup_MainQuests_SkelligeAct1_05|Nameless
+2116568204||option_PotP_TrackingGroup_MainQuests_SkelligeAct1_06|The Calm Before the Storm
+2116568205||option_PotP_TrackingGroup_MainQuests_SkelligeAct1_07|A Mysterious Passenger
+;
+2116568206||option_PotP_TrackingGroup_MainQuests_Act2_01|Ugly Baby
+2116568207||option_PotP_TrackingGroup_MainQuests_Act2_02|Disturbance
+2116568208||option_PotP_TrackingGroup_MainQuests_Act2_03|To Bait a Forktail...
+2116568209||option_PotP_TrackingGroup_MainQuests_Act2_04|The Final Trial
+2116568210||option_PotP_TrackingGroup_MainQuests_Act2_05|No Place Like Home
+2116568211||option_PotP_TrackingGroup_MainQuests_Act2_06|Va Fail, Elaine
+2116568212||option_PotP_TrackingGroup_MainQuests_Act2_07|Brothers In Arms: Velen
+2116568213||option_PotP_TrackingGroup_MainQuests_Act2_08|Brothers In Arms: Novigrad
+2116568214||option_PotP_TrackingGroup_MainQuests_Act2_09|Brothers In Arms: Skellige
+2116568215||option_PotP_TrackingGroup_MainQuests_Act2_10|Brothers In Arms: Nilfgaard
+2116568216||option_PotP_TrackingGroup_MainQuests_Act2_11|The Isle of Mists
+2116568217||option_PotP_TrackingGroup_MainQuests_Act2_12|The Battle of Kaer Morhen
+2116568218||option_PotP_TrackingGroup_MainQuests_Act2_13|Blood on the Battlefield
+;
+2116568219||option_PotP_TrackingGroup_MainQuests_Act3_01|Bald Mountain
+2116568220||option_PotP_TrackingGroup_MainQuests_Act3_02|Final Preparations
+2116568221||option_PotP_TrackingGroup_MainQuests_Act3_03|Blindingly Obvious
+2116568222||option_PotP_TrackingGroup_MainQuests_Act3_04|The Great Escape
+2116568223||option_PotP_TrackingGroup_MainQuests_Act3_05|Payback
+2116568224||option_PotP_TrackingGroup_MainQuests_Act3_06|Through Time and Space
+2116568225||option_PotP_TrackingGroup_MainQuests_Act3_07|Battle Preparations
+2116568226||option_PotP_TrackingGroup_MainQuests_Act3_08|The Sunstone
+2116568227||option_PotP_TrackingGroup_MainQuests_Act3_09|Veni Vidi Vigo
+2116568228||option_PotP_TrackingGroup_MainQuests_Act3_10|Child of the Elder Blood
+2116568229||option_PotP_TrackingGroup_MainQuests_Act3_11|Skjall's Grave
+2116568230||option_PotP_TrackingGroup_MainQuests_Act3_12|On Thin Ice
+2116568231||option_PotP_TrackingGroup_MainQuests_Act3_13|Tedd Deireadh, The Final Age
+2116568232||option_PotP_TrackingGroup_MainQuests_Act3_14|Something Ends, Something Begins
+;
+2116568233||option_PotP_TrackingGroup_MainQuests_HeartsOfStone_01|Evil's Soft First Touches
+2116568234||option_PotP_TrackingGroup_MainQuests_HeartsOfStone_02|Dead Man's Party
+2116568235||option_PotP_TrackingGroup_MainQuests_HeartsOfStone_03|Open Sesame!
+2116568236||option_PotP_TrackingGroup_MainQuests_HeartsOfStone_04|Open Sesame: Witcher Seasonings
+2116568237||option_PotP_TrackingGroup_MainQuests_HeartsOfStone_05|Open Sesame: Breaking and Entering
+2116568238||option_PotP_TrackingGroup_MainQuests_HeartsOfStone_06|Open Sesame: The Safecracker
+2116568239||option_PotP_TrackingGroup_MainQuests_HeartsOfStone_07|Scenes From a Marriage
+2116568240||option_PotP_TrackingGroup_MainQuests_HeartsOfStone_08|Whatsoever a Man Soweth...
+;
+2116568241||option_PotP_TrackingGroup_MainQuests_BloodAndWine_01|Envoys, Wineboys
+2116568242||option_PotP_TrackingGroup_MainQuests_BloodAndWine_02|The Beast of Toussaint
+2116568243||option_PotP_TrackingGroup_MainQuests_BloodAndWine_03|Blood Run
+2116568244||option_PotP_TrackingGroup_MainQuests_BloodAndWine_04|La Cage au Fou
+2116568245||option_PotP_TrackingGroup_MainQuests_BloodAndWine_05|Where Children Toil, Toys Waste Away
+2116568246||option_PotP_TrackingGroup_MainQuests_BloodAndWine_06|Wine is Sacred
+2116568247||option_PotP_TrackingGroup_MainQuests_BloodAndWine_07|The Man from Cintra
+2116568248||option_PotP_TrackingGroup_MainQuests_BloodAndWine_08|Capture the Castle
+2116568249||option_PotP_TrackingGroup_MainQuests_BloodAndWine_09|The Night of Long Fangs
+2116568250||option_PotP_TrackingGroup_MainQuests_BloodAndWine_10|Beyond Hill and Dale...
+2116568251||option_PotP_TrackingGroup_MainQuests_BloodAndWine_11|Blood Simple
+2116568252||option_PotP_TrackingGroup_MainQuests_BloodAndWine_12|What Lies Unseen
+2116568253||option_PotP_TrackingGroup_MainQuests_BloodAndWine_13|Tesham Mutna
+2116568254||option_PotP_TrackingGroup_MainQuests_BloodAndWine_14|Pomp and Strange Circumstance
+2116568255||option_PotP_TrackingGroup_MainQuests_BloodAndWine_15|Burlap is the New Stripe
+2116568256||option_PotP_TrackingGroup_MainQuests_BloodAndWine_16|Be It Ever So Humble...
+;
+;-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+;-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+;-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+;-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+;
+2116568257||option_PotP_TrackingGroup_SideQuests_WhiteOrchard_01|A Frying Pan, Spick and Span
+2116568258||option_PotP_TrackingGroup_SideQuests_WhiteOrchard_02|Epilogue: Faithful Friend <font size="17">(Empress Ending Only)</font>
+2116568259||option_PotP_TrackingGroup_SideQuests_WhiteOrchard_03|Missing in Action
+2116568260||option_PotP_TrackingGroup_SideQuests_WhiteOrchard_04|On Death's Bed
+2116568261||option_PotP_TrackingGroup_SideQuests_WhiteOrchard_05|Precious Cargo
+2116568262||option_PotP_TrackingGroup_SideQuests_WhiteOrchard_06|Twisted Firestarter
+;
+2116568263||option_PotP_TrackingGroup_SideQuests_Velen_01|A Dog's Life
+2116568264||option_PotP_TrackingGroup_SideQuests_Velen_02|A Favor for a Friend
+2116568265||option_PotP_TrackingGroup_SideQuests_Velen_03|A Greedy God
+2116568266||option_PotP_TrackingGroup_SideQuests_Velen_04|A Towerful of Mice
+2116568267||option_PotP_TrackingGroup_SideQuests_Velen_05|An Invitation from Keira Metz
+2116568268||option_PotP_TrackingGroup_SideQuests_Velen_06|Bitter Harvest
+2116568269||option_PotP_TrackingGroup_SideQuests_Velen_07|Blood Ties
+2116568270||option_PotP_TrackingGroup_SideQuests_Velen_08|Ciri's Room
+2116568271||option_PotP_TrackingGroup_SideQuests_Velen_09|Death By Fire
+2116568272||option_PotP_TrackingGroup_SideQuests_Velen_10|Defender of the Faith
+2116568273||option_PotP_TrackingGroup_SideQuests_Velen_11|Fake Papers
+2116568274||option_PotP_TrackingGroup_SideQuests_Velen_12|Fists of Fury: Velen
+2116568275||option_PotP_TrackingGroup_SideQuests_Velen_13|Fools' Gold
+2116568276||option_PotP_TrackingGroup_SideQuests_Velen_14|For the Advancement of Learning
+2116568277||option_PotP_TrackingGroup_SideQuests_Velen_15|Forefathers' Eve
+2116568278||option_PotP_TrackingGroup_SideQuests_Velen_16|Funeral Pyres
+2116568279||option_PotP_TrackingGroup_SideQuests_Velen_17|Ghosts of the Past
+2116568280||option_PotP_TrackingGroup_SideQuests_Velen_18|Gwent: Velen Players
+2116568281||option_PotP_TrackingGroup_SideQuests_Velen_19|Hazardous Goods
+2116568282||option_PotP_TrackingGroup_SideQuests_Velen_20|Last Rites
+2116568283||option_PotP_TrackingGroup_SideQuests_Velen_21|Love's Cruel Snares
+2116568284||option_PotP_TrackingGroup_SideQuests_Velen_22|Lynch Mob
+2116568285||option_PotP_TrackingGroup_SideQuests_Velen_23|Magic Lamp
+2116568286||option_PotP_TrackingGroup_SideQuests_Velen_24|Races: Crow's Perch
+2116568287||option_PotP_TrackingGroup_SideQuests_Velen_25|Return to Crookback Bog
+2116568288||option_PotP_TrackingGroup_SideQuests_Velen_26|Take What You Want
+2116568289||option_PotP_TrackingGroup_SideQuests_Velen_27|The Fall of the House of Reardon
+2116568290||option_PotP_TrackingGroup_SideQuests_Velen_28|The Truth is in the Stars
+2116568291||option_PotP_TrackingGroup_SideQuests_Velen_30|Thou Shalt Not Pass
+2116568292||option_PotP_TrackingGroup_SideQuests_Velen_31|Where the Cat and Wolf Play...
+2116568293||option_PotP_TrackingGroup_SideQuests_Velen_32|Wild at Heart
+2116568294||option_PotP_TrackingGroup_SideQuests_Velen_33|Witcher Wannabe
+2116568295||option_PotP_TrackingGroup_SideQuests_Velen_34|In the Eternal Fire's Shadow
+2116568296||option_PotP_TrackingGroup_SideQuests_Velen_90|Little Sisters
+;
+2116568297||option_PotP_TrackingGroup_SideQuests_Novigrad_01|A Barnful of Trouble
+2116568298||option_PotP_TrackingGroup_SideQuests_Novigrad_02|A Dangerous Game
+2116568299||option_PotP_TrackingGroup_SideQuests_Novigrad_03|A Deadly Plot
+2116568300||option_PotP_TrackingGroup_SideQuests_Novigrad_04|A Feast for Crows
+2116568301||option_PotP_TrackingGroup_SideQuests_Novigrad_05|A Final Kindness
+2116568302||option_PotP_TrackingGroup_SideQuests_Novigrad_06|A Matter of Life and Death
+2116568303||option_PotP_TrackingGroup_SideQuests_Novigrad_07|A Midnight Clear
+2116568304||option_PotP_TrackingGroup_SideQuests_Novigrad_08|A Tome Entombed
+2116568305||option_PotP_TrackingGroup_SideQuests_Novigrad_09|A Walk on the Waterfront
+2116568306||option_PotP_TrackingGroup_SideQuests_Novigrad_10|An Eye for an Eye
+2116568307||option_PotP_TrackingGroup_SideQuests_Novigrad_11|Avid Collector
+2116568308||option_PotP_TrackingGroup_SideQuests_Novigrad_12|Cabaret
+2116568309||option_PotP_TrackingGroup_SideQuests_Novigrad_13|Carnal Sins
+2116568310||option_PotP_TrackingGroup_SideQuests_Novigrad_14|Empty Coop
+2116568311||option_PotP_TrackingGroup_SideQuests_Novigrad_15|Enchanting: Quality Has Its Price
+2116568312||option_PotP_TrackingGroup_SideQuests_Novigrad_16|Enchanting: Start-up Costs
+2116568313||option_PotP_TrackingGroup_SideQuests_Novigrad_17|Fencing Lessons
+2116568314||option_PotP_TrackingGroup_SideQuests_Novigrad_18|Fists of Fury: Novigrad
+2116568315||option_PotP_TrackingGroup_SideQuests_Novigrad_19|Gwent: Big City Players
+2116568316||option_PotP_TrackingGroup_SideQuests_Novigrad_20|Gwent: Playing Innkeeps
+2116568317||option_PotP_TrackingGroup_SideQuests_Novigrad_21|Gwent: Playing Thaler
+2116568318||option_PotP_TrackingGroup_SideQuests_Novigrad_22|Haunted House
+2116568319||option_PotP_TrackingGroup_SideQuests_Novigrad_23|Hey, You Wanna Look at my Stuff?
+2116568320||option_PotP_TrackingGroup_SideQuests_Novigrad_24|Hidden Messages of the Nilfgaardian Kind
+2116568321||option_PotP_TrackingGroup_SideQuests_Novigrad_25|High Stakes
+2116568322||option_PotP_TrackingGroup_SideQuests_Novigrad_26|Honor Among Thieves
+2116568323||option_PotP_TrackingGroup_SideQuests_Novigrad_27|It Takes Three to Tango
+2116568324||option_PotP_TrackingGroup_SideQuests_Novigrad_28|Little Red
+2116568325||option_PotP_TrackingGroup_SideQuests_Novigrad_29|Message from an Old Friend
+2116568326||option_PotP_TrackingGroup_SideQuests_Novigrad_30|Novigrad Hospitality
+2116568327||option_PotP_TrackingGroup_SideQuests_Novigrad_31|Novigrad, Closed City
+2116568328||option_PotP_TrackingGroup_SideQuests_Novigrad_32|Now or Never
+2116568329||option_PotP_TrackingGroup_SideQuests_Novigrad_33|Of Dairy and Darkness
+2116568330||option_PotP_TrackingGroup_SideQuests_Novigrad_34|Of Swords and Dumplings
+2116568331||option_PotP_TrackingGroup_SideQuests_Novigrad_35|Out On Your Arse!
+2116568332||option_PotP_TrackingGroup_SideQuests_Novigrad_36|Race: The Great Erasmus Vegelbud Memorial Derby
+2116568333||option_PotP_TrackingGroup_SideQuests_Novigrad_37|Races: Swift as the Western Winds
+2116568334||option_PotP_TrackingGroup_SideQuests_Novigrad_38|Reason of State
+2116568335||option_PotP_TrackingGroup_SideQuests_Novigrad_39|Redania's Most Wanted
+2116568336||option_PotP_TrackingGroup_SideQuests_Novigrad_40|Rose on a Red Field
+2116568337||option_PotP_TrackingGroup_SideQuests_Novigrad_41|Rough Neighborhood
+2116568338||option_PotP_TrackingGroup_SideQuests_Novigrad_42|Spooked Mare
+2116568339||option_PotP_TrackingGroup_SideQuests_Novigrad_43|The Dwarven Document Dilemma
+2116568340||option_PotP_TrackingGroup_SideQuests_Novigrad_44|The Gangs of Novigrad
+2116568341||option_PotP_TrackingGroup_SideQuests_Novigrad_45|The Nobleman Statuette
+2116568342||option_PotP_TrackingGroup_SideQuests_Novigrad_46|The Soldier Statuette
+2116568343||option_PotP_TrackingGroup_SideQuests_Novigrad_47|The Taxman Cometh
+2116568344||option_PotP_TrackingGroup_SideQuests_Novigrad_48|The Volunteer
+2116568345||option_PotP_TrackingGroup_SideQuests_Novigrad_49|Warehouse of Woe
+2116568346||option_PotP_TrackingGroup_SideQuests_Novigrad_50|Without a Trace
+2116568347||option_PotP_TrackingGroup_SideQuests_Novigrad_51|Novigrad, Closed City II
+2116568348||option_PotP_TrackingGroup_SideQuests_Novigrad_52|Enchanting: Mastery Demands Sacrifice
+2116568349||option_PotP_TrackingGroup_SideQuests_Novigrad_90|Ciri's Sole Memento
+;
+2116568350||option_PotP_TrackingGroup_SideQuests_Skellige_01|A Bard's Beloved
+2116568351||option_PotP_TrackingGroup_SideQuests_Skellige_02|A Hallowed Horn
+2116568352||option_PotP_TrackingGroup_SideQuests_Skellige_03|Abandoned Sawmill
+2116568353||option_PotP_TrackingGroup_SideQuests_Skellige_04|An Unpaid Debt
+2116568354||option_PotP_TrackingGroup_SideQuests_Skellige_05|Armed Assault
+2116568355||option_PotP_TrackingGroup_SideQuests_Skellige_06|Brave Fools Die Young
+2116568356||option_PotP_TrackingGroup_SideQuests_Skellige_07|Coronation
+2116568357||option_PotP_TrackingGroup_SideQuests_Skellige_08|Crime and Punishment
+2116568358||option_PotP_TrackingGroup_SideQuests_Skellige_09|Finders Keepers
+2116568359||option_PotP_TrackingGroup_SideQuests_Skellige_10|Fists of Fury: Champion of Champions
+2116568360||option_PotP_TrackingGroup_SideQuests_Skellige_11|Fists of Fury: Skellige
+2116568361||option_PotP_TrackingGroup_SideQuests_Skellige_12|Flesh for Sale
+2116568362||option_PotP_TrackingGroup_SideQuests_Skellige_13|For Fame and Glory
+2116568363||option_PotP_TrackingGroup_SideQuests_Skellige_14|Free Spirit
+2116568364||option_PotP_TrackingGroup_SideQuests_Skellige_15|From a Land Far, Far Away
+2116568365||option_PotP_TrackingGroup_SideQuests_Skellige_16|Gwent: Skellige Style
+2116568366||option_PotP_TrackingGroup_SideQuests_Skellige_17|Hard Times
+2116568367||option_PotP_TrackingGroup_SideQuests_Skellige_18|In Wolf's Clothing
+2116568368||option_PotP_TrackingGroup_SideQuests_Skellige_19|Iron Maiden
+2116568369||option_PotP_TrackingGroup_SideQuests_Skellige_20|King's Gambit
+2116568370||option_PotP_TrackingGroup_SideQuests_Skellige_21|Master of the Arena
+2116568371||option_PotP_TrackingGroup_SideQuests_Skellige_22|Peace Disturbed
+2116568372||option_PotP_TrackingGroup_SideQuests_Skellige_23|Possession
+2116568373||option_PotP_TrackingGroup_SideQuests_Skellige_24|Practicum in Advanced Alchemy
+2116568374||option_PotP_TrackingGroup_SideQuests_Skellige_25|Shock Therapy
+2116568375||option_PotP_TrackingGroup_SideQuests_Skellige_26|Stranger in a Strange Land
+2116568376||option_PotP_TrackingGroup_SideQuests_Skellige_27|Taken as a Lass
+2116568377||option_PotP_TrackingGroup_SideQuests_Skellige_28|The Cave of Dreams
+2116568378||option_PotP_TrackingGroup_SideQuests_Skellige_29|The Family Blade
+2116568379||option_PotP_TrackingGroup_SideQuests_Skellige_30|The Heroes' Pursuits: Fayrlund
+2116568380||option_PotP_TrackingGroup_SideQuests_Skellige_31|The Heroes' Pursuits: For the Goddess' Glory
+2116568381||option_PotP_TrackingGroup_SideQuests_Skellige_32|The Heroes' Pursuits: Fyresdal
+2116568382||option_PotP_TrackingGroup_SideQuests_Skellige_33|The Heroes' Pursuits: Kaer Trolde
+2116568383||option_PotP_TrackingGroup_SideQuests_Skellige_34|The Last Wish
+2116568384||option_PotP_TrackingGroup_SideQuests_Skellige_35|The Lord of Undvik
+2116568385||option_PotP_TrackingGroup_SideQuests_Skellige_36|The Nithing
+2116568386||option_PotP_TrackingGroup_SideQuests_Skellige_37|The Path of Warriors
+2116568387||option_PotP_TrackingGroup_SideQuests_Skellige_38|The Price of Honor
+2116568388||option_PotP_TrackingGroup_SideQuests_Skellige_39|The Sad Tale of the Grossbart Brothers
+2116568389||option_PotP_TrackingGroup_SideQuests_Skellige_40|The Tower Outta Nowheres
+2116568390||option_PotP_TrackingGroup_SideQuests_Skellige_41|Worthy of Trust
+;
+2116568391||option_PotP_TrackingGroup_SideQuests_KaerMorhen_01|Berengar's Blade
+2116568392||option_PotP_TrackingGroup_SideQuests_KaerMorhen_02|Greenhouse Effect
+2116568393||option_PotP_TrackingGroup_SideQuests_KaerMorhen_03|Monster Slayer
+2116568394||option_PotP_TrackingGroup_SideQuests_KaerMorhen_04|The Bastion
+2116568395||option_PotP_TrackingGroup_SideQuests_KaerMorhen_05|The Witchers' Forge
+;
+2116568396||option_PotP_TrackingGroup_SideQuests_Toussaint_01|A Knight's Tales
+2116568397||option_PotP_TrackingGroup_SideQuests_Toussaint_02|A Portrait of the Witcher as an Old Man
+2116568398||option_PotP_TrackingGroup_SideQuests_Toussaint_03|Amidst the Mill's Grist
+2116568399||option_PotP_TrackingGroup_SideQuests_Toussaint_04|Big Feet to Fill
+2116568400||option_PotP_TrackingGroup_SideQuests_Toussaint_05|Big Feet to Fill: The First Group
+2116568401||option_PotP_TrackingGroup_SideQuests_Toussaint_06|Big Feet to Fill: The Second Group
+2116568402||option_PotP_TrackingGroup_SideQuests_Toussaint_07|Big Feet to Fill: The Third Group
+2116568403||option_PotP_TrackingGroup_SideQuests_Toussaint_08|Big Feet to Fill: The Forth Group
+2116568404||option_PotP_TrackingGroup_SideQuests_Toussaint_09|Big Feet to Fill: The Fifth Group
+2116568405||option_PotP_TrackingGroup_SideQuests_Toussaint_10|Duck, Duck, Goosed!
+2116568406||option_PotP_TrackingGroup_SideQuests_Toussaint_11|Extreme Cosplay
+2116568407||option_PotP_TrackingGroup_SideQuests_Toussaint_12|Father Knows Worst
+2116568408||option_PotP_TrackingGroup_SideQuests_Toussaint_13|Fists of Fury: Toussaint
+2116568409||option_PotP_TrackingGroup_SideQuests_Toussaint_14|Goodness, Gracious, Great Balls of Granite!
+2116568410||option_PotP_TrackingGroup_SideQuests_Toussaint_15|Gwent: Never Fear, Skellige's Here
+2116568411||option_PotP_TrackingGroup_SideQuests_Toussaint_16|Gwent: To Everything - Turn, Turn, Tournament!
+2116568412||option_PotP_TrackingGroup_SideQuests_Toussaint_17|Knight for Hire
+2116568413||option_PotP_TrackingGroup_SideQuests_Toussaint_18|Master Master Master Master!
+2116568414||option_PotP_TrackingGroup_SideQuests_Toussaint_19|Mutual of Beauclair's Wild Kingdom
+2116568415||option_PotP_TrackingGroup_SideQuests_Toussaint_20|No Place Like Home
+2116568416||option_PotP_TrackingGroup_SideQuests_Toussaint_21|Of Sheers and a Witcher I Sing
+2116568417||option_PotP_TrackingGroup_SideQuests_Toussaint_22|Paperchase
+2116568418||option_PotP_TrackingGroup_SideQuests_Toussaint_23|Raging Wolf
+2116568419||option_PotP_TrackingGroup_SideQuests_Toussaint_24|The Hunger Game
+2116568420||option_PotP_TrackingGroup_SideQuests_Toussaint_25|The Perks of Being a Jailbird
+2116568421||option_PotP_TrackingGroup_SideQuests_Toussaint_26|The Warble of a Smitten Knight
+2116568422||option_PotP_TrackingGroup_SideQuests_Toussaint_27|The Words of the Prophets Are Written on Sarcophagi
+2116568423||option_PotP_TrackingGroup_SideQuests_Toussaint_28|There Can Be Only One
+2116568424||option_PotP_TrackingGroup_SideQuests_Toussaint_29|Till Death Do You Part
+2116568425||option_PotP_TrackingGroup_SideQuests_Toussaint_30|Turn and Face the Strange
+2116568426||option_PotP_TrackingGroup_SideQuests_Toussaint_31|Vintner's Contract: Chuchote Cave
+2116568427||option_PotP_TrackingGroup_SideQuests_Toussaint_32|Vintner's Contract: Cleaning Those Hard-to-Reach Places
+2116568428||option_PotP_TrackingGroup_SideQuests_Toussaint_33|Vintner's Contract: Duchaton Crest
+2116568429||option_PotP_TrackingGroup_SideQuests_Toussaint_34|Vintner's Contract: Dun Tynne Hillside
+2116568430||option_PotP_TrackingGroup_SideQuests_Toussaint_35|Vintner's Contract: Rivecalme Storehouse
+2116568431||option_PotP_TrackingGroup_SideQuests_Toussaint_36|Wine Wars: Belgaard
+2116568432||option_PotP_TrackingGroup_SideQuests_Toussaint_37|Wine Wars: Consorting
+2116568433||option_PotP_TrackingGroup_SideQuests_Toussaint_38|Wine Wars: Coronata
+2116568434||option_PotP_TrackingGroup_SideQuests_Toussaint_39|Wine Wars: The Deus in the Machina
+2116568435||option_PotP_TrackingGroup_SideQuests_Toussaint_40|Wine Wars: Vermentino
+2116568436||option_PotP_TrackingGroup_SideQuests_Toussaint_90|A Night To Remember
+;
+2116568437||option_PotP_TrackingGroup_SideQuests_NonRegional_01|Black Pearl
+2116568438||option_PotP_TrackingGroup_SideQuests_NonRegional_02|Collect 'Em All
+2116568439||option_PotP_TrackingGroup_SideQuests_NonRegional_03|Following the Thread
+2116568440||option_PotP_TrackingGroup_SideQuests_NonRegional_04|Gwent: Old Pals
+2116568441||option_PotP_TrackingGroup_SideQuests_NonRegional_05|Master Armorers
+;
+;-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+;-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+;-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+;-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+;
+2116568442||option_PotP_TrackingGroup_ContractQuests_WhiteOrchard_01|Contract: Devil by the Well
+;
+2116568443||option_PotP_TrackingGroup_ContractQuests_Velen_01|Contract: Jenny o' the Woods
+2116568444||option_PotP_TrackingGroup_ContractQuests_Velen_02|Contract: Missing Brother
+2116568445||option_PotP_TrackingGroup_ContractQuests_Velen_03|Contract: Mysterious Tracks
+2116568446||option_PotP_TrackingGroup_ContractQuests_Velen_04|Contract: Patrol Gone Missing
+2116568447||option_PotP_TrackingGroup_ContractQuests_Velen_05|Contract: Phantom of the Trade Route
+2116568448||option_PotP_TrackingGroup_ContractQuests_Velen_06|Contract: Shrieker
+2116568449||option_PotP_TrackingGroup_ContractQuests_Velen_07|Contract: Swamp Thing
+2116568450||option_PotP_TrackingGroup_ContractQuests_Velen_08|Contract: The Beast of Honorton
+2116568451||option_PotP_TrackingGroup_ContractQuests_Velen_09|Contract: The Griffin from the Highlands
+2116568452||option_PotP_TrackingGroup_ContractQuests_Velen_10|Contract: The Merry Widow
+2116568453||option_PotP_TrackingGroup_ContractQuests_Velen_11|Contract: The Mystery of the Byways Murders
+2116568454||option_PotP_TrackingGroup_ContractQuests_Velen_12|Contract: Woodland Beast
+;
+2116568455||option_PotP_TrackingGroup_ContractQuests_Novigrad_01|Contract: An Elusive Thief
+2116568456||option_PotP_TrackingGroup_ContractQuests_Novigrad_02|Contract: Deadly Delights
+2116568457||option_PotP_TrackingGroup_ContractQuests_Novigrad_03|Contract: Doors Slamming Shut
+2116568458||option_PotP_TrackingGroup_ContractQuests_Novigrad_04|Contract: Lord of the Wood
+2116568459||option_PotP_TrackingGroup_ContractQuests_Novigrad_05|Contract: The Apiarian Phantom
+2116568460||option_PotP_TrackingGroup_ContractQuests_Novigrad_06|Contract: The Creature from Oxenfurt Forest
+2116568461||option_PotP_TrackingGroup_ContractQuests_Novigrad_07|Contract: The Oxenfurt Drunk
+2116568462||option_PotP_TrackingGroup_ContractQuests_Novigrad_08|Contract: The White Lady
+;
+2116568463||option_PotP_TrackingGroup_ContractQuests_Skellige_01|Contract: Dragon
+2116568464||option_PotP_TrackingGroup_ContractQuests_Skellige_02|Contract: Here Comes the Groom
+2116568465||option_PotP_TrackingGroup_ContractQuests_Skellige_03|Contract: Missing Miners
+2116568466||option_PotP_TrackingGroup_ContractQuests_Skellige_04|Contract: Missing Son
+2116568467||option_PotP_TrackingGroup_ContractQuests_Skellige_05|Contract: Muire D'yaeblen
+2116568468||option_PotP_TrackingGroup_ContractQuests_Skellige_06|Contract: Skellige's Most Wanted
+2116568469||option_PotP_TrackingGroup_ContractQuests_Skellige_07|Contract: Strange Beast
+2116568470||option_PotP_TrackingGroup_ContractQuests_Skellige_08|Contract: The Phantom of Eldberg
+2116568471||option_PotP_TrackingGroup_ContractQuests_Skellige_09|In the Heart of the Woods
+;
+2116568472||option_PotP_TrackingGroup_ContractQuests_Toussaint_01|Contract: Big Game Hunter
+2116568473||option_PotP_TrackingGroup_ContractQuests_Toussaint_02|Contract: Bovine Blues
+2116568474||option_PotP_TrackingGroup_ContractQuests_Toussaint_03|Contract: The Tufo Monster
+2116568475||option_PotP_TrackingGroup_ContractQuests_Toussaint_04|Contract: Equine Phantoms
+2116568476||option_PotP_TrackingGroup_ContractQuests_Toussaint_05|Contract: Feet as Cold as Ice
+;
+2116568477||option_PotP_TrackingGroup_TreasureHuntQuests_WhiteOrchard_01|Deserter Gold
+2116568478||option_PotP_TrackingGroup_TreasureHuntQuests_WhiteOrchard_02|Dirty Funds
+2116568479||option_PotP_TrackingGroup_TreasureHuntQuests_WhiteOrchard_03|Temerian Valuables
+2116568480||option_PotP_TrackingGroup_TreasureHuntQuests_Velen_01|A Costly Mistake
+2116568481||option_PotP_TrackingGroup_TreasureHuntQuests_Velen_02|A Plea Ignored
+2116568482||option_PotP_TrackingGroup_TreasureHuntQuests_Velen_03|An Unfortunate Turn of Events
+2116568483||option_PotP_TrackingGroup_TreasureHuntQuests_Velen_04|Battlefield Loot
+2116568484||option_PotP_TrackingGroup_TreasureHuntQuests_Velen_05|Blood Gold
+2116568485||option_PotP_TrackingGroup_TreasureHuntQuests_Velen_06|Don't Play with the Gods
+2116568486||option_PotP_TrackingGroup_TreasureHuntQuests_Velen_07|Dowry
+2116568487||option_PotP_TrackingGroup_TreasureHuntQuests_Velen_08|Hidden from the World
+2116568488||option_PotP_TrackingGroup_TreasureHuntQuests_Velen_09|Lost Goods
+2116568489||option_PotP_TrackingGroup_TreasureHuntQuests_Velen_10|Out of the Frying Pan, into the Fire
+2116568490||option_PotP_TrackingGroup_TreasureHuntQuests_Velen_11|Queen Zuleyka's Treasure
+2116568491||option_PotP_TrackingGroup_TreasureHuntQuests_Velen_12|Sunken Chest
+2116568492||option_PotP_TrackingGroup_TreasureHuntQuests_Velen_13|Sunken Treasure
+2116568493||option_PotP_TrackingGroup_TreasureHuntQuests_Velen_14|The Dead Have No Defense
+2116568494||option_PotP_TrackingGroup_TreasureHuntQuests_Velen_15|The Things Men Do For Coin...
+2116568495||option_PotP_TrackingGroup_TreasureHuntQuests_Velen_16|Tough Luck
+2116568496||option_PotP_TrackingGroup_TreasureHuntQuests_Novigrad_01|A Dark Legacy
+2116568497||option_PotP_TrackingGroup_TreasureHuntQuests_Novigrad_02|A Surprise Inheritance
+2116568498||option_PotP_TrackingGroup_TreasureHuntQuests_Novigrad_03|Coast of Wrecks
+2116568499||option_PotP_TrackingGroup_TreasureHuntQuests_Novigrad_04|From Ofier's Distant Shores
+2116568500||option_PotP_TrackingGroup_TreasureHuntQuests_Novigrad_05|The Cursed Chapel
+2116568501||option_PotP_TrackingGroup_TreasureHuntQuests_Novigrad_06|The Drakenborg Redemption
+2116568502||option_PotP_TrackingGroup_TreasureHuntQuests_Novigrad_07|The Royal Air Force
+2116568503||option_PotP_TrackingGroup_TreasureHuntQuests_Novigrad_08|The Secret Life of Count Romilly
+2116568504||option_PotP_TrackingGroup_TreasureHuntQuests_Novigrad_09|The Sword, Famine and Perfidy
+2116568505||option_PotP_TrackingGroup_TreasureHuntQuests_Novigrad_10|Tinker, Hunter, Soldier, Spy
+2116568506||option_PotP_TrackingGroup_TreasureHuntQuests_Skellige_01|Family Fortune
+2116568507||option_PotP_TrackingGroup_TreasureHuntQuests_Skellige_02|Freya Be Praised!
+2116568508||option_PotP_TrackingGroup_TreasureHuntQuests_Skellige_03|Hidden in the Depths
+2116568509||option_PotP_TrackingGroup_TreasureHuntQuests_Skellige_04|Inheritance
+2116568510||option_PotP_TrackingGroup_TreasureHuntQuests_Skellige_05|Ironsides' Treasure
+2116568511||option_PotP_TrackingGroup_TreasureHuntQuests_Skellige_06|Nilfgaardian Treasure
+2116568512||option_PotP_TrackingGroup_TreasureHuntQuests_Skellige_07|Not Only Eagles Dare
+2116568513||option_PotP_TrackingGroup_TreasureHuntQuests_Skellige_08|Pearls of the Coast
+2116568514||option_PotP_TrackingGroup_TreasureHuntQuests_Skellige_09|Precious Haul
+2116568515||option_PotP_TrackingGroup_TreasureHuntQuests_Skellige_10|Ruins, Hidden Treasure, You Know...
+2116568516||option_PotP_TrackingGroup_TreasureHuntQuests_Skellige_11|Shortcut
+2116568517||option_PotP_TrackingGroup_TreasureHuntQuests_Skellige_12|Unlucky's Treasure
+2116568518||option_PotP_TrackingGroup_TreasureHuntQuests_Skellige_13|X Marks the Spot
+2116568519||option_PotP_TrackingGroup_TreasureHuntQuests_Toussaint_01|Applied Escapology
+2116568520||option_PotP_TrackingGroup_TreasureHuntQuests_Toussaint_02|Around the World in... Eight Days
+2116568521||option_PotP_TrackingGroup_TreasureHuntQuests_Toussaint_03|But Other Than That, How Did You Enjoy the Play?
+2116568522||option_PotP_TrackingGroup_TreasureHuntQuests_Toussaint_04|Coin Doesn't Stink
+2116568523||option_PotP_TrackingGroup_TreasureHuntQuests_Toussaint_05|Don't Take Candy from a Stranger
+2116568524||option_PotP_TrackingGroup_TreasureHuntQuests_Toussaint_06|Filibert Always Pays His Debts
+2116568525||option_PotP_TrackingGroup_TreasureHuntQuests_Toussaint_07|Spoontaneous Profits!
+2116568526||option_PotP_TrackingGroup_TreasureHuntQuests_Toussaint_08|The Black Widow
+2116568527||option_PotP_TrackingGroup_TreasureHuntQuests_Toussaint_09|The Curse of Carnarvon
+2116568528||option_PotP_TrackingGroup_TreasureHuntQuests_Toussaint_10|The Inconstant Gardener
+2116568529||option_PotP_TrackingGroup_TreasureHuntQuests_Toussaint_11|The Last Exploits of Selina's Gang
+2116568530||option_PotP_TrackingGroup_TreasureHuntQuests_Toussaint_12|The Suffering of Young Francois
+2116568531||option_PotP_TrackingGroup_TreasureHuntQuests_Toussaint_13|The Toussaint Prison Experiment
+2116568532||option_PotP_TrackingGroup_TreasureHuntQuests_Toussaint_14|Waiting for Goe and Doh
+2116568533||option_PotP_TrackingGroup_TreasureHuntQuests_Toussaint_15|What Was This About Again?
+;
+2116568534||option_PotP_TrackingGroup_ScavengerHuntQuests_OtherSets_01|Scavenger Hunt: Viper School Gear
+2116568535||option_PotP_TrackingGroup_ScavengerHuntQuests_OtherSets_02|Scavenger Hunt: Grandmaster Manticore Gear
+2116568536||option_PotP_TrackingGroup_ScavengerHuntQuests_OtherSets_03|Scavenger Hunt: Commando Gear
+2116568537||option_PotP_TrackingGroup_ScavengerHuntQuests_OtherSets_04|Scavenger Hunt: Infiltrator's Gear
+2116568538||option_PotP_TrackingGroup_ScavengerHuntQuests_OtherSets_05|Scavenger Hunt: Mastercrafted Tordarroch Gear
+2116568539||option_PotP_TrackingGroup_ScavengerHuntQuests_OtherSets_06|Scavenger Hunt: Forgotten Wolf School Gear Diagrams
+;
+2116568540||option_PotP_TrackingGroup_ScavengerHuntQuests_GriffinSet_01|Scavenger Hunt: Griffin School Gear
+2116568541||option_PotP_TrackingGroup_ScavengerHuntQuests_GriffinSet_02|Scavenger Hunt: Griffin School Gear - Part 1
+2116568542||option_PotP_TrackingGroup_ScavengerHuntQuests_GriffinSet_03|Scavenger Hunt: Griffin School Gear - Part 2
+2116568543||option_PotP_TrackingGroup_ScavengerHuntQuests_GriffinSet_04|Scavenger Hunt: Griffin School Gear - Part 3
+2116568544||option_PotP_TrackingGroup_ScavengerHuntQuests_GriffinSet_05|Scavenger Hunt: Griffin School Gear - Part 4
+2116568545||option_PotP_TrackingGroup_ScavengerHuntQuests_GriffinSet_06|Scavenger Hunt: Grandmaster Griffin Gear
+;
+2116568546||option_PotP_TrackingGroup_ScavengerHuntQuests_FelineSet_01|Scavenger Hunt: Cat School Gear
+2116568547||option_PotP_TrackingGroup_ScavengerHuntQuests_FelineSet_02|Scavenger Hunt: Cat School Gear - Part 1
+2116568548||option_PotP_TrackingGroup_ScavengerHuntQuests_FelineSet_03|Scavenger Hunt: Cat School Gear - Part 2
+2116568549||option_PotP_TrackingGroup_ScavengerHuntQuests_FelineSet_04|Scavenger Hunt: Cat School Gear - Part 3
+2116568550||option_PotP_TrackingGroup_ScavengerHuntQuests_FelineSet_05|Scavenger Hunt: Cat School Gear - Part 4
+2116568551||option_PotP_TrackingGroup_ScavengerHuntQuests_FelineSet_06|Scavenger Hunt: Grandmaster Feline Gear
+;
+2116568552||option_PotP_TrackingGroup_ScavengerHuntQuests_UrsineSet_01|Scavenger Hunt: Bear School Gear
+2116568553||option_PotP_TrackingGroup_ScavengerHuntQuests_UrsineSet_02|Scavenger Hunt: Bear School Gear - Part 1
+2116568554||option_PotP_TrackingGroup_ScavengerHuntQuests_UrsineSet_03|Scavenger Hunt: Bear School Gear - Part 2
+2116568555||option_PotP_TrackingGroup_ScavengerHuntQuests_UrsineSet_04|Scavenger Hunt: Bear School Gear - Part 3
+2116568556||option_PotP_TrackingGroup_ScavengerHuntQuests_UrsineSet_05|Scavenger Hunt: Bear School Gear - Part 4
+2116568557||option_PotP_TrackingGroup_ScavengerHuntQuests_UrsineSet_06|Scavenger Hunt: Grandmaster Ursine Gear
+;
+2116568558||option_PotP_TrackingGroup_ScavengerHuntQuests_WolvenSet_01|Scavenger Hunt: Wolf School Gear
+2116568559||option_PotP_TrackingGroup_ScavengerHuntQuests_WolvenSet_02|Scavenger Hunt: Wolf School Gear - Part 1
+2116568560||option_PotP_TrackingGroup_ScavengerHuntQuests_WolvenSet_03|Scavenger Hunt: Wolf School Gear - Part 2
+2116568561||option_PotP_TrackingGroup_ScavengerHuntQuests_WolvenSet_04|Scavenger Hunt: Wolf School Gear - Part 3
+2116568562||option_PotP_TrackingGroup_ScavengerHuntQuests_WolvenSet_05|Scavenger Hunt: Wolf School Gear - Part 4
+2116568563||option_PotP_TrackingGroup_ScavengerHuntQuests_WolvenSet_06|Scavenger Hunt: Wolf School Gear - Part 5
+2116568564||option_PotP_TrackingGroup_ScavengerHuntQuests_WolvenSet_07|Scavenger Hunt: Wolf School Gear - Part 6
+2116568565||option_PotP_TrackingGroup_ScavengerHuntQuests_WolvenSet_08|Scavenger Hunt: Grandmaster Wolven Gear
+;
+2116568566||option_PotP_TrackingGroup_RandomEvents_Velen_01|At the Mercy of Strangers I
+2116568567||option_PotP_TrackingGroup_RandomEvents_Velen_02|Caravan Attack I
+2116568568||option_PotP_TrackingGroup_RandomEvents_Velen_03|Deadly Crossing I
+2116568569||option_PotP_TrackingGroup_RandomEvents_Velen_04|Deadly Crossing II
+2116568570||option_PotP_TrackingGroup_RandomEvents_Velen_05|Deadly Crossing III
+2116568571||option_PotP_TrackingGroup_RandomEvents_Velen_06|Face Me if You Dare! I
+2116568572||option_PotP_TrackingGroup_RandomEvents_Velen_07|Harassing a Troll
+2116568573||option_PotP_TrackingGroup_RandomEvents_Velen_08|Highway Robbery
+2116568574||option_PotP_TrackingGroup_RandomEvents_Velen_09|Highwayman's Cache
+2116568575||option_PotP_TrackingGroup_RandomEvents_Velen_10|Looters (Heatherton)
+2116568576||option_PotP_TrackingGroup_RandomEvents_Velen_11|Looters (Codgers' Quarry)
+2116568577||option_PotP_TrackingGroup_RandomEvents_Velen_12|Looters (Toderas)
+2116568578||option_PotP_TrackingGroup_RandomEvents_Velen_13|Man's Best Friend
+2116568579||option_PotP_TrackingGroup_RandomEvents_Velen_14|Caravan Attack II
+;
+2116568580||option_PotP_TrackingGroup_RandomEvents_Novigrad_01|A Warm Welcome
+2116568581||option_PotP_TrackingGroup_RandomEvents_Novigrad_02|At the Mercy of Strangers II
+2116568582||option_PotP_TrackingGroup_RandomEvents_Novigrad_03|Drunken Rabble
+2116568583||option_PotP_TrackingGroup_RandomEvents_Novigrad_04|Face Me if You Dare! II
+2116568584||option_PotP_TrackingGroup_RandomEvents_Novigrad_05|Face Me if You Dare! III
+2116568585||option_PotP_TrackingGroup_RandomEvents_Novigrad_06|Karmic Justice
+2116568586||option_PotP_TrackingGroup_RandomEvents_Novigrad_07|Never Trust Children
+2116568587||option_PotP_TrackingGroup_RandomEvents_Novigrad_08|Racists of Novigrad II
+2116568588||option_PotP_TrackingGroup_RandomEvents_Novigrad_09|Racists of Novigrad I
+2116568589||option_PotP_TrackingGroup_RandomEvents_Novigrad_10|Strangers in the Night
+2116568590||option_PotP_TrackingGroup_RandomEvents_Novigrad_11|Strumpet in Distress
+2116568591||option_PotP_TrackingGroup_RandomEvents_Novigrad_12|Suspicious Shakedown
+2116568592||option_PotP_TrackingGroup_RandomEvents_Novigrad_13|The Flame of Hatred I
+2116568593||option_PotP_TrackingGroup_RandomEvents_Novigrad_14|The Most Truest of Basilisks
+2116568594||option_PotP_TrackingGroup_RandomEvents_Novigrad_15|The Price of Passage I
+2116568595||option_PotP_TrackingGroup_RandomEvents_Novigrad_16|Witch Hunter Raids
+2116568596||option_PotP_TrackingGroup_RandomEvents_Novigrad_17|The Price of Passage II
+2116568597||option_PotP_TrackingGroup_RandomEvents_Novigrad_18|The Price of Passage III
+2116568598||option_PotP_TrackingGroup_RandomEvents_Novigrad_19|The Flame of Hatred II
+;
+2116568599||option_PotP_TrackingGroup_RandomEvents_Skellige_01|Call of the Wild
+2116568600||option_PotP_TrackingGroup_RandomEvents_Skellige_02|Farting Trolls
+2116568601||option_PotP_TrackingGroup_RandomEvents_Skellige_03|Siren's Call
+2116568602||option_PotP_TrackingGroup_RandomEvents_Skellige_04|Sweet Bait
+2116568603||option_PotP_TrackingGroup_RandomEvents_Skellige_05|The Four Faces of Hemdall
+2116568604||option_PotP_TrackingGroup_RandomEvents_Skellige_06|Woe is Me
+2116568605||option_PotP_TrackingGroup_RandomEvents_Skellige_07|Yustianna Disturbed
+;
+2116568606||option_PotP_TrackingGroup_RandomEvents_KaerMorhen_01|Trail of Echoes
+;
+;-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+;-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+;-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+;-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+;
+2116568607||option_PotP_TrackingGroup_WorldMap_Signposts_WhiteOrchard_01|Abandoned Village
+2116568608||option_PotP_TrackingGroup_WorldMap_Signposts_WhiteOrchard_02|Broken Bridge
+2116568609||option_PotP_TrackingGroup_WorldMap_Signposts_WhiteOrchard_03|Cackler Bridge
+2116568610||option_PotP_TrackingGroup_WorldMap_Signposts_WhiteOrchard_04|Crossroads
+2116568611||option_PotP_TrackingGroup_WorldMap_Signposts_WhiteOrchard_05|Ford
+2116568612||option_PotP_TrackingGroup_WorldMap_Signposts_WhiteOrchard_06|Mill
+2116568613||option_PotP_TrackingGroup_WorldMap_Signposts_WhiteOrchard_07|Nilfgaardian Garrison
+2116568614||option_PotP_TrackingGroup_WorldMap_Signposts_WhiteOrchard_08|Ransacked Village
+2116568615||option_PotP_TrackingGroup_WorldMap_Signposts_WhiteOrchard_09|Sawmill
+2116568616||option_PotP_TrackingGroup_WorldMap_Signposts_WhiteOrchard_10|Woesong Bridge
+2116568617||option_PotP_TrackingGroup_WorldMap_Signposts_WhiteOrchard_11|King Desmond Bridge
+;
+2116568618||option_PotP_TrackingGroup_WorldMap_Signposts_KaerMorhen_01|Bastion
+2116568619||option_PotP_TrackingGroup_WorldMap_Signposts_KaerMorhen_06|Chort's Cave
+2116568620||option_PotP_TrackingGroup_WorldMap_Signposts_KaerMorhen_07|Circle of Elements
+2116568621||option_PotP_TrackingGroup_WorldMap_Signposts_KaerMorhen_02|Iron Mine
+2116568622||option_PotP_TrackingGroup_WorldMap_Signposts_KaerMorhen_03|Kaer Morhen
+2116568623||option_PotP_TrackingGroup_WorldMap_Signposts_KaerMorhen_08|Kaer Morhen Courtyard
+2116568624||option_PotP_TrackingGroup_WorldMap_Signposts_KaerMorhen_09|Kaer Morhen Valley
+2116568625||option_PotP_TrackingGroup_WorldMap_Signposts_KaerMorhen_04|Lakeside Hut
+2116568626||option_PotP_TrackingGroup_WorldMap_Signposts_KaerMorhen_05|Ruined Watchtower
+2116568627||option_PotP_TrackingGroup_WorldMap_Signposts_KaerMorhen_10|Trials' Cave
+;
+2116568628||option_PotP_TrackingGroup_WorldMap_Signposts_Velen_01|Abandoned Tower
+2116568629||option_PotP_TrackingGroup_WorldMap_Signposts_Velen_02|Ancient Oak
+2116568630||option_PotP_TrackingGroup_WorldMap_Signposts_Velen_03|Bandits' Camp
+2116568631||option_PotP_TrackingGroup_WorldMap_Signposts_Velen_04|Benek
+2116568632||option_PotP_TrackingGroup_WorldMap_Signposts_Velen_05|Blackbough
+2116568633||option_PotP_TrackingGroup_WorldMap_Signposts_Velen_06|Boatmaker's Hut
+2116568634||option_PotP_TrackingGroup_WorldMap_Signposts_Velen_07|Border Post
+2116568635||option_PotP_TrackingGroup_WorldMap_Signposts_Velen_08|Burned Ruins
+2116568636||option_PotP_TrackingGroup_WorldMap_Signposts_Velen_09|Byways
+2116568637||option_PotP_TrackingGroup_WorldMap_Signposts_Velen_10|Claywich
+2116568638||option_PotP_TrackingGroup_WorldMap_Signposts_Velen_11|Coast of Wrecks
+2116568639||option_PotP_TrackingGroup_WorldMap_Signposts_Velen_12|Codgers' Quarry
+2116568640||option_PotP_TrackingGroup_WorldMap_Signposts_Velen_13|Condyle
+2116568641||option_PotP_TrackingGroup_WorldMap_Signposts_Velen_90|Crookback Bog
+2116568642||option_PotP_TrackingGroup_WorldMap_Signposts_Velen_14|Crossroads
+2116568643||option_PotP_TrackingGroup_WorldMap_Signposts_Velen_15|Crow's Perch
+2116568644||option_PotP_TrackingGroup_WorldMap_Signposts_Velen_56|Castle Village
+2116568645||option_PotP_TrackingGroup_WorldMap_Signposts_Velen_16|Destroyed Bastion
+2116568646||option_PotP_TrackingGroup_WorldMap_Signposts_Velen_17|Devil's Pit
+2116568647||option_PotP_TrackingGroup_WorldMap_Signposts_Velen_18|Downwarren
+2116568648||option_PotP_TrackingGroup_WorldMap_Signposts_Velen_19|Dragonslayer's Grotto
+2116568649||option_PotP_TrackingGroup_WorldMap_Signposts_Velen_20|Drudge
+2116568650||option_PotP_TrackingGroup_WorldMap_Signposts_Velen_21|Duen Hen
+2116568651||option_PotP_TrackingGroup_WorldMap_Signposts_Velen_22|Ferry Station
+2116568652||option_PotP_TrackingGroup_WorldMap_Signposts_Velen_23|Forest Hut
+2116568653||option_PotP_TrackingGroup_WorldMap_Signposts_Velen_24|Frischlow
+2116568654||option_PotP_TrackingGroup_WorldMap_Signposts_Velen_25|Fyke Isle
+2116568655||option_PotP_TrackingGroup_WorldMap_Signposts_Velen_26|Grotto
+2116568656||option_PotP_TrackingGroup_WorldMap_Signposts_Velen_27|Hanged Man's Tree
+2116568657||option_PotP_TrackingGroup_WorldMap_Signposts_Velen_28|Hangmans' Alley
+2116568658||option_PotP_TrackingGroup_WorldMap_Signposts_Velen_29|Harpy Feeding Ground
+2116568659||option_PotP_TrackingGroup_WorldMap_Signposts_Velen_30|Heatherton
+2116568660||option_PotP_TrackingGroup_WorldMap_Signposts_Velen_31|Hindhold
+2116568661||option_PotP_TrackingGroup_WorldMap_Signposts_Velen_92|Honorton
+2116568662||option_PotP_TrackingGroup_WorldMap_Signposts_Velen_32|House of Respite
+2116568663||option_PotP_TrackingGroup_WorldMap_Signposts_Velen_33|Inn at the Crossroads
+2116568664||option_PotP_TrackingGroup_WorldMap_Signposts_Velen_34|Isolated Shack
+2116568665||option_PotP_TrackingGroup_WorldMap_Signposts_Velen_35|Kimbolt Way
+2116568666||option_PotP_TrackingGroup_WorldMap_Signposts_Velen_36|Lindenvale
+2116568667||option_PotP_TrackingGroup_WorldMap_Signposts_Velen_37|Lornruk
+2116568668||option_PotP_TrackingGroup_WorldMap_Signposts_Velen_38|Lurtch
+2116568669||option_PotP_TrackingGroup_WorldMap_Signposts_Velen_39|Maurauder's Bridge
+2116568670||option_PotP_TrackingGroup_WorldMap_Signposts_Velen_40|Midcopse
+2116568671||option_PotP_TrackingGroup_WorldMap_Signposts_Velen_93|Mowshurst
+2116568672||option_PotP_TrackingGroup_WorldMap_Signposts_Velen_41|Mulbrydale
+2116568673||option_PotP_TrackingGroup_WorldMap_Signposts_Velen_42|Nilfgaardian Army Group 'Center' Camp
+2116568674||option_PotP_TrackingGroup_WorldMap_Signposts_Velen_43|Olena's Grove
+2116568675||option_PotP_TrackingGroup_WorldMap_Signposts_Velen_44|Oreton
+2116568676||option_PotP_TrackingGroup_WorldMap_Signposts_Velen_94|Oxenfurt Bridge
+2116568677||option_PotP_TrackingGroup_WorldMap_Signposts_Velen_95|Pellar's Hut
+2116568678||option_PotP_TrackingGroup_WorldMap_Signposts_Velen_45|Reardon Manor
+2116568679||option_PotP_TrackingGroup_WorldMap_Signposts_Velen_46|Refugees' Camp
+2116568680||option_PotP_TrackingGroup_WorldMap_Signposts_Velen_47|Road to Bald Mountain
+2116568681||option_PotP_TrackingGroup_WorldMap_Signposts_Velen_48|Ruined Tower
+2116568682||option_PotP_TrackingGroup_WorldMap_Signposts_Velen_49|Stonecutter's Settlement
+2116568683||option_PotP_TrackingGroup_WorldMap_Signposts_Velen_50|The Orphans of Crookback Bog
+2116568684||option_PotP_TrackingGroup_WorldMap_Signposts_Velen_51|Toderas
+2116568685||option_PotP_TrackingGroup_WorldMap_Signposts_Velen_52|Troll Bridge
+2116568686||option_PotP_TrackingGroup_WorldMap_Signposts_Velen_53|Wastrel Manor
+2116568687||option_PotP_TrackingGroup_WorldMap_Signposts_Velen_54|White Eagle Fort
+2116568688||option_PotP_TrackingGroup_WorldMap_Signposts_Velen_96|Witch's Hut
+2116568689||option_PotP_TrackingGroup_WorldMap_Signposts_Velen_55|Wolven Glade
+2116568690||option_PotP_TrackingGroup_WorldMap_Signposts_Velen_97|Nilfgaardian Camp
+;
+2116568691||option_PotP_TrackingGroup_WorldMap_Signposts_Novigrad_01|Aeramas' Abandoned Manor
+2116568692||option_PotP_TrackingGroup_WorldMap_Signposts_Novigrad_02|Alness
+2116568693||option_PotP_TrackingGroup_WorldMap_Signposts_Novigrad_03|Arette
+2116568694||option_PotP_TrackingGroup_WorldMap_Signposts_Novigrad_04|Arnskrone Castle Ruins
+2116568695||option_PotP_TrackingGroup_WorldMap_Signposts_Novigrad_88|Barrengarth
+2116568696||option_PotP_TrackingGroup_WorldMap_Signposts_Novigrad_05|Bowdon
+2116568697||option_PotP_TrackingGroup_WorldMap_Signposts_Novigrad_06|Brunwich
+2116568698||option_PotP_TrackingGroup_WorldMap_Signposts_Novigrad_07|Carsten
+2116568699||option_PotP_TrackingGroup_WorldMap_Signposts_Novigrad_08|Cavern
+2116568700||option_PotP_TrackingGroup_WorldMap_Signposts_Novigrad_09|Crane Cape
+2116568701||option_PotP_TrackingGroup_WorldMap_Signposts_Novigrad_89|Crippled Kate's
+2116568702||option_PotP_TrackingGroup_WorldMap_Signposts_Novigrad_10|Crossroads
+2116568703||option_PotP_TrackingGroup_WorldMap_Signposts_Novigrad_11|Cunny of the Goose
+2116568704||option_PotP_TrackingGroup_WorldMap_Signposts_Novigrad_12|Dancing Windmill
+2116568705||option_PotP_TrackingGroup_WorldMap_Signposts_Novigrad_13|Drahim Castle
+2116568706||option_PotP_TrackingGroup_WorldMap_Signposts_Novigrad_14|Draken Hollow Outpost
+2116568707||option_PotP_TrackingGroup_WorldMap_Signposts_Novigrad_15|Electors' Square
+2116568708||option_PotP_TrackingGroup_WorldMap_Signposts_Novigrad_16|Erde
+2116568709||option_PotP_TrackingGroup_WorldMap_Signposts_Novigrad_17|Est Tayiar
+2116568710||option_PotP_TrackingGroup_WorldMap_Signposts_Novigrad_18|Eternal Fire Chapel
+2116568711||option_PotP_TrackingGroup_WorldMap_Signposts_Novigrad_90|Farcorners
+2116568712||option_PotP_TrackingGroup_WorldMap_Signposts_Novigrad_19|Garin Estate
+2116568713||option_PotP_TrackingGroup_WorldMap_Signposts_Novigrad_20|Gate of the Heirarch
+2116568714||option_PotP_TrackingGroup_WorldMap_Signposts_Novigrad_91|Gildorf
+2116568715||option_PotP_TrackingGroup_WorldMap_Signposts_Novigrad_21|Glory Gate
+2116568716||option_PotP_TrackingGroup_WorldMap_Signposts_Novigrad_22|Gustfields Farm
+2116568717||option_PotP_TrackingGroup_WorldMap_Signposts_Novigrad_92|Harborside
+2116568718||option_PotP_TrackingGroup_WorldMap_Signposts_Novigrad_93|Hattori's Workshop
+2116568719||option_PotP_TrackingGroup_WorldMap_Signposts_Novigrad_23|Heddel
+2116568720||option_PotP_TrackingGroup_WorldMap_Signposts_Novigrad_24|Herbalist's Hut
+2116568721||option_PotP_TrackingGroup_WorldMap_Signposts_Novigrad_25|Hierarch Square
+2116568722||option_PotP_TrackingGroup_WorldMap_Signposts_Novigrad_26|Honeyfill Meadworks
+2116568723||option_PotP_TrackingGroup_WorldMap_Signposts_Novigrad_27|Hunter's Cottage
+2116568724||option_PotP_TrackingGroup_WorldMap_Signposts_Novigrad_28|Isolated Hut
+2116568725||option_PotP_TrackingGroup_WorldMap_Signposts_Novigrad_29|Kilkerinn Ruins
+2116568726||option_PotP_TrackingGroup_WorldMap_Signposts_Novigrad_30|Lighthouse
+2116568727||option_PotP_TrackingGroup_WorldMap_Signposts_Novigrad_31|Loggers' Hut
+2116568728||option_PotP_TrackingGroup_WorldMap_Signposts_Novigrad_32|Lucian's Windmill
+2116568729||option_PotP_TrackingGroup_WorldMap_Signposts_Novigrad_33|Martin Fruille's Farmstead
+2116568730||option_PotP_TrackingGroup_WorldMap_Signposts_Novigrad_34|Moldavie Residence
+2116568731||option_PotP_TrackingGroup_WorldMap_Signposts_Novigrad_94|Novigrad Bridge
+2116568732||option_PotP_TrackingGroup_WorldMap_Signposts_Novigrad_35|Novigrad Docks
+2116568733||option_PotP_TrackingGroup_WorldMap_Signposts_Novigrad_36|Novigrad Gate
+2116568734||option_PotP_TrackingGroup_WorldMap_Signposts_Novigrad_95|Oxenfurt Academy
+2116568735||option_PotP_TrackingGroup_WorldMap_Signposts_Novigrad_37|Oxenfurt Gate
+2116568736||option_PotP_TrackingGroup_WorldMap_Signposts_Novigrad_38|Oxenfurt Harbor
+2116568737||option_PotP_TrackingGroup_WorldMap_Signposts_Novigrad_96|Passiflora
+2116568738||option_PotP_TrackingGroup_WorldMap_Signposts_Novigrad_39|Portside Gate
+2116568739||option_PotP_TrackingGroup_WorldMap_Signposts_Novigrad_40|Sarrasin Grange
+2116568740||option_PotP_TrackingGroup_WorldMap_Signposts_Novigrad_41|Seven Cats Inn
+2116568741||option_PotP_TrackingGroup_WorldMap_Signposts_Novigrad_97|Sigi Reuven's Bathhouse
+2116568742||option_PotP_TrackingGroup_WorldMap_Signposts_Novigrad_98|Silverton
+2116568743||option_PotP_TrackingGroup_WorldMap_Signposts_Novigrad_42|Southern Gate
+2116568744||option_PotP_TrackingGroup_WorldMap_Signposts_Novigrad_43|St. Gregory's Bridge
+2116568745||option_PotP_TrackingGroup_WorldMap_Signposts_Novigrad_44|Temerian Partisan Hideout
+2116568746||option_PotP_TrackingGroup_WorldMap_Signposts_Novigrad_99|The Bits
+2116568747||option_PotP_TrackingGroup_WorldMap_Signposts_Novigrad_45|Tretogor Gate
+2116568748||option_PotP_TrackingGroup_WorldMap_Signposts_Novigrad_46|Upper Mill
+2116568749||option_PotP_TrackingGroup_WorldMap_Signposts_Novigrad_47|Ursten
+2116568750||option_PotP_TrackingGroup_WorldMap_Signposts_Novigrad_48|Vegelbud Residence
+2116568751||option_PotP_TrackingGroup_WorldMap_Signposts_Novigrad_49|Vikk Watchtower
+2116568752||option_PotP_TrackingGroup_WorldMap_Signposts_Novigrad_50|Von Everec Estate
+2116568753||option_PotP_TrackingGroup_WorldMap_Signposts_Novigrad_51|Western Gate
+2116568754||option_PotP_TrackingGroup_WorldMap_Signposts_Novigrad_52|Wheat Fields
+2116568755||option_PotP_TrackingGroup_WorldMap_Signposts_Novigrad_53|Widows' Grotto
+2116568756||option_PotP_TrackingGroup_WorldMap_Signposts_Novigrad_54|Winespring Grange
+2116568757||option_PotP_TrackingGroup_WorldMap_Signposts_Novigrad_55|Yantra
+2116568758||option_PotP_TrackingGroup_WorldMap_Signposts_Novigrad_56|Zuetzer Castle
+;
+2116568759||option_PotP_TrackingGroup_WorldMap_Signposts_Skellige_01|Abandoned Sawmill
+2116568760||option_PotP_TrackingGroup_WorldMap_Signposts_Skellige_02|Abandoned Village
+2116568761||option_PotP_TrackingGroup_WorldMap_Signposts_Skellige_03|Ancient Crypt
+2116568762||option_PotP_TrackingGroup_WorldMap_Signposts_Skellige_90|Ard Hugtand
+2116568763||option_PotP_TrackingGroup_WorldMap_Signposts_Skellige_04|Arinbjorn
+2116568764||option_PotP_TrackingGroup_WorldMap_Signposts_Skellige_05|Bay Of Winds
+2116568765||option_PotP_TrackingGroup_WorldMap_Signposts_Skellige_06|Blandare
+2116568766||option_PotP_TrackingGroup_WorldMap_Signposts_Skellige_07|Boxholm
+2116568767||option_PotP_TrackingGroup_WorldMap_Signposts_Skellige_08|Bridge to Kaer Trolde
+2116568768||option_PotP_TrackingGroup_WorldMap_Signposts_Skellige_91|Castle Tuirseach
+2116568769||option_PotP_TrackingGroup_WorldMap_Signposts_Skellige_09|Clan Tordarroch Forge
+2116568770||option_PotP_TrackingGroup_WorldMap_Signposts_Skellige_10|Crossroads
+2116568771||option_PotP_TrackingGroup_WorldMap_Signposts_Skellige_11|Distillery
+2116568772||option_PotP_TrackingGroup_WorldMap_Signposts_Skellige_12|Dorve Ruins
+2116568773||option_PotP_TrackingGroup_WorldMap_Signposts_Skellige_13|Druids' Camp
+2116568774||option_PotP_TrackingGroup_WorldMap_Signposts_Skellige_14|Eldberg Lighthouse
+2116568775||option_PotP_TrackingGroup_WorldMap_Signposts_Skellige_15|Elverum Lighthouse
+2116568776||option_PotP_TrackingGroup_WorldMap_Signposts_Skellige_16|Fayrlund
+2116568777||option_PotP_TrackingGroup_WorldMap_Signposts_Skellige_17|Fornhala
+2116568778||option_PotP_TrackingGroup_WorldMap_Signposts_Skellige_18|Freya's Garden
+2116568779||option_PotP_TrackingGroup_WorldMap_Signposts_Skellige_19|Fyresdal
+2116568780||option_PotP_TrackingGroup_WorldMap_Signposts_Skellige_20|Gedyneith
+2116568781||option_PotP_TrackingGroup_WorldMap_Signposts_Skellige_21|Giants' Toes
+2116568782||option_PotP_TrackingGroup_WorldMap_Signposts_Skellige_22|Grotto
+2116568783||option_PotP_TrackingGroup_WorldMap_Signposts_Skellige_23|Gull Point
+2116568784||option_PotP_TrackingGroup_WorldMap_Signposts_Skellige_24|Harviken
+2116568785||option_PotP_TrackingGroup_WorldMap_Signposts_Skellige_25|Holmstein's Port
+2116568786||option_PotP_TrackingGroup_WorldMap_Signposts_Skellige_26|Hov
+2116568787||option_PotP_TrackingGroup_WorldMap_Signposts_Skellige_27|Isolated Hut
+2116568788||option_PotP_TrackingGroup_WorldMap_Signposts_Skellige_28|Kaer Almhult
+2116568789||option_PotP_TrackingGroup_WorldMap_Signposts_Skellige_92|Kaer Dhu
+2116568790||option_PotP_TrackingGroup_WorldMap_Signposts_Skellige_29|Kaer Gelen
+2116568791||option_PotP_TrackingGroup_WorldMap_Signposts_Skellige_30|Kaer Muire
+2116568792||option_PotP_TrackingGroup_WorldMap_Signposts_Skellige_93|Kaer Nyssen
+2116568793||option_PotP_TrackingGroup_WorldMap_Signposts_Skellige_31|Kaer Trolde Harbor
+2116568794||option_PotP_TrackingGroup_WorldMap_Signposts_Skellige_94|Kaer Trolde Village
+2116568795||option_PotP_TrackingGroup_WorldMap_Signposts_Skellige_32|Larvik
+2116568796||option_PotP_TrackingGroup_WorldMap_Signposts_Skellige_33|Lofoten
+2116568797||option_PotP_TrackingGroup_WorldMap_Signposts_Skellige_34|Lofoten Cemetery
+2116568798||option_PotP_TrackingGroup_WorldMap_Signposts_Skellige_35|Lurthen
+2116568799||option_PotP_TrackingGroup_WorldMap_Signposts_Skellige_36|Marlin Coast
+2116568800||option_PotP_TrackingGroup_WorldMap_Signposts_Skellige_95|Melusine's Cave
+2116568801||option_PotP_TrackingGroup_WorldMap_Signposts_Skellige_37|Miners' Camp
+2116568802||option_PotP_TrackingGroup_WorldMap_Signposts_Skellige_38|Old Watchtower
+2116568803||option_PotP_TrackingGroup_WorldMap_Signposts_Skellige_39|Palisade
+2116568804||option_PotP_TrackingGroup_WorldMap_Signposts_Skellige_40|Rannvaig
+2116568805||option_PotP_TrackingGroup_WorldMap_Signposts_Skellige_41|Redgill
+2116568806||option_PotP_TrackingGroup_WorldMap_Signposts_Skellige_42|Rogne
+2116568807||option_PotP_TrackingGroup_WorldMap_Signposts_Skellige_43|Ruined Inn
+2116568808||option_PotP_TrackingGroup_WorldMap_Signposts_Skellige_96|Snidhall Isle
+2116568809||option_PotP_TrackingGroup_WorldMap_Signposts_Skellige_44|Sund
+2116568810||option_PotP_TrackingGroup_WorldMap_Signposts_Skellige_45|Svorlag
+2116568811||option_PotP_TrackingGroup_WorldMap_Signposts_Skellige_46|The Pali Gap Coast
+2116568812||option_PotP_TrackingGroup_WorldMap_Signposts_Skellige_47|Trail to Yngvar's Fang
+2116568813||option_PotP_TrackingGroup_WorldMap_Signposts_Skellige_48|Trottheim
+2116568814||option_PotP_TrackingGroup_WorldMap_Signposts_Skellige_49|Urialla Harbor
+2116568815||option_PotP_TrackingGroup_WorldMap_Signposts_Skellige_50|Urskar
+2116568816||option_PotP_TrackingGroup_WorldMap_Signposts_Skellige_51|Whale Graveyard
+2116568817||option_PotP_TrackingGroup_WorldMap_Signposts_Skellige_52|Wild Shore
+2116568818||option_PotP_TrackingGroup_WorldMap_Signposts_Skellige_53|Yngvar's Fang
+2116568819||option_PotP_TrackingGroup_WorldMap_Signposts_Skellige_54|Yustinna's Grotto
+2116568820||option_PotP_TrackingGroup_WorldMap_Signposts_Skellige_97|Hemdall's Shrine
+;
+2116568821||option_PotP_TrackingGroup_WorldMap_Signposts_Toussaint_90|Abandoned Storehouse
+2116568822||option_PotP_TrackingGroup_WorldMap_Signposts_Toussaint_01|Ardaiso Quarry
+2116568823||option_PotP_TrackingGroup_WorldMap_Signposts_Toussaint_02|Arthach Palace Ruins
+2116568824||option_PotP_TrackingGroup_WorldMap_Signposts_Toussaint_03|Basane Farm
+2116568825||option_PotP_TrackingGroup_WorldMap_Signposts_Toussaint_91|Bastoy Prison Ruins
+2116568826||option_PotP_TrackingGroup_WorldMap_Signposts_Toussaint_04|Beauclair Palace
+2116568827||option_PotP_TrackingGroup_WorldMap_Signposts_Toussaint_05|Beauclair Port
+2116568828||option_PotP_TrackingGroup_WorldMap_Signposts_Toussaint_06|Belgaard Vineyard
+2116568829||option_PotP_TrackingGroup_WorldMap_Signposts_Toussaint_07|Castel Ravello Vineyard
+2116568830||option_PotP_TrackingGroup_WorldMap_Signposts_Toussaint_08|Casteldaccia Abandoned Estate
+2116568831||option_PotP_TrackingGroup_WorldMap_Signposts_Toussaint_09|Chuchote Cave
+2116568832||option_PotP_TrackingGroup_WorldMap_Signposts_Toussaint_10|Coopers' Gate
+2116568833||option_PotP_TrackingGroup_WorldMap_Signposts_Toussaint_11|Coronata Vineyard
+2116568834||option_PotP_TrackingGroup_WorldMap_Signposts_Toussaint_12|Corvo Bianco Vineyard
+2116568835||option_PotP_TrackingGroup_WorldMap_Signposts_Toussaint_13|Count de la Croix's Mill
+2116568836||option_PotP_TrackingGroup_WorldMap_Signposts_Toussaint_14|Delcinea Windmill
+2116568837||option_PotP_TrackingGroup_WorldMap_Signposts_Toussaint_92|Doren Alma Estate
+2116568838||option_PotP_TrackingGroup_WorldMap_Signposts_Toussaint_15|Dun Tynne Castle
+2116568839||option_PotP_TrackingGroup_WorldMap_Signposts_Toussaint_16|Dun Tynne Crossroads
+2116568840||option_PotP_TrackingGroup_WorldMap_Signposts_Toussaint_17|Dun Tynne Hillside
+2116568841||option_PotP_TrackingGroup_WorldMap_Signposts_Toussaint_18|Flovive
+2116568842||option_PotP_TrackingGroup_WorldMap_Signposts_Toussaint_19|Fort Astre Ruins
+2116568843||option_PotP_TrackingGroup_WorldMap_Signposts_Toussaint_20|Fort Ussar Ruins
+2116568844||option_PotP_TrackingGroup_WorldMap_Signposts_Toussaint_21|Fox Hollow
+2116568845||option_PotP_TrackingGroup_WorldMap_Signposts_Toussaint_22|Francollarts
+2116568846||option_PotP_TrackingGroup_WorldMap_Signposts_Toussaint_23|Gelenser Farm
+2116568847||option_PotP_TrackingGroup_WorldMap_Signposts_Toussaint_24|Harbor Gate
+2116568848||option_PotP_TrackingGroup_WorldMap_Signposts_Toussaint_25|Hortense Vineyard
+2116568849||option_PotP_TrackingGroup_WorldMap_Signposts_Toussaint_93|Lac Célavy
+2116568850||option_PotP_TrackingGroup_WorldMap_Signposts_Toussaint_94|Lazare Lafargue's Workshop
+2116568851||option_PotP_TrackingGroup_WorldMap_Signposts_Toussaint_26|Lebioda's Gate
+2116568852||option_PotP_TrackingGroup_WorldMap_Signposts_Toussaint_27|Mere-Lachaiselongue Cemetery
+2116568853||option_PotP_TrackingGroup_WorldMap_Signposts_Toussaint_28|Metinna Gate
+2116568854||option_PotP_TrackingGroup_WorldMap_Signposts_Toussaint_29|Mont Crane Castle
+2116568855||option_PotP_TrackingGroup_WorldMap_Signposts_Toussaint_30|Nilfgaardian Embassy
+2116568856||option_PotP_TrackingGroup_WorldMap_Signposts_Toussaint_31|Palace Gardens
+2116568857||option_PotP_TrackingGroup_WorldMap_Signposts_Toussaint_32|Plegmund's Bridge
+2116568858||option_PotP_TrackingGroup_WorldMap_Signposts_Toussaint_33|Prophet Lebioda Statue
+2116568859||option_PotP_TrackingGroup_WorldMap_Signposts_Toussaint_34|Rioux-Cannes Outpost
+2116568860||option_PotP_TrackingGroup_WorldMap_Signposts_Toussaint_35|San Sebastian
+2116568861||option_PotP_TrackingGroup_WorldMap_Signposts_Toussaint_36|Sansretour Valley
+2116568862||option_PotP_TrackingGroup_WorldMap_Signposts_Toussaint_37|Seidhe Llygad Amphitheater
+2116568863||option_PotP_TrackingGroup_WorldMap_Signposts_Toussaint_38|Termes Palace Ruins
+2116568864||option_PotP_TrackingGroup_WorldMap_Signposts_Toussaint_39|Tesham Mutna Ruins
+2116568865||option_PotP_TrackingGroup_WorldMap_Signposts_Toussaint_95|The Belles of Beauclair
+2116568866||option_PotP_TrackingGroup_WorldMap_Signposts_Toussaint_40|The Cockatrice Inn
+2116568867||option_PotP_TrackingGroup_WorldMap_Signposts_Toussaint_41|The Gran'place
+2116568868||option_PotP_TrackingGroup_WorldMap_Signposts_Toussaint_42|The Silver Salamander Inn
+2116568869||option_PotP_TrackingGroup_WorldMap_Signposts_Toussaint_43|Tourney Grounds
+2116568870||option_PotP_TrackingGroup_WorldMap_Signposts_Toussaint_44|Toussaint Prison
+2116568871||option_PotP_TrackingGroup_WorldMap_Signposts_Toussaint_45|Trading Post
+2116568872||option_PotP_TrackingGroup_WorldMap_Signposts_Toussaint_46|Trastamara Hunting Cottage
+2116568873||option_PotP_TrackingGroup_WorldMap_Signposts_Toussaint_96|Vermentino Vineyard
+2116568874||option_PotP_TrackingGroup_WorldMap_Signposts_Toussaint_97|Villa Vedette
+;
+2116568875||option_PotP_TrackingGroup_WorldMap_PlacesOfPower_WhiteOrchard_01|Igni: Mill
+2116568876||option_PotP_TrackingGroup_WorldMap_PlacesOfPower_WhiteOrchard_02|Axii: Sawmill
+2116568877||option_PotP_TrackingGroup_WorldMap_PlacesOfPower_WhiteOrchard_03|Aard: Mill
+2116568878||option_PotP_TrackingGroup_WorldMap_PlacesOfPower_WhiteOrchard_04|Quen: Cackler Bridge
+2116568879||option_PotP_TrackingGroup_WorldMap_PlacesOfPower_WhiteOrchard_05|Quen: Broken Bridge
+2116568880||option_PotP_TrackingGroup_WorldMap_PlacesOfPower_WhiteOrchard_06|Yrden: Abandoned Village
+;
+2116568881||option_PotP_TrackingGroup_WorldMap_PlacesOfPower_Toussaint_01|Igni: Fort Ussar Ruins
+2116568882||option_PotP_TrackingGroup_WorldMap_PlacesOfPower_Toussaint_02|Axii: Rioux-Cannes Outpost
+2116568883||option_PotP_TrackingGroup_WorldMap_PlacesOfPower_Toussaint_03|Aard: Hortense Vineyard
+2116568884||option_PotP_TrackingGroup_WorldMap_PlacesOfPower_Toussaint_04|Quen: Termes Palace Ruins
+2116568885||option_PotP_TrackingGroup_WorldMap_PlacesOfPower_Toussaint_05|Yrden: Arthach Palace Ruins
+;
+2116568886||option_PotP_TrackingGroup_WorldMap_PlacesOfPower_Novigrad_01|Axii: Alness
+2116568887||option_PotP_TrackingGroup_WorldMap_PlacesOfPower_Novigrad_02|Igni: Electors' Square
+;
+2116568888||option_PotP_TrackingGroup_WorldMap_PlacesOfPower_KaerMorhen_01|Igni: Ruined Watchtower
+;
+2116568889||option_PotP_TrackingGroup_WorldMap_PlacesOfPower_Velen_01|Igni: Ancient Oak
+2116568890||option_PotP_TrackingGroup_WorldMap_PlacesOfPower_Velen_02|Aard: Frischlow
+2116568891||option_PotP_TrackingGroup_WorldMap_PlacesOfPower_Velen_03|Quen: Lornruk
+2116568892||option_PotP_TrackingGroup_WorldMap_PlacesOfPower_Velen_04|Quen: Road to Bald Mountain
+2116568893||option_PotP_TrackingGroup_WorldMap_PlacesOfPower_Velen_05|Yrden: Byways
+2116568894||option_PotP_TrackingGroup_WorldMap_PlacesOfPower_Velen_06|Yrden: Dragonslayer's Grotto
+;
+2116568895||option_PotP_TrackingGroup_WorldMap_PlacesOfPower_Skellige_01|Igni: Ancient Crypt
+2116568896||option_PotP_TrackingGroup_WorldMap_PlacesOfPower_Skellige_02|Igni: Svorlag
+2116568897||option_PotP_TrackingGroup_WorldMap_PlacesOfPower_Skellige_03|Axii: Crossroads
+2116568898||option_PotP_TrackingGroup_WorldMap_PlacesOfPower_Skellige_04|Axii: Fornhala
+2116568899||option_PotP_TrackingGroup_WorldMap_PlacesOfPower_Skellige_05|Aard: Redgill
+2116568900||option_PotP_TrackingGroup_WorldMap_PlacesOfPower_Skellige_06|Quen: Kaer Trolde
+2116568901||option_PotP_TrackingGroup_WorldMap_PlacesOfPower_Skellige_07|Quen: Yngvar's Fang
+2116568902||option_PotP_TrackingGroup_WorldMap_PlacesOfPower_Skellige_08|Yrden: Druids Camp
+2116568903||option_PotP_TrackingGroup_WorldMap_PlacesOfPower_Skellige_09|Yrden: Harviken
+;
+2116568904||option_PotP_TrackingGroup_WorldMap_PlacesOfPower_TheSpiral_01|Aard: Gas Forest
+;
+2116568905||option_PotP_TrackingGroup_WorldMap_MonsterNests_WhiteOrchard_03|Ghoul Nest 1: (Cackler Bridge)
+2116568906||option_PotP_TrackingGroup_WorldMap_MonsterNests_WhiteOrchard_02|Ghoul Nest 2: (Crossroads)
+2116568907||option_PotP_TrackingGroup_WorldMap_MonsterNests_WhiteOrchard_01|Ghoul Nest 3: (Mill)
+;
+2116568908||option_PotP_TrackingGroup_WorldMap_MonsterNests_Velen_19|Drowner Nest: (Drudge)
+2116568909||option_PotP_TrackingGroup_WorldMap_MonsterNests_Velen_20|Drowner Nest: (Road to Bald Mountain)
+2116568910||option_PotP_TrackingGroup_WorldMap_MonsterNests_Velen_05|Endrega Nest: (Ursten 1)
+2116568911||option_PotP_TrackingGroup_WorldMap_MonsterNests_Velen_06|Endrega Nest: (Ursten 2)
+2116568912||option_PotP_TrackingGroup_WorldMap_MonsterNests_Velen_12|Ghoul Nest: (Boatmaker's Hut)
+2116568913||option_PotP_TrackingGroup_WorldMap_MonsterNests_Velen_10|Ghoul Nest: (Burned Ruins)
+2116568914||option_PotP_TrackingGroup_WorldMap_MonsterNests_Velen_11|Ghoul Nest: (Crow's Perch)
+2116568915||option_PotP_TrackingGroup_WorldMap_MonsterNests_Velen_07|Ghoul Nest: (Ferry Station 1)
+2116568916||option_PotP_TrackingGroup_WorldMap_MonsterNests_Velen_08|Ghoul Nest: (Ferry Station 2)
+2116568917||option_PotP_TrackingGroup_WorldMap_MonsterNests_Velen_09|Ghoul Nest: (Stonecutter's Settlement)
+2116568918||option_PotP_TrackingGroup_WorldMap_MonsterNests_Velen_03|Harpy Nest: (Hindhold)
+2116568919||option_PotP_TrackingGroup_WorldMap_MonsterNests_Velen_13|Nekker Nest: (Benek)
+2116568920||option_PotP_TrackingGroup_WorldMap_MonsterNests_Velen_01|Nekker Nest: (Codgers' Quarry)
+2116568921||option_PotP_TrackingGroup_WorldMap_MonsterNests_Velen_14|Nekker Nest: (Reardon Manor 1)
+2116568922||option_PotP_TrackingGroup_WorldMap_MonsterNests_Velen_15|Nekker Nest: (Reardon Manor 2)
+2116568923||option_PotP_TrackingGroup_WorldMap_MonsterNests_Velen_16|Nekker Nest: (Toderas)
+2116568924||option_PotP_TrackingGroup_WorldMap_MonsterNests_Velen_21|Rotfiend Nest: (Drahim Castle)
+2116568925||option_PotP_TrackingGroup_WorldMap_MonsterNests_Velen_02|Rotfiend Nest: (Hindhold)
+2116568926||option_PotP_TrackingGroup_WorldMap_MonsterNests_Velen_04|Rotfiend Nest: (Ursten)
+2116568927||option_PotP_TrackingGroup_WorldMap_MonsterNests_Velen_17|Wyvern Nest: (Grotto 1)
+2116568928||option_PotP_TrackingGroup_WorldMap_MonsterNests_Velen_18|Wyvern Nest: (Grotto 2)
+;
+2116568929||option_PotP_TrackingGroup_WorldMap_MonsterNests_Skellige_01|Drowner Nest: (Crossroads)
+2116568930||option_PotP_TrackingGroup_WorldMap_MonsterNests_Skellige_03|Harpy Nest: (Fyresdal)
+2116568931||option_PotP_TrackingGroup_WorldMap_MonsterNests_Skellige_02|Siren Nest: (Crossroads)
+2116568932||option_PotP_TrackingGroup_WorldMap_MonsterNests_Skellige_04|Siren Nest: (Ruined Inn)
+2116568933||option_PotP_TrackingGroup_WorldMap_MonsterNests_Skellige_05|Siren Nest: (Bay Of Winds)
+;
+2116568934||option_PotP_TrackingGroup_WorldMap_MonsterNests_Novigrad_04|Arachnomorph Nest: (Garin Estate)
+2116568935||option_PotP_TrackingGroup_WorldMap_MonsterNests_Novigrad_01|Forktail Nest: (Vikk Watchtower)
+2116568936||option_PotP_TrackingGroup_WorldMap_MonsterNests_Novigrad_05|Nekker Nest: (Brunwich 1)
+2116568937||option_PotP_TrackingGroup_WorldMap_MonsterNests_Novigrad_06|Nekker Nest: (Brunwich 2)
+2116568938||option_PotP_TrackingGroup_WorldMap_MonsterNests_Novigrad_02|Nekker Nest: (Hunter's Cottage)
+2116568939||option_PotP_TrackingGroup_WorldMap_MonsterNests_Novigrad_03|Wyvern Nest: (Draken Hollow Outpost)
+;
+2116568940||option_PotP_TrackingGroup_WorldMap_MonsterNests_Toussaint_04|Archespore Nest: (Count de la Croix's Mill)
+2116568941||option_PotP_TrackingGroup_WorldMap_MonsterNests_Toussaint_06|Archespore Nest: (Mère-Lachaiselongue Cemetery)
+2116568942||option_PotP_TrackingGroup_WorldMap_MonsterNests_Toussaint_09|Forktail Nest: (Basane Farm)
+2116568943||option_PotP_TrackingGroup_WorldMap_MonsterNests_Toussaint_01|Giant centipede Nest: (Fort Astre Ruins 1)
+2116568944||option_PotP_TrackingGroup_WorldMap_MonsterNests_Toussaint_02|Giant centipede Nest: (Fort Astre Ruins 2)
+2116568945||option_PotP_TrackingGroup_WorldMap_MonsterNests_Toussaint_07|Giant centipede Nest: (Tesham Mutna Ruins)
+2116568946||option_PotP_TrackingGroup_WorldMap_MonsterNests_Toussaint_08|Giant centipede Nest: (Trastamara Hunting Cottage)
+2116568947||option_PotP_TrackingGroup_WorldMap_MonsterNests_Toussaint_03|Harpy Nest: (Rioux-Cannes Outpost)
+2116568948||option_PotP_TrackingGroup_WorldMap_MonsterNests_Toussaint_05|Kikimore Nest: (Dun Tynne Castle)
+2116568949||option_PotP_TrackingGroup_WorldMap_MonsterNests_Toussaint_10|Slyzard Nest: (Fort Ussar Ruins)
+;
+2116568950||option_PotP_TrackingGroup_WorldMap_MonsterDens_Velen_01|Ogroid Den: (Hanged Man's Tree)
+2116568951||option_PotP_TrackingGroup_WorldMap_MonsterDens_Velen_02|Vampire Den: (Dragonslayer's Grotto)
+;
+2116568952||option_PotP_TrackingGroup_WorldMap_MonsterDens_Novigrad_01|Elementa Den: (Cavern)
+2116568953||option_PotP_TrackingGroup_WorldMap_MonsterDens_Novigrad_02|Ogroid Den: (Ursten)
+;
+2116568954||option_PotP_TrackingGroup_WorldMap_MonsterDens_Skellige_01|Specter Den: (Ancient Crypt)
+2116568955||option_PotP_TrackingGroup_WorldMap_MonsterDens_Skellige_02|Specter Den: (Kaer Gelen)
+2116568956||option_PotP_TrackingGroup_WorldMap_MonsterDens_Skellige_03|Necrophage Den: (Kaer Gelen)
+2116568957||option_PotP_TrackingGroup_WorldMap_MonsterDens_Skellige_04|Ogroid Den: (Fornhala)
+;
+2116568958||option_PotP_TrackingGroup_WorldMap_MonsterDens_Toussaint_01|Cursed Den: (Basane Farm)
+2116568959||option_PotP_TrackingGroup_WorldMap_MonsterDens_Toussaint_02|Cursed Den: (The Pits of Brume)
+2116568960||option_PotP_TrackingGroup_WorldMap_MonsterDens_Toussaint_03|Insectoid Den: (Dun Tynne Hillside)
+2116568961||option_PotP_TrackingGroup_WorldMap_MonsterDens_Toussaint_04|Insectoid Den: (Rioux-Cannes Outpost)
+2116568962||option_PotP_TrackingGroup_WorldMap_MonsterDens_Toussaint_05|Vampire Den: (Basane Farm)
+;
+2116568963||option_PotP_TrackingGroup_WorldMap_BanditCamp_WhiteOrchard_01|North of Cackler Bridge
+2116568964||option_PotP_TrackingGroup_WorldMap_BanditCamp_WhiteOrchard_02|North of the Sawmill
+2116568965||option_PotP_TrackingGroup_WorldMap_BanditCamp_WhiteOrchard_03|South of the Broken Bridge
+2116568966||option_PotP_TrackingGroup_WorldMap_BanditCamp_WhiteOrchard_04|West of Crossroads
+2116568967||option_PotP_TrackingGroup_WorldMap_BanditCamp_WhiteOrchard_05|West of King Desmond Bridge
+2116568968||option_PotP_TrackingGroup_WorldMap_BanditCamp_WhiteOrchard_06|West of Ransacked Village
+;
+2116568969||option_PotP_TrackingGroup_WorldMap_BanditCamp_Skellige_01|North of Giants' Toes
+2116568970||option_PotP_TrackingGroup_WorldMap_BanditCamp_Skellige_02|North of Holmstein's Port
+2116568971||option_PotP_TrackingGroup_WorldMap_BanditCamp_Skellige_03|East of Rannvaig
+2116568972||option_PotP_TrackingGroup_WorldMap_BanditCamp_Skellige_04|East of Whale Graveyard
+2116568973||option_PotP_TrackingGroup_WorldMap_BanditCamp_Skellige_05|South of Old Watchtower
+2116568974||option_PotP_TrackingGroup_WorldMap_BanditCamp_Skellige_06|Island in the Ocean
+;
+2116568975||option_PotP_TrackingGroup_WorldMap_BanditCamp_Toussaint_01|North of Fort Astre Ruins
+2116568976||option_PotP_TrackingGroup_WorldMap_BanditCamp_Toussaint_02|North of Fort Ussar Ruins
+2116568977||option_PotP_TrackingGroup_WorldMap_BanditCamp_Toussaint_03|North of Fox Hollow
+2116568978||option_PotP_TrackingGroup_WorldMap_BanditCamp_Toussaint_04|North of Termes Palace Ruins
+2116568979||option_PotP_TrackingGroup_WorldMap_BanditCamp_Toussaint_05|Northeast of Arthach Palace Ruins
+2116568980||option_PotP_TrackingGroup_WorldMap_BanditCamp_Toussaint_06|Northwest of Fox Hollow
+2116568981||option_PotP_TrackingGroup_WorldMap_BanditCamp_Toussaint_07|East of Basane Farm
+2116568982||option_PotP_TrackingGroup_WorldMap_BanditCamp_Toussaint_08|South of Arthach Palace Ruins
+2116568983||option_PotP_TrackingGroup_WorldMap_BanditCamp_Toussaint_09|South of Fort Ussar Ruins
+2116568984||option_PotP_TrackingGroup_WorldMap_BanditCamp_Toussaint_10|South of Mont Crane Castle
+2116568985||option_PotP_TrackingGroup_WorldMap_BanditCamp_Toussaint_11|South of Seidhe Llygad Amphitheater
+2116568986||option_PotP_TrackingGroup_WorldMap_BanditCamp_Toussaint_12|South of The Silver Salamander Inn
+2116568987||option_PotP_TrackingGroup_WorldMap_BanditCamp_Toussaint_13|West of Mont Crane Castle
+2116568988||option_PotP_TrackingGroup_WorldMap_BanditCamp_Toussaint_14|West of Trading Post
+;
+2116568989||option_PotP_TrackingGroup_WorldMap_BanditCamp_Novigrad_01|South of Crossroads
+2116568990||option_PotP_TrackingGroup_WorldMap_BanditCamp_Novigrad_02|East of Widows' Grotto
+2116568991||option_PotP_TrackingGroup_WorldMap_BanditCamp_Novigrad_03|East of Est Tayiar
+2116568992||option_PotP_TrackingGroup_WorldMap_BanditCamp_Novigrad_04|East of Alness
+2116568993||option_PotP_TrackingGroup_WorldMap_BanditCamp_Novigrad_05|West of Erde
+2116568994||option_PotP_TrackingGroup_WorldMap_BanditCamp_Novigrad_06|Within Kilkerinn Ruins
+2116568995||option_PotP_TrackingGroup_WorldMap_BanditCamp_Novigrad_07|North of Zuetzer Castle
+2116568996||option_PotP_TrackingGroup_WorldMap_BanditCamp_Novigrad_08|East of Crane Cape
+2116568997||option_PotP_TrackingGroup_WorldMap_BanditCamp_Novigrad_09|Northwest of Sarrasin Grange
+2116568998||option_PotP_TrackingGroup_WorldMap_BanditCamp_Novigrad_10|Northeast of Bowdon
+2116568999||option_PotP_TrackingGroup_WorldMap_BanditCamp_Novigrad_11|Northwest of Brunwich
+2116569000||option_PotP_TrackingGroup_WorldMap_BanditCamp_Novigrad_12|North of Upper Mill
+;
+2116569001||option_PotP_TrackingGroup_WorldMap_BanditCamp_Velen_01|Southwest of Benek
+2116569002||option_PotP_TrackingGroup_WorldMap_BanditCamp_Velen_02|North of Road to Bald Mountain
+2116569003||option_PotP_TrackingGroup_WorldMap_BanditCamp_Velen_03|West of Crossroads
+2116569004||option_PotP_TrackingGroup_WorldMap_BanditCamp_Velen_04|East of Lindenvale
+2116569005||option_PotP_TrackingGroup_WorldMap_BanditCamp_Velen_05|North of Mowshurst
+2116569006||option_PotP_TrackingGroup_WorldMap_BanditCamp_Velen_06|North of Lindenvale
+2116569007||option_PotP_TrackingGroup_WorldMap_BanditCamp_Velen_07|North of Maurauder's Bridge
+2116569008||option_PotP_TrackingGroup_WorldMap_BanditCamp_Velen_08|Within Devil's Pit
+2116569009||option_PotP_TrackingGroup_WorldMap_BanditCamp_Velen_09|North of Inn at the Crossroads
+2116569010||option_PotP_TrackingGroup_WorldMap_BanditCamp_Velen_10|East of Blackbough
+2116569011||option_PotP_TrackingGroup_WorldMap_BanditCamp_Velen_11|North of Forest Hut
+2116569012||option_PotP_TrackingGroup_WorldMap_BanditCamp_Velen_12|South of Forest Hut
+2116569013||option_PotP_TrackingGroup_WorldMap_BanditCamp_Velen_13|East of Refugees' Camp
+2116569014||option_PotP_TrackingGroup_WorldMap_BanditCamp_Velen_14|North of Coast of Wrecks
+2116569015||option_PotP_TrackingGroup_WorldMap_BanditCamp_Velen_15|East of Condyle
+2116569016||option_PotP_TrackingGroup_WorldMap_BanditCamp_Velen_16|South of Condyle
+2116569017||option_PotP_TrackingGroup_WorldMap_BanditCamp_Velen_17|Within Condyle
+2116569018||option_PotP_TrackingGroup_WorldMap_BanditCamp_Velen_18|North of Condyle
+2116569019||option_PotP_TrackingGroup_WorldMap_BanditCamp_Velen_19|Southwest of Refugees' Camp
+;
+;-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+;-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+;-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+;-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+;
+2116569020||option_PotP_TrackingGroup_Trophies_01|Arachas
+2116569021||option_PotP_TrackingGroup_Trophies_02|Archgriffin
+2116569022||option_PotP_TrackingGroup_Trophies_03|Cave Troll
+2116569023||option_PotP_TrackingGroup_Trophies_04|Chort
+2116569024||option_PotP_TrackingGroup_Trophies_05|Cockatrice
+2116569025||option_PotP_TrackingGroup_Trophies_06|Conserved Shaelmaar
+2116569026||option_PotP_TrackingGroup_Trophies_07|Doppler
+2116569027||option_PotP_TrackingGroup_Trophies_08|Earth Elemental
+2116569028||option_PotP_TrackingGroup_Trophies_09|Ekhidna
+2116569029||option_PotP_TrackingGroup_Trophies_10|Ekimmara
+2116569030||option_PotP_TrackingGroup_Trophies_11|Fiend
+2116569031||option_PotP_TrackingGroup_Trophies_12|Foglet
+2116569032||option_PotP_TrackingGroup_Trophies_13|Forktail
+2116569033||option_PotP_TrackingGroup_Trophies_14|Garkain
+2116569034||option_PotP_TrackingGroup_Trophies_15|Golyat
+2116569035||option_PotP_TrackingGroup_Trophies_16|Grave Hag
+2116569036||option_PotP_TrackingGroup_Trophies_17|Griffin
+2116569037||option_PotP_TrackingGroup_Trophies_18|Grottore
+2116569038||option_PotP_TrackingGroup_Trophies_19|Katakan
+2116569039||option_PotP_TrackingGroup_Trophies_20|King of Swineherd's crown
+2116569040||option_PotP_TrackingGroup_Trophies_21|Leshen
+2116569041||option_PotP_TrackingGroup_Trophies_22|Nekker Warrior
+2116569042||option_PotP_TrackingGroup_Trophies_23|Nightwraith
+2116569043||option_PotP_TrackingGroup_Trophies_24|Noonwraith
+2116569044||option_PotP_TrackingGroup_Trophies_25|Shaelmaar
+2116569045||option_PotP_TrackingGroup_Trophies_26|Silver Basilisk
+2116569046||option_PotP_TrackingGroup_Trophies_27|Slyzard
+2116569047||option_PotP_TrackingGroup_Trophies_28|Succubus
+2116569048||option_PotP_TrackingGroup_Trophies_29|Trophy <font color="#D79D3A">(Knight for Hire)</font>
+2116569049||option_PotP_TrackingGroup_Trophies_30|Umbra
+2116569050||option_PotP_TrackingGroup_Trophies_31|Water Hag
+2116569051||option_PotP_TrackingGroup_Trophies_32|Wight
+2116569052||option_PotP_TrackingGroup_Trophies_33|Wild Hunt Hound
+2116569053||option_PotP_TrackingGroup_Trophies_34|Wraith
+2116569054||option_PotP_TrackingGroup_Trophies_35|Wyvern
+;
+;-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+;-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+;-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+;-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+;
+2116569055||option_PotP_TrackingGroup_Relics_SilverSwords_01|Addan Deith
+2116569056||option_PotP_TrackingGroup_Relics_SilverSwords_02|Aerondight
+2116569057||option_PotP_TrackingGroup_Relics_SilverSwords_03|Ami
+2116569058||option_PotP_TrackingGroup_Relics_SilverSwords_04|Anathema
+2116569059||option_PotP_TrackingGroup_Relics_SilverSwords_05|Anth
+2116569060||option_PotP_TrackingGroup_Relics_SilverSwords_06|Arainne
+2116569061||option_PotP_TrackingGroup_Relics_SilverSwords_07|Azure Wrath
+2116569062||option_PotP_TrackingGroup_Relics_SilverSwords_08|Blade of Ys
+2116569063||option_PotP_TrackingGroup_Relics_SilverSwords_09|Bleidd
+2116569064||option_PotP_TrackingGroup_Relics_SilverSwords_10|Bloodsword
+2116569065||option_PotP_TrackingGroup_Relics_SilverSwords_11|Breath of the North
+2116569066||option_PotP_TrackingGroup_Relics_SilverSwords_12|Cantata
+2116569067||option_PotP_TrackingGroup_Relics_SilverSwords_13|Casus Foederis
+2116569068||option_PotP_TrackingGroup_Relics_SilverSwords_14|Dahlia
+2116569069||option_PotP_TrackingGroup_Relics_SilverSwords_15|Deargdeith
+2116569070||option_PotP_TrackingGroup_Relics_SilverSwords_16|Deithwen
+2116569071||option_PotP_TrackingGroup_Relics_SilverSwords_17|Fate
+2116569072||option_PotP_TrackingGroup_Relics_SilverSwords_18|Fen'aeth
+2116569073||option_PotP_TrackingGroup_Relics_SilverSwords_19|Gesheft
+2116569074||option_PotP_TrackingGroup_Relics_SilverSwords_20|Gynvael
+2116569075||option_PotP_TrackingGroup_Relics_SilverSwords_21|Gynvael Aedd
+2116569076||option_PotP_TrackingGroup_Relics_SilverSwords_22|Harpy
+2116569077||option_PotP_TrackingGroup_Relics_SilverSwords_23|Hav'caaren
+2116569078||option_PotP_TrackingGroup_Relics_SilverSwords_24|Loathen
+2116569079||option_PotP_TrackingGroup_Relics_SilverSwords_25|Maugrim
+2116569080||option_PotP_TrackingGroup_Relics_SilverSwords_26|Moonblade
+2116569081||option_PotP_TrackingGroup_Relics_SilverSwords_27|Naevde Seidhe
+2116569082||option_PotP_TrackingGroup_Relics_SilverSwords_28|Negotiator
+2116569083||option_PotP_TrackingGroup_Relics_SilverSwords_29|Pang of Conscience
+2116569084||option_PotP_TrackingGroup_Relics_SilverSwords_30|Reach of the Damned
+2116569085||option_PotP_TrackingGroup_Relics_SilverSwords_31|Rose of Shaerrawed
+2116569086||option_PotP_TrackingGroup_Relics_SilverSwords_32|Sarrim
+2116569087||option_PotP_TrackingGroup_Relics_SilverSwords_33|Tah'rel
+2116569088||option_PotP_TrackingGroup_Relics_SilverSwords_34|The Bride
+2116569089||option_PotP_TrackingGroup_Relics_SilverSwords_35|Tlareg
+2116569090||option_PotP_TrackingGroup_Relics_SilverSwords_36|Tor Zireael
+2116569091||option_PotP_TrackingGroup_Relics_SilverSwords_37|Tor'haerne
+2116569092||option_PotP_TrackingGroup_Relics_SilverSwords_38|Weeper
+2116569093||option_PotP_TrackingGroup_Relics_SilverSwords_39|Zerrikanterment
+2116569094||option_PotP_TrackingGroup_Relics_SilverSwords_40|Zireael
+2116569095||option_PotP_TrackingGroup_Relics_SilverSwords_41|Nine-Tailed Vixen Silver Sword
+;
+2116569096||option_PotP_TrackingGroup_Relics_SilverSwords_W3EE_01|Aerondight
+2116569097||option_PotP_TrackingGroup_Relics_SilverSwords_W3EE_02|Azure Wrath
+2116569098||option_PotP_TrackingGroup_Relics_SilverSwords_W3EE_03|Bloodsword
+2116569099||option_PotP_TrackingGroup_Relics_SilverSwords_W3EE_04|Cantata
+2116569100||option_PotP_TrackingGroup_Relics_SilverSwords_W3EE_05|Casus Foederis
+2116569101||option_PotP_TrackingGroup_Relics_SilverSwords_W3EE_06|Fate
+2116569102||option_PotP_TrackingGroup_Relics_SilverSwords_W3EE_07|Gesheft
+2116569103||option_PotP_TrackingGroup_Relics_SilverSwords_W3EE_08|Harpy
+2116569104||option_PotP_TrackingGroup_Relics_SilverSwords_W3EE_09|Hav'caaren
+2116569105||option_PotP_TrackingGroup_Relics_SilverSwords_W3EE_10|Naevde Seidhe
+2116569106||option_PotP_TrackingGroup_Relics_SilverSwords_W3EE_11|Negotiator
+2116569107||option_PotP_TrackingGroup_Relics_SilverSwords_W3EE_12|Reach of the Damned
+2116569108||option_PotP_TrackingGroup_Relics_SilverSwords_W3EE_13|Rose of Shaerrawed
+2116569109||option_PotP_TrackingGroup_Relics_SilverSwords_W3EE_14|Sarrim
+2116569110||option_PotP_TrackingGroup_Relics_SilverSwords_W3EE_15|The Adversary
+2116569111||option_PotP_TrackingGroup_Relics_SilverSwords_W3EE_16|The Bride
+2116569112||option_PotP_TrackingGroup_Relics_SilverSwords_W3EE_17|Tlareg
+2116569113||option_PotP_TrackingGroup_Relics_SilverSwords_W3EE_18|Weeper
+2116569114||option_PotP_TrackingGroup_Relics_SilverSwords_W3EE_19|Zerrikanterment
+;
+2116569115||option_PotP_TrackingGroup_Relics_SteelSwords_01|Angivare
+2116569116||option_PotP_TrackingGroup_Relics_SteelSwords_02|Arbitrator
+2116569117||option_PotP_TrackingGroup_Relics_SteelSwords_03|Ard'aenye
+2116569118||option_PotP_TrackingGroup_Relics_SteelSwords_04|Ashrune
+2116569119||option_PotP_TrackingGroup_Relics_SteelSwords_05|Barber-Surgeon
+2116569120||option_PotP_TrackingGroup_Relics_SteelSwords_06|Beann'shie
+2116569121||option_PotP_TrackingGroup_Relics_SteelSwords_07|Belhaven blade
+2116569122||option_PotP_TrackingGroup_Relics_SteelSwords_08|Black Unicorn
+2116569123||option_PotP_TrackingGroup_Relics_SteelSwords_09|Blade from the Bits
+2116569124||option_PotP_TrackingGroup_Relics_SteelSwords_10|Blave
+2116569125||option_PotP_TrackingGroup_Relics_SteelSwords_11|Bloed Aedd
+2116569126||option_PotP_TrackingGroup_Relics_SteelSwords_12|Caerme
+2116569127||option_PotP_TrackingGroup_Relics_SteelSwords_13|Carabella
+2116569128||option_PotP_TrackingGroup_Relics_SteelSwords_14|Caroline
+2116569129||option_PotP_TrackingGroup_Relics_SteelSwords_15|Cleaver hood
+2116569130||option_PotP_TrackingGroup_Relics_SteelSwords_16|D'yaebl
+2116569131||option_PotP_TrackingGroup_Relics_SteelSwords_17|Dancer
+2116569132||option_PotP_TrackingGroup_Relics_SteelSwords_18|Daystar
+2116569133||option_PotP_TrackingGroup_Relics_SteelSwords_19|Deireadh
+2116569134||option_PotP_TrackingGroup_Relics_SteelSwords_20|Devine
+2116569135||option_PotP_TrackingGroup_Relics_SteelSwords_21|Faithful Friend
+2116569136||option_PotP_TrackingGroup_Relics_SteelSwords_22|Faramond's blade
+2116569137||option_PotP_TrackingGroup_Relics_SteelSwords_23|Forgotten vran sword
+2116569138||option_PotP_TrackingGroup_Relics_SteelSwords_24|Glory of the North
+2116569139||option_PotP_TrackingGroup_Relics_SteelSwords_25|Gwestog
+2116569140||option_PotP_TrackingGroup_Relics_SteelSwords_26|Gwyhyr
+2116569141||option_PotP_TrackingGroup_Relics_SteelSwords_27|Harvall
+2116569142||option_PotP_TrackingGroup_Relics_SteelSwords_28|Headhunter
+2116569143||option_PotP_TrackingGroup_Relics_SteelSwords_29|Hen Gaidth steel sword
+2116569144||option_PotP_TrackingGroup_Relics_SteelSwords_30|Hjalmar's steel sword
+2116569145||option_PotP_TrackingGroup_Relics_SteelSwords_31|Hope
+2116569146||option_PotP_TrackingGroup_Relics_SteelSwords_32|Inis
+2116569147||option_PotP_TrackingGroup_Relics_SteelSwords_33|Iris
+2116569148||option_PotP_TrackingGroup_Relics_SteelSwords_34|Longclaw
+2116569149||option_PotP_TrackingGroup_Relics_SteelSwords_35|Lune
+2116569150||option_PotP_TrackingGroup_Relics_SteelSwords_36|Mourner
+2116569151||option_PotP_TrackingGroup_Relics_SteelSwords_37|Ofieri kilij
+2116569152||option_PotP_TrackingGroup_Relics_SteelSwords_38|Ofieri saber
+2116569153||option_PotP_TrackingGroup_Relics_SteelSwords_39|Order of the Flaming Rose sword
+2116569154||option_PotP_TrackingGroup_Relics_SteelSwords_40|Poker
+2116569155||option_PotP_TrackingGroup_Relics_SteelSwords_41|Princess Xenthia's Sword
+2116569156||option_PotP_TrackingGroup_Relics_SteelSwords_42|Squire's steel sword
+2116569157||option_PotP_TrackingGroup_Relics_SteelSwords_43|Superior Dol Blathanna sword
+2116569158||option_PotP_TrackingGroup_Relics_SteelSwords_44|Tesham Mutna steel sword
+2116569159||option_PotP_TrackingGroup_Relics_SteelSwords_45|The Emmentaler
+2116569160||option_PotP_TrackingGroup_Relics_SteelSwords_46|Tir Tochair blade
+2116569161||option_PotP_TrackingGroup_Relics_SteelSwords_47|Tor Lara
+2116569162||option_PotP_TrackingGroup_Relics_SteelSwords_48|Toussaint Ducal Guard Officer's steel sword
+2116569163||option_PotP_TrackingGroup_Relics_SteelSwords_49|Toussaint Ducal Guardsman's steel sword
+2116569164||option_PotP_TrackingGroup_Relics_SteelSwords_50|Toussaint knight's steel sword
+2116569165||option_PotP_TrackingGroup_Relics_SteelSwords_51|Toussaint steel sword
+2116569166||option_PotP_TrackingGroup_Relics_SteelSwords_52|Ultimatum
+2116569167||option_PotP_TrackingGroup_Relics_SteelSwords_53|Viroledan blade
+2116569168||option_PotP_TrackingGroup_Relics_SteelSwords_54|Vitis
+2116569169||option_PotP_TrackingGroup_Relics_SteelSwords_55|Winter Blade
+2116569170||option_PotP_TrackingGroup_Relics_SteelSwords_56|Winter's Blade
+2116569171||option_PotP_TrackingGroup_Relics_SteelSwords_57|Wolf
+2116569172||option_PotP_TrackingGroup_Relics_SteelSwords_58|Nine-Tailed Vixen Steel Sword
+;
+2116569173||option_PotP_TrackingGroup_Relics_SteelSwords_W3EE_01|Arbitrator
+2116569174||option_PotP_TrackingGroup_Relics_SteelSwords_W3EE_02|Ard'aenye
+2116569175||option_PotP_TrackingGroup_Relics_SteelSwords_W3EE_03|Barber-Surgeon
+2116569176||option_PotP_TrackingGroup_Relics_SteelSwords_W3EE_04|Beann'shie
+2116569177||option_PotP_TrackingGroup_Relics_SteelSwords_W3EE_05|Black Unicorn
+2116569178||option_PotP_TrackingGroup_Relics_SteelSwords_W3EE_06|Blade from the Bits
+2116569179||option_PotP_TrackingGroup_Relics_SteelSwords_W3EE_07|Blave
+2116569180||option_PotP_TrackingGroup_Relics_SteelSwords_W3EE_08|Caerme
+2116569181||option_PotP_TrackingGroup_Relics_SteelSwords_W3EE_09|Deireadh
+2116569182||option_PotP_TrackingGroup_Relics_SteelSwords_W3EE_10|Devine
+2116569183||option_PotP_TrackingGroup_Relics_SteelSwords_W3EE_11|Glory of the North
+2116569184||option_PotP_TrackingGroup_Relics_SteelSwords_W3EE_12|Gláeddyv Blathanna
+2116569185||option_PotP_TrackingGroup_Relics_SteelSwords_W3EE_13|Greatsword of Camelot
+2116569186||option_PotP_TrackingGroup_Relics_SteelSwords_W3EE_14|Gwyhyr
+2116569187||option_PotP_TrackingGroup_Relics_SteelSwords_W3EE_15|Headhunter
+2116569188||option_PotP_TrackingGroup_Relics_SteelSwords_W3EE_16|Hen Gaidth steel sword
+2116569189||option_PotP_TrackingGroup_Relics_SteelSwords_W3EE_17|Inis
+2116569190||option_PotP_TrackingGroup_Relics_SteelSwords_W3EE_18|Iris
+2116569191||option_PotP_TrackingGroup_Relics_SteelSwords_W3EE_19|Longclaw
+2116569192||option_PotP_TrackingGroup_Relics_SteelSwords_W3EE_20|Lune
+2116569193||option_PotP_TrackingGroup_Relics_SteelSwords_W3EE_21|Ofieri kilij
+2116569194||option_PotP_TrackingGroup_Relics_SteelSwords_W3EE_22|Ofieri saber
+2116569195||option_PotP_TrackingGroup_Relics_SteelSwords_W3EE_23|Order of the Flaming Rose sword
+2116569196||option_PotP_TrackingGroup_Relics_SteelSwords_W3EE_24|Princess Xenthia's sword
+2116569197||option_PotP_TrackingGroup_Relics_SteelSwords_W3EE_25|Tesham Mutna steel sword
+2116569198||option_PotP_TrackingGroup_Relics_SteelSwords_W3EE_26|The Caretaker's spade
+2116569199||option_PotP_TrackingGroup_Relics_SteelSwords_W3EE_27|The Emmentaler
+2116569200||option_PotP_TrackingGroup_Relics_SteelSwords_W3EE_28|Tor Lara
+2116569201||option_PotP_TrackingGroup_Relics_SteelSwords_W3EE_29|Ultimatum
+2116569202||option_PotP_TrackingGroup_Relics_SteelSwords_W3EE_30|Vitis
+2116569203||option_PotP_TrackingGroup_Relics_SteelSwords_W3EE_31|Winter's Blade
+;
+2116569204||option_PotP_TrackingGroup_Relics_Crossbows_01|Crossbow
+2116569205||option_PotP_TrackingGroup_Relics_Crossbows_02|Death From Above
+2116569206||option_PotP_TrackingGroup_Relics_Crossbows_03|Ofieri crossbow
+;
+2116569207||option_PotP_TrackingGroup_Relics_Crossbows_W3EE_01|Death From Above
+2116569208||option_PotP_TrackingGroup_Relics_Crossbows_W3EE_02|Ofieri crossbow
+;
+;-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+;-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+;-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+;-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+;
+2116569209||option_PotP_TrackingGroup_GwentCards_Monsters_01|Eredin: King of the Wild Hunt
+2116569210||option_PotP_TrackingGroup_GwentCards_Monsters_02|Eredin: Commander of the Red Riders
+2116569211||option_PotP_TrackingGroup_GwentCards_Monsters_03|Eredin: Destroyer of Worlds
+2116569212||option_PotP_TrackingGroup_GwentCards_Monsters_04|Eredin: Bringer of Death
+2116569213||option_PotP_TrackingGroup_GwentCards_Monsters_05|Eredin Bréacc Glas: The Treacherous
+2116569214||option_PotP_TrackingGroup_GwentCards_Monsters_06|Draug
+2116569215||option_PotP_TrackingGroup_GwentCards_Monsters_07|Imlerith
+2116569216||option_PotP_TrackingGroup_GwentCards_Monsters_08|Kayran
+2116569217||option_PotP_TrackingGroup_GwentCards_Monsters_09|Leshen
+2116569218||option_PotP_TrackingGroup_GwentCards_Monsters_10|Arachas
+2116569219||option_PotP_TrackingGroup_GwentCards_Monsters_11|Arachas Behemoth
+2116569220||option_PotP_TrackingGroup_GwentCards_Monsters_12|Botchling
+2116569221||option_PotP_TrackingGroup_GwentCards_Monsters_13|Celaeno Harpy
+2116569222||option_PotP_TrackingGroup_GwentCards_Monsters_14|Cockatrice
+2116569223||option_PotP_TrackingGroup_GwentCards_Monsters_15|Crone: Brewess
+2116569224||option_PotP_TrackingGroup_GwentCards_Monsters_16|Crone: Weavess
+2116569225||option_PotP_TrackingGroup_GwentCards_Monsters_17|Crone: Whispess
+2116569226||option_PotP_TrackingGroup_GwentCards_Monsters_18|Earth Elemental
+2116569227||option_PotP_TrackingGroup_GwentCards_Monsters_19|Endrega
+2116569228||option_PotP_TrackingGroup_GwentCards_Monsters_20|Fiend
+2116569229||option_PotP_TrackingGroup_GwentCards_Monsters_21|Fire Elemental
+2116569230||option_PotP_TrackingGroup_GwentCards_Monsters_22|Foglet
+2116569231||option_PotP_TrackingGroup_GwentCards_Monsters_23|Forktail
+2116569232||option_PotP_TrackingGroup_GwentCards_Monsters_24|Frightener
+2116569233||option_PotP_TrackingGroup_GwentCards_Monsters_25|Gargoyle
+2116569234||option_PotP_TrackingGroup_GwentCards_Monsters_26|Ghoul
+2116569235||option_PotP_TrackingGroup_GwentCards_Monsters_27|Grave Hag
+2116569236||option_PotP_TrackingGroup_GwentCards_Monsters_28|Griffin
+2116569237||option_PotP_TrackingGroup_GwentCards_Monsters_29|Harpy
+2116569238||option_PotP_TrackingGroup_GwentCards_Monsters_30|Ice Giant
+2116569239||option_PotP_TrackingGroup_GwentCards_Monsters_31|Nekker
+2116569240||option_PotP_TrackingGroup_GwentCards_Monsters_32|Plague Maiden
+2116569241||option_PotP_TrackingGroup_GwentCards_Monsters_33|Toad
+2116569242||option_PotP_TrackingGroup_GwentCards_Monsters_34|Vampire: Bruxa
+2116569243||option_PotP_TrackingGroup_GwentCards_Monsters_35|Vampire: Ekimmara
+2116569244||option_PotP_TrackingGroup_GwentCards_Monsters_36|Vampire: Fleder
+2116569245||option_PotP_TrackingGroup_GwentCards_Monsters_37|Vampire: Garkain
+2116569246||option_PotP_TrackingGroup_GwentCards_Monsters_38|Vampire: Katakan
+2116569247||option_PotP_TrackingGroup_GwentCards_Monsters_39|Werewolf
+2116569248||option_PotP_TrackingGroup_GwentCards_Monsters_40|Wyvern
+;
+2116569249||option_PotP_TrackingGroup_GwentCards_NorthernRealms_01|Foltest: King of Temeria
+2116569250||option_PotP_TrackingGroup_GwentCards_NorthernRealms_02|Foltest: Lord Commander of the North
+2116569251||option_PotP_TrackingGroup_GwentCards_NorthernRealms_03|Foltest: The Siegemaster
+2116569252||option_PotP_TrackingGroup_GwentCards_NorthernRealms_04|Foltest: The Steel-Forged
+2116569253||option_PotP_TrackingGroup_GwentCards_NorthernRealms_05|Foltest: Son of Medell
+2116569254||option_PotP_TrackingGroup_GwentCards_NorthernRealms_06|Esterad Thyssen
+2116569255||option_PotP_TrackingGroup_GwentCards_NorthernRealms_07|John Natalis
+2116569256||option_PotP_TrackingGroup_GwentCards_NorthernRealms_08|Philippa Eilhart
+2116569257||option_PotP_TrackingGroup_GwentCards_NorthernRealms_09|Vernon Roche
+2116569258||option_PotP_TrackingGroup_GwentCards_NorthernRealms_10|Ballista
+2116569259||option_PotP_TrackingGroup_GwentCards_NorthernRealms_11|Blue Stripes Commando
+2116569260||option_PotP_TrackingGroup_GwentCards_NorthernRealms_12|Catapult
+2116569261||option_PotP_TrackingGroup_GwentCards_NorthernRealms_13|Crinfrid Reavers Dragon Hunter
+2116569262||option_PotP_TrackingGroup_GwentCards_NorthernRealms_14|Dethmold
+2116569263||option_PotP_TrackingGroup_GwentCards_NorthernRealms_15|Dun Banner Medic
+2116569264||option_PotP_TrackingGroup_GwentCards_NorthernRealms_16|Kaedweni Siege Expert
+2116569265||option_PotP_TrackingGroup_GwentCards_NorthernRealms_17|Keira Metz
+2116569266||option_PotP_TrackingGroup_GwentCards_NorthernRealms_18|Poor Fucking Infantry
+2116569267||option_PotP_TrackingGroup_GwentCards_NorthernRealms_19|Prince Stennis
+2116569268||option_PotP_TrackingGroup_GwentCards_NorthernRealms_20|Redanian Foot Soldier
+2116569269||option_PotP_TrackingGroup_GwentCards_NorthernRealms_21|Sabrina Glevissig
+2116569270||option_PotP_TrackingGroup_GwentCards_NorthernRealms_22|Sheldon Skaggs
+2116569271||option_PotP_TrackingGroup_GwentCards_NorthernRealms_23|Siege Tower
+2116569272||option_PotP_TrackingGroup_GwentCards_NorthernRealms_24|Siegfried of Denesle
+2116569273||option_PotP_TrackingGroup_GwentCards_NorthernRealms_25|Sigismund Dijkstra
+2116569274||option_PotP_TrackingGroup_GwentCards_NorthernRealms_26|Síle de Tansarville
+2116569275||option_PotP_TrackingGroup_GwentCards_NorthernRealms_27|Thaler
+2116569276||option_PotP_TrackingGroup_GwentCards_NorthernRealms_28|Trebuchet
+2116569277||option_PotP_TrackingGroup_GwentCards_NorthernRealms_29|Ves
+2116569278||option_PotP_TrackingGroup_GwentCards_NorthernRealms_30|Yarpen Zigrin
+;
+2116569279||option_PotP_TrackingGroup_GwentCards_NeutralCards_01|Cirilla Fiona Elen Riannon
+2116569280||option_PotP_TrackingGroup_GwentCards_NeutralCards_02|Geralt of Rivia
+2116569281||option_PotP_TrackingGroup_GwentCards_NeutralCards_03|Mysterious Elf
+2116569282||option_PotP_TrackingGroup_GwentCards_NeutralCards_04|Triss Merigold
+2116569283||option_PotP_TrackingGroup_GwentCards_NeutralCards_05|Yennefer of Vengerberg
+2116569284||option_PotP_TrackingGroup_GwentCards_NeutralCards_06|Commander's Horn
+2116569285||option_PotP_TrackingGroup_GwentCards_NeutralCards_07|Decoy
+2116569286||option_PotP_TrackingGroup_GwentCards_NeutralCards_08|Scorch
+2116569287||option_PotP_TrackingGroup_GwentCards_NeutralCards_09|Cow
+2116569288||option_PotP_TrackingGroup_GwentCards_NeutralCards_10|Dandelion
+2116569289||option_PotP_TrackingGroup_GwentCards_NeutralCards_11|Emiel Regis Rohellec Terzieff
+2116569290||option_PotP_TrackingGroup_GwentCards_NeutralCards_12|Gaunter O'Dimm
+2116569291||option_PotP_TrackingGroup_GwentCards_NeutralCards_13|Gaunter O'Dimm: Darkness
+2116569292||option_PotP_TrackingGroup_GwentCards_NeutralCards_14|Olgierd von Everec
+2116569293||option_PotP_TrackingGroup_GwentCards_NeutralCards_15|Vesemir
+2116569294||option_PotP_TrackingGroup_GwentCards_NeutralCards_16|Villentretenmerth
+2116569295||option_PotP_TrackingGroup_GwentCards_NeutralCards_17|Zoltan Chivay
+2116569296||option_PotP_TrackingGroup_GwentCards_NeutralCards_18|Biting Frost
+2116569297||option_PotP_TrackingGroup_GwentCards_NeutralCards_19|Clear Weather
+2116569298||option_PotP_TrackingGroup_GwentCards_NeutralCards_20|Impenetrable Fog
+2116569299||option_PotP_TrackingGroup_GwentCards_NeutralCards_21|Skellige Storm
+2116569300||option_PotP_TrackingGroup_GwentCards_NeutralCards_22|Torrential Rain
+;
+2116569301||option_PotP_TrackingGroup_GwentCards_NilfgaardianEmpire_01|Emhyr var Emreis: His Imperial Majesty
+2116569302||option_PotP_TrackingGroup_GwentCards_NilfgaardianEmpire_02|Emhyr var Emreis: Emperor of Nilfgaard
+2116569303||option_PotP_TrackingGroup_GwentCards_NilfgaardianEmpire_03|Emhyr var Emreis: The White Flame
+2116569304||option_PotP_TrackingGroup_GwentCards_NilfgaardianEmpire_04|Emhyr var Emreis: The Relentless
+2116569305||option_PotP_TrackingGroup_GwentCards_NilfgaardianEmpire_05|Emhyr var Emreis: Invader of the North
+2116569306||option_PotP_TrackingGroup_GwentCards_NilfgaardianEmpire_06|Letho of Gulet
+2116569307||option_PotP_TrackingGroup_GwentCards_NilfgaardianEmpire_07|Menno Coehoorn
+2116569308||option_PotP_TrackingGroup_GwentCards_NilfgaardianEmpire_08|Morvran Voorhis
+2116569309||option_PotP_TrackingGroup_GwentCards_NilfgaardianEmpire_09|Tibor Eggebracht
+2116569310||option_PotP_TrackingGroup_GwentCards_NilfgaardianEmpire_10|Albrich
+2116569311||option_PotP_TrackingGroup_GwentCards_NilfgaardianEmpire_11|Assire var Anahid
+2116569312||option_PotP_TrackingGroup_GwentCards_NilfgaardianEmpire_12|Black Infantry Archer
+2116569313||option_PotP_TrackingGroup_GwentCards_NilfgaardianEmpire_13|Cahir Mawr Dyffryn aep Ceallach
+2116569314||option_PotP_TrackingGroup_GwentCards_NilfgaardianEmpire_14|Cynthia
+2116569315||option_PotP_TrackingGroup_GwentCards_NilfgaardianEmpire_15|Etolian Auxiliary Archers
+2116569316||option_PotP_TrackingGroup_GwentCards_NilfgaardianEmpire_16|Fringilla Vigo
+2116569317||option_PotP_TrackingGroup_GwentCards_NilfgaardianEmpire_17|Heavy Zerrikanian Fire Scorpion
+2116569318||option_PotP_TrackingGroup_GwentCards_NilfgaardianEmpire_18|Impera Brigade Guard
+2116569319||option_PotP_TrackingGroup_GwentCards_NilfgaardianEmpire_19|Morteisen
+2116569320||option_PotP_TrackingGroup_GwentCards_NilfgaardianEmpire_20|Nausicaa Cavalry Rider
+2116569321||option_PotP_TrackingGroup_GwentCards_NilfgaardianEmpire_21|Puttkammer
+2116569322||option_PotP_TrackingGroup_GwentCards_NilfgaardianEmpire_22|Rainfarn
+2116569323||option_PotP_TrackingGroup_GwentCards_NilfgaardianEmpire_23|Renuald aep Matsen
+2116569324||option_PotP_TrackingGroup_GwentCards_NilfgaardianEmpire_24|Rotten Mangonel
+2116569325||option_PotP_TrackingGroup_GwentCards_NilfgaardianEmpire_25|Shilard Fitz-Oesterlen
+2116569326||option_PotP_TrackingGroup_GwentCards_NilfgaardianEmpire_26|Siege Engineer
+2116569327||option_PotP_TrackingGroup_GwentCards_NilfgaardianEmpire_27|Siege Technician
+2116569328||option_PotP_TrackingGroup_GwentCards_NilfgaardianEmpire_28|Stefan Skellen
+2116569329||option_PotP_TrackingGroup_GwentCards_NilfgaardianEmpire_29|Sweers
+2116569330||option_PotP_TrackingGroup_GwentCards_NilfgaardianEmpire_30|Vanhemar
+2116569331||option_PotP_TrackingGroup_GwentCards_NilfgaardianEmpire_31|Vattier de Rideaux
+2116569332||option_PotP_TrackingGroup_GwentCards_NilfgaardianEmpire_32|Vreemde
+2116569333||option_PotP_TrackingGroup_GwentCards_NilfgaardianEmpire_33|Young Emissary
+2116569334||option_PotP_TrackingGroup_GwentCards_NilfgaardianEmpire_34|Zerrikanian Fire Scorpion
+;
+2116569335||option_PotP_TrackingGroup_GwentCards_Scoiatael_01|Francesca Findabair: Pureblood Elf
+2116569336||option_PotP_TrackingGroup_GwentCards_Scoiatael_02|Francesca Findabair: Daisy of the Valley
+2116569337||option_PotP_TrackingGroup_GwentCards_Scoiatael_03|Francesca Findabair: The Beautiful
+2116569338||option_PotP_TrackingGroup_GwentCards_Scoiatael_04|Francesca Findabair: Queen of Dol Blathanna
+2116569339||option_PotP_TrackingGroup_GwentCards_Scoiatael_05|Francesca Findabair: Hope of the Aen Seidhe
+2116569340||option_PotP_TrackingGroup_GwentCards_Scoiatael_06|Eithné
+2116569341||option_PotP_TrackingGroup_GwentCards_Scoiatael_07|Iorveth
+2116569342||option_PotP_TrackingGroup_GwentCards_Scoiatael_08|Isengrim Faoiltiarna
+2116569343||option_PotP_TrackingGroup_GwentCards_Scoiatael_09|Saesenthessis
+2116569344||option_PotP_TrackingGroup_GwentCards_Scoiatael_10|Barclay Els
+2116569345||option_PotP_TrackingGroup_GwentCards_Scoiatael_11|Ciaran aep Easnillien
+2116569346||option_PotP_TrackingGroup_GwentCards_Scoiatael_12|Dennis Cranmer
+2116569347||option_PotP_TrackingGroup_GwentCards_Scoiatael_13|Dol Blathanna Archer
+2116569348||option_PotP_TrackingGroup_GwentCards_Scoiatael_14|Dol Blathanna Scout
+2116569349||option_PotP_TrackingGroup_GwentCards_Scoiatael_15|Dwarven Skirmisher
+2116569350||option_PotP_TrackingGroup_GwentCards_Scoiatael_16|Elven Skirmisher
+2116569351||option_PotP_TrackingGroup_GwentCards_Scoiatael_17|Filavandrel aén Fidháil
+2116569352||option_PotP_TrackingGroup_GwentCards_Scoiatael_18|Havekar Healer
+2116569353||option_PotP_TrackingGroup_GwentCards_Scoiatael_19|Havekar Smuggler
+2116569354||option_PotP_TrackingGroup_GwentCards_Scoiatael_20|Ida Emean aep Sivney
+2116569355||option_PotP_TrackingGroup_GwentCards_Scoiatael_21|Mahakaman Defender
+2116569356||option_PotP_TrackingGroup_GwentCards_Scoiatael_22|Milva
+2116569357||option_PotP_TrackingGroup_GwentCards_Scoiatael_23|Riordain
+2116569358||option_PotP_TrackingGroup_GwentCards_Scoiatael_24|Schirrú
+2116569359||option_PotP_TrackingGroup_GwentCards_Scoiatael_25|Toruviel
+2116569360||option_PotP_TrackingGroup_GwentCards_Scoiatael_26|Vrihedd Brigade Recruit
+2116569361||option_PotP_TrackingGroup_GwentCards_Scoiatael_27|Vrihedd Brigade Veteran
+2116569362||option_PotP_TrackingGroup_GwentCards_Scoiatael_28|Yaevinn
+;
+2116569363||option_PotP_TrackingGroup_GwentCards_Skellige_01|Crach an Craite
+2116569364||option_PotP_TrackingGroup_GwentCards_Skellige_02|King Bran
+2116569365||option_PotP_TrackingGroup_GwentCards_Skellige_03|Mardroeme
+2116569366||option_PotP_TrackingGroup_GwentCards_Skellige_04|Cerys
+2116569367||option_PotP_TrackingGroup_GwentCards_Skellige_05|Ermion
+2116569368||option_PotP_TrackingGroup_GwentCards_Skellige_06|Hjalmar
+2116569369||option_PotP_TrackingGroup_GwentCards_Skellige_07|Berserker
+2116569370||option_PotP_TrackingGroup_GwentCards_Skellige_08|Birna Bran
+2116569371||option_PotP_TrackingGroup_GwentCards_Skellige_09|Blueboy Lugos
+2116569372||option_PotP_TrackingGroup_GwentCards_Skellige_10|Clan Brokvar Archer
+2116569373||option_PotP_TrackingGroup_GwentCards_Skellige_11|Clan Dimun Pirate
+2116569374||option_PotP_TrackingGroup_GwentCards_Skellige_12|Clan Drummond Shield Maiden
+2116569375||option_PotP_TrackingGroup_GwentCards_Skellige_13|Clan Heymaey Skald
+2116569376||option_PotP_TrackingGroup_GwentCards_Skellige_14|Clan Tordarroch Armorsmith
+2116569377||option_PotP_TrackingGroup_GwentCards_Skellige_15|Clan an Craite Warrior
+2116569378||option_PotP_TrackingGroup_GwentCards_Skellige_16|Donar an Hindar
+2116569379||option_PotP_TrackingGroup_GwentCards_Skellige_17|Draig Bon-Dhu
+2116569380||option_PotP_TrackingGroup_GwentCards_Skellige_18|Holger Blackhand
+2116569381||option_PotP_TrackingGroup_GwentCards_Skellige_19|Kambi
+2116569382||option_PotP_TrackingGroup_GwentCards_Skellige_20|Light Longship
+2116569383||option_PotP_TrackingGroup_GwentCards_Skellige_21|Madman Lugos
+2116569384||option_PotP_TrackingGroup_GwentCards_Skellige_22|Olaf
+2116569385||option_PotP_TrackingGroup_GwentCards_Skellige_23|Svanrige
+2116569386||option_PotP_TrackingGroup_GwentCards_Skellige_24|Udalryk
+2116569387||option_PotP_TrackingGroup_GwentCards_Skellige_25|War Longship
+2116569388||option_PotP_TrackingGroup_GwentCards_Skellige_26|Young Berserker
+;
+2116569389||option_PotP_TrackingGroup_GwentCards_Monsters_Redux_01|Eredin Bréacc Glas
+2116569390||option_PotP_TrackingGroup_GwentCards_Monsters_Redux_02|Ghost in the Tree
+2116569391||option_PotP_TrackingGroup_GwentCards_Monsters_Redux_03|Gaunter O'Dimm
+2116569392||option_PotP_TrackingGroup_GwentCards_Monsters_Redux_04|Unseen Elder
+2116569393||option_PotP_TrackingGroup_GwentCards_Monsters_Redux_05|Ge'els
+2116569394||option_PotP_TrackingGroup_GwentCards_Monsters_Redux_06|Caranthir Ar-Feiniel
+2116569395||option_PotP_TrackingGroup_GwentCards_Monsters_Redux_07|Emiel Regis Rohellec Terzieff
+2116569396||option_PotP_TrackingGroup_GwentCards_Monsters_Redux_08|Imlerith
+2116569397||option_PotP_TrackingGroup_GwentCards_Monsters_Redux_09|Abaya
+2116569398||option_PotP_TrackingGroup_GwentCards_Monsters_Redux_10|Adda
+2116569399||option_PotP_TrackingGroup_GwentCards_Monsters_Redux_11|Anabelle
+2116569400||option_PotP_TrackingGroup_GwentCards_Monsters_Redux_12|Arachas
+2116569401||option_PotP_TrackingGroup_GwentCards_Monsters_Redux_13|Arachas Behemoth
+2116569402||option_PotP_TrackingGroup_GwentCards_Monsters_Redux_14|Avallac'h
+2116569403||option_PotP_TrackingGroup_GwentCards_Monsters_Redux_15|Blood Moon
+2116569404||option_PotP_TrackingGroup_GwentCards_Monsters_Redux_16|Caretaker
+2116569405||option_PotP_TrackingGroup_GwentCards_Monsters_Redux_17|Cow
+2116569406||option_PotP_TrackingGroup_GwentCards_Monsters_Redux_18|Crone: Brewess
+2116569407||option_PotP_TrackingGroup_GwentCards_Monsters_Redux_19|Crone: Weavess
+2116569408||option_PotP_TrackingGroup_GwentCards_Monsters_Redux_20|Crone: Whispess
+2116569409||option_PotP_TrackingGroup_GwentCards_Monsters_Redux_21|Dagon
+2116569410||option_PotP_TrackingGroup_GwentCards_Monsters_Redux_22|Dettlaff van der Eretein
+2116569411||option_PotP_TrackingGroup_GwentCards_Monsters_Redux_23|Draug
+2116569412||option_PotP_TrackingGroup_GwentCards_Monsters_Redux_24|Drowner
+2116569413||option_PotP_TrackingGroup_GwentCards_Monsters_Redux_25|Earth Elemental
+2116569414||option_PotP_TrackingGroup_GwentCards_Monsters_Redux_26|Fire Elemental
+2116569415||option_PotP_TrackingGroup_GwentCards_Monsters_Redux_27|Foglet
+2116569416||option_PotP_TrackingGroup_GwentCards_Monsters_Redux_28|Frightener
+2116569417||option_PotP_TrackingGroup_GwentCards_Monsters_Redux_29|Gael
+2116569418||option_PotP_TrackingGroup_GwentCards_Monsters_Redux_30|Ghoul
+2116569419||option_PotP_TrackingGroup_GwentCards_Monsters_Redux_31|Golyat
+2116569420||option_PotP_TrackingGroup_GwentCards_Monsters_Redux_32|Harpy
+2116569421||option_PotP_TrackingGroup_GwentCards_Monsters_Redux_33|Hubert Rejk
+2116569422||option_PotP_TrackingGroup_GwentCards_Monsters_Redux_34|Iris von Everec
+2116569423||option_PotP_TrackingGroup_GwentCards_Monsters_Redux_35|Iris' Companions
+2116569424||option_PotP_TrackingGroup_GwentCards_Monsters_Redux_36|Kayran
+2116569425||option_PotP_TrackingGroup_GwentCards_Monsters_Redux_37|Kiyan
+2116569426||option_PotP_TrackingGroup_GwentCards_Monsters_Redux_38|Morvudd
+2116569427||option_PotP_TrackingGroup_GwentCards_Monsters_Redux_39|Myrhyff
+2116569428||option_PotP_TrackingGroup_GwentCards_Monsters_Redux_40|Naglfar
+2116569429||option_PotP_TrackingGroup_GwentCards_Monsters_Redux_41|Nekker
+2116569430||option_PotP_TrackingGroup_GwentCards_Monsters_Redux_42|Nithral
+2116569431||option_PotP_TrackingGroup_GwentCards_Monsters_Redux_43|Operator
+2116569432||option_PotP_TrackingGroup_GwentCards_Monsters_Redux_44|Orianna
+2116569433||option_PotP_TrackingGroup_GwentCards_Monsters_Redux_45|Queen of the Night
+2116569434||option_PotP_TrackingGroup_GwentCards_Monsters_Redux_46|Savolla
+2116569435||option_PotP_TrackingGroup_GwentCards_Monsters_Redux_47|Siren
+2116569436||option_PotP_TrackingGroup_GwentCards_Monsters_Redux_48|Sleeping Giant
+2116569437||option_PotP_TrackingGroup_GwentCards_Monsters_Redux_49|Toad Prince
+2116569438||option_PotP_TrackingGroup_GwentCards_Monsters_Redux_50|Vampire: Alp
+2116569439||option_PotP_TrackingGroup_GwentCards_Monsters_Redux_51|Vampire: Ekimmara
+2116569440||option_PotP_TrackingGroup_GwentCards_Monsters_Redux_52|Vampire: Fleder
+2116569441||option_PotP_TrackingGroup_GwentCards_Monsters_Redux_53|Vampire: Garkain
+2116569442||option_PotP_TrackingGroup_GwentCards_Monsters_Redux_54|Vampire: Plumard
+2116569443||option_PotP_TrackingGroup_GwentCards_Monsters_Redux_55|Vran Warrior
+2116569444||option_PotP_TrackingGroup_GwentCards_Monsters_Redux_56|White Frost
+2116569445||option_PotP_TrackingGroup_GwentCards_Monsters_Redux_57|Wild Hunt Hound
+2116569446||option_PotP_TrackingGroup_GwentCards_Monsters_Redux_58|Wild Hunt Navigator
+2116569447||option_PotP_TrackingGroup_GwentCards_Monsters_Redux_59|Wild Hunt Rider
+2116569448||option_PotP_TrackingGroup_GwentCards_Monsters_Redux_60|Wild Hunt Warrior
+2116569449||option_PotP_TrackingGroup_GwentCards_Monsters_Redux_61|Wolf
+2116569450||option_PotP_TrackingGroup_GwentCards_Monsters_Redux_62|Woodland Spirit
+2116569451||option_PotP_TrackingGroup_GwentCards_Monsters_Redux_63|Yghern
+;
+2116569452||option_PotP_TrackingGroup_GwentCards_NeutralCards_Redux_01|Azar Javed
+2116569453||option_PotP_TrackingGroup_GwentCards_NeutralCards_Redux_02|Geralt of Rivia
+2116569454||option_PotP_TrackingGroup_GwentCards_NeutralCards_Redux_03|Biting Frost
+2116569455||option_PotP_TrackingGroup_GwentCards_NeutralCards_Redux_04|Cirilla Fiona Elen Riannon
+2116569456||option_PotP_TrackingGroup_GwentCards_NeutralCards_Redux_05|Clear Weather
+2116569457||option_PotP_TrackingGroup_GwentCards_NeutralCards_Redux_06|Decoy
+2116569458||option_PotP_TrackingGroup_GwentCards_NeutralCards_Redux_07|Eskel
+2116569459||option_PotP_TrackingGroup_GwentCards_NeutralCards_Redux_08|Impenetrable Fog
+2116569460||option_PotP_TrackingGroup_GwentCards_NeutralCards_Redux_09|Lambert
+2116569461||option_PotP_TrackingGroup_GwentCards_NeutralCards_Redux_10|Mardroeme
+2116569462||option_PotP_TrackingGroup_GwentCards_NeutralCards_Redux_11|Professor
+2116569463||option_PotP_TrackingGroup_GwentCards_NeutralCards_Redux_12|Torrential Rain
+2116569464||option_PotP_TrackingGroup_GwentCards_NeutralCards_Redux_13|Vesemir
+2116569465||option_PotP_TrackingGroup_GwentCards_NeutralCards_Redux_14|Yennefer of Vengerberg
+;
+2116569466||option_PotP_TrackingGroup_GwentCards_NilfgaardianEmpire_Redux_01|Morvran Voorhis
+2116569467||option_PotP_TrackingGroup_GwentCards_NilfgaardianEmpire_Redux_02|Emhyr var Emreis
+2116569468||option_PotP_TrackingGroup_GwentCards_NilfgaardianEmpire_Redux_03|Usurper
+2116569469||option_PotP_TrackingGroup_GwentCards_NilfgaardianEmpire_Redux_04|Jan Calveit
+2116569470||option_PotP_TrackingGroup_GwentCards_NilfgaardianEmpire_Redux_05|False Ciri
+2116569471||option_PotP_TrackingGroup_GwentCards_NilfgaardianEmpire_Redux_06|Ardal aep Dahy
+2116569472||option_PotP_TrackingGroup_GwentCards_NilfgaardianEmpire_Redux_07|Anna Henrietta
+2116569473||option_PotP_TrackingGroup_GwentCards_NilfgaardianEmpire_Redux_08|Letho of Gulet
+2116569474||option_PotP_TrackingGroup_GwentCards_NilfgaardianEmpire_Redux_09|Alba Division Spearman
+2116569475||option_PotP_TrackingGroup_GwentCards_NilfgaardianEmpire_Redux_10|Albrich
+2116569476||option_PotP_TrackingGroup_GwentCards_NilfgaardianEmpire_Redux_11|Alchemist
+2116569477||option_PotP_TrackingGroup_GwentCards_NilfgaardianEmpire_Redux_12|Artorius Vigo
+2116569478||option_PotP_TrackingGroup_GwentCards_NilfgaardianEmpire_Redux_13|Assire var Anahid
+2116569479||option_PotP_TrackingGroup_GwentCards_NilfgaardianEmpire_Redux_14|Auckes
+2116569480||option_PotP_TrackingGroup_GwentCards_NilfgaardianEmpire_Redux_15|Black Infantry Archer
+2116569481||option_PotP_TrackingGroup_GwentCards_NilfgaardianEmpire_Redux_16|Cahir Mawr Dyffryn aep Ceallach
+2116569482||option_PotP_TrackingGroup_GwentCards_NilfgaardianEmpire_Redux_17|Cantarella
+2116569483||option_PotP_TrackingGroup_GwentCards_NilfgaardianEmpire_Redux_18|Catriona Plague
+2116569484||option_PotP_TrackingGroup_GwentCards_NilfgaardianEmpire_Redux_19|Cynthia
+2116569485||option_PotP_TrackingGroup_GwentCards_NilfgaardianEmpire_Redux_20|Damien de la Tour
+2116569486||option_PotP_TrackingGroup_GwentCards_NilfgaardianEmpire_Redux_21|Ducal Guard
+2116569487||option_PotP_TrackingGroup_GwentCards_NilfgaardianEmpire_Redux_22|Etolian Auxiliary Archers
+2116569488||option_PotP_TrackingGroup_GwentCards_NilfgaardianEmpire_Redux_23|Fringilla Vigo
+2116569489||option_PotP_TrackingGroup_GwentCards_NilfgaardianEmpire_Redux_24|Gregoire de Gorgon
+2116569490||option_PotP_TrackingGroup_GwentCards_NilfgaardianEmpire_Redux_25|Heavy Zerrikanian Fire Scorpion
+2116569491||option_PotP_TrackingGroup_GwentCards_NilfgaardianEmpire_Redux_26|Joachim de Wett
+2116569492||option_PotP_TrackingGroup_GwentCards_NilfgaardianEmpire_Redux_27|Leo Bonhart
+2116569493||option_PotP_TrackingGroup_GwentCards_NilfgaardianEmpire_Redux_28|Menno Coehoorn
+2116569494||option_PotP_TrackingGroup_GwentCards_NilfgaardianEmpire_Redux_29|Milton de Peyrac-Peyran
+2116569495||option_PotP_TrackingGroup_GwentCards_NilfgaardianEmpire_Redux_30|Nausicaa Cavalry Rider
+2116569496||option_PotP_TrackingGroup_GwentCards_NilfgaardianEmpire_Redux_31|Palmerin de Launfal
+2116569497||option_PotP_TrackingGroup_GwentCards_NilfgaardianEmpire_Redux_32|Peter Saar Gwynleve
+2116569498||option_PotP_TrackingGroup_GwentCards_NilfgaardianEmpire_Redux_33|Puttkammer
+2116569499||option_PotP_TrackingGroup_GwentCards_NilfgaardianEmpire_Redux_34|Rainfarn
+2116569500||option_PotP_TrackingGroup_GwentCards_NilfgaardianEmpire_Redux_35|Rience
+2116569501||option_PotP_TrackingGroup_GwentCards_NilfgaardianEmpire_Redux_36|Rotten Mangonel
+2116569502||option_PotP_TrackingGroup_GwentCards_NilfgaardianEmpire_Redux_37|Serrit
+2116569503||option_PotP_TrackingGroup_GwentCards_NilfgaardianEmpire_Redux_38|Shilard Fitz-Oesterlen
+2116569504||option_PotP_TrackingGroup_GwentCards_NilfgaardianEmpire_Redux_39|Siege Engineer
+2116569505||option_PotP_TrackingGroup_GwentCards_NilfgaardianEmpire_Redux_40|Stefan Skellen
+2116569506||option_PotP_TrackingGroup_GwentCards_NilfgaardianEmpire_Redux_41|Sweers
+2116569507||option_PotP_TrackingGroup_GwentCards_NilfgaardianEmpire_Redux_42|Syanna
+2116569508||option_PotP_TrackingGroup_GwentCards_NilfgaardianEmpire_Redux_43|Tibor Eggebracht
+2116569509||option_PotP_TrackingGroup_GwentCards_NilfgaardianEmpire_Redux_44|Vanhemar
+2116569510||option_PotP_TrackingGroup_GwentCards_NilfgaardianEmpire_Redux_45|Vattier de Rideaux
+2116569511||option_PotP_TrackingGroup_GwentCards_NilfgaardianEmpire_Redux_46|Vicovaro Medic
+2116569512||option_PotP_TrackingGroup_GwentCards_NilfgaardianEmpire_Redux_47|Vilgefortz
+2116569513||option_PotP_TrackingGroup_GwentCards_NilfgaardianEmpire_Redux_48|Vivienne de Tabris
+2116569514||option_PotP_TrackingGroup_GwentCards_NilfgaardianEmpire_Redux_49|Vreemde
+2116569515||option_PotP_TrackingGroup_GwentCards_NilfgaardianEmpire_Redux_50|Young Emissary
+2116569516||option_PotP_TrackingGroup_GwentCards_NilfgaardianEmpire_Redux_51|Zerrikanian Fire Scorpion
+;
+2116569517||option_PotP_TrackingGroup_GwentCards_Scoiatael_Redux_01|Brouver Hoog
+2116569518||option_PotP_TrackingGroup_GwentCards_Scoiatael_Redux_02|Eithné
+2116569519||option_PotP_TrackingGroup_GwentCards_Scoiatael_Redux_03|Ithlinne Aegli aep Aevenien
+2116569520||option_PotP_TrackingGroup_GwentCards_Scoiatael_Redux_04|Francesca Findabair
+2116569521||option_PotP_TrackingGroup_GwentCards_Scoiatael_Redux_05|Dana Méadbh
+2116569522||option_PotP_TrackingGroup_GwentCards_Scoiatael_Redux_06|Iorveth
+2116569523||option_PotP_TrackingGroup_GwentCards_Scoiatael_Redux_07|Morénn
+2116569524||option_PotP_TrackingGroup_GwentCards_Scoiatael_Redux_08|Saskia
+2116569525||option_PotP_TrackingGroup_GwentCards_Scoiatael_Redux_09|Aelirenn
+2116569526||option_PotP_TrackingGroup_GwentCards_Scoiatael_Redux_10|Aglaïs
+2116569527||option_PotP_TrackingGroup_GwentCards_Scoiatael_Redux_11|Barclay Els
+2116569528||option_PotP_TrackingGroup_GwentCards_Scoiatael_Redux_12|Braenn
+2116569529||option_PotP_TrackingGroup_GwentCards_Scoiatael_Redux_13|Brokilon Sentinel
+2116569530||option_PotP_TrackingGroup_GwentCards_Scoiatael_Redux_14|Ciaran aep Easnillien
+2116569531||option_PotP_TrackingGroup_GwentCards_Scoiatael_Redux_15|Dennis Cranmer
+2116569532||option_PotP_TrackingGroup_GwentCards_Scoiatael_Redux_16|Dol Blathanna Archer
+2116569533||option_PotP_TrackingGroup_GwentCards_Scoiatael_Redux_17|Dol Blathanna Bomber
+2116569534||option_PotP_TrackingGroup_GwentCards_Scoiatael_Redux_18|Dol Blathanna Scout
+2116569535||option_PotP_TrackingGroup_GwentCards_Scoiatael_Redux_19|Dryad Grovekeeper
+2116569536||option_PotP_TrackingGroup_GwentCards_Scoiatael_Redux_20|Dwarven Chariot
+2116569537||option_PotP_TrackingGroup_GwentCards_Scoiatael_Redux_21|Dwarven Mercenary
+2116569538||option_PotP_TrackingGroup_GwentCards_Scoiatael_Redux_22|Dwarven Skirmisher
+2116569539||option_PotP_TrackingGroup_GwentCards_Scoiatael_Redux_23|Ele'yas
+2116569540||option_PotP_TrackingGroup_GwentCards_Scoiatael_Redux_24|Elven Skirmisher
+2116569541||option_PotP_TrackingGroup_GwentCards_Scoiatael_Redux_25|Fauve
+2116569542||option_PotP_TrackingGroup_GwentCards_Scoiatael_Redux_26|Filavandrel aén Fidháil
+2116569543||option_PotP_TrackingGroup_GwentCards_Scoiatael_Redux_27|Forest of Death
+2116569544||option_PotP_TrackingGroup_GwentCards_Scoiatael_Redux_28|Half-Elf Hunter
+2116569545||option_PotP_TrackingGroup_GwentCards_Scoiatael_Redux_29|Éibhear Hattori
+2116569546||option_PotP_TrackingGroup_GwentCards_Scoiatael_Redux_30|Havekar Healer
+2116569547||option_PotP_TrackingGroup_GwentCards_Scoiatael_Redux_31|Havekar Smuggler
+2116569548||option_PotP_TrackingGroup_GwentCards_Scoiatael_Redux_32|Ida Emean aep Sivney
+2116569549||option_PotP_TrackingGroup_GwentCards_Scoiatael_Redux_33|Isengrim Faoiltiarna
+2116569550||option_PotP_TrackingGroup_GwentCards_Scoiatael_Redux_34|Lady Of The Lake
+2116569551||option_PotP_TrackingGroup_GwentCards_Scoiatael_Redux_35|Mahakaman Defender
+2116569552||option_PotP_TrackingGroup_GwentCards_Scoiatael_Redux_36|Malena
+2116569553||option_PotP_TrackingGroup_GwentCards_Scoiatael_Redux_37|Milva
+2116569554||option_PotP_TrackingGroup_GwentCards_Scoiatael_Redux_38|Nature's Rebuke
+2116569555||option_PotP_TrackingGroup_GwentCards_Scoiatael_Redux_39|Percival Schuttenbach
+2116569556||option_PotP_TrackingGroup_GwentCards_Scoiatael_Redux_40|Riordain
+2116569557||option_PotP_TrackingGroup_GwentCards_Scoiatael_Redux_41|Schirrú
+2116569558||option_PotP_TrackingGroup_GwentCards_Scoiatael_Redux_42|Sirssa
+2116569559||option_PotP_TrackingGroup_GwentCards_Scoiatael_Redux_43|Toruviel
+2116569560||option_PotP_TrackingGroup_GwentCards_Scoiatael_Redux_44|Treant: Boar
+2116569561||option_PotP_TrackingGroup_GwentCards_Scoiatael_Redux_45|Treant: Mantis
+2116569562||option_PotP_TrackingGroup_GwentCards_Scoiatael_Redux_46|Vernossiel
+2116569563||option_PotP_TrackingGroup_GwentCards_Scoiatael_Redux_47|Villentretenmerth
+2116569564||option_PotP_TrackingGroup_GwentCards_Scoiatael_Redux_48|Vrihedd Brigade Recruit
+2116569565||option_PotP_TrackingGroup_GwentCards_Scoiatael_Redux_49|Vrihedd Brigade Veteran
+2116569566||option_PotP_TrackingGroup_GwentCards_Scoiatael_Redux_50|Water Of Brokilon
+2116569567||option_PotP_TrackingGroup_GwentCards_Scoiatael_Redux_51|Yaevinn
+;
+2116569568||option_PotP_TrackingGroup_GwentCards_NorthernRealms_Redux_01|Demavend III
+2116569569||option_PotP_TrackingGroup_GwentCards_NorthernRealms_Redux_02|Foltest
+2116569570||option_PotP_TrackingGroup_GwentCards_NorthernRealms_Redux_03|Calanthe
+2116569571||option_PotP_TrackingGroup_GwentCards_NorthernRealms_Redux_04|Henselt
+2116569572||option_PotP_TrackingGroup_GwentCards_NorthernRealms_Redux_05|Radovid V
+2116569573||option_PotP_TrackingGroup_GwentCards_NorthernRealms_Redux_06|John Natalis
+2116569574||option_PotP_TrackingGroup_GwentCards_NorthernRealms_Redux_07|Olgierd von Everec
+2116569575||option_PotP_TrackingGroup_GwentCards_NorthernRealms_Redux_08|Philippa Eilhart
+2116569576||option_PotP_TrackingGroup_GwentCards_NorthernRealms_Redux_09|Prince Anséis
+2116569577||option_PotP_TrackingGroup_GwentCards_NorthernRealms_Redux_10|Ballista
+2116569578||option_PotP_TrackingGroup_GwentCards_NorthernRealms_Redux_11|Beggar
+2116569579||option_PotP_TrackingGroup_GwentCards_NorthernRealms_Redux_12|Bloody Baron
+2116569580||option_PotP_TrackingGroup_GwentCards_NorthernRealms_Redux_13|Blue Stripes Commando
+2116569581||option_PotP_TrackingGroup_GwentCards_NorthernRealms_Redux_14|Boris
+2116569582||option_PotP_TrackingGroup_GwentCards_NorthernRealms_Redux_15|Botchling
+2116569583||option_PotP_TrackingGroup_GwentCards_NorthernRealms_Redux_16|Caleb Menge
+2116569584||option_PotP_TrackingGroup_GwentCards_NorthernRealms_Redux_17|Carlo Varese
+2116569585||option_PotP_TrackingGroup_GwentCards_NorthernRealms_Redux_18|Catapult
+2116569586||option_PotP_TrackingGroup_GwentCards_NorthernRealms_Redux_19|Cleric of the Flaming Rose
+2116569587||option_PotP_TrackingGroup_GwentCards_NorthernRealms_Redux_20|Crinfrid Reavers Dragon Hunter
+2116569588||option_PotP_TrackingGroup_GwentCards_NorthernRealms_Redux_21|Crownsplitter Thug
+2116569589||option_PotP_TrackingGroup_GwentCards_NorthernRealms_Redux_22|Cutup Lackey
+2116569590||option_PotP_TrackingGroup_GwentCards_NorthernRealms_Redux_23|Dandelion
+2116569591||option_PotP_TrackingGroup_GwentCards_NorthernRealms_Redux_24|Dethmold
+2116569592||option_PotP_TrackingGroup_GwentCards_NorthernRealms_Redux_25|Sigismund Dijkstra
+2116569593||option_PotP_TrackingGroup_GwentCards_NorthernRealms_Redux_26|Dun Banner Medic
+2116569594||option_PotP_TrackingGroup_GwentCards_NorthernRealms_Redux_27|Igor The Hook
+2116569595||option_PotP_TrackingGroup_GwentCards_NorthernRealms_Redux_28|Jacques de Aldersberg
+2116569596||option_PotP_TrackingGroup_GwentCards_NorthernRealms_Redux_29|Kaedweni Siege Expert
+2116569597||option_PotP_TrackingGroup_GwentCards_NorthernRealms_Redux_30|Kaedweni Siege Support
+2116569598||option_PotP_TrackingGroup_GwentCards_NorthernRealms_Redux_31|Keira Metz
+2116569599||option_PotP_TrackingGroup_GwentCards_NorthernRealms_Redux_32|King of Beggars
+2116569600||option_PotP_TrackingGroup_GwentCards_NorthernRealms_Redux_33|Knight of the Flaming Rose
+2116569601||option_PotP_TrackingGroup_GwentCards_NorthernRealms_Redux_34|Lebioda
+2116569602||option_PotP_TrackingGroup_GwentCards_NorthernRealms_Redux_35|Merigold's Hailstorm
+2116569603||option_PotP_TrackingGroup_GwentCards_NorthernRealms_Redux_36|Nathaniel Pastodi
+2116569604||option_PotP_TrackingGroup_GwentCards_NorthernRealms_Redux_37|Passiflora Peaches
+2116569605||option_PotP_TrackingGroup_GwentCards_NorthernRealms_Redux_38|Poor Fucking Infantry
+2116569606||option_PotP_TrackingGroup_GwentCards_NorthernRealms_Redux_39|Redanian Foot Soldier
+2116569607||option_PotP_TrackingGroup_GwentCards_NorthernRealms_Redux_40|Sabrina Glevissig
+2116569608||option_PotP_TrackingGroup_GwentCards_NorthernRealms_Redux_41|Shani
+2116569609||option_PotP_TrackingGroup_GwentCards_NorthernRealms_Redux_42|Sheldon Skaggs
+2116569610||option_PotP_TrackingGroup_GwentCards_NorthernRealms_Redux_43|Siege Tower
+2116569611||option_PotP_TrackingGroup_GwentCards_NorthernRealms_Redux_44|Síle de Tansarville
+2116569612||option_PotP_TrackingGroup_GwentCards_NorthernRealms_Redux_45|Prince Stennis
+2116569613||option_PotP_TrackingGroup_GwentCards_NorthernRealms_Redux_46|Tatterwing
+2116569614||option_PotP_TrackingGroup_GwentCards_NorthernRealms_Redux_47|Thaler
+2116569615||option_PotP_TrackingGroup_GwentCards_NorthernRealms_Redux_48|Trebuchet
+2116569616||option_PotP_TrackingGroup_GwentCards_NorthernRealms_Redux_49|Triss Merigold
+2116569617||option_PotP_TrackingGroup_GwentCards_NorthernRealms_Redux_50|Vernon Roche
+2116569618||option_PotP_TrackingGroup_GwentCards_NorthernRealms_Redux_51|Ves
+2116569619||option_PotP_TrackingGroup_GwentCards_NorthernRealms_Redux_52|Vincent Meis
+2116569620||option_PotP_TrackingGroup_GwentCards_NorthernRealms_Redux_53|Vissegerd
+2116569621||option_PotP_TrackingGroup_GwentCards_NorthernRealms_Redux_54|Whoreson Junior
+2116569622||option_PotP_TrackingGroup_GwentCards_NorthernRealms_Redux_55|Witch Hunter
+2116569623||option_PotP_TrackingGroup_GwentCards_NorthernRealms_Redux_56|Yarpen Zigrin
+2116569624||option_PotP_TrackingGroup_GwentCards_NorthernRealms_Redux_57|Zoltan Chivay
+;
+2116569625||option_PotP_TrackingGroup_GwentCards_Skellige_Redux_01|Bran Tuirseach
+2116569626||option_PotP_TrackingGroup_GwentCards_Skellige_Redux_02|Crach an Craite
+2116569627||option_PotP_TrackingGroup_GwentCards_Skellige_Redux_03|Harald the Cripple
+2116569628||option_PotP_TrackingGroup_GwentCards_Skellige_Redux_04|Eist Tuirseach
+2116569629||option_PotP_TrackingGroup_GwentCards_Skellige_Redux_05|Cerys an Craite
+2116569630||option_PotP_TrackingGroup_GwentCards_Skellige_Redux_06|Hjalmar
+2116569631||option_PotP_TrackingGroup_GwentCards_Skellige_Redux_07|Kambi
+2116569632||option_PotP_TrackingGroup_GwentCards_Skellige_Redux_08|Tyr
+2116569633||option_PotP_TrackingGroup_GwentCards_Skellige_Redux_09|Clan an Craite Marauder
+2116569634||option_PotP_TrackingGroup_GwentCards_Skellige_Redux_10|Clan an Craite Warrior
+2116569635||option_PotP_TrackingGroup_GwentCards_Skellige_Redux_11|Clan an Craite Whaler
+2116569636||option_PotP_TrackingGroup_GwentCards_Skellige_Redux_12|Artis
+2116569637||option_PotP_TrackingGroup_GwentCards_Skellige_Redux_13|Athak Akydalv
+2116569638||option_PotP_TrackingGroup_GwentCards_Skellige_Redux_14|Birna Bran
+2116569639||option_PotP_TrackingGroup_GwentCards_Skellige_Redux_15|Holger Blackhand
+2116569640||option_PotP_TrackingGroup_GwentCards_Skellige_Redux_16|Blueboy Lugos
+2116569641||option_PotP_TrackingGroup_GwentCards_Skellige_Redux_17|Boatbuilders
+2116569642||option_PotP_TrackingGroup_GwentCards_Skellige_Redux_18|Clan Brokvar Archer
+2116569643||option_PotP_TrackingGroup_GwentCards_Skellige_Redux_19|Cave of Dreams
+2116569644||option_PotP_TrackingGroup_GwentCards_Skellige_Redux_20|Clan Dimun Captain
+2116569645||option_PotP_TrackingGroup_GwentCards_Skellige_Redux_21|Clan Dimun Corsair
+2116569646||option_PotP_TrackingGroup_GwentCards_Skellige_Redux_22|Clan Dimun Smuggler
+2116569647||option_PotP_TrackingGroup_GwentCards_Skellige_Redux_23|Djenge Frett
+2116569648||option_PotP_TrackingGroup_GwentCards_Skellige_Redux_24|Donar an Hindar
+2116569649||option_PotP_TrackingGroup_GwentCards_Skellige_Redux_25|Draig Bon-Dhu
+2116569650||option_PotP_TrackingGroup_GwentCards_Skellige_Redux_26|Clan Drummond Shield Maiden
+2116569651||option_PotP_TrackingGroup_GwentCards_Skellige_Redux_27|Ermion
+2116569652||option_PotP_TrackingGroup_GwentCards_Skellige_Redux_28|Clan Heymaey Flaminica
+2116569653||option_PotP_TrackingGroup_GwentCards_Skellige_Redux_29|Clan Heymaey Skald
+2116569654||option_PotP_TrackingGroup_GwentCards_Skellige_Redux_30|Harald Houndsnout
+2116569655||option_PotP_TrackingGroup_GwentCards_Skellige_Redux_31|Jutta an Dimun
+2116569656||option_PotP_TrackingGroup_GwentCards_Skellige_Redux_32|Knut the Callous
+2116569657||option_PotP_TrackingGroup_GwentCards_Skellige_Redux_33|Light Longship
+2116569658||option_PotP_TrackingGroup_GwentCards_Skellige_Redux_34|Lytta Neyd
+2116569659||option_PotP_TrackingGroup_GwentCards_Skellige_Redux_35|Madman Lugos
+2116569660||option_PotP_TrackingGroup_GwentCards_Skellige_Redux_36|Morkvarg
+2116569661||option_PotP_TrackingGroup_GwentCards_Skellige_Redux_37|Olaf
+2116569662||option_PotP_TrackingGroup_GwentCards_Skellige_Redux_38|Priestess of Freya
+2116569663||option_PotP_TrackingGroup_GwentCards_Skellige_Redux_39|Ragh Nar Roog
+2116569664||option_PotP_TrackingGroup_GwentCards_Skellige_Redux_40|Skellige Storm
+2116569665||option_PotP_TrackingGroup_GwentCards_Skellige_Redux_41|Skjall
+2116569666||option_PotP_TrackingGroup_GwentCards_Skellige_Redux_42|Sukrus
+2116569667||option_PotP_TrackingGroup_GwentCards_Skellige_Redux_43|Svalblod
+2116569668||option_PotP_TrackingGroup_GwentCards_Skellige_Redux_44|Svanrige Tuirseach
+2116569669||option_PotP_TrackingGroup_GwentCards_Skellige_Redux_45|Clan Tordarroch Armorsmith
+2116569670||option_PotP_TrackingGroup_GwentCards_Skellige_Redux_46|Clan Tuirseach Skirmisher
+2116569671||option_PotP_TrackingGroup_GwentCards_Skellige_Redux_47|Udalryk
+2116569672||option_PotP_TrackingGroup_GwentCards_Skellige_Redux_48|Vabjorn
+2116569673||option_PotP_TrackingGroup_GwentCards_Skellige_Redux_49|Vildkaarl Butcher
+2116569674||option_PotP_TrackingGroup_GwentCards_Skellige_Redux_50|Vildkaarl Ravager
+2116569675||option_PotP_TrackingGroup_GwentCards_Skellige_Redux_51|War Longship
+2116569676||option_PotP_TrackingGroup_GwentCards_Skellige_Redux_52|Yoana
+;
+;-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+;-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+;-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+;-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+;
+2116569677||PotP_NotificationLine_SezonBurz| Sezon Burz Item(DYNAMC_REPLACE)
+2116569678||option_PotP_TrackingGroup_AdditionalItemContent_SezonBurz_01|Sezon Burz Leather Jacket
+2116569679||option_PotP_TrackingGroup_AdditionalItemContent_SezonBurz_02|Sezon Burz Leather Trousers
+2116569680||option_PotP_TrackingGroup_AdditionalItemContent_SezonBurz_03|Sezon Burz Leather Gloves
+2116569681||option_PotP_TrackingGroup_AdditionalItemContent_SezonBurz_04|Sezon Burz Leather Boots
+2116569682||option_PotP_TrackingGroup_AdditionalItemContent_SezonBurz_05|Sezon Burz Silver Sword
+2116569683||option_PotP_TrackingGroup_AdditionalItemContent_SezonBurz_06|Sezon Burz Steel Sword
+2116569684||option_PotP_TrackingGroup_AdditionalItemContent_SezonBurz_07|Sezon Burz Crossbow
+;
+2116569685||PotP_NotificationLine_CosWiecej| "Coś Więcej" Item(DYNAMC_REPLACE)
+2116569686||option_PotP_TrackingGroup_AdditionalItemContent_CosWiecej_01|"Coś Więcej" Leather Jacket
+2116569687||option_PotP_TrackingGroup_AdditionalItemContent_CosWiecej_02|"Coś Więcej" Gloves
+2116569688||option_PotP_TrackingGroup_AdditionalItemContent_CosWiecej_03|"Coś Więcej" Pants
+2116569689||option_PotP_TrackingGroup_AdditionalItemContent_CosWiecej_04|"Coś Więcej" Boots
+2116569690||option_PotP_TrackingGroup_AdditionalItemContent_CosWiecej_05|"Coś Więcej" Steel Sword
+2116569691||option_PotP_TrackingGroup_AdditionalItemContent_CosWiecej_06|"Coś Więcej" Silver Sword
+2116569692||option_PotP_TrackingGroup_AdditionalItemContent_CosWiecej_07|Mahakaman Rune Sihil
+;
+2116569693||PotP_NotificationLine_W3EE| W3EE Item(DYNAMC_REPLACE)
+2116569694||option_PotP_TrackingGroup_AdditionalItemContent_W3EE_Gothic_01|Gothic Plate Armor
+2116569695||option_PotP_TrackingGroup_AdditionalItemContent_W3EE_Gothic_02|Gothic Plate Gauntlets
+2116569696||option_PotP_TrackingGroup_AdditionalItemContent_W3EE_Gothic_03|Gothic Plate Greaves
+2116569697||option_PotP_TrackingGroup_AdditionalItemContent_W3EE_Gothic_04|Gothic Plate Helm
+2116569698||option_PotP_TrackingGroup_AdditionalItemContent_W3EE_Gothic_05|Gothic Plate Sabatons
+;
+2116569699||option_PotP_TrackingGroup_AdditionalItemContent_W3EE_Meteorite_01|Meteorite Silver Plate Armor
+2116569700||option_PotP_TrackingGroup_AdditionalItemContent_W3EE_Meteorite_02|Meteorite Silver Plate Gauntlets
+2116569701||option_PotP_TrackingGroup_AdditionalItemContent_W3EE_Meteorite_03|Meteorite Silver Plate Greaves
+2116569702||option_PotP_TrackingGroup_AdditionalItemContent_W3EE_Meteorite_04|Meteorite Silver Plate Helm
+2116569703||option_PotP_TrackingGroup_AdditionalItemContent_W3EE_Meteorite_05|Meteorite Silver Plate Sabatons
+;
+2116569704||option_PotP_TrackingGroup_AdditionalItemContent_W3EE_Dimeritium_01|Dimeritium Alloy Plate Armor
+2116569705||option_PotP_TrackingGroup_AdditionalItemContent_W3EE_Dimeritium_02|Dimeritium Alloy Plate Gauntlets
+2116569706||option_PotP_TrackingGroup_AdditionalItemContent_W3EE_Dimeritium_03|Dimeritium Alloy Plate Greaves
+2116569707||option_PotP_TrackingGroup_AdditionalItemContent_W3EE_Dimeritium_04|Dimeritium Alloy Plate Helm
+2116569708||option_PotP_TrackingGroup_AdditionalItemContent_W3EE_Dimeritium_05|Dimeritium Alloy Plate Sabatons
+;
+2116569709||option_PotP_TrackingGroup_GearSets_NewMoon_01|New Moon Armor
+2116569710||option_PotP_TrackingGroup_GearSets_NewMoon_02|New Moon Boots
+2116569711||option_PotP_TrackingGroup_GearSets_NewMoon_03|New Moon Gauntlets
+2116569712||option_PotP_TrackingGroup_GearSets_NewMoon_04|New Moon Trousers
+;
+2116569713||option_PotP_TrackingGroup_GearSets_Nilfgaardian_01|Nilfgaardian Armor
+2116569714||option_PotP_TrackingGroup_GearSets_Nilfgaardian_02|Nilfgaardian Boots
+2116569715||option_PotP_TrackingGroup_GearSets_Nilfgaardian_03|Nilfgaardian Gauntlets
+2116569716||option_PotP_TrackingGroup_GearSets_Nilfgaardian_04|Nilfgaardian Trousers
+;
+2116569717||option_PotP_TrackingGroup_GearSets_Temerian_01|Temerian Armor
+2116569718||option_PotP_TrackingGroup_GearSets_Temerian_02|Temerian Boots
+2116569719||option_PotP_TrackingGroup_GearSets_Temerian_03|Temerian Gauntlets
+2116569720||option_PotP_TrackingGroup_GearSets_Temerian_04|Temerian Trousers
+;
+2116569721||option_PotP_TrackingGroup_GearSets_Undvik_01|Undvik Armor
+2116569722||option_PotP_TrackingGroup_GearSets_Undvik_02|Undvik Boots
+2116569723||option_PotP_TrackingGroup_GearSets_Undvik_03|Undvik Gauntlets
+2116569724||option_PotP_TrackingGroup_GearSets_Undvik_04|Undvik Trousers
+;
+2116569725||option_PotP_TrackingGroup_GearSets_TeshamMutna_01|Tesham Mutna Armor
+2116569726||option_PotP_TrackingGroup_GearSets_TeshamMutna_02|Tesham Mutna Boots
+2116569727||option_PotP_TrackingGroup_GearSets_TeshamMutna_03|Tesham Mutna Gauntlets
+2116569728||option_PotP_TrackingGroup_GearSets_TeshamMutna_04|Tesham Mutna Mask
+2116569729||option_PotP_TrackingGroup_GearSets_TeshamMutna_05|Tesham Mutna Trousers
+;
+2116569730||option_PotP_TrackingGroup_GearSets_HenGaidth_01|Hen Gaidth Armor
+2116569731||option_PotP_TrackingGroup_GearSets_HenGaidth_02|Hen Gaidth Boots
+2116569732||option_PotP_TrackingGroup_GearSets_HenGaidth_03|Hen Gaidth Gauntlets
+2116569733||option_PotP_TrackingGroup_GearSets_HenGaidth_04|Hen Gaidth Mask
+2116569734||option_PotP_TrackingGroup_GearSets_HenGaidth_05|Hen Gaidth Trousers
+;
+2116569735||option_PotP_TrackingGroup_GearSets_Ofieri_01|Ofieri scale armor
+2116569736||option_PotP_TrackingGroup_GearSets_Ofieri_02|Ofieri Boots
+2116569737||option_PotP_TrackingGroup_GearSets_Ofieri_03|Ofieri Gauntlets
+2116569738||option_PotP_TrackingGroup_GearSets_Ofieri_04|Ofieri Sharovary
+;
+2116569739||option_PotP_TrackingGroup_GearSets_ForgottenWolven_01|Forgotten Wolven Armor
+2116569740||option_PotP_TrackingGroup_GearSets_ForgottenWolven_02|Forgotten Wolven Boots
+2116569741||option_PotP_TrackingGroup_GearSets_ForgottenWolven_03|Forgotten Wolven Gauntlets
+2116569742||option_PotP_TrackingGroup_GearSets_ForgottenWolven_04|Forgotten Wolven Trousers
+2116569743||option_PotP_TrackingGroup_GearSets_ForgottenWolven_05|Forgotten Wolven Steel Sword
+2116569744||option_PotP_TrackingGroup_GearSets_ForgottenWolven_06|Forgotten Wolven Silver Sword
+;
+2116569745||option_PotP_TrackingGroup_GearSets_WhiteTiger_01|White Tiger of the West Armor
+2116569746||option_PotP_TrackingGroup_GearSets_WhiteTiger_02|White Tiger of the West Boots
+2116569747||option_PotP_TrackingGroup_GearSets_WhiteTiger_03|White Tiger of the West Vambraces
+2116569748||option_PotP_TrackingGroup_GearSets_WhiteTiger_04|White Tiger of the West Trousers
+;
+2116569749||option_PotP_TrackingGroup_GearSets_DolBlathanna_01|Armor of a Thousand Flowers
+2116569750||option_PotP_TrackingGroup_GearSets_DolBlathanna_02|Boots of a Thousand Flowers
+2116569751||option_PotP_TrackingGroup_GearSets_DolBlathanna_03|Gauntlets of a Thousand Flowers
+2116569752||option_PotP_TrackingGroup_GearSets_DolBlathanna_04|Trousers of a Thousand Flowers
+2116569753||option_PotP_TrackingGroup_GearSets_DolBlathanna_05|Sword of a Thousand Flowers
+2116569754||option_PotP_TrackingGroup_GearSets_DolBlathanna_06|White Widow of the Valley of Flowers
+;
+;-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+;-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+;-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+;-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+;
+2116569755||PotP_NotificationLine_ShadesOfIron| Shades of Iron Item(DYNAMC_REPLACE)
+2116569756||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_Berserker_01|Berserker Armor
+2116569757||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_Berserker_02|Berserker Cage
+2116569758||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_Berserker_03|Berserker Gauntlets
+2116569759||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_Berserker_04|Berserker Greaves
+2116569760||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_Berserker_05|Berserker Helm
+2116569761||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_Berserker_06|Berserker Pants
+;
+2116569762||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_Bismarck_01|Bismarck Knight Armor
+2116569763||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_Bismarck_02|Bismarck Knight Greaves
+2116569764||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_Bismarck_03|Bismarck Knight Gauntlets
+2116569765||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_Bismarck_04|Bismarck Knight Cuisses Plates
+2116569766||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_Bismarck_05|Bismarck Helm
+;
+2116569767||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_BloodHunter_01|Blood Hunter's Boots
+2116569768||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_BloodHunter_02|Blood Hunter's Coat
+2116569769||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_BloodHunter_03|Blood Hunter's Gloves
+2116569770||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_BloodHunter_04|Blood Hunter's Hat
+2116569771||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_BloodHunter_05|Blood Hunter's Mask
+2116569772||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_BloodHunter_06|Blood Hunter's Pants
+;
+2116569773||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_Crow_01|Crow-feathered Hunter Garb
+2116569774||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_Crow_02|Crow-feathered Hunter Boots
+2116569775||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_Crow_03|Crow-feathered Hunter Gloves
+2116569776||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_Crow_04|Crow-feathered Hunter Pants
+2116569777||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_Crow_05|Beak Mask
+;
+2116569778||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_FallenKnight_01|Fallen Knight Armor
+2116569779||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_FallenKnight_02|Fallen Knight Greaves
+2116569780||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_FallenKnight_03|Fallen Knight Gauntlets
+2116569781||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_FallenKnight_04|Fallen Knight Leg Guards
+2116569782||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_FallenKnight_05|Fallen Knight Helm
+;
+2116569783||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_Faraam_01|Faraam Armor
+2116569784||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_Faraam_02|Faraam Boots
+2116569785||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_Faraam_03|Faraam Gauntlets
+2116569786||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_Faraam_04|Faraam Pants
+2116569787||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_Faraam_05|Faraam Helm
+;
+2116569788||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_HeadTaker_01|Headtaker Coat
+2116569789||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_HeadTaker_02|Headtaker Boots
+2116569790||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_HeadTaker_03|Headtaker Gloves
+2116569791||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_HeadTaker_04|Headtaker Pants
+2116569792||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_HeadTaker_05|Headtaker Mask
+;
+2116569793||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_Hitokiri_01|Hitokiri Raiment
+2116569794||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_Hitokiri_02|Hitokiri Boots
+2116569795||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_Hitokiri_03|Hitokiri Claws
+2116569796||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_Hitokiri_04|Hitokiri Pants
+2116569797||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_Hitokiri_05|Hitokiri Visage
+;
+2116569798||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_Kara_01|Kara Armor
+2116569799||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_Kara_02|Kara Boots
+2116569800||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_Kara_03|Kara Gauntlets
+2116569801||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_Kara_04|Kara Pants
+2116569802||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_Kara_05|Kara Hat
+;
+2116569803||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_LionHunter_01|Lionhunter Garb
+2116569804||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_LionHunter_02|Lionhunter Boots
+2116569805||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_LionHunter_03|Lionhunter Gauntlets
+2116569806||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_LionHunter_04|Lionhunter Pants
+2116569807||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_LionHunter_05|Lionhunter Silver Mask
+;
+2116569808||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_Assassin_01|Master Assassin Garb
+2116569809||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_Assassin_02|Master Assassin Boots
+2116569810||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_Assassin_03|Master Assassin Bracer
+2116569811||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_Assassin_04|Master Assassin Pants
+2116569812||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_Assassin_05|Master Assassin Hood
+;
+2116569813||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_OldHunter_01|Old Hunter's Garb
+2116569814||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_OldHunter_02|Old Hunter's Boots
+2116569815||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_OldHunter_03|Old Hunter's Gloves
+2116569816||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_OldHunter_04|Old Hunter's Pants
+2116569817||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_OldHunter_05|Old Hunter's Hat
+;
+2116569818||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_Revenant_01|Revenant Armor
+2116569819||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_Revenant_02|Revenant Greaves
+2116569820||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_Revenant_03|Revenant Gauntlets
+2116569821||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_Revenant_04|Revenant Leg Guards
+2116569822||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_Revenant_05|Revenant Hood
+;
+2116569823||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_Stalker_01|Stalker Coat
+2116569824||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_Stalker_02|Stalker Boots
+2116569825||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_Stalker_03|Stalker Gloves
+2116569826||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_Stalker_04|Stalker Pants
+2116569827||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_Stalker_05|Stalker Mask
+;
+2116569828||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_Taifeng_01|Taifeng Armor
+2116569829||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_Taifeng_02|Taifeng Boots
+2116569830||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_Taifeng_03|Taifeng Gloves
+2116569831||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_Taifeng_04|Taifeng Leg Guards
+2116569832||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_Taifeng_05|Ronin Hat
+;
+2116569833||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_Unseen_01|Unseen Hunter's Garb
+2116569834||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_Unseen_02|Unseen Hunter's Boots
+2116569835||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_Unseen_03|Unseen Hunter's Gloves
+2116569836||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_Unseen_04|Unseen Hunter's Pants
+2116569837||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_Unseen_05|Unseen Hunter's Helm
+;
+2116569838||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_Sithis_01|Sithis Armor
+2116569839||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_Sithis_02|Sithis Hood
+;
+2116569840||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_SilverSwords_01|Aquila
+2116569841||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_SilverSwords_02|Ares
+2116569842||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_SilverSwords_03|Armageddon
+2116569843||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_SilverSwords_04|Beastcutter
+2116569844||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_SilverSwords_05|Blackdawn
+2116569845||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_SilverSwords_06|Blooddusk
+2116569846||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_SilverSwords_07|Bloodletter
+2116569847||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_SilverSwords_08|Bloodshot
+2116569848||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_SilverSwords_09|Claymore
+2116569849||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_SilverSwords_10|Crownbreaker
+2116569850||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_SilverSwords_11|Cursed Khopesh
+2116569851||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_SilverSwords_12|Dragonbane
+2116569852||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_SilverSwords_13|Ejder
+2116569853||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_SilverSwords_14|Flameborn
+2116569854||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_SilverSwords_15|Frostmourne
+2116569855||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_SilverSwords_16|Gorgonslayer
+2116569856||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_SilverSwords_17|Graveripper
+2116569857||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_SilverSwords_18|Guandao
+2116569858||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_SilverSwords_19|Gwaedlif
+2116569859||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_SilverSwords_20|Hades' Grasp
+2116569860||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_SilverSwords_21|Haoma
+2116569861||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_SilverSwords_22|Heavenspire
+2116569862||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_SilverSwords_23|Hellspire
+2116569863||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_SilverSwords_24|Icarus' Tears
+2116569864||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_SilverSwords_25|Ikari
+2116569865||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_SilverSwords_26|Lionhunter
+2116569866||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_SilverSwords_27|Oathblade
+2116569867||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_SilverSwords_28|Oblivion
+2116569868||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_SilverSwords_29|Peacekeeper
+2116569869||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_SilverSwords_30|Pridefall
+2116569870||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_SilverSwords_31|Rakuyo
+2116569871||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_SilverSwords_32|Realmdrifter Blade
+2116569872||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_SilverSwords_33|Realmdrifter Divider
+2116569873||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_SilverSwords_34|Saint Kukri
+2116569874||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_SilverSwords_35|Sinner
+2116569875||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_SilverSwords_36|Sithis Blade
+2116569876||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_SilverSwords_37|Voidblade
+2116569877||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_SilverSwords_38|Vulcan
+2116569878||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_SilverSwords_39|Zerrikanian Knife
+;
+2116569879||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_SteelSwords_01|Aquila
+2116569880||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_SteelSwords_02|Ares
+2116569881||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_SteelSwords_03|Armageddon
+2116569882||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_SteelSwords_04|Beastcutter
+2116569883||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_SteelSwords_05|Blackdawn
+2116569884||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_SteelSwords_06|Blooddusk
+2116569885||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_SteelSwords_07|Bloodletter
+2116569886||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_SteelSwords_08|Bloodshot
+2116569887||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_SteelSwords_09|Claymore
+2116569888||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_SteelSwords_10|Crownbreaker
+2116569889||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_SteelSwords_11|Cursed Khopesh
+2116569890||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_SteelSwords_12|Dragonbane
+2116569891||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_SteelSwords_13|Ejder
+2116569892||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_SteelSwords_14|Flameborn
+2116569893||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_SteelSwords_15|Frostmourne
+2116569894||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_SteelSwords_16|Gorgonslayer
+2116569895||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_SteelSwords_17|Graveripper
+2116569896||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_SteelSwords_18|Guandao
+2116569897||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_SteelSwords_19|Gwaedlif
+2116569898||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_SteelSwords_20|Hades' Grasp
+2116569899||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_SteelSwords_21|Haoma
+2116569900||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_SteelSwords_22|Heavenspire
+2116569901||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_SteelSwords_23|Hellspire
+2116569902||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_SteelSwords_24|Icarus' Tears
+2116569903||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_SteelSwords_25|Ikari
+2116569904||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_SteelSwords_26|Lionhunter
+2116569905||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_SteelSwords_27|Oathblade
+2116569906||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_SteelSwords_28|Oblivion
+2116569907||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_SteelSwords_29|Peacekeeper
+2116569908||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_SteelSwords_30|Pridefall
+2116569909||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_SteelSwords_31|Rakuyo
+2116569910||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_SteelSwords_32|Realmdrifter Blade
+2116569911||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_SteelSwords_33|Realmdrifter Divider
+2116569912||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_SteelSwords_34|Saint Kukri
+2116569913||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_SteelSwords_35|Sinner
+2116569914||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_SteelSwords_36|Sithis Blade
+2116569915||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_SteelSwords_37|Voidblade
+2116569916||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_SteelSwords_38|Vulcan
+2116569917||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_SteelSwords_39|Zerrikanian Knife
+;
+;-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+;-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+;-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+;-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+;
+2116569918||PotP_Preview_Event_1|<br/><font color="#9D75BF">Random Events: Velen [COUNTS]<br/></font>
+2116569919||PotP_Preview_Event_2|<br/><font color="#9D75BF">Random Events: Novigrad [COUNTS]<br/></font>
+2116569920||PotP_Preview_Event_3|<br/><font color="#9D75BF">Random Events: Skellige [COUNTS]<br/></font>
+2116569921||PotP_Preview_Event_4|<br/><font color="#9D75BF">Random Events: Kaer Morhen [COUNTS]<br/></font>
+;
+2116569922||PotP_Preview_MainQ_1|<br/><font color="#9D75BF">Main Quests: Prologue [COUNTS]<br/></font>
+2116569923||PotP_Preview_MainQ_2|<br/><font color="#9D75BF">Main Quests: Act 1 - Velen [COUNTS]<br/></font>
+2116569924||PotP_Preview_MainQ_3|<br/><font color="#9D75BF">Main Quests: Act 1 - Novigrad [COUNTS]<br/></font>
+2116569925||PotP_Preview_MainQ_4|<br/><font color="#9D75BF">Main Quests: Act 1 - Skellige [COUNTS]<br/></font>
+2116569926||PotP_Preview_MainQ_5|<br/><font color="#9D75BF">Main Quests: Act 2 [COUNTS]<br/></font>
+2116569927||PotP_Preview_MainQ_6|<br/><font color="#9D75BF">Main Quests: Act 3 [COUNTS]<br/></font>
+2116569928||PotP_Preview_MainQ_7|<br/><font color="#9D75BF">Main Quests: Hearts of Stone [COUNTS]<br/></font>
+2116569929||PotP_Preview_MainQ_8|<br/><font color="#9D75BF">Main Quests: Blood and Wine [COUNTS]<br/></font>
+2116569930||PotP_Preview_MainQ_9|<br/><font color="#9D75BF">Main Quests: Vizima [COUNTS]<br/></font>
+;
+2116569931||PotP_Preview_SideQ_1|<br/><font color="#9D75BF">Side Quests: White Orchard [COUNTS]<br/></font>
+2116569932||PotP_Preview_SideQ_2|<br/><font color="#9D75BF">Side Quests: Velen [COUNTS]<br/></font>
+2116569933||PotP_Preview_SideQ_3|<br/><font color="#9D75BF">Side Quests: Novigrad [COUNTS]<br/></font>
+2116569934||PotP_Preview_SideQ_4|<br/><font color="#9D75BF">Side Quests: Skellige [COUNTS]<br/></font>
+2116569935||PotP_Preview_SideQ_5|<br/><font color="#9D75BF">Side Quests: Kaer Morhen [COUNTS]<br/></font>
+2116569936||PotP_Preview_SideQ_6|<br/><font color="#9D75BF">Side Quests: Toussaint [COUNTS]<br/></font>
+2116569937||PotP_Preview_SideQ_7|<br/><font color="#9D75BF">Side Quests: Non Regional [COUNTS]<br/></font>
+;
+2116569938||PotP_Preview_ContQ_1|<br/><font color="#9D75BF">Monster Hunt Contracts: White Orchard [COUNTS]<br/></font>
+2116569939||PotP_Preview_ContQ_2|<br/><font color="#9D75BF">Monster Hunt Contracts: Velen [COUNTS]<br/></font>
+2116569940||PotP_Preview_ContQ_3|<br/><font color="#9D75BF">Monster Hunt Contracts: Novigrad [COUNTS]<br/></font>
+2116569941||PotP_Preview_ContQ_4|<br/><font color="#9D75BF">Monster Hunt Contracts: Skellige [COUNTS]<br/></font>
+2116569942||PotP_Preview_ContQ_5|<br/><font color="#9D75BF">Monster Hunt Contracts: Toussaint [COUNTS]<br/></font>
+;
+2116569943||PotP_Preview_ScavQ_1|<br/><font color="#9D75BF">Scavenger Hunts: Griffin Gear [COUNTS]<br/></font>
+2116569944||PotP_Preview_ScavQ_2|<br/><font color="#9D75BF">Scavenger Hunts: Feline Gear [COUNTS]<br/></font>
+2116569945||PotP_Preview_ScavQ_3|<br/><font color="#9D75BF">Scavenger Hunts: Ursine Gear [COUNTS]<br/></font>
+2116569946||PotP_Preview_ScavQ_4|<br/><font color="#9D75BF">Scavenger Hunts: Wolven Gear [COUNTS]<br/></font>
+2116569947||PotP_Preview_ScavQ_5|<br/><font color="#9D75BF">Scavenger Hunts: Miscellaneous [COUNTS]<br/></font>
+;
+2116569948||PotP_Preview_TreaQ_1|<br/><font color="#9D75BF">Treasure Hunts: White Orchard [COUNTS]<br/></font>
+2116569949||PotP_Preview_TreaQ_2|<br/><font color="#9D75BF">Treasure Hunts: Velen [COUNTS]<br/></font>
+2116569950||PotP_Preview_TreaQ_3|<br/><font color="#9D75BF">Treasure Hunts: Novigrad [COUNTS]<br/></font>
+2116569951||PotP_Preview_TreaQ_4|<br/><font color="#9D75BF">Treasure Hunts: Skellige [COUNTS]<br/></font>
+2116569952||PotP_Preview_TreaQ_5|<br/><font color="#9D75BF">Treasure Hunts: Toussaint [COUNTS]<br/></font>
+;
+2116569953||PotP_Preview_DensM_1|<br/><font color="#9D75BF">Monster Dens: Velen [COUNTS]<br/></font>
+2116569954||PotP_Preview_DensM_2|<br/><font color="#9D75BF">Monster Dens: Novigrad [COUNTS]<br/></font>
+2116569955||PotP_Preview_DensM_3|<br/><font color="#9D75BF">Monster Dens: Skellige [COUNTS]<br/></font>
+2116569956||PotP_Preview_DensM_4|<br/><font color="#9D75BF">Monster Dens: Toussaint [COUNTS]<br/></font>
+2116569957||PotP_Preview_NestM_1|<br/><font color="#9D75BF">Monster Nests: White Orchard [COUNTS]<br/></font>
+2116569958||PotP_Preview_NestM_2|<br/><font color="#9D75BF">Monster Nests: Velen [COUNTS]<br/></font>
+2116569959||PotP_Preview_NestM_3|<br/><font color="#9D75BF">Monster Nests: Novigrad [COUNTS]<br/></font>
+2116569960||PotP_Preview_NestM_4|<br/><font color="#9D75BF">Monster Nests: Skellige [COUNTS]<br/></font>
+2116569961||PotP_Preview_NestM_5|<br/><font color="#9D75BF">Monster Nests: Toussaint [COUNTS]<br/></font>
+;
+2116569962||PotP_Preview_Place_1|<br/><font color="#9D75BF">Places of Power: White Orchard [COUNTS]<br/></font>
+2116569963||PotP_Preview_Place_2|<br/><font color="#9D75BF">Places of Power: Velen [COUNTS]<br/></font>
+2116569964||PotP_Preview_Place_3|<br/><font color="#9D75BF">Places of Power: Novigrad [COUNTS]<br/></font>
+2116569965||PotP_Preview_Place_4|<br/><font color="#9D75BF">Places of Power: Skellige [COUNTS]<br/></font>
+2116569966||PotP_Preview_Place_5|<br/><font color="#9D75BF">Places of Power: Kaer Morhen [COUNTS]<br/></font>
+2116569967||PotP_Preview_Place_6|<br/><font color="#9D75BF">Places of Power: Toussaint [COUNTS]<br/></font>
+2116569968||PotP_Preview_Place_7|<br/><font color="#9D75BF">Places of Power: The Spiral [COUNTS]<br/></font>
+;
+2116569969||PotP_Preview_SignP_1|<br/><font color="#9D75BF">Signposts: White Orchard [COUNTS]<br/></font>
+2116569970||PotP_Preview_SignP_2|<br/><font color="#9D75BF">Signposts: Velen [COUNTS]<br/></font>
+2116569971||PotP_Preview_SignP_3|<br/><font color="#9D75BF">Signposts: Novigrad [COUNTS]<br/></font>
+2116569972||PotP_Preview_SignP_4|<br/><font color="#9D75BF">Signposts: Skellige [COUNTS]<br/></font>
+2116569973||PotP_Preview_SignP_5|<br/><font color="#9D75BF">Signposts: Kaer Morhen [COUNTS]<br/></font>
+2116569974||PotP_Preview_SignP_6|<br/><font color="#9D75BF">Signposts: Toussaint [COUNTS]<br/></font>
+;
+2116569975||PotP_Preview_Camps_1|<br/><font color="#9D75BF">Bandit Camps: White Orchard [COUNTS]<br/></font>
+2116569976||PotP_Preview_Camps_2|<br/><font color="#9D75BF">Bandit Camps: Velen [COUNTS]<br/></font>
+2116569977||PotP_Preview_Camps_3|<br/><font color="#9D75BF">Bandit Camps: Novigrad [COUNTS]<br/></font>
+2116569978||PotP_Preview_Camps_4|<br/><font color="#9D75BF">Bandit Camps: Skellige [COUNTS]<br/></font>
+2116569979||PotP_Preview_Camps_5|<br/><font color="#9D75BF">Bandit Camps: Toussaint [COUNTS]<br/></font>
+;
+2116569980||PotP_Preview_Troph_1|<br/><font color="#9D75BF">Monster Trophies: [COUNTS]<br/></font>
+2116569981||PotP_Preview_Relic_1|<br/><font color="#9D75BF">Relics: Silver Swords [COUNTS]<br/></font>
+2116569982||PotP_Preview_Relic_2|<br/><font color="#9D75BF">Relics: Steel Swords [COUNTS]<br/></font>
+2116569983||PotP_Preview_Relic_3|<br/><font color="#9D75BF">Relics: Crossbows [COUNTS]<br/></font>
+;
+2116569984||PotP_Preview_GearS_1|<br/><font color="#9D75BF">Armor Set Pieces: Thousand Flowers Set [COUNTS]<br/></font>
+2116569985||PotP_Preview_GearS_2|<br/><font color="#9D75BF">Armor Set Pieces: Forgotten Wolven Set [COUNTS]<br/></font>
+2116569986||PotP_Preview_GearS_3|<br/><font color="#9D75BF">Armor Set Pieces: Hen Gaidth Set [COUNTS]<br/></font>
+2116569987||PotP_Preview_GearS_4|<br/><font color="#9D75BF">Armor Set Pieces: New Moon Set [COUNTS]<br/></font>
+2116569988||PotP_Preview_GearS_5|<br/><font color="#9D75BF">Armor Set Pieces: Nilfgaardian Set [COUNTS]<br/></font>
+2116569989||PotP_Preview_GearS_6|<br/><font color="#9D75BF">Armor Set Pieces: Ofieri Set [COUNTS]<br/></font>
+2116569990||PotP_Preview_GearS_7|<br/><font color="#9D75BF">Armor Set Pieces: Temerian Set [COUNTS]<br/></font>
+2116569991||PotP_Preview_GearS_8|<br/><font color="#9D75BF">Armor Set Pieces: Tesham Mutna Set [COUNTS]<br/></font>
+2116569992||PotP_Preview_GearS_9|<br/><font color="#9D75BF">Armor Set Pieces: Undvik Set [COUNTS]<br/></font>
+2116569993||PotP_Preview_GearS_A|<br/><font color="#9D75BF">Armor Set Pieces: White Tiger Set [COUNTS]<br/></font>
+;
+2116569994||PotP_Preview_Gwent_1|<br/><font color="#9D75BF">Gwent Cards: Monsters [COUNTS]<br/></font>
+2116569995||PotP_Preview_Gwent_2|<br/><font color="#9D75BF">Gwent Cards: Neutral Cards [COUNTS]<br/></font>
+2116569996||PotP_Preview_Gwent_3|<br/><font color="#9D75BF">Gwent Cards: Nilfgaardian Empire [COUNTS]<br/></font>
+2116569997||PotP_Preview_Gwent_4|<br/><font color="#9D75BF">Gwent Cards: Northern Realms [COUNTS]<br/></font>
+2116569998||PotP_Preview_Gwent_5|<br/><font color="#9D75BF">Gwent Cards: Scoia'tael [COUNTS]<br/></font>
+2116569999||PotP_Preview_Gwent_6|<br/><font color="#9D75BF">Gwent Cards: Skellige [COUNTS]<br/></font>
+;
+2117171000||PotP_Preview_DLCC_1|<br/><font color="#9D75BF">Coś Więcej Gear [COUNTS]<br/></font>
+2117171001||PotP_Preview_DLCC_2|<br/><font color="#9D75BF">Sezon Burz Gear [COUNTS]<br/></font>
+2117171002||PotP_Preview_DLCC_3|<br/><font color="#9D75BF">Gothic Gear [COUNTS]<br/></font>
+2117171003||PotP_Preview_DLCC_4|<br/><font color="#9D75BF">Meteorite Gear [COUNTS]<br/></font>
+2117171004||PotP_Preview_DLCC_5|<br/><font color="#9D75BF">Dimeritium Gear [COUNTS]<br/></font>
+;
+2117171005||PotP_Preview_Shad_01|<br/><font color="#9D75BF">Shades of Iron: Berserker Set [COUNTS]<br/></font>
+2117171006||PotP_Preview_Shad_02|<br/><font color="#9D75BF">Shades of Iron: Bismarck Set [COUNTS]<br/></font>
+2117171007||PotP_Preview_Shad_03|<br/><font color="#9D75BF">Shades of Iron: Blood Hunter Set [COUNTS]<br/></font>
+2117171008||PotP_Preview_Shad_04|<br/><font color="#9D75BF">Shades of Iron: Crow-feathered Hunter Set [COUNTS]<br/></font>
+2117171009||PotP_Preview_Shad_05|<br/><font color="#9D75BF">Shades of Iron: Fallen Knight Set [COUNTS]<br/></font>
+2117171010||PotP_Preview_Shad_06|<br/><font color="#9D75BF">Shades of Iron: Faraam Set [COUNTS]<br/></font>
+2117171011||PotP_Preview_Shad_07|<br/><font color="#9D75BF">Shades of Iron: Headtaker Set [COUNTS]<br/></font>
+2117171012||PotP_Preview_Shad_08|<br/><font color="#9D75BF">Shades of Iron: Hitokiri Set [COUNTS]<br/></font>
+2117171013||PotP_Preview_Shad_09|<br/><font color="#9D75BF">Shades of Iron: Kara Set [COUNTS]<br/></font>
+2117171014||PotP_Preview_Shad_10|<br/><font color="#9D75BF">Shades of Iron: Lionhunter Set [COUNTS]<br/></font>
+2117171015||PotP_Preview_Shad_11|<br/><font color="#9D75BF">Shades of Iron: Master Assassin Set [COUNTS]<br/></font>
+2117171016||PotP_Preview_Shad_12|<br/><font color="#9D75BF">Shades of Iron: Old Hunter Set [COUNTS]<br/></font>
+2117171017||PotP_Preview_Shad_13|<br/><font color="#9D75BF">Shades of Iron: Revenant Set [COUNTS]<br/></font>
+2117171018||PotP_Preview_Shad_14|<br/><font color="#9D75BF">Shades of Iron: Stalker Set [COUNTS]<br/></font>
+2117171019||PotP_Preview_Shad_15|<br/><font color="#9D75BF">Shades of Iron: Taifeng Set [COUNTS]<br/></font>
+2117171020||PotP_Preview_Shad_16|<br/><font color="#9D75BF">Shades of Iron: Unseen Hunter Set [COUNTS]<br/></font>
+2117171021||PotP_Preview_Shad_17|<br/><font color="#9D75BF">Shades of Iron: Sithis Set [COUNTS]<br/></font>
+2117171022||PotP_Preview_Shad_18|<br/><font color="#9D75BF">Shades of Iron: Silver Swords [COUNTS]<br/></font>
+2117171023||PotP_Preview_Shad_19|<br/><font color="#9D75BF">Shades of Iron: Steel Swords [COUNTS]<br/></font>
+;
+;-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+;-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+;-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+;-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+;
+2117171024||PotP_Event_AtTheMercyOfStrangers_1_NG_Description	|<font color="#D7D23A">~ At the Mercy of Strangers ~</font><br/>Investigate the cry for help
+2117171025||PotP_Event_AtTheMercyOfStrangers_2_NG_Description	|<font color="#D7D23A">~ At the Mercy of Strangers ~</font><br/>Talk to John Verdun
+2117171026||PotP_Event_CaravanAttack_NG_1_Description			|<font color="#D7D23A">~ Caravan Attack ~</font><br/>Sounds of a commotion came from over here
+2117171027||PotP_Event_CaravanAttack_NG_2_Description			|<font color="#D7D23A">~ Caravan Attack ~</font><br/>A familiar face has arrived in Crow's Perch. Perhaps it will be worth a visit.
+2117171028||PotP_Event_DeadlyCrossing_1_NG_Description			|<font color="#D7D23A">~ Deadly Crossing ~</font><br/>Looters were seen here recently
+2117171029||PotP_Event_DeadlyCrossing_2_NG_Description			|<font color="#D7D23A">~ Deadly Crossing ~</font><br/>Looters were seen here recently
+2117171030||PotP_Event_DeadlyCrossing_3_NG_Description			|<font color="#D7D23A">~ Deadly Crossing ~</font><br/>Pay the toll or find another way across
+2117171031||PotP_Event_FaceMeIfYouDare_1_NG_Description			|<font color="#D7D23A">~ Face Me if You Dare! ~</font><br/>Talk to the challenger
+2117171032||PotP_Event_FaceMeIfYouDare_2_NG_Description			|<font color="#D7D23A">~ Face Me if You Dare! ~</font><br/>Talk to Ronvid
+2117171033||PotP_Event_FaceMeIfYouDare_3_NG_Description			|<font color="#D7D23A">~ Face Me if You Dare! ~</font><br/>Talk to Ronvid and his friends
+2117171034||PotP_Event_HarassingATroll_NG_Description			|<font color="#D7D23A">~ Harassing a Troll ~</font><br/>Help the troll kill the nekkers
+2117171035||PotP_Event_HighwayRobbery_NG_Description			|<font color="#D7D23A">~ Highway Robbery ~</font><br/>Save the trader from the bandit attack
+2117171036||PotP_Event_HighwaymansCache_NG_Description			|<font color="#D7D23A">~ Highwayman's Cache ~</font><br/>Talk to the bandits about crossing the bridge
+2117171037||PotP_Event_LootersHeatherton_NG_Description			|<font color="#D7D23A">~ Looters ~</font><br/>Confront the looters
+2117171038||PotP_Event_LootersCodgersQuarry_NG_Description		|<font color="#D7D23A">~ Looters ~</font><br/>Confront the looters
+2117171039||PotP_Event_LootersToderas_NG_Description			|<font color="#D7D23A">~ Looters ~</font><br/>Confront the looters
+2117171040||PotP_Event_MansBestFriend_NG_Description			|<font color="#D7D23A">~ Man's Best Friend ~</font><br/>Save the children from the wild dog
+2117171041||PotP_Event_AWarmWelcome_NG_Description				|<font color="#D7D23A">~ A Warm Welcome ~</font><br/>Approach the refugees
+2117171042||PotP_Event_DrunkenRabble_NG_Description				|<font color="#D7D23A">~ Drunken Rabble ~</font><br/>Approach the drunk butchers
+2117171043||PotP_Event_KarmicJustice_NG_Description				|<font color="#D7D23A">~ Karmic Justice ~</font><br/>Confront the elves
+2117171044||PotP_Event_NeverTrustChildren_NG_Description		|<font color="#D7D23A">~ Never Trust Children ~</font><br/>Talk to the crying child
+2117171045||PotP_Event_RacistsOfNovigradFC_NG_Description		|<font color="#D7D23A">~ Racists of Novigrad ~</font><br/>Confront the men harassing the elves
+2117171046||PotP_Event_RacistsOfNovigradHS_NG_Description		|<font color="#D7D23A">~ Racists of Novigrad ~</font><br/>Confront the men harassing the elf
+2117171047||PotP_Event_StrangersInTheNight_NG_Description		|<font color="#D7D23A">~ Strangers in the Night ~</font><br/>Talk to the three men
+2117171048||PotP_Event_StrumpetInDistress_NG_Description		|<font color="#D7D23A">~ Strumpet in Distress ~</font><br/>Intervene the arguing duo
+2117171049||PotP_Event_SuspiciousShakedown_NG_Description		|<font color="#D7D23A">~ Suspicious Shakedown ~</font><br/>Confront the bandits harassing the merchant
+2117171050||PotP_Event_TheFlameOfHatred_NG_1_Description		|<font color="#D7D23A">~ The Flame of Hatred ~</font><br/>Talk to the priest
+2117171051||PotP_Event_TheFlameOfHatred_NG_2_Description		|<font color="#D7D23A">~ The Flame of Hatred ~</font><br/>Investigate a report of bandits in the area
+2117171052||PotP_Event_TheMostTruestOfBasilisks_NG_Description	|<font color="#D7D23A">~ The Most Truest of Basilisks ~</font><br/>Investigate the beast tamer and his "Basilisk"
+2117171053||PotP_Event_ThePriceOfPassage_NG_1_Description		|<font color="#D7D23A">~ The Price of Passage ~</font><br/>Approach the Redanian soldiers
+2117171054||PotP_Event_ThePriceOfPassage_NG_2_Description		|<font color="#D7D23A">~ The Price of Passage ~</font><br/>Approach the Redanian soldiers
+2117171055||PotP_Event_ThePriceOfPassage_NG_3_Description		|<font color="#D7D23A">~ The Price of Passage ~</font><br/>Approach the Redanian soldiers
+2117171056||PotP_Event_WitchHunterRaids_NG_Description			|<font color="#D7D23A">~ Witch Hunter Raids ~</font><br/>Interfere with the Mage's arrest
+2117171057||PotP_Event_CallOfTheWild_NG_Description				|<font color="#D7D23A">~ Call of the Wild ~</font><br/>Investigate a Werewolf sighting in the area
+2117171058||PotP_Event_FartingTrolls_NG_Description				|<font color="#D7D23A">~ Farting Trolls ~</font><br/>Strange sounds and smells have been reported around this cave
+2117171059||PotP_Event_SirensCall_NG_Description				|<font color="#D7D23A">~ Siren's Call ~</font><br/>Defend the man from the sirens
+2117171060||PotP_Event_SweetBait_NG_Description					|<font color="#D7D23A">~ Sweet Bait ~</font><br/>Talk to the distressed child
+2117171061||PotP_Event_TheFourFacesOfHemdall_NG_Description		|<font color="#D7D23A">~ The Four Faces of Hemdall ~</font><br/>Confront the pirates blocking access to the shrine
+2117171062||PotP_Event_WoeIsMe_NG_Description					|<font color="#D7D23A">~ Woe is Me ~</font><br/>Help an injured peasant on the bridge
+2117171063||PotP_Event_YustiannaDisturbed_NG_Description		|<font color="#D7D23A">~ Yustianna Disturbed ~</font><br/>People say bandits have been rumored to lurk here
+2117171064||PotP_Event_TrailOfEchoes_NG_Description				|<font color="#D7D23A">~ Trail of Echoes ~</font><br/>Investigate the ancient cave in the mountains
+;
+;-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+;-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+;-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+;-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+;
+2117171065||PotP_Preview_Missable_00|<br/><font color="#9D75BF">The Following Quests May Fail Or Become Unavailable If Not Done Immediately<br/></font>
+2117171066||PotP_Preview_Missable_01|<br/><font color="#9D75BF">Complete Before travelling to Vizima During 'Lilac and Gooseberries'<br/></font>
+2117171067||PotP_Preview_Missable_02|<br/><font color="#9D75BF">Complete Before taking Uma from Crow's Perch During 'Ugly Baby'<br/></font>
+2117171068||PotP_Preview_Missable_03|<br/><font color="#9D75BF">Complete Before Accepting 'A Favor for a Friend'<br/></font>
+2117171069||PotP_Preview_Missable_04|<br/><font color="#9D75BF">Complete Before The Witch Hunter's Outpost Section During 'Count Reuven's Treasure'<br/></font>
+2117171070||PotP_Preview_Missable_05|<br/><font color="#9D75BF">Complete Before Accepting 'Following the Thread'<br/></font>
+2117171071||PotP_Preview_Missable_06|<br/><font color="#9D75BF">Complete Before Accepting 'On Thin Ice'<br/></font>
+2117171072||PotP_Preview_Missable_07|<br/><font color="#9D75BF">Complete Before Accepting 'King's Gambit'<br/></font>
+2117171073||PotP_Preview_Missable_08|<br/><font color="#9D75BF">Complete Before Accepting 'Battle Preparations'<br/></font>
+2117171074||PotP_Preview_Missable_09|<br/><font color="#9D75BF">Complete Before talking To Ciri About The Lodge Meeting During 'Final Preparations'<br/></font>
+2117171075||PotP_Preview_Missable_10|<br/><font color="#9D75BF">Complete Before Travelling To The Isle Of Mists<br/></font>
+2117171076||PotP_Preview_Missable_11|<br/><font color="#9D75BF">Complete Before Finishing 'Where Children Toil, Toys Waste Away'<br/></font>
+;
+2117171077||ProgressOnThePath_MoreEntries|Plus [COUNTS] more entries...
+;
+;Next ID 2117171078
