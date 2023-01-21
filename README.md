@@ -40,6 +40,10 @@ The following mods that add custom items are supported:
 **World Interactions**
 - DLC - Fast Travel Pack
 
+**Compatibility**
+The following mods have conflicting "Bundled" files which can not be merged or patched using script merger
+- [Brothers in Arms - TW3 Bug Fix and Restored Content Collection - Next-Gen](https://www.nexusmods.com/witcher3/mods/7329 "Click to visit this mod on Nexus Mods") 
+
 # Installation
 Download the main file from **Releases**, extract the files from the archive and place them in your mods and DLC folders
 
