@@ -1,4 +1,4 @@
-# Introduction
+# Introduction [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/C1C3I3NYN)
 This mod dynamically tracks the acquisition of rare and unique items as well as the completion of all quests and most worldmap activities. Whenever something is acquired or completed, it is marked as such in the relevent Progress Preview.
 
 ### Currently tracked:
