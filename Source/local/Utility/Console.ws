@@ -2,7 +2,38 @@
 // Progress on the Path - TW3 Progress Tracker
 //
 //---------------------------------------------------
-//-- Functions --------------------------------------
+//-- Exec Functions ---------------------------------
+//---------------------------------------------------
+
+exec function pt_pos() 
+{
+	GetWitcherPlayer().DisplayHudMessage(AreaTypeToName(theGame.GetCommonMapManager().GetCurrentArea()));
+	LogChannel('PotP Position', VecToString(thePlayer.GetWorldPosition()));
+}
+
+//---------------------------------------------------
+//-- Exec Functions ---------------------------------
+//---------------------------------------------------
+
+exec function pt_spiral()
+{
+	theGame.ScheduleWorldChangeToMapPin( "levels\the_spiral\spiral.w2w", '' );
+	theGame.RequestAutoSave( "fast travel", true );
+}
+
+//---------------------------------------------------
+//-- Exec Functions ---------------------------------
+//---------------------------------------------------
+
+exec function pt_forest() 
+{
+	if(theGame.GetCommonMapManager().GetCurrentArea() == 7) {
+		thePlayer.Teleport(Vector(-671.004,-2248.409,81.81971,1));
+	}
+}
+
+//---------------------------------------------------
+//-- Exec Functions ---------------------------------
 //---------------------------------------------------
 
 exec function pt_LogPins(PinType: name) {
@@ -26,7 +57,7 @@ exec function pt_LogPins(PinType: name) {
 }
 
 //---------------------------------------------------
-//-- Functions --------------------------------------
+//-- Exec Functions ---------------------------------
 //---------------------------------------------------
 
 exec function pt_update()
@@ -40,7 +71,7 @@ exec function pt_update()
 }
 
 //---------------------------------------------------
-//-- Functions --------------------------------------
+//-- Exec Functions ---------------------------------
 //---------------------------------------------------
 
 exec function pt_state() 
@@ -55,7 +86,7 @@ exec function pt_state()
 }
 
 //---------------------------------------------------
-//-- Functions --------------------------------------
+//-- Exec Functions ---------------------------------
 //---------------------------------------------------
 
 exec function pt_reset() 
@@ -72,7 +103,7 @@ exec function pt_reset()
 }
 
 //---------------------------------------------------
-//-- Functions --------------------------------------
+//-- Exec Functions ---------------------------------
 //---------------------------------------------------
 
 exec function pt_checkfact(s: string) {
@@ -85,28 +116,7 @@ exec function pt_checkfact(s: string) {
 }
 
 //---------------------------------------------------
-//-- Functions --------------------------------------
-//---------------------------------------------------
-
-exec function pt_spiral()
-{
-	theGame.ScheduleWorldChangeToMapPin( "levels\the_spiral\spiral.w2w", '' );
-	theGame.RequestAutoSave( "fast travel", true );
-}
-
-//---------------------------------------------------
-//-- Functions --------------------------------------
-//---------------------------------------------------
-
-exec function pt_forest() 
-{
-	if(theGame.GetCommonMapManager().GetCurrentArea() == 7) {
-		thePlayer.Teleport(Vector(-671.004,-2248.409,81.81971,1));
-	}
-}
-
-//---------------------------------------------------
-//-- Functions --------------------------------------
+//-- Exec Functions ---------------------------------
 //---------------------------------------------------
 
 exec function pt_sizes()
@@ -131,19 +141,19 @@ exec function pt_complete()
 	if (GetPotP(master, 'pt_complete'))
 	{
 		for ( Idx = 0; Idx < master.PotP_ArrayManager.MasterList_Events.Size(); Idx += 1 ) {
-			master.PotP_PersistentStorage.SetCompleted(master.PotP_ArrayManager.MasterList_Events[Idx]);
+			master.PotP_ArrayManager.MasterList_Events[Idx].SetCompleted();
 		}
 		
 		for ( Idx = 0; Idx < master.PotP_ArrayManager.MasterList_Quests.Size(); Idx += 1 ) {
-			master.PotP_PersistentStorage.SetCompleted(master.PotP_ArrayManager.MasterList_Quests[Idx]);
+			master.PotP_ArrayManager.MasterList_Quests[Idx].SetCompleted();
 		}
 
 		for ( Idx = 0; Idx < master.PotP_ArrayManager.MasterList_World.Size(); Idx += 1 ) {
-			master.PotP_PersistentStorage.SetCompleted(master.PotP_ArrayManager.MasterList_World[Idx]);
+			master.PotP_ArrayManager.MasterList_World[Idx].SetCompleted();
 		}
 
 		for ( Idx = 0; Idx < master.PotP_ArrayManager.MasterList_Items.Size(); Idx += 1 ) {
-			master.PotP_PersistentStorage.SetCompleted(master.PotP_ArrayManager.MasterList_Items[Idx]);
+			master.PotP_ArrayManager.MasterList_Items[Idx].SetCompleted();
 		}	
 	}
 }
@@ -263,7 +273,7 @@ exec function pt_AddCrossbows(LogEntries: bool, quality: int, optional Quantity:
 exec function pt_AddTrophies(LogEntries: bool, quality: int, optional Quantity: int, optional RemoveAfter: bool) {
 	
 	var PInventory: CInventoryComponent = thePlayer.GetInventory();
-	var ent_arr: array< name > = theGame.GetDefinitionsManager().GetItemsWithTag('trophy');
+	var ent_arr: array< name > = theGame.GetDefinitionsManager().GetItemsWithTag('Trophy');
 	var dup_arr: array< name >;
 	var Idx, min, max: int;
 		
@@ -326,6 +336,73 @@ exec function pt_AddQuestItems(LogEntries: bool, quality: int, optional Quantity
 			}
 		}
 	}
+}
+
+//---------------------------------------------------
+//-- Functions --------------------------------------
+//---------------------------------------------------
+
+exec function pt_LogGwentCards(only_variations: bool)
+{
+	var master: CProgressOnThePath;
+	var PInventory: CInventoryComponent = thePlayer.GetInventory();
+	var ent_arr: array< name > = theGame.GetDefinitionsManager().GetItemsWithTag('GwintCard');
+	
+	var CardArray: array<name>;
+	var CardNames: array<string>;
+	var CardBases: array< array< name > >;
+	var CardName: string;
+	var CardBase: name;
+	var Idx, Edx: int;
+	
+	if (!GetPotP(master, 'pt_LogGwentCards'))
+	{
+		return;
+	}	
+	
+	master.PotP_ItemsGoblin.GotoState('Disabled');
+	
+	for (Idx = 0; Idx < ent_arr.Size(); Idx += 1)
+	{
+		CardArray.Clear();
+		
+		PInventory.AddAnItem(ent_arr[Idx], 1);
+		
+		CardBase = ent_arr[Idx];
+		CardName = GetLocStringByKeyExt(theGame.GetDefinitionsManager().GetItemLocalisationKeyName(CardBase));
+		
+		if (CardNames.Contains(CardName))
+		{
+			Edx = CardNames.FindFirst(CardName);
+			CardBases[Edx].PushBack(CardBase);
+		}
+		else
+		{
+			CardArray.PushBack(CardBase);
+			CardNames.PushBack(CardName);
+			CardBases.PushBack(CardArray);
+		}	
+	}
+	
+	for (Idx = 0; Idx < CardNames.Size(); Idx += 1)
+	{
+		if (only_variations && CardBases[Idx].Size() == 1)
+		{
+			continue;
+		}
+		
+		LogChannel('PotP Gwent Card Logger', "["+ Idx +"] Local Name = " + CardNames[Idx]);
+		LogChannel('PotP Gwent Card Logger', "["+ Idx +"] Variations = " + CardBases[Idx].Size());
+		
+		for (Edx = 0; Edx < CardBases[Idx].Size(); Edx += 1)
+		{
+			LogChannel('PotP Gwent Card Logger', "Variation ["+ Edx +"] = " + CardBases[Idx][Edx]);
+		}
+		
+		LogChannel('PotP Gwent Card Logger', " ");
+	}
+
+	master.PotP_ItemsGoblin.GotoState('Idle');
 }
 
 //---------------------------------------------------
@@ -529,3 +606,80 @@ exec function pt_dlc()
 //---------------------------------------------------
 //-- End Of Code ------------------------------------
 //---------------------------------------------------
+
+//---------------------------------------------------
+//-- Functions --------------------------------------
+//---------------------------------------------------
+
+exec function pt_variation(type: name, only_variations: bool)
+{
+	/*Allowed Types
+	 *pt_variation('PlayerSilverWeapon', true)
+	 *pt_variation('PlayerSteelWeapon', true)
+	 *pt_variation('Trophy', true)
+	 */
+	 
+	var master: CProgressOnThePath;
+	var PInventory: CInventoryComponent = thePlayer.GetInventory();
+	var ent_arr: array< name > = theGame.GetDefinitionsManager().GetItemsWithTag(type);
+	
+	var ItemArray: array<name>;
+	var ItemNames: array<string>;
+	var ItemBases: array< array< name > >;
+	var ItemName: string;
+	var ItemBase: name;
+	var Idx, Edx, min, max: int;
+	
+	if (!GetPotP(master, 'pt_LogGwentCards'))
+	{
+		return;
+	}	
+	
+	master.PotP_ItemsGoblin.GotoState('Disabled');
+	
+	for (Idx = 0; Idx < ent_arr.Size(); Idx += 1)
+	{
+		ItemArray.Clear();
+
+		PInventory.GetItemQualityFromName(ent_arr[Idx], min, max);
+		if (min == 4) 
+		{	
+			PInventory.AddAnItem(ent_arr[Idx], 1);
+			
+			ItemBase = ent_arr[Idx];
+			ItemName = GetLocStringByKeyExt(theGame.GetDefinitionsManager().GetItemLocalisationKeyName(ItemBase));
+			
+			if (ItemNames.Contains(ItemName))
+			{
+				Edx = ItemNames.FindFirst(ItemName);
+				ItemBases[Edx].PushBack(ItemBase);
+			}
+			else
+			{
+				ItemArray.PushBack(ItemBase);
+				ItemNames.PushBack(ItemName);
+				ItemBases.PushBack(ItemArray);
+			}	
+		}
+	}
+	
+	for (Idx = 0; Idx < ItemNames.Size(); Idx += 1)
+	{
+		if (only_variations && ItemBases[Idx].Size() == 1)
+		{
+			continue;
+		}
+		
+		LogChannel('PotP Variation Logger', "["+ Idx +"] Local Name = " + ItemNames[Idx]);
+		LogChannel('PotP Variation Logger', "["+ Idx +"] Variations = " + ItemBases[Idx].Size());
+		
+		for (Edx = 0; Edx < ItemBases[Idx].Size(); Edx += 1)
+		{
+			LogChannel('PotP Variation Logger', "Variation ["+ Edx +"] = " + ItemBases[Idx][Edx]);
+		}
+		
+		LogChannel('PotP Variation Logger', " ");
+	}
+
+	master.PotP_ItemsGoblin.GotoState('Idle');
+}

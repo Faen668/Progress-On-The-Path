@@ -1,0 +1,214 @@
+{
+    "files": [
+        {
+            "path": "gameplay\\gui_new\\icons\\potp\\collect.png",
+            "level": 0,
+            "seed": 1,
+            "consumed": 1,
+            "id": "B59BAB48-CE3C3CBF-6FF11E34-137891B7"
+        },
+        {
+            "path": "gameplay\\gui_new\\icons\\potp\\gwint_mons.png",
+            "level": 0,
+            "seed": 1,
+            "consumed": 1,
+            "id": "1675C6A2-FECCADB2-320E09FF-81227CF2"
+        },
+        {
+            "path": "gameplay\\gui_new\\icons\\potp\\gwint_nilf.png",
+            "level": 0,
+            "seed": 1,
+            "consumed": 1,
+            "id": "D3A6C6D4-4B22EFC1-5D6E679D-B193D35D"
+        },
+        {
+            "path": "gameplay\\gui_new\\icons\\potp\\gwint_north.png",
+            "level": 0,
+            "seed": 1,
+            "consumed": 1,
+            "id": "802534F3-7CDF8F22-936448C4-AB48AE51"
+        },
+        {
+            "path": "gameplay\\gui_new\\icons\\potp\\gwint_scoj.png",
+            "level": 0,
+            "seed": 1,
+            "consumed": 1,
+            "id": "B3C3B6A3-DB3D6711-8A68900A-D6BAC09B"
+        },
+        {
+            "path": "gameplay\\gui_new\\icons\\potp\\gwint_skel.png",
+            "level": 0,
+            "seed": 1,
+            "consumed": 1,
+            "id": "3A38341B-68AC8B78-0D9FF3BA-A73C9475"
+        },
+        {
+            "path": "gameplay\\gui_new\\icons\\potp\\gwint_spec.png",
+            "level": 0,
+            "seed": 1,
+            "consumed": 1,
+            "id": "A6F4654A-2876A909-59C4E99E-2E0B71A3"
+        },
+        {
+            "path": "gameplay\\gui_new\\icons\\potp\\map.png",
+            "level": 0,
+            "seed": 1,
+            "consumed": 1,
+            "id": "7AD8FAD1-208BBCE8-33CAA447-04079270"
+        },
+        {
+            "path": "gameplay\\gui_new\\icons\\potp\\qp.png",
+            "level": 0,
+            "seed": 1,
+            "consumed": 1,
+            "id": "4CCEE2A4-895F70D7-6C83266D-9C4DFF01"
+        },
+        {
+            "path": "gameplay\\gui_new\\icons\\potp\\qp_alt.png",
+            "level": 0,
+            "seed": 1,
+            "consumed": 1,
+            "id": "DD779D71-F43FC02C-4C34FF50-CE368A3B"
+        },
+        {
+            "path": "gameplay\\gui_new\\icons\\potp\\qp_miss.png",
+            "level": 0,
+            "seed": 1,
+            "consumed": 1,
+            "id": "F84BA3C0-A66DBDF9-3F84A781-A8FB0E35"
+        },
+        {
+            "path": "gameplay\\gui_new\\icons\\potp\\tracked_banditcamp.png",
+            "level": 0,
+            "seed": 1,
+            "consumed": 1,
+            "id": "126D0BA4-7A3D2F7A-9FC2245C-5FF3E459"
+        },
+        {
+            "path": "gameplay\\gui_new\\icons\\potp\\tracked_banditcamp_dark.png",
+            "level": 0,
+            "seed": 1,
+            "consumed": 1,
+            "id": "B4A24CEB-664AAAA3-830B3CC6-AD3C4436"
+        },
+        {
+            "path": "gameplay\\gui_new\\icons\\potp\\tracked_blue.png",
+            "level": 0,
+            "seed": 1,
+            "consumed": 1,
+            "id": "CB98EE38-064A49B7-A5087195-0DCA72C8"
+        },
+        {
+            "path": "gameplay\\gui_new\\icons\\potp\\tracked_gold.png",
+            "level": 0,
+            "seed": 1,
+            "consumed": 1,
+            "id": "CF794ABC-BDCD15E2-8BFCCDED-995C33C8"
+        },
+        {
+            "path": "gameplay\\gui_new\\icons\\potp\\tracked_guardedtreasure.png",
+            "level": 0,
+            "seed": 1,
+            "consumed": 1,
+            "id": "B739DA00-6943597B-DA90DCF9-C87A6B36"
+        },
+        {
+            "path": "gameplay\\gui_new\\icons\\potp\\tracked_guardedtreasure_dark.png",
+            "level": 0,
+            "seed": 1,
+            "consumed": 1,
+            "id": "FE252A63-DE2C3D62-EBD24F24-23E55FB2"
+        },
+        {
+            "path": "gameplay\\gui_new\\icons\\potp\\tracked_gwent.png",
+            "level": 0,
+            "seed": 1,
+            "consumed": 1,
+            "id": "70DFF2F5-4A859505-A91133D5-F4BDC754"
+        },
+        {
+            "path": "gameplay\\gui_new\\icons\\potp\\tracked_monsterden.png",
+            "level": 0,
+            "seed": 1,
+            "consumed": 1,
+            "id": "7C5415AD-5FE58DFE-87A9F05C-BA9D50B7"
+        },
+        {
+            "path": "gameplay\\gui_new\\icons\\potp\\tracked_monsterden_dark.png",
+            "level": 0,
+            "seed": 1,
+            "consumed": 1,
+            "id": "EE430596-BFD061D3-1D7C9592-9DEEAAEC"
+        },
+        {
+            "path": "gameplay\\gui_new\\icons\\potp\\tracked_monsternest.png",
+            "level": 0,
+            "seed": 1,
+            "consumed": 1,
+            "id": "7DF3B58D-69FC3D9F-F6E4B8A4-72869DFC"
+        },
+        {
+            "path": "gameplay\\gui_new\\icons\\potp\\tracked_monsternest_dark.png",
+            "level": 0,
+            "seed": 1,
+            "consumed": 1,
+            "id": "BF58A559-ACFB1659-FD8097B7-C6F3EB0F"
+        },
+        {
+            "path": "gameplay\\gui_new\\icons\\potp\\tracked_personindistress.png",
+            "level": 0,
+            "seed": 1,
+            "consumed": 1,
+            "id": "203A4CDD-3A7ABD9B-7A192FD1-E31885C3"
+        },
+        {
+            "path": "gameplay\\gui_new\\icons\\potp\\tracked_personindistress_dark.png",
+            "level": 0,
+            "seed": 1,
+            "consumed": 1,
+            "id": "88DF32A9-0AA5BAC9-B27907F3-4EF39341"
+        },
+        {
+            "path": "gameplay\\gui_new\\icons\\potp\\tracked_placeofpower.png",
+            "level": 0,
+            "seed": 1,
+            "consumed": 1,
+            "id": "B2AB56C2-7AAABD10-42E72DBA-44E9CC1D"
+        },
+        {
+            "path": "gameplay\\gui_new\\icons\\potp\\tracked_placeofpower_dark.png",
+            "level": 0,
+            "seed": 1,
+            "consumed": 1,
+            "id": "8D2339F3-540D37BD-09F58695-8B6DFEB6"
+        },
+        {
+            "path": "gameplay\\gui_new\\icons\\potp\\tracked_red.png",
+            "level": 0,
+            "seed": 1,
+            "consumed": 1,
+            "id": "72A01CCE-093E4DC1-DF3C37A9-197AC256"
+        },
+        {
+            "path": "gameplay\\gui_new\\icons\\potp\\tracked_roadsign.png",
+            "level": 0,
+            "seed": 1,
+            "consumed": 1,
+            "id": "2F3CF631-16A2D81C-FCC0D621-3BD1562B"
+        },
+        {
+            "path": "gameplay\\gui_new\\icons\\potp\\tracked_roadsign_dark.png",
+            "level": 0,
+            "seed": 1,
+            "consumed": 1,
+            "id": "27F5EB20-AC42945F-6AB223F6-6013160F"
+        },
+        {
+            "path": "gameplay\\gui_new\\icons\\potp\\wolf.png",
+            "level": 0,
+            "seed": 1,
+            "consumed": 1,
+            "id": "28087062-8B1F287E-F9F1317C-1394AE40"
+        }
+    ]
+}

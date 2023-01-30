@@ -6,129 +6,142 @@
 //-- Class ------------------------------------------
 //---------------------------------------------------
 
-statemachine class CProgressOnThePath_TutorialPopup extends CEntity {	
+struct PotP_PlayerNotification
+{
+	var message_uuid	: string;
+	var message_title	: string;
+	var message_body	: string;
 	
-	public var MessageID: string;
-		default MessageID = "";
-		
-	public var MessageTitle: string;
-		default MessageTitle = "";
-		
-	public var Messagebody: string;
-		default Messagebody = "";
-
-	public var TutorialPopUp: bool;
-		default TutorialPopUp = false;
-
-	public var TutorialHint: bool;
-		default TutorialHint = false;
-		
-	public function Showpopup(M: string, B: string, U: string, optional force: bool, optional isTutorialMessage: bool, optional isTutorialHint: bool) {
-	
-		MessageTitle = M;
-		Messagebody = B;
-		MessageID = U;
-		
-		TutorialPopUp = isTutorialMessage;
-		TutorialHint = isTutorialHint;
-
-		if (FactsQuerySum(MessageID) == 0 || force) {
-			this.GotoState('PT_Waiting');
-			this.GotoState('PT_Running');
-		}
-	}
+	var is_unique		: bool;
 }
 
-//---------------------------------------------------
-//-- States -----------------------------------------
-//---------------------------------------------------
+statemachine class CProgressOnThePath_TutorialPopup
+{	
+	public var filename: name;
+		default filename = 'PotP Popup Manager';
+	
+	public var master: CProgressOnThePath;
 
-state PT_Waiting in CProgressOnThePath_TutorialPopup {
-}
+	//---------------------------------------------------
 
-//---------------------------------------------------
-//-- States -----------------------------------------
-//---------------------------------------------------
-
-state PT_Running in CProgressOnThePath_TutorialPopup {
+	public function initialise(master: CProgressOnThePath)
+	{
+		this.master = master;
 		
-	event OnEnterState(previous_state_name: name) {
-		this._Entry();
+		//Display Pending Messages in persistent storage.
+		if (master.PotP_PersistentStorage.MasterList_Pl_Messages.Size() > 0)
+		{
+			this.GotoState('ShowMessage');
+		}
 	}
-
-//---------------------------------------------------
-
-	entry function _Entry() {
+	
+	//---------------------------------------------------
 		
-		while (PotP_IsPlayerBusy()) {
-			Sleep(5);
-		}
-		
-		FactsSet(parent.MessageID, 1);
-		
-		if (parent.TutorialPopUp) {
-			this._OpenTutorial();
-			return;
-		}
-
-		if (parent.TutorialHint) {
-			this._OpenTutorialHint();
+	public function Showpopup(title: string, body: string, uuid: string, type: string, is_unique: bool) 
+	{		
+		if (type == "PopUp")
+		{
+			this.DisplayUserMessage(PotP_PlayerNotification(uuid, title, body, is_unique));
 			return;
 		}
 		
-		this._Open();
+		if (!is_unique && uuid == "")
+		{
+			uuid = "PotP_GenericMessageID";
+		}
+		
+		master.PotP_PersistentStorage.MasterList_Pl_Messages.PushBack(PotP_PlayerNotification(uuid, title, body, is_unique));
+		if (!this.IsInState('ShowMessage')) 
+		{ 
+			this.GotoState('ShowMessage'); 
+		}
 	}
 
 //---------------------------------------------------
 
-	latent function _Open() {
+	private function DisplayUserMessage(message: PotP_PlayerNotification) {
 
-		var popup_data: PotP_PopupData;
+		var popup_data: PotP_PopupData = new PotP_PopupData in thePlayer;
 
-		popup_data = new PotP_PopupData in thePlayer;
-
-		popup_data.SetMessageTitle( parent.MessageTitle );
-		popup_data.SetMessageText( parent.Messagebody );
-
+		popup_data.SetMessageTitle( message.message_title );
+		popup_data.SetMessageText( message.message_body );
 		popup_data.PauseGame = true;
 		
-		if (PotP_UsingVladimirUI()) {
+		if (PotP_UsingVladimirUI()) 
+		{
 			popup_data.ScreenPosX = 400.0 / 1920.0;
 		}
 		
 		theGame.RequestMenu('PopupMenu', popup_data);
 	}
+}
 
 //---------------------------------------------------
+//-- States -----------------------------------------
+//---------------------------------------------------
 
-	latent function _OpenTutorial() {
-
-		var tut: W3TutorialPopupData = new W3TutorialPopupData in thePlayer;
-		tut.managerRef = theGame.GetTutorialSystem();
+state Idle in CProgressOnThePath_TutorialPopup 
+{
+	event OnEnterState(previous_state_name: name) 
+	{
+		super.OnEnterState(previous_state_name);
+		PotP_Logger("Entered state [Idle]", , parent.filename);
 		
-		tut.messageTitle = parent.MessageTitle;
-		tut.messageText = parent.Messagebody;
-		
-		tut.enableGlossoryLink = false;
-		tut.autosize = true;
-		tut.blockInput = true;
-		tut.pauseGame = true;
-		tut.fullscreen = true;	
-		tut.canBeShownInMenus = true;
-		tut.enableAcceptButton = true;
-		
-		theGame.GetTutorialSystem().ShowTutorialHint(tut);
+		if (parent.master.PotP_PersistentStorage.MasterList_Pl_Messages.Size() > 0)
+		{
+			parent.GotoState('ShowMessage');
+		}
 	}
+}
 
 //---------------------------------------------------
+//-- States -----------------------------------------
+//---------------------------------------------------
 
-	latent function _OpenTutorialHint() {
+state ShowMessage in CProgressOnThePath_TutorialPopup 
+{
+	event OnEnterState(previous_state_name: name) 
+	{
+		super.OnEnterState(previous_state_name);
+		PotP_Logger("Entered state [ShowMessage]", , parent.filename);
+		
+		this.ShowMessage_Entry();
+	}
+	
+//---------------------------------------------------
+
+	entry function ShowMessage_Entry()
+	{
+		var message: PotP_PlayerNotification;
+
+		while (PotP_IsPlayerBusy()) 
+		{
+			PotP_Logger("Waiting For Player Busy Check...", , parent.filename);
+			Sleep(5);
+		}
+		
+		message = parent.master.PotP_PersistentStorage.MasterList_Pl_Messages[0];
+		
+		this.DisplayUserMessage(message);
+
+		if (message.is_unique)
+		{
+			FactsSet(message.message_uuid, 1);
+		}
+			
+		parent.master.PotP_PersistentStorage.MasterList_Pl_Messages.Erase(0);
+		parent.GotoState('Idle');
+	}
+	
+//---------------------------------------------------
+
+	latent function DisplayUserMessage(message: PotP_PlayerNotification) {
 
 		var m_tutorialHintDataObj: W3TutorialPopupData = new W3TutorialPopupData in thePlayer;
 
 		m_tutorialHintDataObj.managerRef = theGame.GetTutorialSystem();
-		m_tutorialHintDataObj.messageTitle = parent.MessageTitle;
-		m_tutorialHintDataObj.messageText = "<p align=\"center\">" + parent.Messagebody + "</p>";
+		m_tutorialHintDataObj.messageTitle = message.message_title;
+		m_tutorialHintDataObj.messageText = "<p align=\"center\">" + message.message_body + "</p>";
 		m_tutorialHintDataObj.enableGlossoryLink = false;		
 		m_tutorialHintDataObj.autosize = true;
 		m_tutorialHintDataObj.blockInput = false;
@@ -139,9 +152,15 @@ state PT_Running in CProgressOnThePath_TutorialPopup {
 		
 		m_tutorialHintDataObj.posX = 0.f;
 		m_tutorialHintDataObj.posY = 0.40f;
-		m_tutorialHintDataObj.duration = 5 * 1000;
+		
+		m_tutorialHintDataObj.duration = ( (float) PotP_GetNotificationValue('ProgressOnThePath_GloballNotification_Time') * 1000 );
+		if (message.is_unique)
+		{
+			m_tutorialHintDataObj.duration = (10 * 1000);
+		}
 		
 		theGame.GetTutorialSystem().ShowTutorialHint(m_tutorialHintDataObj);
+		Sleep(m_tutorialHintDataObj.duration);
 	}
 }
 	

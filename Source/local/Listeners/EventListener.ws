@@ -15,9 +15,9 @@ statemachine class CProgressOnThePath_EventListener
 	
 	//---------------------------------------------------
 
-	public function initialise(PotP_BaseClass: CProgressOnThePath)
+	public function initialise(master: CProgressOnThePath)
 	{
-		this.master = PotP_BaseClass;
+		this.master = master;
 	}
 }
 
@@ -52,7 +52,7 @@ state Idle in CProgressOnThePath_EventListener
 
 	entry function Idle_Main() { 
 		
-		Sleep(FactsQuerySum("ProgressOnThePath_BGProcessing_Qust"));
+		Sleep(5);
 		
 		while (PotP_IsPlayerBusy()) 
 		{
@@ -90,16 +90,14 @@ state Checking in CProgressOnThePath_EventListener
 		{
 			if (FactsQuerySum(events_array[i].entryname) > 0) 
 			{
-				if (parent.master.PotP_PersistentStorage.IsCompletedOrIgnored(events_array[i])) 
+				if (!events_array[i].IsPlayable()) 
 				{
 					continue;
 				}
-				parent.master.PotP_PersistentStorage.SetCompleted(events_array[i], , true);
-				parent.master.PotP_Notifications.UpdatePlayerFromQuest(events_array[i].localname, 2, false, false);
-				PotP_Logger("Completed Random Event [" + events_array[i].entryname + "] -- " + events_array[i].localname, , parent.filename);
+				
+				PotP_CompleteEventByString(events_array[i].entryname);
 			}
 		}
-		parent.master.PotP_Notifications.NotifyPlayerFromBackgroundProcess();
 		parent.GotoState('Idle');
 	}
 }

@@ -58,17 +58,18 @@
 2116568045||PotP_PLURAL_REPLACER|s
 ;
 2116568046||option_ProgressOnThePath_MeditationUpdate|<font color="#479c9d">Perform A Full Update       :    When Meditating</font>
-2116568047||option_ProgressOnThePath_EnableHotKey|<font color="#479c9d">Perform A Full Update       :    Via Hotkey:</font> <font size="16"> (Default 'F7')</font>
-2116568048||option_ProgressOnThePath_BGProcessing_Qust|<font color="#A3CFA7">Background Monitoring     :   Quest Completion</font> <font size="16">(Freq in seconds)</font>
-2116568049||option_ProgressOnThePath_BGProcessing_Item|<font color="#A3CFA7">Background Monitoring     :   Item Acquisition</font> <font size="16">(Freq in seconds)</font>
-2116568050||option_ProgressOnThePath_BGProcessing_WMap|<font color="#A3CFA7">Background Monitoring     :   Map Completion</font> <font size="16">(Freq in seconds)</font>
-2116568051||option_ProgressOnThePath_Notification_Size|<font color="#FFE194">Notification Settings           :   Font Size</font>
-2116568052||option_ProgressOnThePath_Notification_Time|<font color="#FFE194">Notification Settings           :   Display Time</font> <font size="16">(Freq in seconds)</font>
-2116568053||option_ProgressOnThePath_Notification_Font|<font color="#FFE194">Notification Settings           :   Text Colour</font>
-2116568054||option_ProgressOnThePath_Notification_Qust|<font color="#FF7D63">Notification Catagories       :   Quest Updates</font>
-2116568055||option_ProgressOnThePath_Notification_Item|<font color="#FF7D63">Notification Catagories       :   Item Updates</font>
-2116568056||option_ProgressOnThePath_Notification_WMap|<font color="#FF7D63">Notification Catagories       :   Map Pin Updates</font>
-2116568057||option_ProgressOnThePath_Notification_Null|<font color="#FF7D63">Notification Catagories       :   Null Updates</font> <font size="16">(Nothing To Update...)</font>
+2116568047||option_ProgressOnThePath_EnableHotKey|<font color="#479c9d">Perform A Full Update       :    Via Hotkey:</font> <font size="16"> (Default 'Numpad 5')</font>
+;
+2116568048||option_ProgressOnThePath_GlobalNotification_Size|<font color="#7FD8BE">Global Settings       :   Notification Font Size</font>
+2116568049||option_ProgressOnThePath_GlobalNotification_Time|<font color="#7FD8BE">Global Settings       :   Notification Display Time</font> <font size="16">(Freq in seconds)</font>
+2116568050||option_ProgressOnThePath_GlobalNotification_Font|<font color="#7FD8BE">Global Settings       :   Notification Text Colour</font>
+;
+2116568051||option_ProgressOnThePath_FullNotification_Quest|<font color="#FF7D63">Main Update Notification       :   Include Quest Updates</font>
+2116568052||option_ProgressOnThePath_FullNotification_Event|<font color="#FF7D63">Main Update Notification       :   Include Random Event Updates</font>
+2116568053||option_ProgressOnThePath_FullNotification_Gwent|<font color="#FF7D63">Main Update Notification       :   Include Gwent Card Updates</font>
+2116568054||option_ProgressOnThePath_FullNotification_Items|<font color="#FF7D63">Main Update Notification       :   Include Item Updates</font>
+2116568055||option_ProgressOnThePath_FullNotification_World|<font color="#FF7D63">Main Update Notification       :   Include Map Pin Updates</font>
+2116568056||option_ProgressOnThePath_FullNotification_Nulls|<font color="#FF7D63">Main Update Notification       :   Show Null Updates</font> <font size="16">(Nothing To Update...)</font>
 ;
 2116568058||ProgressOnThePath_FilterError|<br/><br/><br/><br/><br/><br/>Nothing to show<br/><br/>Check the active filters for this preview to show any incomplete entries
 2116568059||ProgressOnThePath_FilterComplete|<br/><br/><br/><br/><br/><br/>All entries complete for this preview
@@ -82,7 +83,6 @@
 2116568065||option_ProgressOnThePath_Preview_Comp|<font color="#7FD8BE">Global             :   Show Completed Entries</font>
 2116568066||option_ProgressOnThePath_Preview_Igno|<font color="#7FD8BE">Global             :   Show Ignored Entries</font>
 2116568067||option_ProgressOnThePath_Preview_Iden|<font color="#7FD8BE">Global             :   Show Entry UUID's</font>
-2116568068||option_ProgressOnThePath_Preview_Hide|<font color="#7FD8BE">Global             :   Spoiler Mode</font> <font size="16"> (Hide Entry Names)</font>
 ;
 2116568069||option_ProgressOnThePath_Preview_WArea|<font color="#8EA4C8">World Map     :   Filter By Region</font>
 2116568070||preset_value_QT_Option_WArea_0|All
@@ -93,7 +93,7 @@
 2116568075||preset_value_QT_Option_WArea_5|Toussaint
 2116568076||preset_value_QT_Option_WArea_6|Kaer Morhen
 ;
-2116568077||option_ProgressOnThePath_Preview|<font color="#7FD8BE">Global             :   Hotkey Opens
+2116568077||option_ProgressOnThePath_Preview|<font color="#7FD8BE">Global             :   Hotkey Opens</font> <font size="16"> (Default 'Numpad 6')</font>
 2116568078||preset_value_QT_Option_Preview_0|Quest Progress
 2116568079||preset_value_QT_Option_Preview_1|World Map Progress
 2116568080||preset_value_QT_Option_Preview_2|Collectable Items Progress
@@ -175,11 +175,11 @@
 2116568147||ProgressOnThePath_Default_MapPin_Name				|Random Event
 2116568148||ProgressOnThePath_Default_MapPin_Description		|A Random Event Is Available At This Location
 ;
-2116568149||preset_value_QT_Option_NotificationColour_0|Black (Default)
-2116568150||preset_value_QT_Option_NotificationColour_1|<font color="#233067">Blue</font>
-2116568151||preset_value_QT_Option_NotificationColour_2|<font color="#630F0F">Red</font>
-2116568152||preset_value_QT_Option_NotificationColour_3|<font color="#084A23">Green</font>
-2116568153||preset_value_QT_Option_NotificationColour_4|<font color="#431C53">Purple</font>
+2116568149||preset_value_QT_Option_GlobalNotificationColour_0|Black (Default)
+2116568150||preset_value_QT_Option_GlobalNotificationColour_1|<font color="#233067">Blue</font>
+2116568151||preset_value_QT_Option_GlobalNotificationColour_2|<font color="#630F0F">Red</font>
+2116568152||preset_value_QT_Option_GlobalNotificationColour_3|<font color="#084A23">Green</font>
+2116568153||preset_value_QT_Option_GlobalNotificationColour_4|<font color="#431C53">Purple</font>
 ;
 2116568154||UpdateProgressOnThePath|PotP: Update Progress Tracker
 2116568155||DisplayProgressPreview|PotP: Preview Key
@@ -190,9 +190,9 @@
 2116568158||ProgressOnTheBath_TutorialBook1_Name|Updating The Tracker
 2116568159||ProgressOnTheBath_TutorialBook1_Desc|<font color="#CD7D03">Updating The Tracker:</font><br/>Progress on the Path is fully automatic and monitors gameplay completion using a system of background monitors while you are getting on with your whirling, twirling and bee hive burning.<br/><br/>Background monitoring comes with a few options in the Mod Menu for you to play with and customize to your liking. You are able to customize the frequency with which the background monitor will update the player and also suppress / enable notifications for the different tracking categories you are interested in being updated about. There are also several other ways Progress on the Path can be updated:<br/><br/><font color="#18B3F1">While Meditating</font> - With the 'Perform A Full Update When Meditating' option enabled, the tracker will perform a full update automatically when the player starts meditation, the update will only run once per meditation session.<br/><br/><font color="#18B3F1">Hotkey</font> - The update hotkey (Default NumPad 5) can be used to run a full update whenever you like, a notification will display on-screen after the update which can also be customized in the mod menu.
 2116568160||ProgressOnTheBath_TutorialBook2_Name|Progress Previews
-2116568161||ProgressOnTheBath_TutorialBook2_Desc|Progress Previews:</font><br/>You can preview your current completion progress by hitting one of the three hotkeys built into the mod (default NumPad7, NumPad8, NumPad9).<br/><br/>Each hotkey will open a customisable and dynamic message showing you the current status of the tracked entries for that catagory.<br/><br/>NumPad7 will open the preview for 'Quest Progress'<br/>NumPad8 Will open the preview for 'World Map Progress'<br/>NumPad9 will open the preview for 'Collectables Progress'<br/><br/>Depending on your settings in the mod menu, the previews will display the tracked entries as follows:<br/><br/>'Missable' <font color="#D79D3A">(*)</font><br/>'Mod Added' <font color="#26CAD6">(*)</font><br/>'In Progress' <font color="#C8566B">(*)</font><br/><font color="#A1EF7A">~ Completed ~</font><br/><font color="#D7D23A">~ Ignored ~</font><br/><br/>The previews will also display how many tracked entries are being hidden by the filters you have enabled in the mod menu.
+2116568161||ProgressOnTheBath_TutorialBook2_Desc|Progress Previews:</font><br/>You can preview your current completion progress by hitting the configurable hotkey (default Numpad 6) or by selecting one of the preview entries in the glossary section.<br/><br/>Depending on your settings in the mod menu, the previews will display the tracked entries with specific tags attached.<br/><br/>Missable entries will appear under their own sub category.<br/><br/>The <font color="#26CAD6">(Mod Added)</font> tag will be applied to all entries being dynamically tracked from supported mods.<br/><br/>The <font color="#C8566B">(In Progress)</font> tag will be applied to all quests that are active in the players journal.<br/><br/>The <font color="#A1EF7A">(Completed)</font> tag will be applied to all entries that have been completed / collected.<br/><br/>The <font color="#D7D23A">(Ignored)</font> tag will be applied to any entries that have been manually set as ignored. The mod will never automatically set an option to ignored, you can use this to hide / ignore entries you don't have any interest in.<br/><br/>The previews will also display the names of any filters you have enabled in the mod menu at the top of the preview under the header.
 2116568162||ProgressOnTheBath_TutorialBook3_Name|Item Tracking
-2116568163||ProgressOnTheBath_TutorialBook3_Desc|<font color="#CD7D03">Item Tracking:</font><br/>Progress on the Path supports dynamic tracking of over 350 rare, unique or otherwise difficult to find items as well as hundreds of Mod Added items available from the different supported mods.<br/><br/>The background monitoring system will evaluate all items as they are added to your inventory or stash and update them accordingly in the previews if they are collectable.<br/><br/>Dropping or selling collectable items will not affect their completion status in the tracker so feel free to do whatever you want with them after collecting them for the first time.
+2116568163||ProgressOnTheBath_TutorialBook3_Desc|<font color="#CD7D03">Item Tracking:</font><br/>Progress on the Path supports dynamic tracking of over 350 rare, unique or otherwise difficult to find items as well as hundreds of Mod Added items available from the different supported mods.<br/><br/>The background monitoring system will evaluate all items as they are added to your inventory or stash and update them accordingly in the previews if they are collectable.<br/><br/>Dropping or selling collectable items will not affect their completion status in the tracker so feel free to do whatever you want with them after collecting them for the first time.<br/><br/><font color="#CD7D03">Gwent Card Tracking:</font><br/>Progress on the Path tracks all collectable Gwent Cards in its own preview message. As well as displaying a list of all cards, the preview also contains sublists categorizing the cards on how they are obtained.
 2116568164||ProgressOnTheBath_TutorialBook4_Name|Quest Tracking
 2116568165||ProgressOnTheBath_TutorialBook4_Desc|<font color="#CD7D03">Quest Tracking:</font><br/>Quest tracking is quite simple under the hood. The background monitoring system will automatically update tracked quests to their correct status as you start and complete them in the game.<br/><br/>If there is a quest you are not able to do due to in-game decisions or some other reason, you can manually toggle the quest as 'Completed' or 'Ignored' using console commands which will be explained in the 'Console Commands' Section.
 2116568166||ProgressOnTheBath_TutorialBook5_Name|World Map Tracking
@@ -638,40 +638,40 @@
 2116568564||option_PotP_TrackingGroup_ScavengerHuntQuests_WolvenSet_07|Scavenger Hunt: Wolf School Gear - Part 6
 2116568565||option_PotP_TrackingGroup_ScavengerHuntQuests_WolvenSet_08|Scavenger Hunt: Grandmaster Wolven Gear
 ;
-2116568566||option_PotP_TrackingGroup_RandomEvents_Velen_01|At the Mercy of Strangers I
-2116568567||option_PotP_TrackingGroup_RandomEvents_Velen_02|Caravan Attack I
-2116568568||option_PotP_TrackingGroup_RandomEvents_Velen_03|Deadly Crossing I
-2116568569||option_PotP_TrackingGroup_RandomEvents_Velen_04|Deadly Crossing II
-2116568570||option_PotP_TrackingGroup_RandomEvents_Velen_05|Deadly Crossing III
-2116568571||option_PotP_TrackingGroup_RandomEvents_Velen_06|Face Me if You Dare! I
+2116568566||option_PotP_TrackingGroup_RandomEvents_Velen_01|At the Mercy of Strangers
+2116568567||option_PotP_TrackingGroup_RandomEvents_Velen_02|Caravan Attack
+2116568568||option_PotP_TrackingGroup_RandomEvents_Velen_03|The Troll Bridge Crossing
+2116568569||option_PotP_TrackingGroup_RandomEvents_Velen_04|The Crossing of Lindenvale
+2116568570||option_PotP_TrackingGroup_RandomEvents_Velen_05|A Most Deadly Crossing
+2116568571||option_PotP_TrackingGroup_RandomEvents_Velen_06|Face Me if You Dare!
 2116568572||option_PotP_TrackingGroup_RandomEvents_Velen_07|Harassing a Troll
 2116568573||option_PotP_TrackingGroup_RandomEvents_Velen_08|Highway Robbery
 2116568574||option_PotP_TrackingGroup_RandomEvents_Velen_09|Highwayman's Cache
-2116568575||option_PotP_TrackingGroup_RandomEvents_Velen_10|Looters (Heatherton)
-2116568576||option_PotP_TrackingGroup_RandomEvents_Velen_11|Looters (Codgers' Quarry)
-2116568577||option_PotP_TrackingGroup_RandomEvents_Velen_12|Looters (Toderas)
+2116568575||option_PotP_TrackingGroup_RandomEvents_Velen_10|Heatherton Looters
+2116568576||option_PotP_TrackingGroup_RandomEvents_Velen_11|Codgers' Quarry Looters
+2116568577||option_PotP_TrackingGroup_RandomEvents_Velen_12|Toderas Looters
 2116568578||option_PotP_TrackingGroup_RandomEvents_Velen_13|Man's Best Friend
-2116568579||option_PotP_TrackingGroup_RandomEvents_Velen_14|Caravan Attack II
+2116568579||option_PotP_TrackingGroup_RandomEvents_Velen_14|The Grateful Merchant
 ;
 2116568580||option_PotP_TrackingGroup_RandomEvents_Novigrad_01|A Warm Welcome
-2116568581||option_PotP_TrackingGroup_RandomEvents_Novigrad_02|At the Mercy of Strangers II
+2116568581||option_PotP_TrackingGroup_RandomEvents_Novigrad_02|At the Mercy of Strangers
 2116568582||option_PotP_TrackingGroup_RandomEvents_Novigrad_03|Drunken Rabble
-2116568583||option_PotP_TrackingGroup_RandomEvents_Novigrad_04|Face Me if You Dare! II
-2116568584||option_PotP_TrackingGroup_RandomEvents_Novigrad_05|Face Me if You Dare! III
+2116568583||option_PotP_TrackingGroup_RandomEvents_Novigrad_04|The Defender of Maid Bilberry
+2116568584||option_PotP_TrackingGroup_RandomEvents_Novigrad_05|Unlearned Lessons
 2116568585||option_PotP_TrackingGroup_RandomEvents_Novigrad_06|Karmic Justice
 2116568586||option_PotP_TrackingGroup_RandomEvents_Novigrad_07|Never Trust Children
-2116568587||option_PotP_TrackingGroup_RandomEvents_Novigrad_08|Racists of Novigrad II
-2116568588||option_PotP_TrackingGroup_RandomEvents_Novigrad_09|Racists of Novigrad I
+2116568587||option_PotP_TrackingGroup_RandomEvents_Novigrad_08|Dye Pit Racists
+2116568588||option_PotP_TrackingGroup_RandomEvents_Novigrad_09|The Racists of Novigrad
 2116568589||option_PotP_TrackingGroup_RandomEvents_Novigrad_10|Strangers in the Night
 2116568590||option_PotP_TrackingGroup_RandomEvents_Novigrad_11|Strumpet in Distress
 2116568591||option_PotP_TrackingGroup_RandomEvents_Novigrad_12|Suspicious Shakedown
-2116568592||option_PotP_TrackingGroup_RandomEvents_Novigrad_13|The Flame of Hatred I
+2116568592||option_PotP_TrackingGroup_RandomEvents_Novigrad_13|The Flame of Hatred
 2116568593||option_PotP_TrackingGroup_RandomEvents_Novigrad_14|The Most Truest of Basilisks
-2116568594||option_PotP_TrackingGroup_RandomEvents_Novigrad_15|The Price of Passage I
+2116568594||option_PotP_TrackingGroup_RandomEvents_Novigrad_15|The Price of Passage
 2116568595||option_PotP_TrackingGroup_RandomEvents_Novigrad_16|Witch Hunter Raids
-2116568596||option_PotP_TrackingGroup_RandomEvents_Novigrad_17|The Price of Passage II
-2116568597||option_PotP_TrackingGroup_RandomEvents_Novigrad_18|The Price of Passage III
-2116568598||option_PotP_TrackingGroup_RandomEvents_Novigrad_19|The Flame of Hatred II
+2116568596||option_PotP_TrackingGroup_RandomEvents_Novigrad_17|Another Price of Passage
+2116568597||option_PotP_TrackingGroup_RandomEvents_Novigrad_18|The Final Price of Passage
+2116568598||option_PotP_TrackingGroup_RandomEvents_Novigrad_19|The Ambush
 ;
 2116568599||option_PotP_TrackingGroup_RandomEvents_Skellige_01|Call of the Wild
 2116568600||option_PotP_TrackingGroup_RandomEvents_Skellige_02|Farting Trolls
@@ -797,7 +797,7 @@
 2116568710||option_PotP_TrackingGroup_WorldMap_Signposts_Novigrad_18|Eternal Fire Chapel
 2116568711||option_PotP_TrackingGroup_WorldMap_Signposts_Novigrad_90|Farcorners
 2116568712||option_PotP_TrackingGroup_WorldMap_Signposts_Novigrad_19|Garin Estate
-2116568713||option_PotP_TrackingGroup_WorldMap_Signposts_Novigrad_20|Gate of the Heirarch
+2116568713||option_PotP_TrackingGroup_WorldMap_Signposts_Novigrad_20|Gate of the Hierarch
 2116568714||option_PotP_TrackingGroup_WorldMap_Signposts_Novigrad_91|Gildorf
 2116568715||option_PotP_TrackingGroup_WorldMap_Signposts_Novigrad_21|Glory Gate
 2116568716||option_PotP_TrackingGroup_WorldMap_Signposts_Novigrad_22|Gustfields Farm
@@ -1235,6 +1235,7 @@
 2116569112||option_PotP_TrackingGroup_Relics_SilverSwords_W3EE_17|Tlareg
 2116569113||option_PotP_TrackingGroup_Relics_SilverSwords_W3EE_18|Weeper
 2116569114||option_PotP_TrackingGroup_Relics_SilverSwords_W3EE_19|Zerrikanterment
+2117171097||option_PotP_TrackingGroup_Relics_SilverSwords_W3EE_20|Nine-Tailed Vixen Silver Sword
 ;
 2116569115||option_PotP_TrackingGroup_Relics_SteelSwords_01|Angivare
 2116569116||option_PotP_TrackingGroup_Relics_SteelSwords_02|Arbitrator
@@ -1326,6 +1327,7 @@
 2116569201||option_PotP_TrackingGroup_Relics_SteelSwords_W3EE_29|Ultimatum
 2116569202||option_PotP_TrackingGroup_Relics_SteelSwords_W3EE_30|Vitis
 2116569203||option_PotP_TrackingGroup_Relics_SteelSwords_W3EE_31|Winter's Blade
+2117171098||option_PotP_TrackingGroup_Relics_SteelSwords_W3EE_32|Nine-Tailed Vixen Steel Sword
 ;
 2116569204||option_PotP_TrackingGroup_Relics_Crossbows_01|Crossbow
 2116569205||option_PotP_TrackingGroup_Relics_Crossbows_02|Death From Above
@@ -1924,11 +1926,11 @@
 ;
 2116569755||PotP_NotificationLine_ShadesOfIron| Shades of Iron Item(DYNAMC_REPLACE)
 2116569756||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_Berserker_01|Berserker Armor
-2116569757||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_Berserker_02|Berserker Cage
+2116569757||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_Berserker_02|Berserker Greaves
 2116569758||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_Berserker_03|Berserker Gauntlets
-2116569759||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_Berserker_04|Berserker Greaves
-2116569760||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_Berserker_05|Berserker Helm
-2116569761||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_Berserker_06|Berserker Pants
+2116569759||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_Berserker_04|Berserker Pants
+2116569760||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_Berserker_05|Berserker Cage
+2116569761||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_Berserker_06|Berserker Helm
 ;
 2116569762||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_Bismarck_01|Bismarck Knight Armor
 2116569763||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_Bismarck_02|Bismarck Knight Greaves
@@ -1936,12 +1938,12 @@
 2116569765||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_Bismarck_04|Bismarck Knight Cuisses Plates
 2116569766||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_Bismarck_05|Bismarck Helm
 ;
-2116569767||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_BloodHunter_01|Blood Hunter's Boots
-2116569768||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_BloodHunter_02|Blood Hunter's Coat
+2116569767||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_BloodHunter_01|Blood Hunter's Coat
+2116569768||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_BloodHunter_02|Blood Hunter's Boots
 2116569769||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_BloodHunter_03|Blood Hunter's Gloves
-2116569770||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_BloodHunter_04|Blood Hunter's Hat
-2116569771||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_BloodHunter_05|Blood Hunter's Mask
-2116569772||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_BloodHunter_06|Blood Hunter's Pants
+2116569770||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_BloodHunter_04|Blood Hunter's Pants
+2116569771||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_BloodHunter_05|Blood Hunter's Hat
+2116569772||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_BloodHunter_06|Blood Hunter's Mask
 ;
 2116569773||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_Crow_01|Crow-feathered Hunter Garb
 2116569774||option_PotP_TrackingGroup_AdditionalItemContent_ShadesOfIron_Crow_02|Crow-feathered Hunter Boots
@@ -2238,35 +2240,35 @@
 2117171024||PotP_Event_AtTheMercyOfStrangers_1_NG_Description	|<font color="#D7D23A">~ At the Mercy of Strangers ~</font><br/>Investigate the cry for help
 2117171025||PotP_Event_AtTheMercyOfStrangers_2_NG_Description	|<font color="#D7D23A">~ At the Mercy of Strangers ~</font><br/>Talk to John Verdun
 2117171026||PotP_Event_CaravanAttack_NG_1_Description			|<font color="#D7D23A">~ Caravan Attack ~</font><br/>Sounds of a commotion came from over here
-2117171027||PotP_Event_CaravanAttack_NG_2_Description			|<font color="#D7D23A">~ Caravan Attack ~</font><br/>A familiar face has arrived in Crow's Perch. Perhaps it will be worth a visit.
-2117171028||PotP_Event_DeadlyCrossing_1_NG_Description			|<font color="#D7D23A">~ Deadly Crossing ~</font><br/>Looters were seen here recently
-2117171029||PotP_Event_DeadlyCrossing_2_NG_Description			|<font color="#D7D23A">~ Deadly Crossing ~</font><br/>Looters were seen here recently
-2117171030||PotP_Event_DeadlyCrossing_3_NG_Description			|<font color="#D7D23A">~ Deadly Crossing ~</font><br/>Pay the toll or find another way across
+2117171027||PotP_Event_CaravanAttack_NG_2_Description			|<font color="#D7D23A">~ The Grateful Merchant ~</font><br/>A familiar face has arrived in Crow's Perch. Perhaps it will be worth a visit.
+2117171028||PotP_Event_DeadlyCrossing_1_NG_Description			|<font color="#D7D23A">~ The Crossing of Lindenvale ~</font><br/>Looters were seen here recently
+2117171029||PotP_Event_DeadlyCrossing_2_NG_Description			|<font color="#D7D23A">~ A Most Deadly Crossing ~</font><br/>Looters were seen here recently
+2117171030||PotP_Event_DeadlyCrossing_3_NG_Description			|<font color="#D7D23A">~ The Troll Bridge Crossing ~</font><br/>Pay the toll or find another way across
 2117171031||PotP_Event_FaceMeIfYouDare_1_NG_Description			|<font color="#D7D23A">~ Face Me if You Dare! ~</font><br/>Talk to the challenger
-2117171032||PotP_Event_FaceMeIfYouDare_2_NG_Description			|<font color="#D7D23A">~ Face Me if You Dare! ~</font><br/>Talk to Ronvid
-2117171033||PotP_Event_FaceMeIfYouDare_3_NG_Description			|<font color="#D7D23A">~ Face Me if You Dare! ~</font><br/>Talk to Ronvid and his friends
+2117171032||PotP_Event_FaceMeIfYouDare_2_NG_Description			|<font color="#D7D23A">~ The Defender of Maid Bilberry ~</font><br/>Talk to Ronvid
+2117171033||PotP_Event_FaceMeIfYouDare_3_NG_Description			|<font color="#D7D23A">~ Unlearned Lessons ~</font><br/>Talk to Ronvid and his friends
 2117171034||PotP_Event_HarassingATroll_NG_Description			|<font color="#D7D23A">~ Harassing a Troll ~</font><br/>Help the troll kill the nekkers
 2117171035||PotP_Event_HighwayRobbery_NG_Description			|<font color="#D7D23A">~ Highway Robbery ~</font><br/>Save the trader from the bandit attack
 2117171036||PotP_Event_HighwaymansCache_NG_Description			|<font color="#D7D23A">~ Highwayman's Cache ~</font><br/>Talk to the bandits about crossing the bridge
-2117171037||PotP_Event_LootersHeatherton_NG_Description			|<font color="#D7D23A">~ Looters ~</font><br/>Confront the looters
-2117171038||PotP_Event_LootersCodgersQuarry_NG_Description		|<font color="#D7D23A">~ Looters ~</font><br/>Confront the looters
-2117171039||PotP_Event_LootersToderas_NG_Description			|<font color="#D7D23A">~ Looters ~</font><br/>Confront the looters
+2117171037||PotP_Event_LootersHeatherton_NG_Description			|<font color="#D7D23A">~ Heatherton Looters ~</font><br/>Confront the looters
+2117171038||PotP_Event_LootersCodgersQuarry_NG_Description		|<font color="#D7D23A">~ Codgers' Quarry Looters ~</font><br/>Confront the looters
+2117171039||PotP_Event_LootersToderas_NG_Description			|<font color="#D7D23A">~ Toderas Looters ~</font><br/>Confront the looters
 2117171040||PotP_Event_MansBestFriend_NG_Description			|<font color="#D7D23A">~ Man's Best Friend ~</font><br/>Save the children from the wild dog
 2117171041||PotP_Event_AWarmWelcome_NG_Description				|<font color="#D7D23A">~ A Warm Welcome ~</font><br/>Approach the refugees
 2117171042||PotP_Event_DrunkenRabble_NG_Description				|<font color="#D7D23A">~ Drunken Rabble ~</font><br/>Approach the drunk butchers
 2117171043||PotP_Event_KarmicJustice_NG_Description				|<font color="#D7D23A">~ Karmic Justice ~</font><br/>Confront the elves
 2117171044||PotP_Event_NeverTrustChildren_NG_Description		|<font color="#D7D23A">~ Never Trust Children ~</font><br/>Talk to the crying child
-2117171045||PotP_Event_RacistsOfNovigradFC_NG_Description		|<font color="#D7D23A">~ Racists of Novigrad ~</font><br/>Confront the men harassing the elves
-2117171046||PotP_Event_RacistsOfNovigradHS_NG_Description		|<font color="#D7D23A">~ Racists of Novigrad ~</font><br/>Confront the men harassing the elf
+2117171045||PotP_Event_RacistsOfNovigradFC_NG_Description		|<font color="#D7D23A">~ Dye Pit Racists ~</font><br/>Confront the men harassing the elves
+2117171046||PotP_Event_RacistsOfNovigradHS_NG_Description		|<font color="#D7D23A">~ The Racists of Novigrad ~</font><br/>Confront the men harassing the elf
 2117171047||PotP_Event_StrangersInTheNight_NG_Description		|<font color="#D7D23A">~ Strangers in the Night ~</font><br/>Talk to the three men
 2117171048||PotP_Event_StrumpetInDistress_NG_Description		|<font color="#D7D23A">~ Strumpet in Distress ~</font><br/>Intervene the arguing duo
 2117171049||PotP_Event_SuspiciousShakedown_NG_Description		|<font color="#D7D23A">~ Suspicious Shakedown ~</font><br/>Confront the bandits harassing the merchant
 2117171050||PotP_Event_TheFlameOfHatred_NG_1_Description		|<font color="#D7D23A">~ The Flame of Hatred ~</font><br/>Talk to the priest
-2117171051||PotP_Event_TheFlameOfHatred_NG_2_Description		|<font color="#D7D23A">~ The Flame of Hatred ~</font><br/>Investigate a report of bandits in the area
+2117171051||PotP_Event_TheFlameOfHatred_NG_2_Description		|<font color="#D7D23A">~ The Ambush ~</font><br/>Investigate a report of bandits in the area
 2117171052||PotP_Event_TheMostTruestOfBasilisks_NG_Description	|<font color="#D7D23A">~ The Most Truest of Basilisks ~</font><br/>Investigate the beast tamer and his "Basilisk"
 2117171053||PotP_Event_ThePriceOfPassage_NG_1_Description		|<font color="#D7D23A">~ The Price of Passage ~</font><br/>Approach the Redanian soldiers
-2117171054||PotP_Event_ThePriceOfPassage_NG_2_Description		|<font color="#D7D23A">~ The Price of Passage ~</font><br/>Approach the Redanian soldiers
-2117171055||PotP_Event_ThePriceOfPassage_NG_3_Description		|<font color="#D7D23A">~ The Price of Passage ~</font><br/>Approach the Redanian soldiers
+2117171054||PotP_Event_ThePriceOfPassage_NG_2_Description		|<font color="#D7D23A">~ Another Price of Passage ~</font><br/>Approach the Redanian soldiers
+2117171055||PotP_Event_ThePriceOfPassage_NG_3_Description		|<font color="#D7D23A">~ The Final Price of Passage ~</font><br/>Approach the Redanian soldiers
 2117171056||PotP_Event_WitchHunterRaids_NG_Description			|<font color="#D7D23A">~ Witch Hunter Raids ~</font><br/>Interfere with the Mage's arrest
 2117171057||PotP_Event_CallOfTheWild_NG_Description				|<font color="#D7D23A">~ Call of the Wild ~</font><br/>Investigate a Werewolf sighting in the area
 2117171058||PotP_Event_FartingTrolls_NG_Description				|<font color="#D7D23A">~ Farting Trolls ~</font><br/>Strange sounds and smells have been reported around this cave
@@ -2294,7 +2296,41 @@
 2117171074||PotP_Preview_Missable_09|<br/><font color="#9D75BF">Complete Before talking To Ciri About The Lodge Meeting During 'Final Preparations'<br/></font>
 2117171075||PotP_Preview_Missable_10|<br/><font color="#9D75BF">Complete Before Travelling To The Isle Of Mists<br/></font>
 2117171076||PotP_Preview_Missable_11|<br/><font color="#9D75BF">Complete Before Finishing 'Where Children Toil, Toys Waste Away'<br/></font>
+2117171077||PotP_Preview_Missable_12|<br/><font color="#9D75BF">Only Playable if you do not banish Sarah during 'Novigrad Dreaming'<br/></font>
 ;
-2117171077||ProgressOnThePath_MoreEntries|Plus [COUNTS] more entries...
+2117171078||ProgressOnThePath_MoreEntries|Plus [COUNTS] more entries...
 ;
-;Next ID 2117171078
+2117171079||PotP_NewEventMessage1|The event '[EVENTNAME]' is now available in [EVENTLOCATION]<br/><br/>Take a look at the World Map to find its location.
+;
+2117171080||option_ProgressOnThePath_Preview_GExtra|<font color="#DE8971">Gwent              :   Show Detailed Info</font>
+2117171081||ProgressOnThePath_Builderheader_Missable|<font color="#D79D3A">  - Missable:</font><br/>
+2117171082||ProgressOnThePath_Builderheader_Lead|<font color="#AECBEB">  - Leaders:</font><br/>
+2117171083||ProgressOnThePath_Builderheader_Hero|<font color="#AECBEB">  - Heros:</font><br/>
+2117171084||ProgressOnThePath_Builderheader_Unit|<font color="#AECBEB">  - Units:</font><br/>
+;
+2117171085||ProgressOnThePath_Location_Velen|Velen
+2117171086||ProgressOnThePath_Location_Oxenfurt|Oxenfurt
+2117171087||ProgressOnThePath_Location_Novigrad|Novigrad
+2117171088||ProgressOnThePath_Location_CrowsPerch|Crow's Perch
+;
+2117171089||panel_QT_Page_Notifications|Notifications
+2117171090||option_ProgressOnThePath_BackNotification_Quest|<font color="#FFE194">Realtime Updates       :   Show Quest Updates</font>
+2117171091||option_ProgressOnThePath_BackNotification_Event|<font color="#FFE194">Realtime Updates       :   Show Random Event Updates</font>
+2117171092||option_ProgressOnThePath_BackNotification_Gwent|<font color="#FFE194">Realtime Updates       :   Show Gwent Card Updates</font>
+2117171093||option_ProgressOnThePath_BackNotification_Items|<font color="#FFE194">Realtime Updates       :   Show Item Updates</font>
+2117171094||option_ProgressOnThePath_BackNotification_World|<font color="#FFE194">Realtime Updates       :   Show Map Pin Updates</font>
+;
+2117171095||option_ProgressOnThePath_MiscNotification_Event|<font color="#DE8971">Miscellaneous       :   New Event Unlocked Notification</font>
+2117171096||option_ProgressOnThePath_MiscNotification_Enter|<font color="#DE8971">Miscellaneous       :   Manually Toggled Notification</font>
+;
+2117171099||ProgressOnThePath_PreviewTag_IP|<font size="17" color="#C8566B"> (In Progress)</font>
+2117171100||ProgressOnThePath_PreviewTag_CO|<font size="17" color="#2ba84a"> (Completed)</font>
+2117171101||ProgressOnThePath_PreviewTag_IG|<font size="17" color="#ff686b"> (Ignored)</font>
+2117171102||ProgressOnThePath_PreviewTag_MA|<font size="17" color="#26CAD6"> (Mod Added)</font>
+2117171103||ProgressOnThePath_PreviewTag_MI|<font size="17" color="#D79D3A"> (Missable)</font>
+2117171104||ProgressOnThePath_PreviewTag_BO|<font size="17" color="#C8566B"> (Bought)</font>
+2117171105||ProgressOnThePath_PreviewTag_LO|<font size="17" color="#C8566B"> (Lootable)</font>
+2117171106||ProgressOnThePath_PreviewTag_QR|<font size="17" color="#C8566B"> (Quest Reward)</font>
+2117171107||ProgressOnThePath_PreviewTag_WO|<font size="17" color="#C8566B"> (Won)</font>
+;
+;Next ID 2117171108

@@ -20,9 +20,9 @@ class CProgressOnThePath_GwentPreview
 	
 	//---------------------------------------------------
 
-	public function initialise(PotP_BaseClass: CProgressOnThePath) : CProgressOnThePath_GwentPreview
+	public function initialise(master: CProgressOnThePath) : CProgressOnThePath_GwentPreview
 	{
-		this.master = PotP_BaseClass;
+		this.master = master;
 		return this;
 	}
 	
@@ -88,7 +88,7 @@ class CProgressOnThePath_GwentPreview
 	private function build(Header: string, pData: array<PotP_PreviewEntry>) 
 	{	
 		this.consumebuilder((new ProgressOnThepath_GwentCardBuilder in thePlayer)
-			.init(master.PotP_PersistentStorage)
+			.init()
 			.setFilters(this.areaFilter, this.typeFilter)
 			.addHeader(Header)
 			.addDataSet(pData)

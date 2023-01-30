@@ -20,9 +20,9 @@ class CProgressOnThePath_QuestPreview
 	
 	//---------------------------------------------------
 
-	public function initialise(PotP_BaseClass: CProgressOnThePath) : CProgressOnThePath_QuestPreview
+	public function initialise(master: CProgressOnThePath) : CProgressOnThePath_QuestPreview
 	{
-		this.master = PotP_BaseClass;
+		this.master = master;
 		return this;
 	}
 	
@@ -111,7 +111,7 @@ class CProgressOnThePath_QuestPreview
 	private function build(Header: string, pData: array<PotP_PreviewEntry>) 
 	{	
 		this.consumebuilder((new ProgressOnThepath_StringBuilder in thePlayer)
-			.init(master.PotP_PersistentStorage)
+			.init()
 			.setFilters(this.areaFilter, this.typeFilter)
 			.addHeader(Header)
 			.addDataSet(pData)

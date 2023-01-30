@@ -19,9 +19,9 @@ class CProgressOnThePath_ItemsPreview
 	
 	//---------------------------------------------------
 
-	public function initialise(PotP_BaseClass: CProgressOnThePath) : CProgressOnThePath_ItemsPreview
+	public function initialise(master: CProgressOnThePath) : CProgressOnThePath_ItemsPreview
 	{
-		this.master = PotP_BaseClass;
+		this.master = master;
 		return this;
 	}
 	
@@ -110,7 +110,7 @@ class CProgressOnThePath_ItemsPreview
 	private function build(Header: string, pData: array<PotP_PreviewEntry>) 
 	{	
 		this.consumebuilder((new ProgressOnThepath_StringBuilder in thePlayer)
-			.init(master.PotP_PersistentStorage)
+			.init()
 			.setFilters(0, this.typeFilter)
 			.addHeader(Header)
 			.addDataSet(pData)

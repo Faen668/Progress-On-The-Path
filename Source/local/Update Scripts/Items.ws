@@ -14,9 +14,9 @@ statemachine class CProgressOnThePath_Relic_Updater {
 	
 	//---------------------------------------------------
 
-	public function initialise(PotP_BaseClass: CProgressOnThePath) : CProgressOnThePath_Relic_Updater
+	public function initialise(master: CProgressOnThePath) : CProgressOnThePath_Relic_Updater
 	{
-		this.master = PotP_BaseClass;
+		this.master = master;
 		return this;
 	}
 
@@ -77,13 +77,10 @@ state Updating in CProgressOnThePath_Relic_Updater
 	{
 		var GwentManager: CR4GwintManager = theGame.GetGwintManager();
 		var pData_E: array<PotP_PreviewEntry> 	= parent.master.PotP_ArrayManager.MasterList_Items;
-		var dup_arr: array< name >;
 		var Idx: int;
 		
 		for ( Idx = 0; Idx < pData_E.Size(); Idx += 1 )
-		{
-			PotP_GetAllVariations(pData_E[Idx].item_name, pData_E[Idx].group, dup_arr);
-			
+		{			
 			if (pData_E[Idx].arrayType == PotP_A_Gwent)
 			{
 				if (!GwentManager.HasLootedCard() || (pData_E[Idx].filter == PotP_I_Skell && !GwentManager.IsDeckUnlocked(GwintFaction_Skellige)))
@@ -91,35 +88,35 @@ state Updating in CProgressOnThePath_Relic_Updater
 					continue;
 				}
 				
-				if (this.IsCardCollected(dup_arr, pData_E[Idx]) && !parent.master.PotP_PersistentStorage.IsCompletedOrIgnored(pData_E[Idx]))
+				if (this.IsCardCollected(pData_E[Idx]) && pData_E[Idx].IsPlayable())
 				{
-					parent.master.PotP_PersistentStorage.SetCompleted(pData_E[Idx]);
-					parent.master.PotP_Notifications.UpdateItemCounter(1, pData_E[Idx].group);
+					pData_E[Idx].SetCompleted();
+					pData_E[Idx].AddToNotificationQueue();
 				}
 				continue;
 			}
 			
-			if (this.IsItemCollected(dup_arr, pData_E[Idx]) && !parent.master.PotP_PersistentStorage.IsCompletedOrIgnored(pData_E[Idx]))
+			if (this.IsItemCollected(pData_E[Idx]) && pData_E[Idx].IsPlayable())
 			{
-				parent.master.PotP_PersistentStorage.SetCompleted(pData_E[Idx], true);
-				parent.master.PotP_Notifications.UpdateItemCounter(1, pData_E[Idx].group);
+				pData_E[Idx].SetCompleted();
+				pData_E[Idx].AddToNotificationQueue();
 			}
 		}
 	}
 
 //---------------------------------------------------
 
-	private function IsItemCollected(VariationsArray: array< name >, pData_E: PotP_PreviewEntry) : bool 
+	private function IsItemCollected(pData_E: PotP_PreviewEntry) : bool 
 	{
 		var PInventory: CInventoryComponent = thePlayer.GetInventory();
 		var SInventory: CInventoryComponent = GetWitcherPlayer().GetHorseManager().GetInventoryComponent();
 		var Idx, min, max: int;
 		
-		for (Idx = 0; Idx < VariationsArray.Size(); Idx += 1) 
+		for (Idx = 0; Idx < pData_E.variations.Size(); Idx += 1) 
 		{
-			PInventory.GetItemQualityFromName(VariationsArray[Idx], min, max);
+			PInventory.GetItemQualityFromName(pData_E.variations[Idx], min, max);
 
-			if (min >= 4 && (parent.master.PotP_PersistentStorage.IsCollected(pData_E) || PInventory.HasItem(VariationsArray[Idx]) || SInventory.HasItem(VariationsArray[Idx]) || GetWitcherPlayer().GetHorseManager().IsItemEquippedByName(VariationsArray[Idx])))
+			if (min >= 4 && (pData_E.IsCollected() || PInventory.HasItem(pData_E.variations[Idx]) || SInventory.HasItem(pData_E.variations[Idx]) || GetWitcherPlayer().GetHorseManager().IsItemEquippedByName(pData_E.variations[Idx])))
 			{ 
 				return true;
 			}
@@ -129,7 +126,7 @@ state Updating in CProgressOnThePath_Relic_Updater
 
 //---------------------------------------------------
 
-	private function IsCardCollected(VariationsArray: array< name >, pData_E: PotP_PreviewEntry) : bool {
+	private function IsCardCollected(pData_E: PotP_PreviewEntry) : bool {
 		
 		var Idx: int;
 
@@ -138,9 +135,9 @@ state Updating in CProgressOnThePath_Relic_Updater
 			return true; 
 		}
 		
-		for ( Idx = 0; Idx < VariationsArray.Size(); Idx += 1 )
+		for ( Idx = 0; Idx < pData_E.variations.Size(); Idx += 1 )
 		{
-			if ( thePlayer.GetInventory().HasItem(VariationsArray[Idx]) ) 
+			if ( thePlayer.GetInventory().HasItem(pData_E.variations[Idx]) ) 
 			{
 				return true;
 			} 

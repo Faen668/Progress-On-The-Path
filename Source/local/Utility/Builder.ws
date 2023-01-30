@@ -15,7 +15,6 @@ struct PotP_Builder_Result
 
 class ProgressOnThepath_StringBuilder
 {
-	private var storage		: CProgressOnThePath_Storage;
 	private var data		: array<PotP_PreviewEntry>;
 	private var n_entryList	: array<PotP_PreviewEntry>;
 	private var m_entryList	: array<PotP_PreviewEntry>;
@@ -37,11 +36,8 @@ class ProgressOnThepath_StringBuilder
 		
 	//---------------------------------------------------
 	
-	public function init(PotP_PersistentStorage: CProgressOnThePath_Storage) : ProgressOnThepath_StringBuilder 
-	{
-		// Initialises the storage variable and builder.
-		this.storage = PotP_PersistentStorage;
-		
+	public function init() : ProgressOnThepath_StringBuilder 
+	{		
 		return this;
 	}
 
@@ -147,7 +143,7 @@ class ProgressOnThepath_StringBuilder
 				
 				if (!m_headerAdded)
 				{
-					messagebody += "<font color='#D79D3A'>  - Missable:</font><br/>";
+					messagebody += GetLocStringByKeyExt("ProgressOnThePath_Builderheader_Missable");
 					m_headerAdded = true;
 				}
 				messagebody += entry_line + "<br/>";
@@ -158,7 +154,7 @@ class ProgressOnThepath_StringBuilder
 		total_count = this.data.Size();
 		
 		for ( Idx = 0; Idx < this.data.Size(); Idx += 1 ) {
-			completed_count += (int) this.storage.IsCompletedOrIgnored(this.data[Idx]);
+			completed_count += (int) !this.data[Idx].IsPlayable();
 		}
 		
 		// Return message and counts as a result.
@@ -176,9 +172,9 @@ class ProgressOnThepath_StringBuilder
 	private function GetString(entry_data: PotP_PreviewEntry) : string 
 	{
 		var localName: 		string = entry_data.getID() + entry_data.localname;
-		var isCompleted: 	bool = storage.IsCompleted(entry_data);
-		var isIgnored: 		bool = storage.IsIgnored(entry_data);
-		var isInProgress: 	bool = storage.IsInProgress(entry_data);
+		var isCompleted: 	bool = entry_data.IsCompleted();
+		var isIgnored: 		bool = entry_data.IsIgnored();
+		var isInProgress: 	bool = entry_data.IsInProgress();
 		var entry_line:		string;
 		
 		// Return empty string as this entry is either completed or ignored and the options to show are diabled.
@@ -243,16 +239,10 @@ class ProgressOnThepath_StringBuilder
 
 class ProgressOnThepath_GwentCardBuilder
 {
-	private var storage		: CProgressOnThePath_Storage;
 	private var data		: array<PotP_PreviewEntry>;
-	
-	private var n_entryList	: array<PotP_PreviewEntry>;
-	private var m_entryList	: array<PotP_PreviewEntry>;
-	
-	private var b_entryList	: array<PotP_PreviewEntry>;
+	private var u_entryList	: array<PotP_PreviewEntry>;
+	private var h_entryList	: array<PotP_PreviewEntry>;
 	private var l_entryList	: array<PotP_PreviewEntry>;
-	private var d_entryList	: array<PotP_PreviewEntry>;
-	private var q_entryList	: array<PotP_PreviewEntry>;
 		
 	private var header: string;
 		default header = "";
@@ -274,11 +264,8 @@ class ProgressOnThepath_GwentCardBuilder
 		
 	//---------------------------------------------------
 	
-	public function init(PotP_PersistentStorage: CProgressOnThePath_Storage) : ProgressOnThepath_GwentCardBuilder 
-	{
-		// Initialises the storage variable and builder.
-		this.storage = PotP_PersistentStorage;
-		
+	public function init() : ProgressOnThepath_GwentCardBuilder 
+	{		
 		return this;
 	}
 
@@ -314,50 +301,26 @@ class ProgressOnThepath_GwentCardBuilder
 
 	//---------------------------------------------------
 	
-	private function addEntry(_quest: PotP_PreviewEntry) : void
+	private function addUnitEntry(_quest: PotP_PreviewEntry) : void
 	{
 		// Used internally to hold 'normal' entries.
-		n_entryList.PushBack(_quest);
+		u_entryList.PushBack(_quest);
 	}
 
 	//---------------------------------------------------
 	
-	private function addMissableEntry(_quest: PotP_PreviewEntry) : void
+	private function addHeroEntry(_quest: PotP_PreviewEntry) : void
 	{
 		// Used internally to hold 'normal' entries.
-		m_entryList.PushBack(_quest);
+		h_entryList.PushBack(_quest);
 	}
 	
 	//---------------------------------------------------
 	
-	private function addboughtEntry(_quest: PotP_PreviewEntry) : void
-	{
-		// Used internally to hold 'missable' entries.
-		b_entryList.PushBack(_quest);
-	}
-
-	//---------------------------------------------------
-	
-	private function addlootedEntry(_quest: PotP_PreviewEntry) : void
+	private function addLeaderEntry(_quest: PotP_PreviewEntry) : void
 	{
 		// Used internally to hold 'missable' entries.
 		l_entryList.PushBack(_quest);
-	}
-
-	//---------------------------------------------------
-	
-	private function addrewardEntry(_quest: PotP_PreviewEntry) : void
-	{
-		// Used internally to hold 'missable' entries.
-		q_entryList.PushBack(_quest);
-	}
-
-	//---------------------------------------------------
-	
-	private function adddualedEntry(_quest: PotP_PreviewEntry) : void
-	{
-		// Used internally to hold 'missable' entries.
-		d_entryList.PushBack(_quest);
 	}
 	
 	//---------------------------------------------------
@@ -365,8 +328,7 @@ class ProgressOnThepath_GwentCardBuilder
 	public function build() : PotP_Builder_Result
 	{
 		var messagebody, entry_line: string = "";		
-		var n_headerAdded, m_headerAdded, r_headerAdded: bool = false;
-		var q_headerAdded, b_headerAdded, l_headerAdded, d_headerAdded: bool = false;
+		var n_headerAdded, u_headerAdded, h_headerAdded, l_headerAdded: bool = false;
 		var completed_count, total_count: float;
 		var Idx: int;
 
@@ -377,151 +339,45 @@ class ProgressOnThepath_GwentCardBuilder
 		// Traverse and separate normal and missable entries from the data array.
 		for (Idx = 0; Idx < this.data.Size(); Idx += 1)
 		{
-			if (this.data[Idx].is_missable) {
-				this.addMissableEntry(this.data[Idx]);
+			if (this.data[Idx].card_type == PotP_G_Lead) {
+				this.addLeaderEntry(this.data[Idx]);
 				continue;
 			}
 
-			if (this.data[Idx].is_bought) {
-				this.addboughtEntry(this.data[Idx]);
+			if (this.data[Idx].card_type == PotP_G_Hero) {
+				this.addHeroEntry(this.data[Idx]);
 				continue;
 			}
-
-			if (this.data[Idx].is_loot) {
-				this.addlootedEntry(this.data[Idx]);
-				continue;
-			}
-
-			if (this.data[Idx].is_reward) {
-				this.addrewardEntry(this.data[Idx]);
-				continue;
-			}
-
-			if (this.data[Idx].is_dual) {
-				this.adddualedEntry(this.data[Idx]);
-				continue;
-			}
-			this.addEntry(this.data[Idx]);
+			
+			this.addUnitEntry(this.data[Idx]);
 		}
 		
-		// Traverse normal entries array (potentially empty)
-		for ( Idx = 0; Idx < n_entryList.Size(); Idx += 1 )
-		{
-			entry_line = this.GetString(n_entryList[Idx]);
-			
-			if (entry_line != "")
-			{
-				if (!n_headerAdded)
-				{
-					messagebody += header;
-					n_headerAdded = true;
-				}
-
-				if (!r_headerAdded)
-				{
-					messagebody += "<font color='#aecbeb'>  - Won From Random NPC's:</font><br/>";
-					r_headerAdded = true;
-				}
-				messagebody += entry_line + "<br/>";
-			}
-		}
-
-		// Traverse missable entries array (potentially empty)
-		for ( Idx = 0; Idx < q_entryList.Size(); Idx += 1 ) 
-		{
-			entry_line = this.GetString(q_entryList[Idx]);
-			
-			if (entry_line != "")
-			{				
-				// Attempt to add main header if normal array is empty.
-				if (!n_headerAdded)
-				{
-					messagebody += header;
-					n_headerAdded = true;
-				}
-				
-				if (!q_headerAdded)
-				{
-					messagebody += "<font color='#aecbeb'>  - Quest Reward:</font><br/>";
-					q_headerAdded = true;
-				}
-				messagebody += entry_line + "<br/>";
-			}
-		}
-
-		// Traverse missable entries array (potentially empty)	
-		for ( Idx = 0; Idx < d_entryList.Size(); Idx += 1 ) 
-		{
-			entry_line = this.GetString(d_entryList[Idx]);
-			
-			if (entry_line != "")
-			{
-				// Attempt to add main header if normal array is empty.
-				if (!n_headerAdded)
-				{
-					messagebody += header;
-					n_headerAdded = true;
-				}
-				
-				if (!d_headerAdded)
-				{
-					messagebody += "<font color='#aecbeb'>  - Won From Unique Dual:</font><br/>";
-					d_headerAdded = true;
-				}
-				messagebody += entry_line + "<br/>";
-			}
-		}
-		
-		// Traverse missable entries array (potentially empty)
-		for ( Idx = 0; Idx < b_entryList.Size(); Idx += 1 ) 
-		{
-			entry_line = this.GetString(b_entryList[Idx]);
-			
-			if (entry_line != "")
-			{
-				// Attempt to add main header if normal array is empty.
-				if (!n_headerAdded)
-				{
-					messagebody += header;
-					n_headerAdded = true;
-				}
-				
-				if (!b_headerAdded)
-				{
-					messagebody += "<font color='#aecbeb'>  - Bought From Vendor:</font><br/>";
-					b_headerAdded = true;
-				}
-				messagebody += entry_line + "<br/>";
-			}
-		}
-		
-		// Traverse missable entries array (potentially empty)	
-		for ( Idx = 0; Idx < l_entryList.Size(); Idx += 1 ) 
+		// Traverse Leader entries array (potentially empty)
+		for ( Idx = 0; Idx < l_entryList.Size(); Idx += 1 )
 		{
 			entry_line = this.GetString(l_entryList[Idx]);
 			
 			if (entry_line != "")
 			{
-				// Attempt to add main header if normal array is empty.
 				if (!n_headerAdded)
 				{
-					messagebody += header;
+					messagebody += this.header;
 					n_headerAdded = true;
 				}
-				
+
 				if (!l_headerAdded)
 				{
-					messagebody += "<font color='#aecbeb'>  - Lootable:</font><br/>";
+					messagebody += GetLocStringByKeyExt("ProgressOnThePath_Builderheader_Lead");
 					l_headerAdded = true;
 				}
 				messagebody += entry_line + "<br/>";
 			}
 		}
 
-		// Traverse missable entries array (potentially empty)
-		for ( Idx = 0; Idx < m_entryList.Size(); Idx += 1 ) 
+		// Traverse Hero entries array (potentially empty)
+		for ( Idx = 0; Idx < h_entryList.Size(); Idx += 1 ) 
 		{
-			entry_line = this.GetString(m_entryList[Idx]);
+			entry_line = this.GetString(h_entryList[Idx]);
 			
 			if (entry_line != "")
 			{				
@@ -532,10 +388,33 @@ class ProgressOnThepath_GwentCardBuilder
 					n_headerAdded = true;
 				}
 				
-				if (!m_headerAdded)
+				if (!h_headerAdded)
 				{
-					messagebody += "<font color='#D79D3A'>  - Missable:</font><br/>";
-					m_headerAdded = true;
+					messagebody += GetLocStringByKeyExt("ProgressOnThePath_Builderheader_Hero");
+					h_headerAdded = true;
+				}
+				messagebody += entry_line + "<br/>";
+			}
+		}
+
+		// Traverse Unit entries array (potentially empty)	
+		for ( Idx = 0; Idx < u_entryList.Size(); Idx += 1 ) 
+		{
+			entry_line = this.GetString(u_entryList[Idx]);
+			
+			if (entry_line != "")
+			{
+				// Attempt to add main header if normal array is empty.
+				if (!n_headerAdded)
+				{
+					messagebody += header;
+					n_headerAdded = true;
+				}
+				
+				if (!u_headerAdded)
+				{
+					messagebody += GetLocStringByKeyExt("ProgressOnThePath_Builderheader_Unit");
+					u_headerAdded = true;
 				}
 				messagebody += entry_line + "<br/>";
 			}
@@ -545,7 +424,7 @@ class ProgressOnThepath_GwentCardBuilder
 		total_count = this.data.Size();
 		
 		for ( Idx = 0; Idx < this.data.Size(); Idx += 1 ) {
-			completed_count += (int) this.storage.IsCompletedOrIgnored(this.data[Idx]);
+			completed_count += (int) !this.data[Idx].IsPlayable();
 		}
 		
 		// Return message and counts as a result.
@@ -563,9 +442,9 @@ class ProgressOnThepath_GwentCardBuilder
 	private function GetString(entry_data: PotP_PreviewEntry) : string 
 	{
 		var localName: 		string = entry_data.getID() + entry_data.localname;
-		var isCompleted: 	bool = storage.IsCompleted(entry_data);
-		var isIgnored: 		bool = storage.IsIgnored(entry_data);
-		var isInProgress: 	bool = storage.IsInProgress(entry_data);
+		var isCompleted: 	bool = entry_data.IsCompleted();
+		var isIgnored: 		bool = entry_data.IsIgnored();
+		var isInProgress: 	bool = entry_data.IsInProgress();
 		var entry_line:		string;
 		
 		// Return empty string as this entry is either completed or ignored and the options to show are diabled.
@@ -587,36 +466,39 @@ class ProgressOnThepath_GwentCardBuilder
 		}	
 		
 		entry_line = "<font size='25'>       - " + localName + "</font>";
-		
-		// Increase line height and add colour for missable quests.
-		if (entry_data.is_missable)
+
+		// Apply a coloured 'Missable' tag to valid gwent cards.
+		if (entry_data.is_missable) 
 		{
-			entry_line = "<font color='#D79D3A' size='25'>       - </font>" + "<font size='25'>" + localName + "</font>";
+			entry_line += entry_data.T_Missable;
 		}
-	
-		// Apply a coloured 'Bought From Vendor' tag to valid gwent cards.
-		if (entry_data.is_missable && entry_data.is_bought) 
+		
+		if ( (bool) PotP_GetPreviewValue('ProgressOnThePath_Preview_GExtra') ) 
 		{
-			entry_line += entry_data.T_Bought;
-		}	
+			// Apply a coloured 'Bought From Vendor' tag to valid gwent cards.
+			if (entry_data.card_origin == PotP_G_Bought)
+			{
+				entry_line += entry_data.T_Bought;
+			}	
 
-		// Apply a coloured 'Lootable' tag to valid gwent cards.
-		if (entry_data.is_missable && entry_data.is_loot) 
-		{
-			entry_line += entry_data.T_Looted;
-		}	
+			// Apply a coloured 'Lootable' tag to valid gwent cards.
+			if (entry_data.card_origin == PotP_G_Looted)
+			{
+				entry_line += entry_data.T_Looted;
+			}	
 
-		// Apply a coloured 'Quest Reward' tag to valid gwent cards.
-		if (entry_data.is_missable && entry_data.is_reward) 
-		{
-			entry_line += entry_data.T_Reward;
-		}	
+			// Apply a coloured 'Quest Reward' tag to valid gwent cards.
+			if (entry_data.card_origin == PotP_G_Reward)
+			{
+				entry_line += entry_data.T_Reward;
+			}	
 
-		// Apply a coloured 'Won in Dual' tag to valid gwent cards.
-		if (entry_data.is_missable && entry_data.is_dual) 
-		{
-			entry_line += entry_data.T_Dualed;
-		}	
+			// Apply a coloured 'Won in Dual' tag to valid gwent cards.
+			if (entry_data.card_origin == PotP_G_Dualed)
+			{
+				entry_line += entry_data.T_Dualed;
+			}
+		}
 		
 		// Apply a coloured 'Completed' tag to any completed entries.
 		if (isCompleted && showCompleted) 

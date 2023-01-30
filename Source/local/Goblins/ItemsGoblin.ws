@@ -13,6 +13,12 @@ statemachine class CProgressOnThePath_ItemsGoblin extends IInventoryScriptedList
 	
 	public var last_addition_time: float;
 	public var itm_array: array<SItemUniqueId>;
+	
+	public var itm_list: array<name>;
+	public var ent_list: array<PotP_PreviewEntry>;
+	
+	public var player_inv: CInventoryComponent;
+	
 	public var master: CProgressOnThePath;
 	
 	//---------------------------------------------------
@@ -20,8 +26,14 @@ statemachine class CProgressOnThePath_ItemsGoblin extends IInventoryScriptedList
 	public function initialise(PotP_BaseClass: CProgressOnThePath)
 	{
 		this.master = PotP_BaseClass;
-		thePlayer.inv.AddListener(this);
+		this.itm_list = master.PotP_ArrayManager.SupportedItemsList;
+		this.ent_list = master.PotP_ArrayManager.SupportedItemsList_Entity;
+		this.player_inv = thePlayer.inv;
+		
+		player_inv.AddListener(this);
 	}
+	
+	//---------------------------------------------------
 	
 	event OnInventoryScriptedEvent( eventType : EInventoryEventType, itemId : SItemUniqueId, quantity : int, fromAssociatedInventory : bool ) 
 	{
@@ -30,12 +42,33 @@ statemachine class CProgressOnThePath_ItemsGoblin extends IInventoryScriptedList
 			return true;
 		}
 		
-		PotP_Logger("Recieved " + quantity + " " +  thePlayer.inv.GetItemName(itemId), , this.filename);
+		if (this.IsInState('Disabled')) 
+		{ 
+			return true;
+		}
+			
+		if ( itm_list.Contains(player_inv.GetItemName(itemId)) )
+		{
+			this.itm_array.PushBack(itemId);
 		
-		this.itm_array.PushBack(itemId);
-		this.last_addition_time = theGame.GetEngineTimeAsSeconds();
-		this.GotoState('Idle');
-		this.GotoState('ItemAdded');
+			if (!this.IsInState('ItemAdded')) 
+			{ 
+				this.GotoState('ItemAdded'); 
+			}
+		}
+	}
+}
+
+//---------------------------------------------------
+//-- States -----------------------------------------
+//---------------------------------------------------
+
+state Disabled in CProgressOnThePath_ItemsGoblin 
+{
+	event OnEnterState(previous_state_name: name) 
+	{
+		super.OnEnterState(previous_state_name);
+		PotP_Logger("Entered state [Disabled]", , parent.filename);
 	}
 }
 
@@ -49,6 +82,15 @@ state Idle in CProgressOnThePath_ItemsGoblin
 	{
 		super.OnEnterState(previous_state_name);
 		PotP_Logger("Entered state [Idle]", , parent.filename);
+
+		if (parent.itm_array.Size() > 0)
+		{
+			parent.GotoState('ItemAdded');
+		}
+		else
+		{
+			parent.master.PotP_Notifications.NotifyPlayerFromBackgroundProcess();
+		}
 	}
 }
 
@@ -68,82 +110,50 @@ state ItemAdded in CProgressOnThePath_ItemsGoblin
 
 //---------------------------------------------------
 
-	entry function ItemAdded_Entry() {
+	entry function ItemAdded_Entry()
+	{
+		var item : SItemUniqueId;
 		
-		var current_time: float = theGame.GetEngineTimeAsSeconds();
-		var sleep_time: int = (int) PotP_GetGeneralValue('ProgressOnThePath_BGProcessing_Item');
-		
-		while ((current_time - parent.last_addition_time < sleep_time) || PotP_IsPlayerBusy()) 
-		{
-			current_time = theGame.GetEngineTimeAsSeconds();
-			SleepOneFrame();
-		}
-		
-		this.ItemAdded_Main();
-	}
-
-//---------------------------------------------------
-	
-	latent function ItemAdded_Main() {
-		
-		var PInventory: CInventoryComponent = thePlayer.GetInventory();
-		var VariationsArray: array< name >;
-		var Idx: int;
-		
-		while (PotP_IsPlayerBusy()) {
-			SleepOneFrame();
-		}
-		
-		for ( Idx = 0; Idx < parent.itm_array.Size(); Idx += 1 ) 
-		{
-			PotP_GetAllVariations(PInventory.GetItemName(parent.itm_array[Idx]), 'Goblin', VariationsArray);	
-			this.ProcessVariationsArray(VariationsArray, parent.itm_array[Idx], Idx, PInventory.ItemHasTag(parent.itm_array[Idx], theGame.params.GWINT_CARD_ACHIEVEMENT_TAG), PInventory);
-		}
-
 		while (PotP_IsPlayerBusy()) 
 		{
-			SleepOneFrame();
+			PotP_Logger("Waiting For Player Busy Check...", , parent.filename);
+			Sleep(5);
 		}
-
-		parent.master.PotP_Notifications.NotifyPlayerFromBackgroundProcess();
+		
+		SleepOneFrame();
+		
+		item = parent.itm_array[0];
+		
+		this.ProcessItem();
+		parent.itm_array.Erase(0);
 		parent.GotoState('Idle');
 	}
 
 //---------------------------------------------------
-
-	private function ProcessVariationsArray(VariationsArray: array<name>, BaseItem: SItemUniqueId, pIndex: int, IsGwentCard: bool, PInventory: CInventoryComponent) 
-	{
-		var Idx, x, min, max: int;
-		
-		for (Idx = 0; Idx < VariationsArray.Size(); Idx += 1) 
-		{
-			PInventory.GetItemQualityFromName(VariationsArray[Idx], min, max);
-			
-			if (min > 3 || IsGwentCard) 
-			{
-				x = parent.master.PotP_ArrayManager.MasterList_Items_Lookup.FindFirst(VariationsArray[Idx]);
-				if (x != -1) 
-				{ 
-					this._ProcessItem(BaseItem, IsGwentCard, parent.master.PotP_ArrayManager.MasterList_Items[x]); 
-				}
-				parent.itm_array.Erase( pIndex );
-			}
-			parent.itm_array.Erase( pIndex );
-		}
-	}
-
-//---------------------------------------------------
 	
-	private function _ProcessItem(BaseItem: SItemUniqueId, IsGwentCard: bool, entry_data: PotP_PreviewEntry) {	
+	latent function ProcessItem()
+	{
+		var Idx, Edx, min, max: int;
+		var item_name: name;
+		var entry_data: PotP_PreviewEntry;
 
-		var localizedName: string = GetLocStringByKeyExt(thePlayer.GetInventory().GetItemLocalizedNameByUniqueID(BaseItem));
-		
-		if (parent.master.PotP_PersistentStorage.IsCollected(entry_data))
+		item_name = parent.player_inv.GetItemName(parent.itm_array[0]);
+			
+		Edx = parent.itm_list.FindFirst(item_name);
+		if (Edx == -1)
 		{
 			return;
 		}
 		
-		parent.master.PotP_Notifications.UpdatePlayerFromPickUp(BaseItem, localizedName);
-		parent.master.PotP_PersistentStorage.SetCompleted(entry_data, true);
+		entry_data = parent.ent_list[Edx];
+		
+		parent.player_inv.GetItemQualityFromName(item_name, min, max);
+		if ( !entry_data.IsCollected() && (min >= 4 || parent.player_inv.ItemHasTag(parent.itm_array[0], 'GwintCard') ) ) 
+		{
+			entry_data.AddToBackgroundQueue();
+			entry_data.SetCompleted();
+		}
+		
+		SleepOneFrame();
 	}
 }

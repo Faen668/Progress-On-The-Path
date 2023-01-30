@@ -7,13 +7,6 @@
 			
 			<Var id="ProgressOnThePath_MeditationUpdate"		displayName="ProgressOnThePath_MeditationUpdate" 	displayType="TOGGLE"/>
 			<Var id="ProgressOnThePath_EnableHotKey"		 	displayName="ProgressOnThePath_EnableHotKey" 		displayType="TOGGLE"/>
-
-<!--///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////-->
-
-			<Var id="Separator" 								displayName="" 										displayType="SUBTLE_SEPARATOR"/>
-			<Var id="ProgressOnThePath_BGProcessing_Qust" 		displayName="ProgressOnThePath_BGProcessing_Qust" 	displayType="SLIDER;5;60;55"/>
-			<Var id="ProgressOnThePath_BGProcessing_Item" 		displayName="ProgressOnThePath_BGProcessing_Item" 	displayType="SLIDER;5;60;55"/>
-			<Var id="ProgressOnThePath_BGProcessing_WMap" 		displayName="ProgressOnThePath_BGProcessing_WMap" 	displayType="SLIDER;5;60;55"/>
 			
 <!--///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////-->
 
@@ -38,28 +31,6 @@
 			<Var id="ProgressOnThePath_EventMapPins_ArrowPointers"			displayName="ProgressOnThePath_EventMapPins_ArrowPointers" 			displayType="TOGGLE"/>
 			<Var id="ProgressOnThePath_EventMapPins_HighlightedPointers"	displayName="ProgressOnThePath_EventMapPins_HighlightedPointers" 	displayType="TOGGLE"/>
 			
-<!--///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////-->
-
-			<Var id="Separator" 								displayName="" 										displayType="SUBTLE_SEPARATOR"/>
-			<Var id="ProgressOnThePath_Notification_Size" 		displayName="ProgressOnThePath_Notification_Size" 	displayType="SLIDER;14;34;20"/>	
-			<Var id="ProgressOnThePath_Notification_Time" 		displayName="ProgressOnThePath_Notification_Time" 	displayType="SLIDER;1;15;14"/>
-			<Var id="ProgressOnThePath_Notification_Font"		displayName="ProgressOnThePath_Notification_Font"	displayType="OPTIONS">
-				<OptionsArray>
-					<Option id="0" displayName="QT_Option_NotificationColour_0">	<Entry varId="ProgressOnThePath_Notification_Font" value="0"/></Option>
-					<Option id="1" displayName="QT_Option_NotificationColour_1">	<Entry varId="ProgressOnThePath_Notification_Font" value="1"/></Option>
-					<Option id="2" displayName="QT_Option_NotificationColour_2">	<Entry varId="ProgressOnThePath_Notification_Font" value="2"/></Option>
-					<Option id="3" displayName="QT_Option_NotificationColour_3">	<Entry varId="ProgressOnThePath_Notification_Font" value="3"/></Option>
-					<Option id="4" displayName="QT_Option_NotificationColour_4">	<Entry varId="ProgressOnThePath_Notification_Font" value="4"/></Option>
-				</OptionsArray>
-			</Var>
-			
-<!--///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////-->
-
-			<Var id="Separator" 								displayName="" 										displayType="SUBTLE_SEPARATOR"/>
-			<Var id="ProgressOnThePath_Notification_Qust" 		displayName="ProgressOnThePath_Notification_Qust" 	displayType="TOGGLE"/>
-			<Var id="ProgressOnThePath_Notification_Item" 		displayName="ProgressOnThePath_Notification_Item" 	displayType="TOGGLE"/>
-			<Var id="ProgressOnThePath_Notification_WMap" 		displayName="ProgressOnThePath_Notification_WMap" 	displayType="TOGGLE"/>
-			<Var id="ProgressOnThePath_Notification_Null" 		displayName="ProgressOnThePath_Notification_Null" 	displayType="TOGGLE"/>
 		</VisibleVars>
 	</Group>
 
@@ -82,7 +53,6 @@
 					<Option id="4" displayName="QT_Option_Preview_4">	<Entry varId="ProgressOnThePath_Preview" value="4"/></Option>
 				</OptionsArray>
 			</Var>
-			<Var id="ProgressOnThePath_Preview_Hide" 			displayName="ProgressOnThePath_Preview_Hide" 		displayType="TOGGLE"/>
 			<Var id="ProgressOnThePath_Preview_Comp" 			displayName="ProgressOnThePath_Preview_Comp" 		displayType="TOGGLE"/>
 			<Var id="ProgressOnThePath_Preview_Igno" 			displayName="ProgressOnThePath_Preview_Igno" 		displayType="TOGGLE"/>
 			<Var id="ProgressOnThePath_Preview_Iden" 			displayName="ProgressOnThePath_Preview_Iden" 		displayType="TOGGLE"/>
@@ -159,6 +129,7 @@
 					<Option id="6" displayName="QT_Option_GArea_6">	<Entry varId="ProgressOnThePath_Preview_WArea" value="6"/></Option>
 				</OptionsArray>
 			</Var>
+			<Var id="ProgressOnThePath_Preview_GExtra" 			displayName="ProgressOnThePath_Preview_GExtra" 	displayType="TOGGLE"/>
 			
 <!--///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////-->
 			
@@ -187,4 +158,52 @@
 			</Var>
 		</VisibleVars>
 	</Group>
+
+<!--///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////-->
+<!--///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////-->
+<!--///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////-->
+<!--///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////-->
+
+	<Group id="ProgressOnThePath_NotificationSettings" displayName="Mods.QT_Name.QT_Page_Notifications">
+		<VisibleVars>
+			
+			<Var id="ProgressOnThePath_GlobalNotification_Size" 	displayName="ProgressOnThePath_GlobalNotification_Size" 	displayType="SLIDER;14;34;20"/>	
+			<Var id="ProgressOnThePath_GlobalNotification_Font"		displayName="ProgressOnThePath_GlobalNotification_Font"		displayType="OPTIONS">
+				<OptionsArray>
+					<Option id="0" displayName="QT_Option_GlobalNotificationColour_0">	<Entry varId="ProgressOnThePath_GlobalNotification_Font" value="0"/></Option>
+					<Option id="1" displayName="QT_Option_GlobalNotificationColour_1">	<Entry varId="ProgressOnThePath_GlobalNotification_Font" value="1"/></Option>
+					<Option id="2" displayName="QT_Option_GlobalNotificationColour_2">	<Entry varId="ProgressOnThePath_GlobalNotification_Font" value="2"/></Option>
+					<Option id="3" displayName="QT_Option_GlobalNotificationColour_3">	<Entry varId="ProgressOnThePath_GlobalNotification_Font" value="3"/></Option>
+					<Option id="4" displayName="QT_Option_GlobalNotificationColour_4">	<Entry varId="ProgressOnThePath_GlobalNotification_Font" value="4"/></Option>
+				</OptionsArray>
+			</Var>
+			<Var id="ProgressOnThePath_GlobalNotification_Time" 		displayName="ProgressOnThePath_GlobalNotification_Time" 	displayType="SLIDER;1;15;14"/>
+			
+<!--///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////-->
+
+			<Var id="Separator" 									displayName="" 											displayType="SUBTLE_SEPARATOR"/>
+			<Var id="ProgressOnThePath_FullNotification_Quest" 		displayName="ProgressOnThePath_FullNotification_Quest" 	displayType="TOGGLE"/>
+			<Var id="ProgressOnThePath_FullNotification_World" 		displayName="ProgressOnThePath_FullNotification_World" 	displayType="TOGGLE"/>
+			<Var id="ProgressOnThePath_FullNotification_Items" 		displayName="ProgressOnThePath_FullNotification_Items" 	displayType="TOGGLE"/>
+			<Var id="ProgressOnThePath_FullNotification_Gwent" 		displayName="ProgressOnThePath_FullNotification_Gwent" 	displayType="TOGGLE"/>
+			<Var id="ProgressOnThePath_FullNotification_Event" 		displayName="ProgressOnThePath_FullNotification_Event" 	displayType="TOGGLE"/>
+			<Var id="ProgressOnThePath_FullNotification_Nulls" 		displayName="ProgressOnThePath_FullNotification_Nulls" 	displayType="TOGGLE"/>
+			
+<!--///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////-->
+
+			<Var id="Separator" 									displayName="" 											displayType="SUBTLE_SEPARATOR"/>
+			<Var id="ProgressOnThePath_BackNotification_Quest" 		displayName="ProgressOnThePath_BackNotification_Quest" 	displayType="TOGGLE"/>
+			<Var id="ProgressOnThePath_BackNotification_World" 		displayName="ProgressOnThePath_BackNotification_World" 	displayType="TOGGLE"/>
+			<Var id="ProgressOnThePath_BackNotification_Items" 		displayName="ProgressOnThePath_BackNotification_Items" 	displayType="TOGGLE"/>
+			<Var id="ProgressOnThePath_BackNotification_Gwent" 		displayName="ProgressOnThePath_BackNotification_Gwent" 	displayType="TOGGLE"/>
+			<Var id="ProgressOnThePath_BackNotification_Event" 		displayName="ProgressOnThePath_BackNotification_Event" 	displayType="TOGGLE"/>
+
+<!--///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////-->
+
+			<Var id="Separator" 									displayName="" 											displayType="SUBTLE_SEPARATOR"/>
+			<Var id="ProgressOnThePath_MiscNotification_Event" 		displayName="ProgressOnThePath_MiscNotification_Event" 	displayType="TOGGLE"/>
+			<Var id="ProgressOnThePath_MiscNotification_Enter"		displayName="ProgressOnThePath_MiscNotification_Enter" 	displayType="TOGGLE"/>
+			
+		</VisibleVars>
+	</Group>	
 </UserConfig>

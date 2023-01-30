@@ -17,9 +17,9 @@ statemachine class CProgressOnThePath_QuestGoblin
 	
 	//---------------------------------------------------
 
-	public function initialise(PotP_BaseClass: CProgressOnThePath)
+	public function initialise(master: CProgressOnThePath)
 	{
-		this.master = PotP_BaseClass;
+		this.master = master;
 	}
 	
 	//---------------------------------------------------
@@ -70,9 +70,8 @@ state QuestUpdated in CProgressOnThePath_QuestGoblin
 	entry function _QuestUpdated_ProcessQuest() 
 	{
 		var current_time: float = theGame.GetEngineTimeAsSeconds();
-		var sleep_time: int = (int) PotP_GetGeneralValue('ProgressOnThePath_BGProcessing_Qust');
 		
-		while ((current_time - parent.last_addition_time < sleep_time) || PotP_IsPlayerBusy()) 
+		while ((current_time - parent.last_addition_time < 5) || PotP_IsPlayerBusy()) 
 		{
 			current_time = theGame.GetEngineTimeAsSeconds();
 			SleepOneFrame();
@@ -106,9 +105,9 @@ state QuestUpdated in CProgressOnThePath_QuestGoblin
 				continue;
 			}
 			
-			if (parent.master.PotP_PersistentStorage.UpdateQuestEntry(pData_E[x], status))
+			if (pData_E[x].UpdateQuestEntry(status))
 			{
-				parent.master.PotP_Notifications.UpdatePlayerFromQuest(pData_E[x].localname, status, pData_E[x].is_dlc1, pData_E[x].is_dlc2);
+				pData_E[x].AddToBackgroundQueue(status);
 				parent.quest_array.Erase(i);
 			}				
 		}

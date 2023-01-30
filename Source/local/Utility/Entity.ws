@@ -5,14 +5,8 @@
 //-- Preview Entry  ---------------------------------
 //---------------------------------------------------
 
-struct PotP_Preview_Gwent_Details {
-	
-	var location: PotP_Preview_Region;
-	var requires: PotP_Preview_CardInfo;
-}
-
-enum PotP_Preview_CardInfo {
-	
+enum PotP_Preview_CardOrigin
+{
 	PotP_G_NoIdea = 0, //Unknown
 	PotP_G_Bought = 1, //Bought
 	PotP_G_Looted = 2, //looted
@@ -20,8 +14,16 @@ enum PotP_Preview_CardInfo {
 	PotP_G_Dualed = 4, //Unique Dual
 }
 
-enum PotP_Preview_Region {
-	
+enum PotP_Preview_CardType
+{
+	PotP_G_None = 0, //Undefined
+	PotP_G_Lead = 1, //Leader
+	PotP_G_Hero = 2, //Hero
+	PotP_G_Unit = 3, //Unit
+}
+
+enum PotP_Preview_Region 
+{
 	PotP_R_NA = 0, //All
 	PotP_R_WO = 1, //White Orchard
 	PotP_R_VE = 2, //Velen
@@ -33,8 +35,8 @@ enum PotP_Preview_Region {
 	PotP_R_TS = 8  //The Spiral
 }
 
-enum PotP_Preview_Array_Type {
-	
+enum PotP_Preview_Array_Type 
+{
 	PotP_A_Quest = 0, // Quest
 	PotP_A_World = 1, // World
 	PotP_A_Items = 2, // Items
@@ -42,8 +44,8 @@ enum PotP_Preview_Array_Type {
 	PotP_A_Gwent = 4  // Gwent
 }
 
-enum PotP_Preview_Entry_Type {
-	
+enum PotP_Preview_Entry_Type 
+{
 	PotP_E_Primary  	 = 0, // Normal Entry
 	PotP_E_Primary_DLC1  = 1, // Normal Entry (HOS)
 	PotP_E_Primary_DLC2  = 2, // Normal Entry (BAW)
@@ -57,21 +59,33 @@ enum PotP_Preview_Entry_Type {
 	PotP_E_ModAdded_DLC2 = 8  // Mod Added Entry (BAW)
 }
 
-enum PotP_Preview_Items_Filter {
-	
-	PotP_I_Armor  	 = 1,
-	PotP_I_Boots  	 = 2,
-	PotP_I_Pants  	 = 3,
-	PotP_I_Glove  	 = 4,
-	PotP_I_Head  	 = 5,
-	PotP_I_Steel  	 = 6,
-	PotP_I_Silve  	 = 7,
-	PotP_I_Cross	 = 8,
-	PotP_I_Troph	 = 9,
+enum PotP_Preview_Items_Underlying_Filter
+{
+	PotP_U_Armor  	 = 1,
+	PotP_U_Boots  	 = 2,
+	PotP_U_Pants  	 = 3,
+	PotP_U_Glove  	 = 4,
+	PotP_U_Head  	 = 5,
+	PotP_U_Steel  	 = 6,
+	PotP_U_Silve  	 = 7,
+	PotP_U_Cross	 = 8,
+	PotP_U_Troph	 = 9,
 }
 
-enum PotP_Preview_World_Filter {
+enum PotP_Preview_Items_Filter
+{
+	PotP_I_Relic  	 = 1,
+	PotP_I_Gears  	 = 2,
+	PotP_I_Troph  	 = 3,
+	PotP_I_Gwent  	 = 4,
+	PotP_I_Sezon	 = 5,
+	PotP_I_Shade	 = 6,
+	PotP_I_W3eer	 = 7,
+	PotP_I_Wiecej	 = 8,
+};
 
+enum PotP_Preview_World_Filter
+{
 	PotP_I_Camps	 = 1,
 	PotP_I_MDens	 = 2,
 	PotP_I_Nests	 = 3,
@@ -79,8 +93,8 @@ enum PotP_Preview_World_Filter {
 	PotP_I_Signs	 = 5,
 }
 
-enum PotP_Preview_Quest_Filter {
-
+enum PotP_Preview_Quest_Filter
+{
 	PotP_I_Event	 = 1,
 	PotP_I_Mains	 = 2,
 	PotP_I_Sides	 = 3,
@@ -89,8 +103,8 @@ enum PotP_Preview_Quest_Filter {
 	PotP_I_Hunts	 = 6,
 }
 
-enum PotP_Preview_Gwent_Filter {
-
+enum PotP_Preview_Gwent_Filter
+{
 	PotP_I_Monst	 = 1,
 	PotP_I_Nilfg	 = 2,
 	PotP_I_North	 = 3,
@@ -104,16 +118,14 @@ class PotP_PreviewEntry
 {
 	//Items Only Variables
 	var item_name		: name;
+	var variations		: array<name>;
 	
 	//Gwent Only Variables
-	var card_details	:PotP_Preview_Gwent_Details;
-	var is_loot			:bool;
-	var is_reward		:bool;
-	var is_dual			:bool;
-	var is_bought		:bool;
+	var card_type		: PotP_Preview_CardType;
+	var card_origin		: PotP_Preview_CardOrigin;
 
 	//World Only Variables
-	var pin_name		:name;
+	var pin_name		: name;
 	
 	//Event Only Variables
 	var region_string	: string;
@@ -121,134 +133,573 @@ class PotP_PreviewEntry
 	var description		: string;
 	
 	//Quest Only Variables
-	var is_dlc1 		:bool;
-	var is_dlc2 		:bool;
+	var is_dlc1 		: bool;
+	var is_dlc2 		: bool;
 	
 	// Global Variables
-	var type			:PotP_Preview_Entry_Type;
-	var arrayType		:PotP_Preview_Array_Type;
-	var filter			:int;
-	var entryname		:string;
-	var localname		:string;
-	var group			:name;
-	var uuid			:name;
-	var identifier		:string;
-	var region			:PotP_Preview_Region;
-	var is_missable		:bool;
-	var is_modadded		:bool;
+	var fileName		: name;
+	var storage			: CProgressOnThePath_Storage;
+	var mappins			: CProgressOnThePath_MapPins;
+	var notifications	: CProgressOnThePath_Notifications;
+	var type			: PotP_Preview_Entry_Type;
+	var arrayType		: PotP_Preview_Array_Type;
+	var filter			: int;
+	var sub_filter		: int;
+	var entryname		: string;
+	var localname		: string;
+	var uuid			: string;
+	var identifier		: string;
+	var region			: PotP_Preview_Region;
+	var is_missable		: bool;
+	var is_modadded		: bool;
+	var icon_path		: string;
+	var popup_line		: string;
 	
 	//Preview Tags
-	var T_InProgress 	:string;
-	var T_Completed		:string;
-	var T_Ignored		:string;
-	var T_ModAdded		:string;
+	var T_InProgress 	: string;
+	var T_Completed		: string;
+	var T_Ignored		: string;
+	var T_ModAdded		: string;
+						  
+	var T_Bought		: string;
+	var T_Looted		: string;
+	var T_Reward		: string;
+	var T_Dualed		: string;
+	var T_Missable		: string;
 	
-	var T_Bought		:string;
-	var T_Looted		:string;
-	var T_Reward		:String;
-	var T_Dualed		:String;
-		
-	default T_InProgress = "<font size='17' color='#C8566B'> (In Progress)</font>";
-	default T_Completed  = "<font size='17' color='#2ba84a'> (Completed)</font>";
-	default T_Ignored 	 = "<font size='17' color='#ff686b'> (Ignored)</font>";
-	default T_ModAdded 	 = "<font size='17' color='#26CAD6'> (Mod Added)</font>";
-
-	default T_Bought = "<font size='17' color='#C8566B'> (Bought From Vendor)</font>";
-	default T_Looted = "<font size='17' color='#2ba84a'> (Lootable)</font>";
-	default T_Reward = "<font size='17' color='#ff686b'> (Quest Reward)</font>";
-	default T_Dualed = "<font size='17' color='#26CAD6'> (Won in dual)</font>";
+	default fileName = 'PotP Entity';
 	
 	// init function called when creating the instance of this quest.
-	function initQuest(group: name, uuid: name, type: PotP_Preview_Entry_Type, region: PotP_Preview_Region, filter: PotP_Preview_Quest_Filter, entryname: string): PotP_PreviewEntry 
+	function initQuest(uuid: string, type: PotP_Preview_Entry_Type, region: PotP_Preview_Region, filter: PotP_Preview_Quest_Filter, entryname: string): PotP_PreviewEntry 
 	{
-		this.type 		= type;
-		this.entryname 	= entryname;
-		this.group 		= group;
-		this.uuid 		= uuid;
-		this.region 	= region;
-		this.filter	    = filter;
-		
-		this.localname = GetLocStringByKeyExt("option_" + NameToString(uuid));
+		this.type 			= type;
+		this.entryname 		= entryname;
+		this.uuid 			= uuid;
+		this.region 		= region;
+		this.filter	    	= filter;
 		this.SetType();
-
+		
+		this.localname 		= GetLocStringByKeyExt("option_" + uuid);
+		this.icon_path		= GetQuestIconPath();
+		this.popup_line 	= GetQuestlocalisedNotificationLine(filter);
+		
 		return this;
 	}
 	
 	// init function called when creating the instance of this Random Event.
-	function initEvent(group: name, uuid: name, type: PotP_Preview_Entry_Type, region: PotP_Preview_Region, filter: PotP_Preview_Quest_Filter, pin_region: string, factname: string, pin_position: Vector): PotP_PreviewEntry 
-	{
-		this.type		= type;
-		this.entryname 	= factname;
-		this.group 		= group;
-		this.uuid 		= uuid;
-		this.region 	= region;
-		this.filter	    = filter;
+	function initEvent(uuid: string, type: PotP_Preview_Entry_Type, region: PotP_Preview_Region, filter: PotP_Preview_Quest_Filter, initially_unlocked: bool, pin_region: string, factname: string, pin_position: Vector): PotP_PreviewEntry 
+	{	
+		this.type			= type;
+		this.entryname 		= factname;
+		this.uuid 			= uuid;
+		this.region 		= region;
+		this.filter	    	= filter;
+		this.SetType();
 		
 		this.region_string 	= pin_region;
 		this.description 	= GetLocStringByKeyExt(factname + "_Description");
 		this.position 		= pin_position;
 		
-		this.localname = GetLocStringByKeyExt("option_" + NameToString(uuid));
-		this.SetType();
+		this.localname 		= GetLocStringByKeyExt("option_" + uuid);
+		this.icon_path 		= "icons/PotP/tracked_gold.png";
+		this.popup_line 	= GetQuestlocalisedNotificationLine(filter);
+		
+		if (initially_unlocked) { UnlockEvent(); }
 		
 		return this;
 	}
 
 	// init function called when creating the instance of this World Map pin.
-	function initWorld(group: name, uuid: name, region: PotP_Preview_Region, filter: PotP_Preview_World_Filter, type: PotP_Preview_Entry_Type, pin: name): PotP_PreviewEntry 
-	{
-		this.type 		= type;
-		this.pin_name 	= pin;
-		this.group 		= group;
-		this.uuid 		= uuid;
-		this.region 	= region;
-		this.filter	    = filter;
-		
-		this.localname  = GetLocStringByKeyExt("option_" + NameToString(uuid));
-		this.SetType();
+	function initWorld(uuid: string, region: PotP_Preview_Region, filter: PotP_Preview_World_Filter, type: PotP_Preview_Entry_Type, pin: name): PotP_PreviewEntry 
+	{	
+		this.type 			= type;
+		this.pin_name 		= pin;
+		this.uuid 			= uuid;
+		this.region 		= region;
+		this.filter	    	= filter;
+		this.SetType();	
+			
+		this.localname 		= GetLocStringByKeyExt("option_" + uuid);
+		this.icon_path		= GetWorldIconpath();
+		this.popup_line 	= GetWorldlocalisedNotificationLine(filter);
 		
 		return this;
 	}
 
 	// init function called when creating the instance of this Item.
-	function initItems(group: name, uuid: name, type: PotP_Preview_Entry_Type, filter: PotP_Preview_Items_Filter, item_name: name): PotP_PreviewEntry 
+	function initItems(uuid: string, type: PotP_Preview_Entry_Type, filter: PotP_Preview_Items_Filter, sub_filter: PotP_Preview_Items_Underlying_Filter, item_name: name): PotP_PreviewEntry 
 	{
-		this.type 		= type;
-		this.item_name 	= item_name;
-		this.filter	    = filter;
-		this.group 		= group;
-		this.uuid 		= uuid;
-		
-		this.localname  = GetLocStringByKeyExt("option_" + NameToString(uuid));
+		this.type 			= type;
+		this.item_name 	 	= item_name;
+		this.uuid 			= uuid;
+		this.filter	    	= filter;
+		this.sub_filter    	= sub_filter;
 		this.SetType();
-		
+
+		this.localname 		= GetLocStringByKeyExt("option_" + uuid);
+		this.icon_path		= GetItemsIconpath();
+		this.popup_line 	= GetItemslocalisedNotificationLine(filter);
+
 		return this;
 	}
 
 	// init function called when creating the instance of this Gwent Card.
-	function initGwent(group: name, uuid: name, type: PotP_Preview_Entry_Type, filter: PotP_Preview_Gwent_Filter, item_name: name): PotP_PreviewEntry 
+	function initGwent(uuid: string, type: PotP_Preview_Entry_Type, filter: PotP_Preview_Gwent_Filter, item_name: name, optional card_type: PotP_Preview_CardType): PotP_PreviewEntry 
 	{
-		this.type 		  = type;
-		this.item_name 	  = item_name;
-		this.filter	      = filter;
-		this.group 		  = group;
-		this.uuid 		  = uuid;
-		
-		this.card_details 	= this.GetCardSource(item_name);
-		this.is_bought 		= this.card_details.requires == PotP_G_Bought;
-		this.is_loot 		= this.card_details.requires == PotP_G_Looted;
-		this.is_dual 		= this.card_details.requires == PotP_G_Dualed;
-		this.is_reward 		= this.card_details.requires == PotP_G_Reward;
-		this.region			= this.card_details.location;
-		
-		this.localname  = GetLocStringByKeyExt("option_" + NameToString(uuid));
+		this.type 		 	= type;
+		this.item_name 	 	= item_name;
+		this.uuid 		 	= uuid;
+		this.filter	     	= filter;
 		this.SetType();
 		
-		//PotP_Logger(localname + " can be " + card_details.requires + " in " + card_details.location, , 'PotP Preview Entry');
+		this.SetCardOrigin();
+		this.SetCardType(card_type);
+		
+		this.localname 		= GetLocStringByKeyExt("option_" + uuid);
+		this.icon_path		= GetGwentIconpath();
+		this.popup_line 	= GetItemslocalisedNotificationLine(PotP_I_Gwent);
+		
+		//PotP_Logger(localname + " is a " + this.card_type + " card that can be " + this.card_origin, , 'PotP Preview Entry');
 		return this;
 	}
+
+	////////////////////////////////////////////////////////////////////////////////
+	//                               Storage Functions                            //
+	////////////////////////////////////////////////////////////////////////////////
 	
-	// Sets the entry type.
+	function IsPlayable() : bool
+	{
+		return !storage.MasterList_Completed_V.Contains(this.uuid)
+			&& !storage.MasterList_IsIgnored_V.Contains(this.uuid);
+	}
+
+	//---------------------------------------------------
+	
+	function IsCompleted() : bool
+	{
+		return storage.MasterList_Completed_V.Contains(this.uuid);
+	}
+	
+	//---------------------------------------------------
+	
+	function IsIgnored() : bool
+	{
+		return storage.MasterList_IsIgnored_V.Contains(this.uuid);
+	}
+	
+	//---------------------------------------------------
+	
+	function IsInProgress() : bool
+	{
+		return storage.MasterList_InProgres_V.Contains(this.uuid);
+	}
+	
+	//---------------------------------------------------
+	
+	function IsCollected() : bool
+	{	
+		return storage.MasterList_Collected_V.Contains(this.uuid);
+	}
+
+	//---------------------------------------------------
+	
+	function SetCompleted(optional user_forced: bool) : void
+	{
+		if (!IsCompleted()) 
+		{
+			storage.MasterList_Completed_V.PushBack(this.uuid);
+			PotP_Logger("Added - " + this.localname + " to persistent storage list 'Completed'", , this.fileName);
+		}
+
+		if (this.arrayType == PotP_A_Items)
+		{
+			this.SetCollected();
+		}
+
+		if (this.arrayType == PotP_A_Event)
+		{
+			SU_removeCustomPinByTag("PotP_" + this.uuid);
+			PotP_Logger("Removed Map Pin: " + this.localname, , this.fileName);
+		}		
+		
+		this.RemoveInProgress();
+		this.RemoveIgnored();
+
+		if ( user_forced && (bool) PotP_GetNotificationValue('ProgressOnThePath_MiscNotification_Enter') )
+		{
+			notifications.UpdateSingleEntry(this, 2);
+		}
+	}		
+
+	//---------------------------------------------------
+	
+	function SetCollected() : void
+	{
+		if (!IsCollected()) 
+		{
+			FactsSet(this.item_name + "_collected", 1);
+			storage.MasterList_Collected_V.PushBack(this.uuid);
+			PotP_Logger("Added - " + this.localname + " to persistent storage list 'Collected'", , this.fileName);
+		}
+	}	
+	
+	//---------------------------------------------------
+	
+	function SetInProgress() : void
+	{
+		if (!IsInProgress())
+		{
+			storage.MasterList_InProgres_V.PushBack(this.uuid);
+			PotP_Logger("Added - " + this.localname + " to persistent storage list 'In Progress'", , this.fileName);
+		}
+			
+		this.RemoveCompleted();
+		this.RemoveIgnored();
+	}
+
+	//---------------------------------------------------
+	
+	function SetIgnored(optional user_forced: bool) : void
+	{
+		if (!IsIgnored()) 
+		{
+			storage.MasterList_IsIgnored_V.PushBack(this.uuid);
+			PotP_Logger("Added - " + this.localname + " to persistent storage list 'Ignored'", , this.fileName);
+		}
+
+		if (this.arrayType == PotP_A_Event)
+		{
+			SU_removeCustomPinByTag("PotP_" + this.uuid);
+			PotP_Logger("Removed Map Pin: " + this.localname, , this.fileName);
+		}
+			
+		this.RemoveInProgress();
+		this.RemoveCompleted();
+		
+		if ( user_forced && (bool) PotP_GetNotificationValue('ProgressOnThePath_MiscNotification_Enter') )
+		{
+			notifications.UpdateSingleEntry(this, 1);
+		}
+	}
+	
+	//---------------------------------------------------
+	
+	function SetAvailable(optional user_forced: bool) : void
+	{
+		this.RemoveCompleted();
+		this.RemoveIgnored();
+
+		if (this.arrayType == PotP_A_Event)
+		{
+			mappins.GotoState('Updating');
+		}
+		
+		if ( user_forced && (bool) PotP_GetNotificationValue('ProgressOnThePath_MiscNotification_Enter') )
+		{
+			notifications.UpdateSingleEntry(this, 0);
+		}
+	}
+	
+	//---------------------------------------------------
+	
+	function UpdateQuestEntry(status: int) : bool 
+	{	
+		switch (status) 
+		{	
+		case JS_Success:
+		case JS_Failed:
+			if (!IsCompleted()) { this.SetCompleted(); return true; }
+			return false;
+
+		case JS_Active:		
+			if (!IsInProgress()) { this.SetInProgress(); return true; }
+			return false;
+					
+		default: 
+			return false;
+		}
+	}
+
+	//---------------------------------------------------
+	
+	function RemoveIgnored() : void
+	{
+		var Idx: int = storage.MasterList_IsIgnored_V.FindFirst(this.uuid);
+		
+		if (Idx != -1)
+		{ 
+			storage.MasterList_IsIgnored_V.EraseFast(Idx);
+			PotP_Logger("Removed - " + this.localname + " from persistent storage list 'Ignored'", , this.fileName);
+		}
+	}
+	
+	//---------------------------------------------------
+	
+	function RemoveCompleted() : void
+	{
+		var Idx: int = storage.MasterList_Completed_V.FindFirst(this.uuid);
+	
+		if (Idx != -1)
+		{
+			storage.MasterList_Completed_V.EraseFast(Idx);
+			PotP_Logger("Removed - " + this.localname + " from persistent storage list 'Completed'", , this.fileName);
+		}
+	}
+	
+	//---------------------------------------------------
+	
+	function RemoveInProgress() : void
+	{
+		var Idx: int = storage.MasterList_InProgres_V.FindFirst(this.uuid);
+		
+		if (Idx != -1)
+		{ 
+			storage.MasterList_InProgres_V.EraseFast(Idx);
+			PotP_Logger("Removed - " + this.localname + " from persistent storage list 'In Progress'", , this.fileName);
+		}
+	}
+
+	////////////////////////////////////////////////////////////////////////////////
+	//                               Notifications                                //
+	////////////////////////////////////////////////////////////////////////////////
+	
+	function AddToNotificationQueue() : void
+	{
+		switch (this.arrayType)
+		{
+		case PotP_A_Quest:
+			if ( (bool) PotP_GetNotificationValue('ProgressOnThePath_FullNotification_Quest') ) 
+			{
+				notifications.AddToQuestUpdateArray(this);
+			}
+			break;
+			
+		case PotP_A_Event:
+			if ( (bool) PotP_GetNotificationValue('ProgressOnThePath_FullNotification_Event') ) 
+			{
+				notifications.AddToQuestUpdateArray(this);
+			}
+			break;
+		
+		case PotP_A_World:
+			if ( (bool) PotP_GetNotificationValue('ProgressOnThePath_FullNotification_World') ) 
+			{
+				notifications.AddToWorldMapUpdateArray(this);
+			}
+			break;
+		
+		case PotP_A_Items:
+			if ( (bool) PotP_GetNotificationValue('ProgressOnThePath_FullNotification_Items') ) 
+			{
+				notifications.AddToItemUpdateArray(this);
+			}
+			break;
+			
+		case PotP_A_Gwent:
+			if ( (bool) PotP_GetNotificationValue('ProgressOnThePath_FullNotification_Gwent') ) 
+			{
+				notifications.AddToItemUpdateArray(this);
+			}
+			break;
+			
+		default:
+			break;
+		}
+	}
+	
+	//---------------------------------------------------
+	
+	function AddToBackgroundQueue(optional status: int) : void
+	{		
+		switch (this.arrayType)
+		{
+		case PotP_A_Quest:
+			if ( (bool) PotP_GetNotificationValue('ProgressOnThePath_BackNotification_Quest') ) 
+			{
+				notifications.AddToBackGroundArray_Quest(this, status);
+			}
+			break;
+			
+		case PotP_A_Event:
+			if ( (bool) PotP_GetNotificationValue('ProgressOnThePath_BackNotification_Event') ) 
+			{
+				notifications.AddToBackGroundArray_Quest(this, status);
+			}
+			break;
+		
+		case PotP_A_World:
+			if ( (bool) PotP_GetNotificationValue('ProgressOnThePath_BackNotification_World') ) 
+			{
+				notifications.AddToBackGroundArray_WorldMap(this);
+			}
+			break;
+		
+		case PotP_A_Items:
+			if ( (bool) PotP_GetNotificationValue('ProgressOnThePath_BackNotification_Items') ) 
+			{
+				notifications.AddToBackGroundArray_Item(this);
+			}
+			break;
+			
+		case PotP_A_Gwent:
+			if ( (bool) PotP_GetNotificationValue('ProgressOnThePath_BackNotification_Gwent') ) 
+			{
+				notifications.AddToBackGroundArray_Item(this);
+			}
+			break;
+			
+		default:
+			break;
+		}
+	}
+	
+	////////////////////////////////////////////////////////////////////////////////
+	//                               Event Functions                              //
+	////////////////////////////////////////////////////////////////////////////////
+	
+	function UnlockEvent() : void
+	{
+		FactsSet(this.entryname + "_unlocked", 1);
+		PotP_Logger("Unlocked Event " + this.localname);
+	}
+	
+	//---------------------------------------------------
+	
+	function IsEventUnlocked() : bool
+	{
+		return FactsQuerySum(this.entryname + "_unlocked") > 0;	
+	}
+	
+	//---------------------------------------------------
+	
+	function GetEventLocation() : string
+	{	
+		switch (this.region)
+		{
+		case PotP_R_VE:
+			return GetLocStringByKeyExt("preset_value_QT_Option_GArea_2");
+			break;
+			
+		case PotP_R_NO:
+			return GetLocStringByKeyExt("preset_value_QT_Option_GArea_3");
+			break;
+
+		case PotP_R_SK:
+			return GetLocStringByKeyExt("preset_value_QT_Option_GArea_4");
+			break;			
+
+		case PotP_R_KM:
+			return GetLocStringByKeyExt("preset_value_QT_Option_GArea_6");
+			break;		
+		
+		default:
+			break;
+		}	
+	}
+
+	////////////////////////////////////////////////////////////////////////////////
+	//                               Gwent Functions                              //
+	////////////////////////////////////////////////////////////////////////////////
+	
+	function GetGwentIconpath() : string
+	{
+		var icon_path: string = thePlayer.GetInventory().GetItemIconPathByName(this.item_name);
+		
+		if (icon_path == "")
+		{
+			return "icons/inventory/gwint/ico_gwent_hero_neutral.png";
+		}
+		return icon_path;
+	}
+
+	//---------------------------------------------------
+
+	function SetCardType(preset_type: PotP_Preview_CardType) : void
+	{
+		var gwintManager 	: CR4GwintManager;
+		var cardDefinition 	: SCardDefinition;
+		
+		PotP_Logger("Preset Type = " + preset_type, , this.fileName);
+		
+		if (preset_type != PotP_G_None)
+		{
+			this.card_type = preset_type;
+			return;
+		}
+		
+		gwintManager = theGame.GetGwintManager();
+		cardDefinition = gwintManager.GetCardDefinition(GetWitcherPlayer().GetGwentCardIndex(this.item_name));
+		
+		if (cardDefinition.index >= 1000) 
+		{
+			this.card_type = PotP_G_Lead;
+			return;
+		}
+		
+		if ((cardDefinition.typeFlags & GwintType_Hero) == GwintType_Hero)
+		{
+			this.card_type = PotP_G_Hero;
+			return;
+		}
+		
+		this.card_type = PotP_G_Unit;
+		return;
+	}
+	
+	//---------------------------------------------------
+	
+	function SetCardOrigin() : void
+	{
+		var request: string = "Source";
+		var sourceCSV : C2dArray;
+		var Idx: int;
+		
+		sourceCSV = LoadCSV("qa\card_sources.csv");
+		
+		if ( PotP_UsingGwentRedux() )
+		{
+			sourceCSV = LoadCSV("gameplay\globals\card_sources.csv");
+			request = "Details";
+		}
+
+		for ( Idx = 0 ; Idx < sourceCSV.GetNumRows() ; Idx += 1 )
+		{
+			if (sourceCSV.GetValueAsName("CardName", Idx) == this.item_name)
+			{
+				switch(sourceCSV.GetValue(request, Idx))
+				{
+				case "Quest":
+				case "gwint_source_quest":
+					this.card_origin = PotP_G_Reward;
+					break;
+				
+				case "Won":
+				case "gwint_source_duel":
+					this.card_origin =  PotP_G_Dualed;
+					break;
+				
+				case "Loot":
+				case "gwint_source_loot":
+					this.card_origin =  PotP_G_Looted;
+					break;
+				
+				case "Bought":
+				case "gwint_source_shop":
+					this.card_origin =  PotP_G_Bought;
+					break;					
+			
+				default:
+					this.card_origin =  PotP_G_Dualed;
+					break;
+				}
+			}
+		}
+	}
+
+	////////////////////////////////////////////////////////////////////////////////
+	//                               Global Functions                             //
+	////////////////////////////////////////////////////////////////////////////////
+	
 	function SetType() : void
 	{
 		switch (this.type)
@@ -295,10 +746,21 @@ class PotP_PreviewEntry
 			this.is_dlc1 = false;
 			this.is_dlc2 = false;
 			break;
-		}	
+		}
+		
+		this.T_InProgress = GetLocStringByKeyExt("ProgressOnThePath_PreviewTag_IP");
+		this.T_Completed  = GetLocStringByKeyExt("ProgressOnThePath_PreviewTag_CO");
+		this.T_Ignored 	  = GetLocStringByKeyExt("ProgressOnThePath_PreviewTag_IG");
+		this.T_ModAdded   = GetLocStringByKeyExt("ProgressOnThePath_PreviewTag_MA");
+		this.T_Missable   = GetLocStringByKeyExt("ProgressOnThePath_PreviewTag_MI");
+		this.T_Bought     = GetLocStringByKeyExt("ProgressOnThePath_PreviewTag_BO");
+		this.T_Looted     = GetLocStringByKeyExt("ProgressOnThePath_PreviewTag_LO");
+		this.T_Reward     = GetLocStringByKeyExt("ProgressOnThePath_PreviewTag_QR");
+		this.T_Dualed     = GetLocStringByKeyExt("ProgressOnThePath_PreviewTag_WO");
 	}
 
-	// returns the debug identifier for this entry (if globally enabled).
+	//---------------------------------------------------
+	
 	function getID() : string 
 	{
 		if ( (bool) PotP_GetPreviewValue('ProgressOnThePath_Preview_Iden') ) 
@@ -307,97 +769,297 @@ class PotP_PreviewEntry
 		}
 		return "";
 	}
-	
-	// returns where this gwent card can be found in the world.
-	function GetCardSource( missingCard : name ) : PotP_Preview_Gwent_Details
-	{
-		var redux : bool = PotP_UsingGwentRedux();
-		var sourceCSV : C2dArray;
-		var sourceLocation: PotP_Preview_Region;
-		var sourceRequires: PotP_Preview_CardInfo;
-		var Idx: int;
-		
-		sourceCSV = LoadCSV("qa\card_sources.csv");
-		
-		if (redux)
-		{
-			sourceCSV = LoadCSV("gameplay\globals\card_sources.csv");
-		}
 
-		for ( Idx = 0 ; Idx < sourceCSV.GetNumRows() ; Idx += 1 )
+	////////////////////////////////////////////////////////////////////////////////
+	//                               Items Functions                              //
+	////////////////////////////////////////////////////////////////////////////////
+	
+	function GetItemsIconpath() : string
+	{
+		var icon_path: string = thePlayer.GetInventory().GetItemIconPathByName(this.item_name);
+		
+		if (icon_path == "")
 		{
-			if (sourceCSV.GetValueAsName("CardName", Idx) == missingCard)
+			return "icons/inventory/weapons/silver_unique_aerondight_64x128.png";
+		}
+		return icon_path;
+	}
+	
+	//---------------------------------------------------
+	
+	function IsItemCollected() : bool
+	{
+		return FactsQuerySum(this.item_name + "_collected") > 0;	
+	}
+	
+	//---------------------------------------------------
+	
+	function compilevariations(optional var1: name, optional var2: name, optional var3: name, optional var4: name): PotP_PreviewEntry 
+	{
+		this.variations.Clear();
+		this.variations.PushBack(this.item_name);
+		
+		if (var1 != '') { if (!this.isValid(var1)) { PotP_Logger("Variation [" + var1 + "] Is Not A Valid Item",, this.fileName); } else { this.addvariation(var1); } }
+		if (var2 != '') { if (!this.isValid(var2)) { PotP_Logger("Variation [" + var2 + "] Is Not A Valid Item",, this.fileName); } else { this.addvariation(var2); } }
+		if (var3 != '') { if (!this.isValid(var3)) { PotP_Logger("Variation [" + var3 + "] Is Not A Valid Item",, this.fileName); } else { this.addvariation(var3); } }
+		if (var4 != '') { if (!this.isValid(var4)) { PotP_Logger("Variation [" + var4 + "] Is Not A Valid Item",, this.fileName); } else { this.addvariation(var4); } }
+
+		return this;
+	}
+	
+	//---------------------------------------------------
+	
+	function addvariation(variation_name: name)
+	{
+		this.variations.PushBack(variation_name);
+		PotP_Logger("Variation [" + variation_name + "] Assigned to Base Item " + this.item_name,, this.fileName);
+	}
+	
+	//---------------------------------------------------
+	
+	function isValid(item_name: name) : bool
+	{
+		return thePlayer.inv.GetItemLocalizedNameByName(item_name) != "";
+	}
+	
+	//---------------------------------------------------
+	
+	function isVariation(item_name: name) : bool
+	{
+		return this.variations.Contains(item_name) && item_name != this.item_name;
+	}
+	
+	//---------------------------------------------------
+	
+	function isBase(item_name: name) : bool
+	{
+		return item_name == this.item_name;
+	}
+	
+	//---------------------------------------------------
+	
+	function GetItemslocalisedNotificationLine(filter: PotP_Preview_Items_Filter) : string
+	{
+		switch(filter)
+		{
+		case PotP_I_Troph:
+			return GetLocStringByKeyExt("PotP_NotificationLine_Troph");
+
+		case PotP_I_Relic:
+			return GetLocStringByKeyExt("PotP_NotificationLine_Relic");
+			
+		case PotP_I_Gears:
+			return GetLocStringByKeyExt("PotP_NotificationLine_GearSet");
+
+		case PotP_I_Gwent:
+			return GetLocStringByKeyExt("PotP_NotificationLine_Gwent");
+			
+		case PotP_I_Shade:
+			return GetLocStringByKeyExt("PotP_NotificationLine_ShadesOfIron");
+
+		case PotP_I_Wiecej:
+			return GetLocStringByKeyExt("PotP_NotificationLine_CosWiecej");
+
+		case PotP_I_Sezon:
+			return GetLocStringByKeyExt("PotP_NotificationLine_SezonBurz");
+
+		case PotP_I_W3eer:
+			return GetLocStringByKeyExt("PotP_NotificationLine_W3EE");
+			
+		default:
+			return "";
+		}
+	}
+
+	////////////////////////////////////////////////////////////////////////////////
+	//                               World Functions                              //
+	////////////////////////////////////////////////////////////////////////////////
+	
+	function GetWorldIconpath() : string
+	{
+		switch (this.filter)
+		{
+			case PotP_I_Camps: return "icons/PotP/tracked_banditcamp_dark.png";
+			case PotP_I_MDens: return "icons/PotP/tracked_monsterden_dark.png";
+			case PotP_I_Nests: return "icons/PotP/tracked_monsternest_dark.png";
+			case PotP_I_Place: return "icons/PotP/tracked_placeofpower_dark.png";
+			case PotP_I_Signs: return "icons/PotP/tracked_roadsign_dark.png";
+		}
+	}
+	
+	//---------------------------------------------------
+	
+	function GetWorldlocalisedNotificationLine(filter: PotP_Preview_World_Filter) : string
+	{
+		switch(filter)
+		{
+		case PotP_I_Camps:
+			return GetLocStringByKeyExt("PotP_NotificationLine_Camps");
+
+		case PotP_I_MDens:
+			return GetLocStringByKeyExt("PotP_NotificationLine_MoDen");
+			
+		case PotP_I_Nests:
+			return GetLocStringByKeyExt("PotP_NotificationLine_MoNes");
+
+		case PotP_I_Place:
+			return GetLocStringByKeyExt("PotP_NotificationLine_Place");
+			
+		case PotP_I_Signs:
+			return GetLocStringByKeyExt("PotP_NotificationLine_SignP");
+		
+		default:
+			return "";
+		}
+	}
+	
+	////////////////////////////////////////////////////////////////////////////////
+	//                               Quest Functions                              //
+	////////////////////////////////////////////////////////////////////////////////
+	
+	function GetQuestIconPath() : string
+	{
+		if (this.is_dlc1) 
+		{ 
+			return "icons/PotP/tracked_blue.png";
+		}
+		
+		if (this.is_dlc2) 
+		{ 
+			return "icons/PotP/tracked_red.png";
+		}
+		
+		return "icons/PotP/tracked_gold.png";
+	}
+	
+	//---------------------------------------------------
+	
+	function GetQuestlocalisedNotificationLine(filter: PotP_Preview_Quest_Filter) : string
+	{
+		switch(filter)
+		{
+		case PotP_I_Mains:
+			
+			switch (this.type)
 			{
-				if (redux) {
-					sourceRequires = this.GetSourceRequirements(sourceCSV.GetValue("Details", Idx));
-				}
-				else {
-					sourceRequires = this.GetSourceRequirements(sourceCSV.GetValue("Source", Idx));
-				}
-				
-				sourceLocation = this.GetsourceCardLocation(sourceCSV.GetValue("OriginArea", Idx));
-				return PotP_Preview_Gwent_Details(sourceLocation, sourceRequires);
+			case PotP_E_Primary_DLC1:
+			case PotP_E_Missable_DLC1:
+			case PotP_E_ModAdded_DLC1:
+				return GetLocStringByKeyExt("PotP_NotificationLine_Quest_Mai2");
+
+			case PotP_E_Primary_DLC2:
+			case PotP_E_Missable_DLC2:
+			case PotP_E_ModAdded_DLC2:
+				return GetLocStringByKeyExt("PotP_NotificationLine_Quest_Mai3");
+			
+			default:
+				return GetLocStringByKeyExt("PotP_NotificationLine_Quest_Mai1");
 			}
-		}
-		return PotP_Preview_Gwent_Details(PotP_R_NA, PotP_G_NoIdea);
-	}
 
-	function GetSourceRequirements(info: string) : PotP_Preview_CardInfo
-	{
-		switch(info) 
-		{
-		case "Quest":
-		case "gwint_source_quest":
-			return PotP_G_Reward;
+		case PotP_I_Sides:
+			
+			switch (this.type)
+			{
+			case PotP_E_Primary_DLC1:
+			case PotP_E_Missable_DLC1:
+			case PotP_E_ModAdded_DLC1:
+				return GetLocStringByKeyExt("PotP_NotificationLine_Quest_Sid2");
+
+			case PotP_E_Primary_DLC2:
+			case PotP_E_Missable_DLC2:
+			case PotP_E_ModAdded_DLC2:
+				return GetLocStringByKeyExt("PotP_NotificationLine_Quest_Sid3");
+			
+			default:
+				return GetLocStringByKeyExt("PotP_NotificationLine_Quest_Sid1");
+			}
+
+		case PotP_I_Conts:
 		
-		case "Won":
-		case "gwint_source_duel":
-			return PotP_G_Dualed;
+			switch (this.type)
+			{
+			case PotP_E_Primary_DLC1:
+			case PotP_E_Missable_DLC1:
+			case PotP_E_ModAdded_DLC1:
+				return GetLocStringByKeyExt("PotP_NotificationLine_Quest_Con2");
+
+			case PotP_E_Primary_DLC2:
+			case PotP_E_Missable_DLC2:
+			case PotP_E_ModAdded_DLC2:
+				return GetLocStringByKeyExt("PotP_NotificationLine_Quest_Con3");
+			
+			default:
+				return GetLocStringByKeyExt("PotP_NotificationLine_Quest_Con1");
+			}
+			
+		case PotP_I_Hunts:
+			
+			switch (this.type)
+			{
+			case PotP_E_Primary_DLC1:
+			case PotP_E_Missable_DLC1:
+			case PotP_E_ModAdded_DLC1:
+				return GetLocStringByKeyExt("PotP_NotificationLine_Quest_Tre2");
+
+			case PotP_E_Primary_DLC2:
+			case PotP_E_Missable_DLC2:
+			case PotP_E_ModAdded_DLC2:
+				return GetLocStringByKeyExt("PotP_NotificationLine_Quest_Tre3");
+			
+			default:
+				return GetLocStringByKeyExt("PotP_NotificationLine_Quest_Tre1");
+			}
+
+		case PotP_I_Scavs:
+			return GetLocStringByKeyExt("PotP_NotificationLine_Quest_Scav");
+
+		case PotP_I_Event:
+			return GetLocStringByKeyExt("PotP_NotificationLine_Event");
 		
-		case "Loot":
-		case "gwint_source_loot":
-			return PotP_G_Looted;
-		
-		case "Bought":
-		case "gwint_source_shop":
-			return PotP_G_Bought;				
+		default:
+			return "";
+		}
+	}
+}
+
+//---------------------------------------------------
+//-- Console Functions For Quest Update -------------
+//---------------------------------------------------
+
+enum pStatus
+{
+	completed = 2,
+	ignored = 1,
+}
+
+exec function pt_changestatus(identifier: string, optional value: pStatus) 
+{
+	var master: CProgressOnThePath;	
+	var EntList: array<PotP_PreviewEntry>;
+	var IdeList: array<string>;
+	var Idx: int;
+
+	if (!GetPotP(master, "Storage")) { return; }
+
+	EntList = master.PotP_ArrayManager.TotalEntList;	
+	IdeList = master.PotP_ArrayManager.TotalIdeList;
+	Idx = IdeList.FindFirst(identifier);
 	
-		default:
-			return PotP_G_Dualed;
-		}
-	}
-
-	function GetsourceCardLocation(info: string) : PotP_Preview_Region
+	if (Idx == -1) { return; }
+	
+	switch (value) 
 	{
-		switch (info)
-		{
-		case "NML":
-			return PotP_R_VE;
-
-		case "Novigrad":
-			return PotP_R_NO;
-
-		case "Skellige":
-			return PotP_R_SK;
-			
-		case "Prologue":
-			return PotP_R_WO;
-
-		case "Vizima":
-			return PotP_R_VI;
-			
-		case "KaerMorhen":
-			return PotP_R_KM;
-
-		case "Toussaint":
-			return PotP_R_TS;
-
-		case "Random":
-			return PotP_R_NA;
-			
-		default:
-			return PotP_R_NA;
-		}
+	case completed:	
+		EntList[Idx].SetCompleted(true);
+		break;
+		
+	case ignored:
+		EntList[Idx].SetIgnored(true);
+		break;
+		
+	default:
+		EntList[Idx].SetAvailable(true);
+		break;
 	}
 }
 

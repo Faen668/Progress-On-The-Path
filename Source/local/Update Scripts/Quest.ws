@@ -94,11 +94,11 @@ state Updating in CProgressOnThePath_Quest_Updater
 				continue;
 			}
 			
-			if (parent.master.PotP_PersistentStorage.UpdateQuestEntry(pData_E[x], status))
+			if (pData_E[x].UpdateQuestEntry(status))
 			{
 				if (status == JS_Success || status == JS_Failed)
 				{
-					parent.master.PotP_Notifications.UpdateQuestCounter(1, pData_E[x].group, pData_E[x].is_dlc1, pData_E[x].is_dlc2);
+					pData_E[x].AddToNotificationQueue();
 				}
 			}				
 		}

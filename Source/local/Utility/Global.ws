@@ -79,6 +79,8 @@ function PotP_PlayerIsMeditating() : bool
 
 function PotP_Logger(message: string, optional ShowInGUI: bool, optional filename: name) 
 {	
+	/*Comment The Line Out On Release Version */ if ( StrContains(message, "Entered state") ) { return; }
+	
 	if (filename == '') 
 	{
 		filename = 'PotP';

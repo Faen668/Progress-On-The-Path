@@ -2,25 +2,17 @@
 //-------------------- Installation ----------------------
 //--------------------------------------------------------
 
+Completely remove any old version.
+
 Copy the 'mods', 'dlc' and 'bin' folder into your witcher 3 directory.
 
-Progress on the Path comes shipped with a set of 'Shared Utils', 
-these utilities are required for some features to work properly 
-such as Map Pins, others like the bootrapper are mandatory for 
-Progress on the Path to run.
-
-When installing this mod, you may get a prompt to override files 
-if another mod is using the shared utils, this is perfectly safe 
-to do and you should do so to make sure this mod functions correctly.
+If you get a prompt to overwrite files go ahead and do so.
 
 //--------------------------------------------------------
 //---------------- Adding User Settings ------------------
 //--------------------------------------------------------
 
-Copy and paste the following into:
-
-\Documents\The Witcher 3\user.settings
-\Documents\The Witcher 3\dx12user.settings (NG Only)
+- Copy and paste the following:
 
 [ProgressOnThePath_PreviewSettings]
 ProgressOnThePath_Preview=0
@@ -39,16 +31,6 @@ ProgressOnThePath_Preview_WType=0
 [ProgressOnThePath_GeneralSettings]
 ProgressOnThePath_MeditationUpdate=true
 ProgressOnThePath_EnableHotKey=true
-ProgressOnThePath_BGProcessing_Qust=5
-ProgressOnThePath_BGProcessing_Item=5
-ProgressOnThePath_BGProcessing_WMap=5
-ProgressOnThePath_Notification_Time=7
-ProgressOnThePath_Notification_Size=18
-ProgressOnThePath_Notification_Font=1
-ProgressOnThePath_Notification_Qust=true
-ProgressOnThePath_Notification_Item=true
-ProgressOnThePath_Notification_WMap=true
-ProgressOnThePath_Notification_Null=true
 ProgressOnThePath_EventMapPins_ShowMapPins=true
 ProgressOnThePath_EventMapPins_MapPinDescription=true
 ProgressOnThePath_EventMapPins_MapPinRadius=30
@@ -57,13 +39,34 @@ ProgressOnThePath_EventMapPins_ShowMiniMap=false
 ProgressOnThePath_EventMapPins_ArrowPointers=false
 ProgressOnThePath_EventMapPins_HighlightedPointers=false
 
+[ProgressOnThePath_NotificationSettings]
+ProgressOnThePath_GlobalNotification_Time=7
+ProgressOnThePath_GlobalNotification_Size=18
+ProgressOnThePath_GlobalNotification_Font=1
+ProgressOnThePath_FullNotification_Quest=true
+ProgressOnThePath_FullNotification_World=true
+ProgressOnThePath_FullNotification_Items=true
+ProgressOnThePath_FullNotification_Gwent=true
+ProgressOnThePath_FullNotification_Event=true
+ProgressOnThePath_FullNotification_Nulls=true
+ProgressOnThePath_BackNotification_Quest=true
+ProgressOnThePath_BackNotification_World=true
+ProgressOnThePath_BackNotification_Items=true
+ProgressOnThePath_BackNotification_Gwent=true
+ProgressOnThePath_BackNotification_Event=true
+ProgressOnThePath_MiscNotification_Event=true
+ProgressOnThePath_MiscNotification_Enter=true
+
+- Into These 2 Files:
+
+*\Documents\The Witcher 3\user.settings
+*\Documents\The Witcher 3\dx12user.settings (NG Only)
+
 //--------------------------------------------------------
 //-------- Adding Hotkey Support (Optional) --------------
 //--------------------------------------------------------
 
----- Step 1
-
-Copy and paste the following into - \Documents\The Witcher 3\input.settings
+- Copy and paste the following:
 
 [Exploration]
 IK_NumPad5=(Action=UpdateProgressOnThePath)
@@ -87,25 +90,35 @@ IK_NumPad6=(Action=DisplayProgressPreview)
 IK_NumPad5=(Action=UpdateProgressOnThePath)
 IK_NumPad6=(Action=DisplayProgressPreview)
 
----- Step 2
+- Into This File:
 
-Copy and paste the following into - The Witcher 3\bin\config\r4game\user_config_matrix\pc\modProgressOnThePath.xml
+*\Documents\The Witcher 3\input.settings
+
+- Copy and paste the following:
 
 <!-- Progress on the Path Begin --> 
 <Var builder="Input" id="UpdateProgressOnThePath" 		displayName="UpdateProgressOnThePath" 		displayType="INPUTPC" actions="UpdateProgressOnThePath"/>
 <Var builder="Input" id="DisplayProgressPreview" 		displayName="DisplayProgressPreview" 		displayType="INPUTPC" actions="DisplayProgressPreview"/>
 <!-- Progress on the Path End -->
 
+- Into This File:
+
+*\The Witcher 3\bin\config\r4game\user_config_matrix\pc\input.xml
+
 //--------------------------------------------------------
 //----------------- Menu Building (NG ONLY) --------------
 //--------------------------------------------------------
 
-Copy and paste the following into:
+-Copy and paste the following:
+
+modProgressOnThePath.xml;
+
+- Into These 2 Files:
 
 *The Witcher 3\bin\config\r4game\user_config_matrix\pc\dx11filelist.txt
 *The Witcher 3\bin\config\r4game\user_config_matrix\pc\dx12filelist.txt
 
-modProgressOnThePath.xml;
+NOTE: Some users have reported problems if this line is at the very end of the file list, if you have any issues displaying the menu then move the line further up the file list.
 
 //--------------------------------------------------------
 //-------------------------- End -------------------------

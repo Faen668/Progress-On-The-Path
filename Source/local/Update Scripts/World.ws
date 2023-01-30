@@ -14,9 +14,9 @@ statemachine class CProgressOnThePath_World_Updater extends CEntity
 	
 	//---------------------------------------------------
 
-	public function initialise(PotP_BaseClass: CProgressOnThePath) : CProgressOnThePath_World_Updater
+	public function initialise(master: CProgressOnThePath) : CProgressOnThePath_World_Updater
 	{
-		this.master = PotP_BaseClass;
+		this.master = master;
 		return this;
 	}
 
@@ -82,8 +82,8 @@ state Updating in CProgressOnThePath_World_Updater
 		for ( Idx = 0; Idx < pData_E.Size(); Idx += 1 ) {
 
 			if (this.IsMapPinEligible(pData_E[Idx], MapManager)) {
-				parent.master.PotP_PersistentStorage.SetCompleted(pData_E[Idx]);
-				parent.master.PotP_Notifications.UpdateMiscCounter(1, pData_E[Idx].group);
+				pData_E[Idx].SetCompleted(pData_E[Idx]);
+				pData_E[Idx].AddToNotificationQueue();
 			}
 		}	
 	}
@@ -92,7 +92,7 @@ state Updating in CProgressOnThePath_World_Updater
 
 	private function IsMapPinEligible(entry_data: PotP_PreviewEntry, MapManager: CCommonMapManager) : bool {
 		
-		if (parent.master.PotP_PersistentStorage.IsCompletedOrIgnored(entry_data))
+		if (!entry_data.IsPlayable())
 		{
 			return false;
 		}

@@ -11,13 +11,13 @@ statemachine class CProgressOnThePath_Event_Updater
 		default filename = 'PotP Event Script';
 	
 	public var master: CProgressOnThePath;
-	public var EventIdentifier: name;
+	public var entity: PotP_PreviewEntry;
 	
 	//---------------------------------------------------
 
-	public function initialise(PotP_BaseClass: CProgressOnThePath) : CProgressOnThePath_Event_Updater
+	public function initialise(master: CProgressOnThePath) : CProgressOnThePath_Event_Updater
 	{
-		this.master = PotP_BaseClass;
+		this.master = master;
 		return this;
 	}
 
@@ -38,9 +38,9 @@ statemachine class CProgressOnThePath_Event_Updater
 	
 	//---------------------------------------------------
 	
-	public function UpdateEvent(EventIdentifier: name) : void
+	public function UpdateEvent(entity: PotP_PreviewEntry) : void
 	{
-		this.EventIdentifier = EventIdentifier;
+		this.entity = entity;
 		this.GotoState('Idle');
 		this.GotoState('UpdateOne');
 	}
@@ -90,15 +90,11 @@ state UpdateAll in CProgressOnThePath_Event_Updater
 		var Idx: int;
 		
 		for ( Idx = 0; Idx < pData_E.Size(); Idx += 1 )
-		{	
-			if (master.PotP_PersistentStorage.IsCompletedOrIgnored(pData_E[Idx])) {
-				continue;
-			}
-			
-			if (FactsQuerySum(pData_E[Idx].entryname) > 0) 
+		{				
+			if (pData_E[Idx].IsPlayable() && FactsQuerySum(pData_E[Idx].entryname) > 0) 
 			{
-				master.PotP_PersistentStorage.SetCompleted(pData_E[Idx], , true);
-				master.PotP_Notifications.UpdateQuestCounter(1, pData_E[Idx].group, false, false);
+				pData_E[Idx].SetCompleted();
+				pData_E[Idx].AddToNotificationQueue();
 			}
 		}
 	}
@@ -131,36 +127,139 @@ state UpdateOne in CProgressOnThePath_Event_Updater
 	latent function UpdateOne_Main() 
 	{
 		var master: CProgressOnThePath = parent.master;
-		var pEvent: PotP_PreviewEntry;
 		
-		var Idx: int  = master.PotP_ArrayManager.TotalVarList.FindFirst(parent.EventIdentifier);
+		FactsSet(parent.entity.entryname, 1);
+		
+		parent.entity.SetCompleted();
+		parent.entity.AddToBackgroundQueue(2);
 
-		if (Idx != -1)
+		while (PotP_IsPlayerBusy())
 		{
-			pEvent = master.PotP_ArrayManager.TotalEntList[Idx];
-			master.PotP_PersistentStorage.SetCompleted(pEvent, , true);		
-			master.PotP_Notifications.UpdatePlayerFromQuest(pEvent.localname, 2, false, false);
-			
-			PotP_Logger("Completed Event " + pEvent.localname, , parent.filename);
-			
-			while (PotP_IsPlayerBusy())
-			{
-				SleepOneFrame();
-			}
-			master.PotP_Notifications.NotifyPlayerFromBackgroundProcess();
+			SleepOneFrame();
 		}
+
+		master.PotP_Notifications.NotifyPlayerFromBackgroundProcess();
 	}
 }
 
-quest function PotP_CompleteEvent( EventIdentifier : name, IsCompleted: bool )
+//---------------------------------------------------
+//-- Quest Functions --------------------------------
+//---------------------------------------------------
+
+quest function PotP_CompleteEvent(fact_name: name, optional fact_name_string: string)
 {
-	var master: CProgressOnThePath;
+	var filename		: name = 'PotP_CompleteEvent';
+	var pEvent_List		: array<PotP_PreviewEntry>;
+	var master			: CProgressOnThePath;
+	var Idx				: int = 0;
 	
-	if (!GetPotP(master, 'PotP_CompleteEvent') || !IsCompleted) {
+	// If PotP is not yet initialised, add a fact for the listener to pick up later.
+	if (!GetPotP(master, filename))
+	{
+		FactsSet(NameToString(fact_name), 1);
+		PotP_Logger("Setting Event Fact - " + fact_name, , filename);
 		return;
 	}
 	
-	master.PotP_UpdaterClass.PotP_Event.UpdateEvent(EventIdentifier);
+	//Assign pEvent_List to the master list of available Events.
+	pEvent_List = master.PotP_ArrayManager.MasterList_Events;
+	
+	//Travserse the available events and find a match for the fact name in the entity.
+	for (Idx = 0; Idx < pEvent_List.Size(); Idx += 1)
+	{
+		// If a match is found, send the entity to the event update class.	
+		if (pEvent_List[Idx].entryname == NameToString(fact_name) && pEvent_List[Idx].IsPlayable())
+		{
+			master.PotP_UpdaterClass.PotP_Event.UpdateEvent(pEvent_List[Idx]);
+		}		
+	}
+}
+
+//---------------------------------------------------
+//-- Quest Functions --------------------------------
+//---------------------------------------------------
+
+function PotP_CompleteEventByString(fact_name: string)
+{
+	var filename		: name = 'PotP_CompleteEventByString';
+	var pEvent_List		: array<PotP_PreviewEntry>;
+	var master			: CProgressOnThePath;
+	var Idx				: int = 0;
+	
+	// If PotP is not yet initialised, add a fact for the listener to pick up later.
+	if (!GetPotP(master, filename))
+	{
+		FactsSet(fact_name, 1);
+		PotP_Logger("Setting Event Fact - " + fact_name, , filename);
+		return;
+	}
+	
+	//Assign pEvent_List to the master list of available Events.
+	pEvent_List = master.PotP_ArrayManager.MasterList_Events;
+	
+	//Travserse the available events and find a match for the fact name in the entity.
+	for (Idx = 0; Idx < pEvent_List.Size(); Idx += 1)
+	{
+		// If a match is found, send the entity to the event update class.	
+		if (pEvent_List[Idx].entryname == fact_name && pEvent_List[Idx].IsPlayable())
+		{
+			master.PotP_UpdaterClass.PotP_Event.UpdateEvent(pEvent_List[Idx]);
+		}	
+	}
+}
+
+//---------------------------------------------------
+//-- Quest Functions --------------------------------
+//---------------------------------------------------
+
+quest function PotP_UnlockEvent(UUID: string, Location: string, Fact: string)
+{
+	var filename		: name = 'PotP_UnlockEvent';
+	var PopupMessage	: string = GetLocStringByKeyExt("PotP_NewEventMessage1");
+	var pEvent_List		: array<PotP_PreviewEntry>;
+	var master			: CProgressOnThePath;
+	var Idx				: int = 0;
+
+	// If PotP is not yet initialised, add a fact for the listener to pick up later.
+	if (!GetPotP(master, filename))
+	{
+		FactsSet(Fact + "_unlocked", 1);
+		return;
+	}
+	
+	//Assign pEvent_List to the master list of available Events.
+	pEvent_List = master.PotP_ArrayManager.MasterList_Events;
+	
+	//Travserse the available events and find a match for the fact name in the entity.
+	for (Idx = 0; Idx < pEvent_List.Size(); Idx += 1)
+	{
+		// Try to assign the name and location of the unlocked event.
+		if (pEvent_List[Idx].uuid == UUID)
+		{
+			// If the event is already unlocked, return.
+			if (pEvent_List[Idx].IsEventUnlocked())
+			{
+				return;
+			}
+			
+			//Unlock the event.
+			pEvent_List[Idx].UnlockEvent();
+			
+			//Reset Map Pins to show unlocked event on the world map.
+			master.PotP_PinManager.GotoState('Updating');
+			
+			if ( (bool) PotP_GetNotificationValue('ProgressOnThePath_MiscNotification_Event') )
+			{
+				//Replace the popup message tags with the event name and location.
+				PopupMessage = StrReplace(PopupMessage, "[EVENTNAME]", pEvent_List[Idx].localname);
+				PopupMessage = StrReplace(PopupMessage, "[EVENTLOCATION]", GetLocStringByKeyExt(Location));
+				
+				//Add the message to the notification queue for display.
+				
+				master.PotP_PopupManager.Showpopup(GetLocStringByKeyExt("panel_QT_Name"), PopupMessage, pEvent_List[Idx].entryname, "Hint", false);
+			}
+		}
+	}
 }
 
 //---------------------------------------------------

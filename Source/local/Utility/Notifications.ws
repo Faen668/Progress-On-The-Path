@@ -43,21 +43,6 @@ class CProgressOnThePath_Notifications
 	private var fontsize: int;
 		default fontsize = 18;
 
-	private var iconPath_MoDen: string;
-		default iconPath_MoDen = "icons/PotP/tracked_monsterden_dark.png";
-
-	private var iconPath_MoNes: string;
-		default iconPath_MoNes = "icons/PotP/tracked_monsternest_dark.png";
-
-	private var iconPath_RSign: string;
-		default iconPath_RSign = "icons/PotP/tracked_roadsign_dark.png";
-		
-	private var iconPath_Place: string;
-		default iconPath_Place = "icons/PotP/tracked_placeofpower_dark.png";
-
-	private var iconPath_Camps: string;
-		default iconPath_Camps = "icons/PotP/tracked_banditcamp_dark.png";
-
 	public var master: CProgressOnThePath;
 	
 	//---------------------------------------------------
@@ -66,295 +51,6 @@ class CProgressOnThePath_Notifications
 	{
 		this.master = PotP_BaseClass;
 		return this;
-	}
-	
-	//---------------------------------------------------
-	
-	public function UpdateQuestCounter(value: int, groupID: name, HOS: bool, BAW: bool) 
-	{	
-		switch( groupID )
-		{
-		//Main Quests
-		case 'PotP_TrackingGroup_MainQuests_Prologue':
-		case 'PotP_TrackingGroup_MainQuests_Vizima':
-		case 'PotP_TrackingGroup_MainQuests_VelenAct1':
-		case 'PotP_TrackingGroup_MainQuests_NovigradAct1':
-		case 'PotP_TrackingGroup_MainQuests_SkelligeAct1':
-		case 'PotP_TrackingGroup_MainQuests_Act2':
-		case 'PotP_TrackingGroup_MainQuests_Act3':
-			AddToQuestUpdateArray(GetLocStringByKeyExt("PotP_NotificationLine_Quest_Mai1"), value, "icons/PotP/tracked_gold.png");
-			break;				
-		
-		case 'PotP_TrackingGroup_MainQuests_HeartsOfStone':
-			AddToQuestUpdateArray(GetLocStringByKeyExt("PotP_NotificationLine_Quest_Mai2"), value, "icons/PotP/tracked_blue.png");
-			break;		
-			
-		case 'PotP_TrackingGroup_MainQuests_BloodAndWine':
-			AddToQuestUpdateArray(GetLocStringByKeyExt("PotP_NotificationLine_Quest_Mai3"), value, "icons/PotP/tracked_red.png");
-			break;		
-		
-		//Side Quests
-		case 'PotP_TrackingGroup_SideQuests_WhiteOrchard':
-		case 'PotP_TrackingGroup_SideQuests_Velen':
-		case 'PotP_TrackingGroup_SideQuests_Skellige':
-		case 'PotP_TrackingGroup_SideQuests_KaerMorhen':
-		case 'PotP_TrackingGroup_SideQuests_Toussaint':
-		case 'PotP_TrackingGroup_SideQuests_NonRegional':
-		case 'PotP_TrackingGroup_SideQuests_Novigrad':
-			if (HOS) { AddToQuestUpdateArray(GetLocStringByKeyExt("PotP_NotificationLine_Quest_Sid2"), value, "icons/PotP/tracked_blue.png"); break; }
-			if (BAW) { AddToQuestUpdateArray(GetLocStringByKeyExt("PotP_NotificationLine_Quest_Sid3"), value, "icons/PotP/tracked_red.png"); break; }
-			AddToQuestUpdateArray(GetLocStringByKeyExt("PotP_NotificationLine_Quest_Sid1"), value, "icons/PotP/tracked_gold.png");
-			break;	
-		
-		//Contract Quests
-		case 'PotP_TrackingGroup_ContractQuests_WhiteOrchard':
-		case 'PotP_TrackingGroup_ContractQuests_Velen':
-		case 'PotP_TrackingGroup_ContractQuests_Novigrad':
-		case 'PotP_TrackingGroup_ContractQuests_Skellige':
-		case 'PotP_TrackingGroup_ContractQuests_Toussaint':
-			if (HOS) { AddToQuestUpdateArray(GetLocStringByKeyExt("PotP_NotificationLine_Quest_Con2"), value, "icons/PotP/tracked_blue.png"); break; }
-			if (BAW) { AddToQuestUpdateArray(GetLocStringByKeyExt("PotP_NotificationLine_Quest_Con3"), value, "icons/PotP/tracked_red.png"); break; }
-			AddToQuestUpdateArray(GetLocStringByKeyExt("PotP_NotificationLine_Quest_Con1"), value, "icons/PotP/tracked_gold.png");
-			break;
-			
-		//Scavenger Hunt Quests
-		case 'PotP_TrackingGroup_ScavengerHuntQuests_GriffinSet':
-		case 'PotP_TrackingGroup_ScavengerHuntQuests_FelineSet':
-		case 'PotP_TrackingGroup_ScavengerHuntQuests_UrsineSet':
-		case 'PotP_TrackingGroup_ScavengerHuntQuests_WolvenSet':
-		case 'PotP_TrackingGroup_ScavengerHuntQuests_OtherSets':	
-			AddToQuestUpdateArray(GetLocStringByKeyExt("PotP_NotificationLine_Quest_Scav"), value, "icons/PotP/tracked_gold.png");
-			break;	
-
-		//Treasure Hunt Quests
-		case 'PotP_TrackingGroup_TreasureHuntQuests_WhiteOrchard':
-		case 'PotP_TrackingGroup_TreasureHuntQuests_Velen':
-		case 'PotP_TrackingGroup_TreasureHuntQuests_Skellige':
-		case 'PotP_TrackingGroup_TreasureHuntQuests_Toussaint':
-		case 'PotP_TrackingGroup_TreasureHuntQuests_Novigrad':
-			if (HOS) { AddToQuestUpdateArray(GetLocStringByKeyExt("PotP_NotificationLine_Quest_Tre2"), value, "icons/PotP/tracked_blue.png"); break; }
-			if (BAW) { AddToQuestUpdateArray(GetLocStringByKeyExt("PotP_NotificationLine_Quest_Tre3"), value, "icons/PotP/tracked_red.png"); break; }
-			AddToQuestUpdateArray(GetLocStringByKeyExt("PotP_NotificationLine_Quest_Tre1"), value, "icons/PotP/tracked_gold.png");
-			break;							
-
-		//Random Events
-		case 'PotP_TrackingGroup_RandomEvents_Velen':
-		case 'PotP_TrackingGroup_RandomEvents_Novigrad':
-		case 'PotP_TrackingGroup_RandomEvents_Skellige':
-		case 'PotP_TrackingGroup_RandomEvents_KaerMorhen':
-			AddToQuestUpdateArray(GetLocStringByKeyExt("PotP_NotificationLine_Event"), value, "icons/PotP/tracked_gold.png");
-			break;				
-		
-		default:
-			break;	
-		}
-	}
-			
-	//---------------------------------------------------
-	
-	public function UpdateMiscCounter(value: int, groupID: name)
-	{
-		switch( groupID )
-		{
-		case 'PotP_TrackingGroup_WorldMap_BanditCamp_WhiteOrchard':
-		case 'PotP_TrackingGroup_WorldMap_BanditCamp_Velen':
-		case 'PotP_TrackingGroup_WorldMap_BanditCamp_Novigrad':
-		case 'PotP_TrackingGroup_WorldMap_BanditCamp_Skellige':
-		case 'PotP_TrackingGroup_WorldMap_BanditCamp_Toussaint':
-			AddToWorldMapUpdateArray(GetLocStringByKeyExt("PotP_NotificationLine_Camps"), value, iconPath_Camps);
-			break;
-			
-		case 'PotP_TrackingGroup_WorldMap_MonsterDens_Velen':
-		case 'PotP_TrackingGroup_WorldMap_MonsterDens_Novigrad':
-		case 'PotP_TrackingGroup_WorldMap_MonsterDens_Skellige':
-		case 'PotP_TrackingGroup_WorldMap_MonsterDens_Toussaint':
-			AddToWorldMapUpdateArray(GetLocStringByKeyExt("PotP_NotificationLine_MoDen"), value, iconPath_MoDen);
-			break;	
-
-		case 'PotP_TrackingGroup_WorldMap_MonsterNests_WhiteOrchard':
-		case 'PotP_TrackingGroup_WorldMap_MonsterNests_Velen':
-		case 'PotP_TrackingGroup_WorldMap_MonsterNests_Skellige':
-		case 'PotP_TrackingGroup_WorldMap_MonsterNests_Novigrad':
-		case 'PotP_TrackingGroup_WorldMap_MonsterNests_Toussaint':
-			AddToWorldMapUpdateArray(GetLocStringByKeyExt("PotP_NotificationLine_MoNes"), value, iconPath_MoNes);
-			break;
-
-		case 'PotP_TrackingGroup_WorldMap_PlacesOfPower_WhiteOrchard':
-		case 'PotP_TrackingGroup_WorldMap_PlacesOfPower_Velen':
-		case 'PotP_TrackingGroup_WorldMap_PlacesOfPower_Novigrad':
-		case 'PotP_TrackingGroup_WorldMap_PlacesOfPower_Skellige':
-		case 'PotP_TrackingGroup_WorldMap_PlacesOfPower_KaerMorhen':
-		case 'PotP_TrackingGroup_WorldMap_PlacesOfPower_Toussaint':
-			AddToWorldMapUpdateArray(GetLocStringByKeyExt("PotP_NotificationLine_Place"), value, iconPath_Place);
-			break;
-
-		case 'PotP_TrackingGroup_WorldMap_Signposts_Velen':
-		case 'PotP_TrackingGroup_WorldMap_Signposts_Novigrad':
-		case 'PotP_TrackingGroup_WorldMap_Signposts_WhiteOrchard':
-		case 'PotP_TrackingGroup_WorldMap_Signposts_KaerMorhen':
-		case 'PotP_TrackingGroup_WorldMap_Signposts_Skellige':
-		case 'PotP_TrackingGroup_WorldMap_Signposts_Toussaint':
-			AddToWorldMapUpdateArray(GetLocStringByKeyExt("PotP_NotificationLine_SignP"), value, iconPath_RSign);
-			break;
-
-		default:
-			break;
-		}
-	}
-
-	//---------------------------------------------------
-	
-	public function UpdateItemCounter(value: int, groupID: name) 
-	{
-		switch( groupID ) 
-		{
-		case 'PotP_TrackingGroup_Trophies':
-			AddToItemUpdateArray(GetLocStringByKeyExt("PotP_NotificationLine_Troph"), value, "icons/inventory/quests/trophy_gryphon_64x64.png");
-			break;
-			
-		case 'PotP_TrackingGroup_Relics_Crossbows':
-		case 'PotP_TrackingGroup_Relics_Crossbows_W3EE':				
-		case 'PotP_TrackingGroup_Relics_SilverSwords':
-		case 'PotP_TrackingGroup_Relics_SilverSwords_W3EE':
-		case 'PotP_TrackingGroup_Relics_SteelSwords':
-		case 'PotP_TrackingGroup_Relics_SteelSwords_W3EE':
-			AddToItemUpdateArray(GetLocStringByKeyExt("PotP_NotificationLine_Relic"), value, "icons/inventory/weapons/silver_unique_aerondight_64x128.png");
-			break;
-			
-		case 'PotP_TrackingGroup_GwentCards_Monsters':
-		case 'PotP_TrackingGroup_GwentCards_Monsters_Redux':
-		case 'PotP_TrackingGroup_GwentCards_NilfgaardianEmpire':
-		case 'PotP_TrackingGroup_GwentCards_NilfgaardianEmpire_Redux':
-		case 'PotP_TrackingGroup_GwentCards_NorthernRealms':
-		case 'PotP_TrackingGroup_GwentCards_NorthernRealms_Redux':
-		case 'PotP_TrackingGroup_GwentCards_Scoiatael':
-		case 'PotP_TrackingGroup_GwentCards_Scoiatael_Redux':
-		case 'PotP_TrackingGroup_GwentCards_Skellige':
-		case 'PotP_TrackingGroup_GwentCards_Skellige_Redux':
-		case 'PotP_TrackingGroup_GwentCards_NeutralCards':
-		case 'PotP_TrackingGroup_GwentCards_NeutralCards_Redux':
-			AddToItemUpdateArray(GetLocStringByKeyExt("PotP_NotificationLine_Gwent"), value, "icons/inventory/gwint/ico_gwent_hero_neutral.png");
-			break;
-			
-		default:
-			UpdateDLCCounter(1, groupID);
-		}
-	}
-
-	//---------------------------------------------------
-	
-	public function UpdateGearSetCounter(value: int, groupID: name) 
-	{
-		AddToItemUpdateArray(GetLocStringByKeyExt("PotP_NotificationLine_GearSet"), value, "icons/inventory/armors/lynx_armor_3_64x128.png");
-	}
-
-	//---------------------------------------------------
-	
-	public function UpdateDLCCounter(value: int, groupID: name) 
-	{
-		var iconpath: string = "icons/inventory/armors/lynx_armor_3_64x128.png";
-		
-		if (StrContains(NameToString(groupID), "ShadesOfIron")) 
-		{
-			AddToItemUpdateArray(GetLocStringByKeyExt("PotP_NotificationLine_ShadesOfIron"), value, iconpath);
-			return;
-		}
-
-		if (StrContains(NameToString(groupID), "CosWiecej")) 
-		{
-			AddToItemUpdateArray(GetLocStringByKeyExt("PotP_NotificationLine_CosWiecej"), value, iconpath);
-			return;
-		}
-
-		if (StrContains(NameToString(groupID), "SezonBurz")) 
-		{
-			AddToItemUpdateArray(GetLocStringByKeyExt("PotP_NotificationLine_SezonBurz"), value, iconpath);
-			return;
-		}
-
-		if (StrContains(NameToString(groupID), "W3EE")) 
-		{
-			AddToItemUpdateArray(GetLocStringByKeyExt("PotP_NotificationLine_W3EE"), value, iconpath);
-			return;
-		}
-	}
-	
-	//---------------------------------------------------
-
-	public function UpdatePlayerFromPickUp(uniqueID : SItemUniqueId, localname: string) 
-	{	
-		this.AddToBackGroundArray_Item(GetLocStringByKeyExt("PotP_NotificationLine_Updated"), uniqueID, localname);
-	}
-	
-	//---------------------------------------------------
-	
-	public function UpdatePlayerFromQuest(QuestName: string, QuestStatus: int, HOS: bool, BAW: bool) 
-	{	
-		if (HOS) 
-		{ 
-			AddToBackGroundArray_Quest(GetLocStringByKeyExt("PotP_NotificationLine_Updated"), QuestName, QuestStatus, "icons/PotP/tracked_blue.png"); 
-			return; 
-		}
-		if (BAW) 
-		{
-			AddToBackGroundArray_Quest(GetLocStringByKeyExt("PotP_NotificationLine_Updated"), QuestName, QuestStatus, "icons/PotP/tracked_red.png"); 
-			return;
-		}
-		
-		this.AddToBackGroundArray_Quest(GetLocStringByKeyExt("PotP_NotificationLine_Updated"), QuestName, QuestStatus, "icons/PotP/tracked_gold.png");
-	}
-
-	//---------------------------------------------------
-	
-	public function UpdatePlayerFromWorldMap(groupID: name, PinName: string) 
-	{	
-		switch( groupID ) 
-		{
-		case 'PotP_TrackingGroup_WorldMap_BanditCamp_WhiteOrchard':
-		case 'PotP_TrackingGroup_WorldMap_BanditCamp_Velen':
-		case 'PotP_TrackingGroup_WorldMap_BanditCamp_Novigrad':
-		case 'PotP_TrackingGroup_WorldMap_BanditCamp_Skellige':
-		case 'PotP_TrackingGroup_WorldMap_BanditCamp_Toussaint':
-			this.AddToBackGroundArray_WorldMap(GetLocStringByKeyExt("PotP_NotificationLine_BanditC"), PinName, iconPath_Camps);
-			break;	
-			
-		case 'PotP_TrackingGroup_WorldMap_MonsterDens_Velen':
-		case 'PotP_TrackingGroup_WorldMap_MonsterDens_Novigrad':
-		case 'PotP_TrackingGroup_WorldMap_MonsterDens_Skellige':
-		case 'PotP_TrackingGroup_WorldMap_MonsterDens_Toussaint':
-			this.AddToBackGroundArray_WorldMap(GetLocStringByKeyExt("PotP_NotificationLine_Updated"), PinName, iconPath_MoDen);
-			break;	
-
-		case 'PotP_TrackingGroup_WorldMap_MonsterNests_WhiteOrchard':
-		case 'PotP_TrackingGroup_WorldMap_MonsterNests_Velen':
-		case 'PotP_TrackingGroup_WorldMap_MonsterNests_Skellige':
-		case 'PotP_TrackingGroup_WorldMap_MonsterNests_Novigrad':
-		case 'PotP_TrackingGroup_WorldMap_MonsterNests_Toussaint':
-			this.AddToBackGroundArray_WorldMap(GetLocStringByKeyExt("PotP_NotificationLine_Updated"), PinName, iconPath_MoNes);
-			break;
-
-		case 'PotP_TrackingGroup_WorldMap_PlacesOfPower_WhiteOrchard':
-		case 'PotP_TrackingGroup_WorldMap_PlacesOfPower_Velen':
-		case 'PotP_TrackingGroup_WorldMap_PlacesOfPower_Novigrad':
-		case 'PotP_TrackingGroup_WorldMap_PlacesOfPower_Skellige':
-		case 'PotP_TrackingGroup_WorldMap_PlacesOfPower_KaerMorhen':
-		case 'PotP_TrackingGroup_WorldMap_PlacesOfPower_Toussaint':
-		case 'PotP_TrackingGroup_WorldMap_PlacesOfPower_TheSpiral':
-			this.AddToBackGroundArray_WorldMap(GetLocStringByKeyExt("PotP_NotificationLine_Updated"), PinName, iconPath_Place);
-			break;
-
-		case 'PotP_TrackingGroup_WorldMap_Signposts_Velen':
-		case 'PotP_TrackingGroup_WorldMap_Signposts_Novigrad':
-		case 'PotP_TrackingGroup_WorldMap_Signposts_WhiteOrchard':
-		case 'PotP_TrackingGroup_WorldMap_Signposts_KaerMorhen':
-		case 'PotP_TrackingGroup_WorldMap_Signposts_Skellige':
-		case 'PotP_TrackingGroup_WorldMap_Signposts_Toussaint':
-			this.AddToBackGroundArray_WorldMap(GetLocStringByKeyExt("PotP_NotificationLine_Updated"), PinName, iconPath_RSign);
-			break;
-
-		default:
-			break;
-		}
 	}
 	
 	//---------------------------------------------------
@@ -405,29 +101,26 @@ class CProgressOnThePath_Notifications
 
 	private function GetNotificationFontSize() : int 
 	{
-		return FactsQuerySum("ProgressOnThePath_Notification_Size");
-	}
-
-	//---------------------------------------------------
-
-	private function SetNotificationFontSize() 
-	{
-		theGame.GetInGameConfigWrapper().SetVarValue('ProgressOnThePath_NotificationSettings', 'ProgressOnThePath_NotificationSize', fontsize);
-		FactsSet("ProgressOnThePath_Notification_Size", fontsize);
+		if ( (int) PotP_GetNotificationValue('ProgressOnThePath_GlobalNotification_Size') < 14 )
+		{
+			theGame.GetInGameConfigWrapper().SetVarValue('ProgressOnThePath_NotificationSettings', 'ProgressOnThePath_GlobalNotification_Size', fontsize);
+		}
+		
+		return (int) PotP_GetNotificationValue('ProgressOnThePath_GlobalNotification_Size');
 	}
 
 	//---------------------------------------------------
 	
 	private function GetNotificationTime() : float
 	{
-		return (float) PotP_GetGeneralValue('ProgressOnThePath_Notification_Time') * 1000.0;
+		return (float) PotP_GetNotificationValue('ProgressOnThePath_GlobalNotification_Time') * 1000.0;
 	}
 	
 	//---------------------------------------------------
 
 	private function GetNotificationColour() : string
 	{
-		switch ( (int) PotP_GetGeneralValue('ProgressOnThePath_Notification_Font') ) {
+		switch ( (int) PotP_GetNotificationValue('ProgressOnThePath_GlobalNotification_Font') ) {
 		
 			case 1:
 				return "<font color='#233067'>";
@@ -474,6 +167,7 @@ class CProgressOnThePath_Notifications
 
 	private function GetTotalCount() : float 
 	{
+		var TotalEntList: array<PotP_PreviewEntry> = this.master.PotP_ArrayManager.TotalEntList;
 		var GwentManager: CR4GwintManager = theGame.GetGwintManager();
 		var i, CardsFound: int;
 
@@ -481,30 +175,30 @@ class CProgressOnThePath_Notifications
 		{
 			if (GwentManager.IsDeckUnlocked(GwintFaction_Skellige))
 			{
-				return this.master.PotP_ArrayManager.TotalEntList.Size();
+				return TotalEntList.Size();
 			}
 			else
 			{
-				for (i = 0; i < this.master.PotP_ArrayManager.TotalEntList.Size(); i += 1)
+				for (i = 0; i < TotalEntList.Size(); i += 1)
 				{
-					if (StrContains(NameToString(this.master.PotP_ArrayManager.TotalVarList[i]), "PotP_TrackingGroup_GwentCards_Skellige")) 
+					if (TotalEntList[i].arrayType == PotP_A_Gwent && TotalEntList[i].filter == PotP_I_Skell)
 					{
 						CardsFound += 1;
 					}
 				}
-				return (this.master.PotP_ArrayManager.TotalEntList.Size() - CardsFound);			
+				return (TotalEntList.Size() - CardsFound);			
 			}
 		}
 		else
 		{
-			for (i = 0; i < this.master.PotP_ArrayManager.TotalEntList.Size(); i += 1)
+			for (i = 0; i < TotalEntList.Size(); i += 1)
 			{
-				if (this.master.PotP_ArrayManager.TotalEntList[i].arrayType == PotP_A_Gwent)
+				if (TotalEntList[i].arrayType == PotP_A_Gwent)
 				{
 					CardsFound += 1;
 				}
 			}
-			return (this.master.PotP_ArrayManager.TotalEntList.Size() - CardsFound);	
+			return (TotalEntList.Size() - CardsFound);	
 		}
 	}
 	
@@ -514,16 +208,12 @@ class CProgressOnThePath_Notifications
 	{
 		var Notification : string = "";
 		
-		if ( GetNotificationFontSize() < 14 ) 
-		{
-			SetNotificationFontSize();
-		}
-		
 		Notification += "<font size='" + GetNotificationFontSize() + "'>" + GetNotificationHeader() + "</font>";
 		Notification += "<font size='" + GetNotificationFontSize() + "'>" + "Completed List - " + this.master.PotP_PersistentStorage.MasterList_Completed_V.Size() + "</font>" + "<br/>";
 		Notification += "<font size='" + GetNotificationFontSize() + "'>" + "InProgres List - " + this.master.PotP_PersistentStorage.MasterList_InProgres_V.Size() + "</font>" + "<br/>";
 		Notification += "<font size='" + GetNotificationFontSize() + "'>" + "IsIgnored List - " + this.master.PotP_PersistentStorage.MasterList_IsIgnored_V.Size() + "</font>" + "<br/>";
 		Notification += "<font size='" + GetNotificationFontSize() + "'>" + "Collected List - " + this.master.PotP_PersistentStorage.MasterList_Collected_V.Size() + "</font>" + "<br/>";
+		Notification += "<font size='" + GetNotificationFontSize() + "'>" + "Pending Messages - " + this.master.PotP_PersistentStorage.MasterList_Pl_Messages.Size() + "</font>" + "<br/>";
 		
 		theGame.GetGuiManager().ShowNotification(Notification, GetNotificationTime(), true);
 	}
@@ -537,159 +227,146 @@ class CProgressOnThePath_Notifications
 
 	//---------------------------------------------------
 	
-	private function AddToQuestUpdateArray(loc: string, value: int, iconPath: string)
+	public function AddToQuestUpdateArray(entry_data: PotP_PreviewEntry)
 	{
-		var InsertedString: string = loc;
+		var InsertedString: string = entry_data.popup_line;
 		var InsertedIndexP: int = QuestUpdateArray_Name.FindFirst(InsertedString);
-		
-		if ( (bool) PotP_GetGeneralValue('ProgressOnThePath_Notification_Qust') ) 
+
+		if (InsertedIndexP == -1)
 		{
-			if (InsertedIndexP == -1)
-			{
-				QuestUpdateArray_Name.PushBack(InsertedString);
-				QuestUpdateArray_Ints.PushBack(value);
-				QuestUpdateArray_Icon.PushBack(iconPath);
-				TrackerUpdateArray_Count += 1;
-				LogChannel('PotP Notification Script', "Inserted - " + InsertedString + " Into the quest array");
-			}
-			else 
-			{
-				QuestUpdateArray_Ints[InsertedIndexP] += value;
-				LogChannel('PotP Notification Script', "Increased Count for - " + InsertedString + " to " + QuestUpdateArray_Ints[InsertedIndexP]);
-			}
+			QuestUpdateArray_Name.PushBack(InsertedString);
+			QuestUpdateArray_Ints.PushBack(1);
+			QuestUpdateArray_Icon.PushBack(entry_data.icon_path);
+			TrackerUpdateArray_Count += 1;
+			LogChannel('PotP Notification Script', "Inserted - " + InsertedString + " Into the quest array");
+		}
+		else 
+		{
+			QuestUpdateArray_Ints[InsertedIndexP] += 1;
+			LogChannel('PotP Notification Script', "Increased Count for - " + InsertedString + " to " + QuestUpdateArray_Ints[InsertedIndexP]);
 		}
 	}
 
 	//---------------------------------------------------
 	
-	private function AddToWorldMapUpdateArray(loc: string, value: int, iconPath: string) 
+	public function AddToWorldMapUpdateArray(entry_data: PotP_PreviewEntry) 
 	{		
-		var InsertedString: string = loc;
+		var InsertedString: string = entry_data.popup_line;
 		var InsertedIndexP: int = WorldMapUpdateArray_Name.FindFirst(InsertedString);
-		
-		if ( (bool) PotP_GetGeneralValue('ProgressOnThePath_Notification_WMap') ) 
+
+		if (InsertedIndexP == -1) 
 		{
-			if (InsertedIndexP == -1) 
-			{
-				WorldMapUpdateArray_Name.PushBack(InsertedString);
-				WorldMapUpdateArray_Ints.PushBack(value);
-				WorldMapUpdateArray_Icon.PushBack(iconPath);
-				TrackerUpdateArray_Count += 1;
-				LogChannel('PotP Notification Script', "Inserted - " + InsertedString + " Into the world map array");
-			}
-			else 
-			{
-				WorldMapUpdateArray_Ints[InsertedIndexP] += value;
-				LogChannel('PotP Notification Script', "Increased Count for - " + InsertedString + " to " + WorldMapUpdateArray_Ints[InsertedIndexP]);
-			}
+			WorldMapUpdateArray_Name.PushBack(InsertedString);
+			WorldMapUpdateArray_Ints.PushBack(1);
+			WorldMapUpdateArray_Icon.PushBack(entry_data.icon_path);
+			TrackerUpdateArray_Count += 1;
+			LogChannel('PotP Notification Script', "Inserted - " + InsertedString + " Into the world map array");
+		}
+		else 
+		{
+			WorldMapUpdateArray_Ints[InsertedIndexP] += 1;
+			LogChannel('PotP Notification Script', "Increased Count for - " + InsertedString + " to " + WorldMapUpdateArray_Ints[InsertedIndexP]);
 		}
 	}
 
 	//---------------------------------------------------
 	
-	private function AddToItemUpdateArray(loc: string, value: int, iconPath: string) 
+	public function AddToItemUpdateArray(entry_data: PotP_PreviewEntry) 
 	{
-		var InsertedString: string = loc;
+		var InsertedString: string = entry_data.popup_line;
 		var InsertedIndexP: int = ItemUpdateArray_Name.FindFirst(InsertedString);
 		
-		if ( (bool) PotP_GetGeneralValue('ProgressOnThePath_Notification_Item') ) 
+		if (InsertedIndexP == -1) 
 		{
-			if (InsertedIndexP == -1) 
-			{
-				ItemUpdateArray_Name.PushBack(InsertedString);
-				ItemUpdateArray_Ints.PushBack(value);
-				ItemUpdateArray_Icon.PushBack(iconPath);
-				TrackerUpdateArray_Count += 1;
-			}
-			else 
-			{
-				ItemUpdateArray_Ints[InsertedIndexP] += value;
-			}
+			ItemUpdateArray_Name.PushBack(InsertedString);
+			ItemUpdateArray_Ints.PushBack(1);
+			ItemUpdateArray_Icon.PushBack(entry_data.icon_path);
+			TrackerUpdateArray_Count += 1;
+		}
+		else 
+		{
+			ItemUpdateArray_Ints[InsertedIndexP] += 1;
 		}
 	}
 
 	//---------------------------------------------------
 	
-	private function AddToBackGroundArray_Item(loc: string, uuid: SItemUniqueId, localname: string)
+	public function AddToBackGroundArray_Item(entry_data: PotP_PreviewEntry)
 	{
-		var InsertedString: string = loc + localname;
-		
-		if ( (bool) PotP_GetGeneralValue('ProgressOnThePath_Notification_Item') ) 
-		{
-			if (BackGroundItemArray_Name.FindFirst(InsertedString) == -1 ) 
-			{
-				BackGroundProcessingArray_Count += 1;
-				
-				if (BackGroundProcessingArray_Count > 20) 
-				{
-					return;
-				}
-				
-				BackGroundItemArray_Name.PushBack(InsertedString);
-				BackGroundItemArray_Icon.PushBack(thePlayer.GetInventory().GetItemIconPathByUniqueID(uuid));
-			}
-		}
-	}
+		var InsertedString: string = GetLocStringByKeyExt("PotP_NotificationLine_Updated") + entry_data.localname;
 
-	//---------------------------------------------------
-	
-	private function AddToBackGroundArray_WorldMap(loc: string, PinName: string, iconPath: string) 
-	{
-		var InsertedString: string = StrReplace(loc + PinName, "(*)", "");
-
-		if ( (bool) PotP_GetGeneralValue('ProgressOnThePath_Notification_WMap') ) 
+		if (BackGroundItemArray_Name.FindFirst(InsertedString) == -1 ) 
 		{
-			if (BackGroundWorldMapArray_Name.FindFirst(InsertedString) == -1 ) 
+			BackGroundProcessingArray_Count += 1;
+			
+			if (BackGroundProcessingArray_Count > 20) 
 			{
-				BackGroundProcessingArray_Count += 1;
-				
-				if (BackGroundProcessingArray_Count > 20) 
-				{
-					return;
-				}
-				
-				BackGroundWorldMapArray_Name.PushBack(InsertedString);
-				BackGroundWorldMapArray_Icon.PushBack(iconPath);
-			}
-		}
-	}
-	
-	//---------------------------------------------------
-	
-	private function AddToBackGroundArray_Quest(loc: string, QuestName: string, QuestStatus: int, iconPath: string) 
-	{
-		var InsertedString: string = loc;
-		
-		if ( (bool) PotP_GetGeneralValue('ProgressOnThePath_Notification_Qust') ) 
-		{
-			switch (QuestStatus)
-			{
-			case JS_Success:
-			case JS_Failed:
-				InsertedString += StrReplace(GetLocStringByKeyExt("PotP_NotificationLine_QuestUpdated"), "(QUESTNAME)", QuestName + GetLocStringByKeyExt("PotP_QUESTCOMPLETE"));
-				break;
-				
-			case JS_Active:
-				InsertedString += StrReplace(GetLocStringByKeyExt("PotP_NotificationLine_QuestUpdated"), "(QUESTNAME)", QuestName + GetLocStringByKeyExt("PotP_QUESTINPROGRESS"));
-				break;
-
-			default:
 				return;
 			}
-				
-			if (BackGroundQuestArray_Name.FindFirst(InsertedString) == -1 ) 
+			
+			BackGroundItemArray_Name.PushBack(InsertedString);
+			BackGroundItemArray_Icon.PushBack(thePlayer.GetInventory().GetItemIconPathByName(entry_data.item_name));
+		}
+	}
+
+	//---------------------------------------------------
+	
+	public function AddToBackGroundArray_WorldMap(entry_data: PotP_PreviewEntry) 
+	{
+		var InsertedString: string = GetLocStringByKeyExt("PotP_NotificationLine_Updated") + entry_data.localname;
+		
+		if (entry_data.filter == PotP_I_Camps)
+		{
+			InsertedString = GetLocStringByKeyExt("PotP_NotificationLine_BanditC") + entry_data.localname;
+		}
+		
+		if (BackGroundWorldMapArray_Name.FindFirst(InsertedString) == -1 ) 
+		{
+			BackGroundProcessingArray_Count += 1;
+			
+			if (BackGroundProcessingArray_Count > 20) 
 			{
-				BackGroundProcessingArray_Count += 1;
-				
-				if (BackGroundProcessingArray_Count > 20) 
-				{
-					return;
-				}
-				
-				BackGroundQuestArray_Name.PushBack(InsertedString);
-				BackGroundQuestArray_Icon.PushBack(iconPath);
-				LogChannel('PotP Notification Script', "Inserted - " + InsertedString + " into the background quest array");
+				return;
 			}
+			
+			BackGroundWorldMapArray_Name.PushBack(InsertedString);
+			BackGroundWorldMapArray_Icon.PushBack(entry_data.icon_path);
+		}
+	}
+	
+	//---------------------------------------------------
+	
+	public function AddToBackGroundArray_Quest(entry_data: PotP_PreviewEntry, QuestStatus: int) 
+	{
+		var InsertedString: string = GetLocStringByKeyExt("PotP_NotificationLine_Updated");
+		
+		switch (QuestStatus)
+		{
+		case JS_Success:
+		case JS_Failed:
+			InsertedString += StrReplace(GetLocStringByKeyExt("PotP_NotificationLine_QuestUpdated"), "(QUESTNAME)", entry_data.localname + GetLocStringByKeyExt("PotP_QUESTCOMPLETE"));
+			break;
+			
+		case JS_Active:
+			InsertedString += StrReplace(GetLocStringByKeyExt("PotP_NotificationLine_QuestUpdated"), "(QUESTNAME)", entry_data.localname + GetLocStringByKeyExt("PotP_QUESTINPROGRESS"));
+			break;
+			
+		default:
+			return;
+		}
+			
+		if (BackGroundQuestArray_Name.FindFirst(InsertedString) == -1 ) 
+		{
+			BackGroundProcessingArray_Count += 1;
+			
+			if (BackGroundProcessingArray_Count > 20) 
+			{
+				return;
+			}
+			
+			BackGroundQuestArray_Name.PushBack(InsertedString);
+			BackGroundQuestArray_Icon.PushBack(entry_data.icon_path);
+			LogChannel('PotP Notification Script', "Inserted - " + InsertedString + " into the background quest array");
 		}
 	}
 	
@@ -804,16 +481,11 @@ class CProgressOnThePath_Notifications
 		SortArrays(WorldMapUpdateArray_Name, WorldMapUpdateArray_Icon, WorldMapUpdateArray_Ints);
 		SortArrays(ItemUpdateArray_Name, ItemUpdateArray_Icon, ItemUpdateArray_Ints);
 		
-		if ( GetNotificationFontSize() < 14 ) 
-		{
-			SetNotificationFontSize();
-		}
-		
 		Notification += "<font size='" + GetNotificationFontSize() + "'>" + GetNotificationHeader() + "</font>";
 		
 		if (this.TrackerUpdateArray_Count == 0) 
 		{
-			if ( (bool) PotP_GetGeneralValue('ProgressOnThePath_Notification_Null') ) 
+			if ( (bool) PotP_GetNotificationValue('ProgressOnThePath_FullNotification_Nulls') ) 
 			{
 				Notification += "<font size='" + GetNotificationFontSize() + "'>" + GetNotificationColour() + GetLocStringByKeyExt("PotP_NullMessage") + "<br/>" + "</font>"; 
 				return Notification;
@@ -830,7 +502,23 @@ class CProgressOnThePath_Notifications
 		}		
 		return Notification;
 	}
+	
+	//---------------------------------------------------
+	
+	public function UpdateSingleEntry(entry_data: PotP_PreviewEntry, status: int)
+	{
+		var Notification : string = "<font size='" + GetNotificationFontSize() + "'>" + GetNotificationHeader() + "</font>";
+
+		switch (status)
+		{
+			case 0: Notification += FormatItemIcon(entry_data.icon_path) + FormatLine_BackGroundProcessingArray("Restored: " + entry_data.localname); break;
+			case 1: Notification += FormatItemIcon(entry_data.icon_path) + FormatLine_BackGroundProcessingArray("Ignored: " + entry_data.localname);  break;
+			case 2: Notification += FormatItemIcon(entry_data.icon_path) + FormatLine_BackGroundProcessingArray("Completed: " + entry_data.localname); break;
+		}
 		
+		theGame.GetGuiManager().ShowNotification(Notification, GetNotificationTime(), true);
+	}
+	
 	//---------------------------------------------------
 	
 	private function FormatMessage_BackGroundProcessingArray() : string 
@@ -840,11 +528,6 @@ class CProgressOnThePath_Notifications
 		var i, f			: int = 0;
 
 		SortBackgroundArrays();
-
-		if (GetNotificationFontSize() < 14 ) 
-		{
-			SetNotificationFontSize();
-		}
 		
 		Notification += "<font size='" + GetNotificationFontSize() + "'>" + GetNotificationHeader() + "</font>";
 			
@@ -898,7 +581,7 @@ class CProgressOnThePath_Notifications
 
 	public function DisplayNotification() 
 	{
-		if (this.NotificationsEnabled()) 
+		if (this.FullNotificationsEnabled()) 
 		{
 			theGame.GetGuiManager().ShowNotification(FormatNotification(), GetNotificationTime(), true);
 		}
@@ -909,20 +592,33 @@ class CProgressOnThePath_Notifications
 
 	public function NotifyPlayerFromBackgroundProcess() 
 	{
-		if (this.NotificationsEnabled() && this.BackGroundProcessingArray_Count > 0) 
+		if (this.BackNotificationsEnabled() && this.BackGroundProcessingArray_Count > 0) 
 		{
 			theGame.GetGuiManager().ShowNotification(FormatMessage_BackGroundProcessingArray(), GetNotificationTime(), true);
 		}
 		this.ResetBackGroundProcessingArray();
 	}	
+	
+	//---------------------------------------------------	
+
+	private function FullNotificationsEnabled() : bool 
+	{
+		return (bool) PotP_GetNotificationValue('ProgressOnThePath_FullNotification_Quest') 
+			|| (bool) PotP_GetNotificationValue('ProgressOnThePath_FullNotification_World') 
+			|| (bool) PotP_GetNotificationValue('ProgressOnThePath_FullNotification_Items')
+			|| (bool) PotP_GetNotificationValue('ProgressOnThePath_FullNotification_Gwent')
+			|| (bool) PotP_GetNotificationValue('ProgressOnThePath_FullNotification_Event');
+	}	
 
 	//---------------------------------------------------	
 
-	private function NotificationsEnabled() : bool 
+	private function BackNotificationsEnabled() : bool 
 	{
-		return (bool) PotP_GetGeneralValue('ProgressOnThePath_Notification_Qust') 
-			|| (bool) PotP_GetGeneralValue('ProgressOnThePath_Notification_Item') 
-			|| (bool) PotP_GetGeneralValue('ProgressOnThePath_Notification_WMap');
+		return (bool) PotP_GetNotificationValue('ProgressOnThePath_BackNotification_Quest') 
+			|| (bool) PotP_GetNotificationValue('ProgressOnThePath_BackNotification_World') 
+			|| (bool) PotP_GetNotificationValue('ProgressOnThePath_BackNotification_Items')
+			|| (bool) PotP_GetNotificationValue('ProgressOnThePath_BackNotification_Gwent')
+			|| (bool) PotP_GetNotificationValue('ProgressOnThePath_BackNotification_Event');
 	}	
 }
 

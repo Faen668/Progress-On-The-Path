@@ -36,13 +36,13 @@ statemachine class CProgressOnThePath extends SU_BaseBootstrappedMod {
 		
 	public var LastUpdateTime: float;
 		default LastUpdateTime = 0;
-	
+		
 	default tag = 'CProgressOnThePath_BootStrapper';
 
 	//---------------------------------------------------
 	
-	public function start() {			
-		
+	public function start() 
+	{			
 		PotP_Logger("Bootstrapped successfully with Magic, prayers and wishful thinking...", , this.fileName);
 		
 		this.LoadStorage();
@@ -79,11 +79,11 @@ statemachine class CProgressOnThePath extends SU_BaseBootstrappedMod {
 
 	//---------------------------------------------------
 
-	private function LoadStorage() { 
-
+	private function LoadStorage() 
+	{ 
 		if (!this.PotP_PersistentStorage)
 		{
-			this.PotP_PersistentStorage = (new CProgressOnThePath_Storage in this).init(this);
+			this.PotP_PersistentStorage = new CProgressOnThePath_Storage in this;
 			PotP_Logger("Progress On The Path: New storage instance created.", , this.fileName);
 		}
 		else
@@ -92,6 +92,7 @@ statemachine class CProgressOnThePath extends SU_BaseBootstrappedMod {
 			PotP_Logger("Progress On The Path: Loading Saved Storage [MasterList_InProgres_V] with a size of [" + this.PotP_PersistentStorage.MasterList_InProgres_V.Size() + "]", , this.fileName);
 			PotP_Logger("Progress On The Path: Loading Saved Storage [MasterList_IsIgnored_V] with a size of [" + this.PotP_PersistentStorage.MasterList_IsIgnored_V.Size() + "]", , this.fileName);
 			PotP_Logger("Progress On The Path: Loading Saved Storage [MasterList_Collected_V] with a size of [" + this.PotP_PersistentStorage.MasterList_Collected_V.Size() + "]", , this.fileName);
+			PotP_Logger("Progress On The Path: Loading Saved Storage [MasterList_Pl_Messages] with a size of [" + this.PotP_PersistentStorage.MasterList_Pl_Messages.Size() + "]", , this.fileName);
 		}
 	}	
 	
@@ -121,8 +122,8 @@ statemachine class CProgressOnThePath extends SU_BaseBootstrappedMod {
 			{
 				description = "<p align=\"center\">" + GetLocStringByKeyExt("ProgressOnThePath_FilterError") + "</p>";
 			}
-
-			PotP_PopupManager.Showpopup(StrReplace((messagetitle + activefilters), "REPLACECOUNT", countstring), description, "PotP_QuestPreview", true);
+ 
+			PotP_PopupManager.Showpopup(StrReplace((messagetitle + activefilters), "REPLACECOUNT", countstring), description, "", "PopUp", false);
 			break;
 			
 		case 1:
@@ -141,7 +142,7 @@ statemachine class CProgressOnThePath extends SU_BaseBootstrappedMod {
 				description = "<p align=\"center\">" + GetLocStringByKeyExt("ProgressOnThePath_FilterError") + "</p>";
 			}
 
-			PotP_PopupManager.Showpopup(StrReplace((messagetitle + activefilters), "REPLACECOUNT", countstring), description, "PotP_WorldPreview", true);
+			PotP_PopupManager.Showpopup(StrReplace((messagetitle + activefilters), "REPLACECOUNT", countstring), description, "", "PopUp", false);
 			break;
 			
 		case 2:
@@ -160,7 +161,7 @@ statemachine class CProgressOnThePath extends SU_BaseBootstrappedMod {
 				description = "<p align=\"center\">" + GetLocStringByKeyExt("ProgressOnThePath_FilterError") + "</p>";
 			}
 
-			PotP_PopupManager.Showpopup(StrReplace((messagetitle + activefilters), "REPLACECOUNT", countstring), description, "PotP_ItemsPreview", true);
+			PotP_PopupManager.Showpopup(StrReplace((messagetitle + activefilters), "REPLACECOUNT", countstring), description, "", "PopUp", false);
 			break;
 			
 		case 3:
@@ -179,7 +180,7 @@ statemachine class CProgressOnThePath extends SU_BaseBootstrappedMod {
 				description = "<p align=\"center\">" + GetLocStringByKeyExt("ProgressOnThePath_FilterError") + "</p>";
 			}
 
-			PotP_PopupManager.Showpopup(StrReplace((messagetitle + activefilters), "REPLACECOUNT", countstring), description, "PotP_GwentPreview", true);
+			PotP_PopupManager.Showpopup(StrReplace((messagetitle + activefilters), "REPLACECOUNT", countstring), description, "", "PopUp", false);
 			break;
 
 		case 4:
@@ -192,7 +193,7 @@ statemachine class CProgressOnThePath extends SU_BaseBootstrappedMod {
 				description = "<p align=\"center\">" + GetLocStringByKeyExt("ProgressOnThePath_FilterComplete") + "</p>";
 			}
 
-			PotP_PopupManager.Showpopup(StrReplace((messagetitle), "REPLACECOUNT", countstring), description, "PotP_MissablePreview", true);
+			PotP_PopupManager.Showpopup(StrReplace((messagetitle), "REPLACECOUNT", countstring), description, "", "PopUp", false);
 			break;
 		}
 	}
@@ -201,7 +202,7 @@ statemachine class CProgressOnThePath extends SU_BaseBootstrappedMod {
 
 	public function UpdateProgressOnThePath(action : SInputAction) 
 	{
-		if ( (bool) PotP_GetGeneralValue('ProgressOnThePath_EnableHotKey') )
+		if ( (bool) PotP_GetGeneralValue('ProgressOnThePath_EnableHotKey') && this.IsInState('Idle') )
 		{
 			if ((theGame.GetEngineTimeAsSeconds() - LastUpdateTime) > 5) 
 			{
@@ -233,10 +234,10 @@ state Idle in CProgressOnThePath
 state Initialising in CProgressOnThePath 
 {
 	private var curVersionStr: string;
-		default curVersionStr = "5.0.0";
+		default curVersionStr = "5.1.0";
 		
 	private var curVersionInt: int;
-		default curVersionInt = 500;
+		default curVersionInt = 510;
 	
 	private var hasUpdated: bool;
 		default hasUpdated = false;
@@ -263,10 +264,10 @@ state Initialising in CProgressOnThePath
 	{	
 		while (PotP_IsPlayerBusy()) 
 		{
-			Sleep(5);
+			SleepOneFrame();
 		}
 
-		parent.PotP_ArrayManager		.initialise();
+		parent.PotP_ArrayManager		.initialise(parent);
 		parent.PotP_UpdaterClass		.initialise(parent);
 		parent.PotP_PinManager			.initialise(parent);
 		parent.PotP_QuestPreview		.initialise(parent);
@@ -280,6 +281,7 @@ state Initialising in CProgressOnThePath
 		parent.PotP_WorldGoblin			.initialise(parent);
 		parent.PotP_EventListener		.initialise(parent);
 		parent.PotP_MeditationListener	.initialise(parent);
+		parent.PotP_PopupManager		.initialise(parent);
 
 		parent.PotP_QuestBook			.initialise(parent);
 		parent.PotP_WorldBook			.initialise(parent);
@@ -294,19 +296,22 @@ state Initialising in CProgressOnThePath
 		parent.PotP_WorldGoblin.GotoState('Idle');
 		parent.PotP_EventListener.GotoState('Idle');
 		parent.PotP_MeditationListener.GotoState('Idle');
+		
+		//GetWitcherPlayer().DisplayHudMessage("Progress on the Path: Ready To Use");
 		parent.GotoState('Idle');
 	}
 	
 	//---------------------------------------------------
 
-	latent function SetModVersion() {		
-		
+	latent function SetModVersion() 
+	{		
 		if (FactsQuerySum(initStr) != 1) 
 		{
 			this.LoadDefaults();
 			FactsSet(initStr, 1);
 			FactsSet(VersStr, curVersionInt);
-			parent.PotP_PopupManager.Showpopup(GetLocStringByKeyExt("panel_QT_Name"), GetLocStringByKeyExt("PotP_InstallMessage"), "PotP_InstallMessage", true, false, true);
+
+			parent.PotP_PopupManager.Showpopup(GetLocStringByKeyExt("panel_QT_Name"), GetLocStringByKeyExt("PotP_InstallMessage"), "PotP_InstallMessage", "Hint", true);
 			return;
 		}
 
@@ -314,23 +319,24 @@ state Initialising in CProgressOnThePath
 		
 		if (hasUpdated) 
 		{
-			parent.PotP_PopupManager.Showpopup(GetLocStringByKeyExt("panel_QT_Name"), GetLocStringByKeyExt("PotP_UpdatedMessage") + curVersionStr, "PotP_UpdatedMessage", true, false, true);
+			parent.PotP_PopupManager.Showpopup(GetLocStringByKeyExt("panel_QT_Name"), GetLocStringByKeyExt("PotP_UpdatedMessage") + curVersionStr, "", "Hint", false);
 		}
 	}
 	
 	//---------------------------------------------------
 	
-	latent function UpdateMod() {
+	latent function UpdateMod() 
+	{
 		if (FactsQuerySum(VersStr) < curVersionInt) 
 		{
-			if (FactsQuerySum(VersStr) < 500) { FactsSet(VersStr, 500); hasUpdated = true; }
+			if (FactsQuerySum(VersStr) < 510) { FactsSet(VersStr, 510); hasUpdated = true; }
 		}
 	}
 	
 	//---------------------------------------------------
 	
-	latent function AddGlosssaryEntries() {
-
+	latent function AddGlosssaryEntries() 
+	{
 		var TutorialBook1: ProgressOnTheBath_TutorialBook1;
 		var TutorialBook2: ProgressOnTheBath_TutorialBook2;
 		var TutorialBook3: ProgressOnTheBath_TutorialBook3;
@@ -434,23 +440,12 @@ state Initialising in CProgressOnThePath
 	
 	//---------------------------------------------------
 	
-	latent function LoadDefaults() {	
+	latent function LoadDefaults() 
+	{	
 		var VarManager: CInGameConfigWrapper = theGame.GetInGameConfigWrapper();
 		
 		VarManager.SetVarValue('ProgressOnThePath_GeneralSettings', 'ProgressOnThePath_MeditationUpdate', 					"true");
 		VarManager.SetVarValue('ProgressOnThePath_GeneralSettings', 'ProgressOnThePath_EnableHotKey', 						"true");
-		
-		VarManager.SetVarValue('ProgressOnThePath_GeneralSettings', 'ProgressOnThePath_BGProcessing_Qust', 					"5");
-		VarManager.SetVarValue('ProgressOnThePath_GeneralSettings', 'ProgressOnThePath_BGProcessing_Item', 					"5");
-		VarManager.SetVarValue('ProgressOnThePath_GeneralSettings', 'ProgressOnThePath_BGProcessing_WMap', 					"5");
-		
-		VarManager.SetVarValue('ProgressOnThePath_GeneralSettings', 'ProgressOnThePath_Notification_Time', 					"7");
-		VarManager.SetVarValue('ProgressOnThePath_GeneralSettings', 'ProgressOnThePath_Notification_Size', 					"18");
-		VarManager.SetVarValue('ProgressOnThePath_GeneralSettings', 'ProgressOnThePath_Notification_Font', 					"1");
-		VarManager.SetVarValue('ProgressOnThePath_GeneralSettings', 'ProgressOnThePath_Notification_Qust', 					"true");
-		VarManager.SetVarValue('ProgressOnThePath_GeneralSettings', 'ProgressOnThePath_Notification_Item', 					"true");
-		VarManager.SetVarValue('ProgressOnThePath_GeneralSettings', 'ProgressOnThePath_Notification_WMap', 					"true");
-		VarManager.SetVarValue('ProgressOnThePath_GeneralSettings', 'ProgressOnThePath_Notification_Null', 					"true");
 		
 		VarManager.SetVarValue('ProgressOnThePath_GeneralSettings', 'ProgressOnThePath_EventMapPins_ShowMapPins', 			"true");
 		VarManager.SetVarValue('ProgressOnThePath_GeneralSettings', 'ProgressOnThePath_EventMapPins_MapPinDescription', 	"true");
@@ -461,7 +456,6 @@ state Initialising in CProgressOnThePath
 		VarManager.SetVarValue('ProgressOnThePath_GeneralSettings', 'ProgressOnThePath_EventMapPins_HighlightedPointers', 	"false");
 		
 		VarManager.SetVarValue('ProgressOnThePath_PreviewSettings', 'ProgressOnThePath_Preview', 							"0");
-		VarManager.SetVarValue('ProgressOnThePath_PreviewSettings', 'ProgressOnThePath_Preview_Hide', 						"false");
 		VarManager.SetVarValue('ProgressOnThePath_PreviewSettings', 'ProgressOnThePath_Preview_Comp', 						"true");
 		VarManager.SetVarValue('ProgressOnThePath_PreviewSettings', 'ProgressOnThePath_Preview_Igno', 						"false");
 		VarManager.SetVarValue('ProgressOnThePath_PreviewSettings', 'ProgressOnThePath_Preview_Iden', 						"false");
@@ -470,8 +464,28 @@ state Initialising in CProgressOnThePath
 		VarManager.SetVarValue('ProgressOnThePath_PreviewSettings', 'ProgressOnThePath_Preview_IType', 						"0");
 		VarManager.SetVarValue('ProgressOnThePath_PreviewSettings', 'ProgressOnThePath_Preview_GArea', 						"0");
 		VarManager.SetVarValue('ProgressOnThePath_PreviewSettings', 'ProgressOnThePath_Preview_GType', 						"0");
+		VarManager.SetVarValue('ProgressOnThePath_PreviewSettings', 'ProgressOnThePath_Preview_GExtra', 					"false");
 		VarManager.SetVarValue('ProgressOnThePath_PreviewSettings', 'ProgressOnThePath_Preview_WArea', 						"0");
 		VarManager.SetVarValue('ProgressOnThePath_PreviewSettings', 'ProgressOnThePath_Preview_WType', 						"0");
+
+		VarManager.SetVarValue('ProgressOnThePath_NotificationSettings', 'ProgressOnThePath_GlobalNotification_Time', 		"7");
+		VarManager.SetVarValue('ProgressOnThePath_NotificationSettings', 'ProgressOnThePath_GlobalNotification_Size', 		"18");
+		VarManager.SetVarValue('ProgressOnThePath_NotificationSettings', 'ProgressOnThePath_GlobalNotification_Font', 		"1");
+		VarManager.SetVarValue('ProgressOnThePath_NotificationSettings', 'ProgressOnThePath_FullNotification_Quest', 		"true");
+		VarManager.SetVarValue('ProgressOnThePath_NotificationSettings', 'ProgressOnThePath_FullNotification_World', 		"true");
+		VarManager.SetVarValue('ProgressOnThePath_NotificationSettings', 'ProgressOnThePath_FullNotification_Items', 		"true");
+		VarManager.SetVarValue('ProgressOnThePath_NotificationSettings', 'ProgressOnThePath_FullNotification_Gwent', 		"true");
+		VarManager.SetVarValue('ProgressOnThePath_NotificationSettings', 'ProgressOnThePath_FullNotification_Event', 		"true");
+		VarManager.SetVarValue('ProgressOnThePath_NotificationSettings', 'ProgressOnThePath_FullNotification_Nulls', 		"true");
+		
+		VarManager.SetVarValue('ProgressOnThePath_NotificationSettings', 'ProgressOnThePath_BackNotification_Quest', 		"true");
+		VarManager.SetVarValue('ProgressOnThePath_NotificationSettings', 'ProgressOnThePath_BackNotification_World', 		"true");
+		VarManager.SetVarValue('ProgressOnThePath_NotificationSettings', 'ProgressOnThePath_BackNotification_Items', 		"true");
+		VarManager.SetVarValue('ProgressOnThePath_NotificationSettings', 'ProgressOnThePath_BackNotification_Gwent', 		"true");
+		VarManager.SetVarValue('ProgressOnThePath_NotificationSettings', 'ProgressOnThePath_BackNotification_Event', 		"true");
+		
+		VarManager.SetVarValue('ProgressOnThePath_NotificationSettings', 'ProgressOnThePath_MiscNotification_Event', 		"true");
+		VarManager.SetVarValue('ProgressOnThePath_NotificationSettings', 'ProgressOnThePath_MiscNotification_Enter', 		"true");
 	}
 }
 

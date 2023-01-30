@@ -15,9 +15,9 @@ statemachine class CProgressOnThePath_WorldGoblin
 	
 	//---------------------------------------------------
 
-	public function initialise(PotP_BaseClass: CProgressOnThePath)
+	public function initialise(master: CProgressOnThePath)
 	{
-		this.master = PotP_BaseClass;
+		this.master = master;
 	}
 }
 
@@ -52,7 +52,7 @@ state Idle in CProgressOnThePath_WorldGoblin
 
 	entry function Idle_Entry() {
 
-		Sleep( (int) PotP_GetGeneralValue('ProgressOnThePath_BGProcessing_WMap') );
+		Sleep( 5 );
 
 		while (PotP_IsPlayerBusy()) 
 		{
@@ -88,8 +88,8 @@ state Checking in CProgressOnThePath_WorldGoblin
 		for ( Idx = 0; Idx < pData_E.Size(); Idx += 1 )
 		{
 			if (this.IsMapPinEligible(pData_E[Idx], MapManager)) {
-				parent.master.PotP_PersistentStorage.SetCompleted(pData_E[Idx]);
-				parent.master.PotP_Notifications.UpdatePlayerFromWorldMap(pData_E[Idx].group, pData_E[Idx].localname);
+				pData_E[Idx].SetCompleted();
+				pData_E[Idx].AddToBackgroundQueue();
 			}
 		}
 		
@@ -106,7 +106,7 @@ state Checking in CProgressOnThePath_WorldGoblin
 
 	private function IsMapPinEligible(entry_data: PotP_PreviewEntry, MapManager: CCommonMapManager) : bool {
 		
-		if (parent.master.PotP_PersistentStorage.IsCompletedOrIgnored(entry_data))
+		if (!entry_data.IsPlayable())
 		{
 			return false;
 		}

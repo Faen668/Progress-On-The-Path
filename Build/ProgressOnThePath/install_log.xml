@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<InstalLog Project="ProgressOnThePath" Build_date="30/01/2023 00:02:34">
+  <Files>
+    <Directory Path="F:\Steam\steamapps\common\The Witcher 3\Mods\modProgressOnThePath">
+      <Directory Path="F:\Steam\steamapps\common\The Witcher 3\Mods\modProgressOnThePath\content">
+        <file>F:\Steam\steamapps\common\The Witcher 3\Mods\modProgressOnThePath\content\blob0.bundle</file>
+        <file>F:\Steam\steamapps\common\The Witcher 3\Mods\modProgressOnThePath\content\metadata.store</file>
+        <file>F:\Steam\steamapps\common\The Witcher 3\Mods\modProgressOnThePath\content\texture.cache</file>
+      </Directory>
+    </Directory>
+    <Directory Path="F:\Steam\steamapps\common\The Witcher 3\DLC\dlc_progressonthepath">
+      <Directory Path="F:\Steam\steamapps\common\The Witcher 3\DLC\dlc_progressonthepath\content">
+        <file>F:\Steam\steamapps\common\The Witcher 3\DLC\dlc_progressonthepath\content\blob0.bundle</file>
+        <file>F:\Steam\steamapps\common\The Witcher 3\DLC\dlc_progressonthepath\content\metadata.store</file>
+      </Directory>
+    </Directory>
+  </Files>
+</InstalLog>
