@@ -19,6 +19,7 @@ With that being said! Progress on the Path dynamically tracks the acquisition of
 - All Vanilla, DLC and Next Gen Armor Sets
 
 **World Interactions**
+- All Bandit Camps
 - All Monster Dens
 - All Monster Nests
 - All Places of Power
