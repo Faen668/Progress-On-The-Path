@@ -248,8 +248,8 @@ Write-Host '- Copy and paste the following code block into the file just before 
 echo ""	
 
 write-host -ForegroundColor yellow "<!-- Progress on the Path Begin --> "
-write-host -ForegroundColor yellow "<Var builder="Input" id="UpdateProgressOnThePath" 		displayName="UpdateProgressOnThePath" 		displayType="INPUTPC" actions="UpdateProgressOnThePath"/>"
-write-host -ForegroundColor yellow "<Var builder="Input" id="DisplayProgressPreview" 		displayName="DisplayProgressPreview" 		displayType="INPUTPC" actions="DisplayProgressPreview"/>"
+write-host -ForegroundColor yellow "<Var builder=""Input"" id=""UpdateProgressOnThePath"" 		displayName=""UpdateProgressOnThePath"" 	displayType=""INPUTPC"" actions=""UpdateProgressOnThePath""/>"
+write-host -ForegroundColor yellow "<Var builder=""Input"" id=""DisplayProgressPreview"" 		displayName=""DisplayProgressPreview"" 		displayType=""INPUTPC"" actions=""DisplayProgressPreview""/>"
 write-host -ForegroundColor yellow "<!-- Progress on the Path End -->"
 write-host -ForegroundColor yellow ""
 
