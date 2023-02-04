@@ -16,7 +16,11 @@ function GetPotP(out master: CProgressOnThePath, optional caller: string): bool
 	PotP_Logger("GetPotP Called by [" + caller + "]");
 	master = (CProgressOnThePath)SUTB_getModByTag('CProgressOnThePath_BootStrapper');
 	
-	return (bool) master;
+	if (master)
+	{
+		return true;
+	}
+	return false;
 }
 
 //---------------------------------------------------

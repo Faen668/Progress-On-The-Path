@@ -8,9 +8,7 @@ class CProgressOnThePath_Storage
 	var MasterList_InProgres_V: array<string>;
 	var MasterList_IsIgnored_V: array<string>;
 	var MasterList_Collected_V: array<string>;
-	
 	var MasterList_Pl_Messages: array<PotP_PlayerNotification>;
-	
 	var MasterList_ItemsGoblin: array<SItemUniqueId>;
 	var MasterList_QuestGoblin: array<CJournalQuest>;
 }

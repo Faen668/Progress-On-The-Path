@@ -23,8 +23,8 @@ XCOPY "%modPath%\Menu" "%modpath%\release\bin\config\r4game\user_config_matrix\p
 XCOPY "%modpath%\Strings\" "%modpath%\release\mods\mod%modname%\content\" /e /s /y
 
 ::Copy over the DLC bundle files.
-XCOPY "%modpath%\Bundle\Mod" "%modpath%\release\mods\mod%modname%\content\" /e /s /y
-XCOPY "%modpath%\Bundle\DLC" "%modpath%\release\dlc\dlc%modname%\content\" /e /s /y
+XCOPY "%modpath%\Build\ProgressOnThePath\packed\Mods\modProgressOnThePath\content" "%modpath%\release\mods\mod%modname%\content\" /e /s /y
+XCOPY "%modpath%\Build\ProgressOnThePath\packed\DLC\dlc_progressonthepath\content" "%modpath%\release\dlc\dlc%modname%\content\" /e /s /y
 
 ::Copy over the README.
 XCOPY "%modpath%\Instructions\" "%modpath%\release\mods\mod%modname%\" /e /s /y

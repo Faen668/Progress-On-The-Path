@@ -213,10 +213,10 @@ state Idle in CProgressOnThePath
 state Initialising in CProgressOnThePath 
 {
 	private var curVersionStr: string;
-		default curVersionStr = "5.1.3";
+		default curVersionStr = "5.1.4";
 		
 	private var curVersionInt: int;
-		default curVersionInt = 513;
+		default curVersionInt = 514;
 	
 	private var hasUpdated: bool;
 		default hasUpdated = false;
@@ -317,7 +317,7 @@ state Initialising in CProgressOnThePath
 	{
 		if (FactsQuerySum(VersStr) < curVersionInt) 
 		{
-			if (FactsQuerySum(VersStr) < 513) { FactsSet(VersStr, 513); hasUpdated = true; }
+			if (FactsQuerySum(VersStr) < 514) { FactsSet(VersStr, 514); hasUpdated = true; }
 		}
 	}
 	
@@ -6317,8 +6317,8 @@ exec function pt_state()
 	
 	if (GetPotP(master, 'pt_state'))
 	{
+		PotP_Logger("Got master from GetPotP()", false, 'pt_state');
 		GetWitcherPlayer().DisplayHudMessage("Progress on the Path: Current State = " + NameToString(master.GetCurrentStateName()));
-		master.PotP_UpdaterClass.StartUpdate();
 	}
 }
 
@@ -6362,6 +6362,7 @@ exec function pt_sizes()
 	
 	if (GetPotP(master, 'pt_sizes'))
 	{
+		PotP_Logger("Got master from GetPotP()", false, 'pt_sizes');
 		master.PotP_Notifications._ShowListSizes();
 	}
 }
@@ -7159,6 +7160,11 @@ class PotP_PreviewEntry
 		this.localname 		= GetLocStringByKeyExt("option_" + uuid);
 		this.icon_path		= GetItemsIconpath();
 		this.popup_line 	= GetItemslocalisedNotificationLine(filter);
+		
+		if (this.IsItemCollected())
+		{
+			this.SetCompleted();
+		}
 
 		return this;
 	}
@@ -7714,16 +7720,16 @@ class PotP_PreviewEntry
 	
 	//---------------------------------------------------
 	
-	function compilevariations(optional var1: name, optional var2: name, optional var3: name, optional var4: name): PotP_PreviewEntry 
+	function compilevariations(optional var1: name, optional var2: name, optional var3: name, optional var4: name) : PotP_PreviewEntry
 	{
 		this.variations.Clear();
 		this.variations.PushBack(this.item_name);
 		
-		if (var1 != '') { if (!this.isValid(var1)) { PotP_Logger("Variation [" + var1 + "] Is Not A Valid Item",, this.fileName); } else { this.addvariation(var1); } }
-		if (var2 != '') { if (!this.isValid(var2)) { PotP_Logger("Variation [" + var2 + "] Is Not A Valid Item",, this.fileName); } else { this.addvariation(var2); } }
-		if (var3 != '') { if (!this.isValid(var3)) { PotP_Logger("Variation [" + var3 + "] Is Not A Valid Item",, this.fileName); } else { this.addvariation(var3); } }
-		if (var4 != '') { if (!this.isValid(var4)) { PotP_Logger("Variation [" + var4 + "] Is Not A Valid Item",, this.fileName); } else { this.addvariation(var4); } }
-
+		if (var1 != '') { this.addvariation(var1); }
+		if (var2 != '') { this.addvariation(var2); }
+		if (var3 != '') { this.addvariation(var3); }
+		if (var4 != '') { this.addvariation(var4); }
+		
 		return this;
 	}
 	
@@ -7733,13 +7739,6 @@ class PotP_PreviewEntry
 	{
 		this.variations.PushBack(variation_name);
 		PotP_Logger("Variation [" + variation_name + "] Assigned to Base Item " + this.item_name,, this.fileName);
-	}
-	
-	//---------------------------------------------------
-	
-	function isValid(item_name: name) : bool
-	{
-		return thePlayer.inv.GetItemLocalizedNameByName(item_name) != "";
 	}
 	
 	//---------------------------------------------------
@@ -8001,7 +8000,11 @@ function GetPotP(out master: CProgressOnThePath, optional caller: string): bool
 	PotP_Logger("GetPotP Called by [" + caller + "]");
 	master = (CProgressOnThePath)SUTB_getModByTag('CProgressOnThePath_BootStrapper');
 	
-	return (bool) master;
+	if (master)
+	{
+		return true;
+	}
+	return false;
 }
 
 //---------------------------------------------------
@@ -9638,9 +9641,7 @@ class CProgressOnThePath_Storage
 	var MasterList_InProgres_V: array<string>;
 	var MasterList_IsIgnored_V: array<string>;
 	var MasterList_Collected_V: array<string>;
-	
 	var MasterList_Pl_Messages: array<PotP_PlayerNotification>;
-	
 	var MasterList_ItemsGoblin: array<SItemUniqueId>;
 	var MasterList_QuestGoblin: array<CJournalQuest>;
 }

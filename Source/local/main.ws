@@ -213,10 +213,10 @@ state Idle in CProgressOnThePath
 state Initialising in CProgressOnThePath 
 {
 	private var curVersionStr: string;
-		default curVersionStr = "5.1.3";
+		default curVersionStr = "5.1.4";
 		
 	private var curVersionInt: int;
-		default curVersionInt = 513;
+		default curVersionInt = 514;
 	
 	private var hasUpdated: bool;
 		default hasUpdated = false;
@@ -317,7 +317,7 @@ state Initialising in CProgressOnThePath
 	{
 		if (FactsQuerySum(VersStr) < curVersionInt) 
 		{
-			if (FactsQuerySum(VersStr) < 513) { FactsSet(VersStr, 513); hasUpdated = true; }
+			if (FactsQuerySum(VersStr) < 514) { FactsSet(VersStr, 514); hasUpdated = true; }
 		}
 	}
 	

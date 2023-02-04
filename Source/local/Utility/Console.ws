@@ -77,8 +77,8 @@ exec function pt_state()
 	
 	if (GetPotP(master, 'pt_state'))
 	{
+		PotP_Logger("Got master from GetPotP()", false, 'pt_state');
 		GetWitcherPlayer().DisplayHudMessage("Progress on the Path: Current State = " + NameToString(master.GetCurrentStateName()));
-		master.PotP_UpdaterClass.StartUpdate();
 	}
 }
 
@@ -122,6 +122,7 @@ exec function pt_sizes()
 	
 	if (GetPotP(master, 'pt_sizes'))
 	{
+		PotP_Logger("Got master from GetPotP()", false, 'pt_sizes');
 		master.PotP_Notifications._ShowListSizes();
 	}
 }
