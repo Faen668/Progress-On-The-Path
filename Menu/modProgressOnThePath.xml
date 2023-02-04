@@ -165,6 +165,62 @@
 <!--///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////-->
 
 	<Group id="ProgressOnThePath_NotificationSettings" displayName="Mods.QT_Name.QT_Page_Notifications">
+		<PresetsArray>
+			<Preset id="0" displayName="QT_Preset_Dis">
+				<Entry varId="ProgressOnThePath_GlobalNotification_Size"	value="0"/>
+				<Entry varId="ProgressOnThePath_GlobalNotification_Font"	value="0"/>
+				<Entry varId="ProgressOnThePath_GlobalNotification_Time"	value="0"/>
+				<Entry varId="ProgressOnThePath_FullNotification_Quest"		value="false"/>
+				<Entry varId="ProgressOnThePath_FullNotification_World"		value="false"/>
+				<Entry varId="ProgressOnThePath_FullNotification_Items"		value="false"/>
+				<Entry varId="ProgressOnThePath_FullNotification_Gwent"		value="false"/>
+				<Entry varId="ProgressOnThePath_FullNotification_Event"		value="false"/>
+				<Entry varId="ProgressOnThePath_FullNotification_Nulls"		value="false"/>
+				<Entry varId="ProgressOnThePath_BackNotification_Quest"		value="false"/>
+				<Entry varId="ProgressOnThePath_BackNotification_World"		value="false"/>
+				<Entry varId="ProgressOnThePath_BackNotification_Items"		value="false"/>
+				<Entry varId="ProgressOnThePath_BackNotification_Gwent"		value="false"/>
+				<Entry varId="ProgressOnThePath_BackNotification_Event"		value="false"/>
+				<Entry varId="ProgressOnThePath_MiscNotification_Event"		value="false"/>
+				<Entry varId="ProgressOnThePath_MiscNotification_Enter"		value="false"/>
+			</Preset>
+			<Preset id="1" displayName="QT_Preset_Lig">
+				<Entry varId="ProgressOnThePath_GlobalNotification_Size"	value="18"/>
+				<Entry varId="ProgressOnThePath_GlobalNotification_Font"	value="1"/>
+				<Entry varId="ProgressOnThePath_GlobalNotification_Time"	value="3"/>
+				<Entry varId="ProgressOnThePath_FullNotification_Quest"		value="true"/>
+				<Entry varId="ProgressOnThePath_FullNotification_World"		value="true"/>
+				<Entry varId="ProgressOnThePath_FullNotification_Items"		value="true"/>
+				<Entry varId="ProgressOnThePath_FullNotification_Gwent"		value="true"/>
+				<Entry varId="ProgressOnThePath_FullNotification_Event"		value="true"/>
+				<Entry varId="ProgressOnThePath_FullNotification_Nulls"		value="true"/>
+				<Entry varId="ProgressOnThePath_BackNotification_Quest"		value="false"/>
+				<Entry varId="ProgressOnThePath_BackNotification_World"		value="false"/>
+				<Entry varId="ProgressOnThePath_BackNotification_Items"		value="false"/>
+				<Entry varId="ProgressOnThePath_BackNotification_Gwent"		value="false"/>
+				<Entry varId="ProgressOnThePath_BackNotification_Event"		value="false"/>
+				<Entry varId="ProgressOnThePath_MiscNotification_Event"		value="true"/>
+				<Entry varId="ProgressOnThePath_MiscNotification_Enter"		value="true"/>
+			</Preset>
+			<Preset id="2" displayName="QT_Preset_Ena">
+				<Entry varId="ProgressOnThePath_GlobalNotification_Size"	value="18"/>
+				<Entry varId="ProgressOnThePath_GlobalNotification_Font"	value="1"/>
+				<Entry varId="ProgressOnThePath_GlobalNotification_Time"	value="7"/>
+				<Entry varId="ProgressOnThePath_FullNotification_Quest"		value="true"/>
+				<Entry varId="ProgressOnThePath_FullNotification_World"		value="true"/>
+				<Entry varId="ProgressOnThePath_FullNotification_Items"		value="true"/>
+				<Entry varId="ProgressOnThePath_FullNotification_Gwent"		value="true"/>
+				<Entry varId="ProgressOnThePath_FullNotification_Event"		value="true"/>
+				<Entry varId="ProgressOnThePath_FullNotification_Nulls"		value="true"/>
+				<Entry varId="ProgressOnThePath_BackNotification_Quest"		value="true"/>
+				<Entry varId="ProgressOnThePath_BackNotification_World"		value="true"/>
+				<Entry varId="ProgressOnThePath_BackNotification_Items"		value="true"/>
+				<Entry varId="ProgressOnThePath_BackNotification_Gwent"		value="true"/>
+				<Entry varId="ProgressOnThePath_BackNotification_Event"		value="true"/>
+				<Entry varId="ProgressOnThePath_MiscNotification_Event"		value="true"/>
+				<Entry varId="ProgressOnThePath_MiscNotification_Enter"		value="true"/>
+			</Preset>
+		</PresetsArray>
 		<VisibleVars>
 			
 			<Var id="ProgressOnThePath_GlobalNotification_Size" 	displayName="ProgressOnThePath_GlobalNotification_Size" 	displayType="SLIDER;14;34;20"/>	

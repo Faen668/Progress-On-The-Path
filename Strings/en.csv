@@ -2333,4 +2333,9 @@
 2117171106||ProgressOnThePath_PreviewTag_QR|<font size="17" color="#C8566B"> (Quest Reward)</font>
 2117171107||ProgressOnThePath_PreviewTag_WO|<font size="17" color="#C8566B"> (Won)</font>
 ;
+2117171108||preset_Mods_QT_Name_QT_Page_Notifications|Notification Settings
+2117171109||preset_value_QT_Preset_Ena|<font color="#2ba84a">Enabled</font>
+2117171110||preset_value_QT_Preset_Lig|<font color="#ECE1A2">Lite Mode</font>
+2117171111||preset_value_QT_Preset_Dis|<font color="#C8566B">Disabled</font>
+;
 ;Next ID 2117171108

@@ -36,6 +36,9 @@ XCOPY "%modpath%\tw3-shared-utils\mod_sharedutils_tiny_bootstrapper\" "%modpath%
 XCOPY "%modpath%\tw3-shared-utils\mod_sharedutils_storage\" "%modpath%\release\mods\mod_sharedutils_storage\" /e /s /y
 XCOPY "%modpath%\tw3-shared-utils\mod_sharedutils_glossary\" "%modpath%\release\mods\mod_sharedutils_glossary\" /e /s /y
 
+::Create zip file for the release.
+powershell Compress-Archive -Path "%modpath%\release\bin", "%modpath%\release\mods", "%modpath%\release\dlc" -DestinationPath "%modpath%\release\Progress-on-the-Path.zip"
+
 ::if "%1"=="-github" (
 ::  echo "creating github release"
 ::  
