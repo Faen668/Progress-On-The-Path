@@ -1,7 +1,3 @@
-//
-// Progress on the Path - TW3 Progress Tracker
-// Script Version: 1.0.0 by K1ngTr4cker
-//
 //---------------------------------------------------
 //-- Functions --------------------------------------
 //---------------------------------------------------
@@ -109,3 +105,4 @@ function PotP_UsingANightToRemember() : bool
 {
 	return theGame.GetDLCManager().IsDLCAvailable('dlc_ntr');
 }
+

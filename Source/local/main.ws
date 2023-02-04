@@ -1,6 +1,3 @@
-//
-// Progress on the Path - TW3 Progress Tracker
-//
 //---------------------------------------------------
 //-- Main Mod Class ---------------------------------
 //---------------------------------------------------
@@ -39,8 +36,6 @@ statemachine class CProgressOnThePath extends SU_BaseBootstrappedMod {
 	{			
 		PotP_Logger("Bootstrapped successfully with Magic, prayers and wishful thinking...", , this.fileName);
 		
-		this.LoadStorage();
-		
 		theInput.RegisterListener(this, 'UpdateProgressOnThePath', 'UpdateProgressOnThePath');
 		theInput.RegisterListener(this, 'DisplayProgressPreview', 'DisplayProgressPreview');
 		
@@ -76,11 +71,7 @@ statemachine class CProgressOnThePath extends SU_BaseBootstrappedMod {
 		}
 		else
 		{
-			PotP_Logger("Progress On The Path: Loading Saved Storage [MasterList_Completed_V] with a size of [" + this.PotP_PersistentStorage.MasterList_Completed_V.Size() + "]", , this.fileName);
-			PotP_Logger("Progress On The Path: Loading Saved Storage [MasterList_InProgres_V] with a size of [" + this.PotP_PersistentStorage.MasterList_InProgres_V.Size() + "]", , this.fileName);
-			PotP_Logger("Progress On The Path: Loading Saved Storage [MasterList_IsIgnored_V] with a size of [" + this.PotP_PersistentStorage.MasterList_IsIgnored_V.Size() + "]", , this.fileName);
-			PotP_Logger("Progress On The Path: Loading Saved Storage [MasterList_Collected_V] with a size of [" + this.PotP_PersistentStorage.MasterList_Collected_V.Size() + "]", , this.fileName);
-			PotP_Logger("Progress On The Path: Loading Saved Storage [MasterList_Pl_Messages] with a size of [" + this.PotP_PersistentStorage.MasterList_Pl_Messages.Size() + "]", , this.fileName);
+			PotP_Logger("Progress On The Path: Loading Saved Storage...", , this.fileName);
 		}
 	}	
 	
@@ -250,6 +241,7 @@ state Initialising in CProgressOnThePath
 	
 	entry function Initialising_Main() 
 	{		
+		parent.LoadStorage();
 		parent.PotP_ArrayManager.initialise(parent);
 		
 		while (PotP_IsPlayerBusy() || parent.PotP_ArrayManager.IsInState('Running')) 
@@ -380,6 +372,3 @@ state Initialising in CProgressOnThePath
 	}
 }
 
-//---------------------------------------------------
-//-- End Of Code ------------------------------------
-//---------------------------------------------------

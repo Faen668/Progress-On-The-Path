@@ -270,3 +270,4 @@ state Updating in CProgressOnThePath_MapPins
 		parent.GotoState('Waiting');
 	}
 }
+

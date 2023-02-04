@@ -1,6 +1,3 @@
-//
-// Progress on the Path - TW3 Progress Tracker
-//
 //---------------------------------------------------
 //-- Preview Books ----------------------------------
 //---------------------------------------------------
@@ -365,8 +362,4 @@ class ProgressOnTheBath_TutorialBook7 extends SU_GlossaryEntry
 		return GetLocStringByKeyExt("ProgressOnThePath_TutorialBook7_Desc");
 	}
 }
-
-//---------------------------------------------------
-//-- End Of Code ------------------------------------
-//---------------------------------------------------
 

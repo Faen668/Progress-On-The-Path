@@ -1,7 +1,3 @@
-//
-// Progress on the Path - TW3 Progress Tracker
-// Script by K1ngTr4cker
-//
 //---------------------------------------------------
 //-- Class ------------------------------------------
 //---------------------------------------------------
@@ -163,3 +159,4 @@ state ItemAdded in CProgressOnThePath_ItemsGoblin
 		SleepOneFrame();
 	}
 }
+

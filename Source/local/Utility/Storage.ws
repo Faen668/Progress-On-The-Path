@@ -1,6 +1,3 @@
-//
-// Progress on the Path - TW3 Progress Tracker
-//
 //---------------------------------------------------
 //-- Storage Class ----------------------------------
 //---------------------------------------------------
@@ -37,6 +34,3 @@ function PotP_GetNotificationValue(variable: name) : string
 	return theGame.GetInGameConfigWrapper().GetVarValue('ProgressOnThePath_NotificationSettings', variable);
 }
 
-//---------------------------------------------------
-//-- End Of Code ------------------------------------
-//---------------------------------------------------

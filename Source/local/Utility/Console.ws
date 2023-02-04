@@ -1,6 +1,3 @@
-//
-// Progress on the Path - TW3 Progress Tracker
-//
 //---------------------------------------------------
 //-- Exec Functions ---------------------------------
 //---------------------------------------------------
@@ -683,3 +680,4 @@ exec function pt_variation(type: name, only_variations: bool)
 
 	master.PotP_ItemsGoblin.GotoState('Idle');
 }
+

@@ -516,3 +516,4 @@ class ProgressOnThepath_GwentCardBuilder
 		return entry_line;
 	}
 }
+

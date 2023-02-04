@@ -1,7 +1,3 @@
-//
-// Progress on the Path - TW3 Progress Tracker
-// Script by K1ngTr4cker
-//
 //---------------------------------------------------
 //-- Class ------------------------------------------
 //---------------------------------------------------		
@@ -126,3 +122,4 @@ state Checking in CProgressOnThePath_WorldGoblin
 		return MapManager.IsEntityMapPinDisabled(entry_data.pin_name);
 	}
 }
+

@@ -1,6 +1,3 @@
-//
-// Progress on the Path - TW3 Progress Tracker
-//
 //---------------------------------------------------
 //-- Class ------------------------------------------
 //---------------------------------------------------		
@@ -101,3 +98,4 @@ state Checking in CProgressOnThePath_EventListener
 		parent.GotoState('Idle');
 	}
 }
+

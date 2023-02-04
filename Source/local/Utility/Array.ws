@@ -1,6 +1,3 @@
-//
-// Progress on the Path - TW3 Progress Tracker
-//
 //---------------------------------------------------
 //-- Class ------------------------------------------
 //---------------------------------------------------
@@ -3519,3 +3516,4 @@ state Running in CProgressOnThePath_ArrayHandler
 		SortPreviewData(parent.Gwent_Skellige, PotP_A_Gwent);
 	}
 }
+

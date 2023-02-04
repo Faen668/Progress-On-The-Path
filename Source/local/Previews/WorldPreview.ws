@@ -1,6 +1,3 @@
-//
-// Progress on the Path - TW3 Progress Tracker
-//
 //---------------------------------------------------
 //-- Class ------------------------------------------
 //---------------------------------------------------
@@ -118,3 +115,4 @@ class CProgressOnThePath_WorldPreview
 		this.completed_count 	+= result.completed_count;
 	}
 }
+
