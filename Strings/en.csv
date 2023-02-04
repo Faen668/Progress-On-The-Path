@@ -2338,4 +2338,7 @@
 2117171110||preset_value_QT_Preset_Lig|<font color="#ECE1A2">Lite Mode</font>
 2117171111||preset_value_QT_Preset_Dis|<font color="#C8566B">Disabled</font>
 ;
-;Next ID 2117171108
+2117171112||option_PotP_TrackingGroup_Relics_SteelSwords_59|Witcher's Steel Sword
+2117171113||option_PotP_TrackingGroup_Relics_SilverSwords_42|Witcher's Silver Sword
+;
+;Next ID 2117171114

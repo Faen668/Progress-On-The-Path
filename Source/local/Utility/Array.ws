@@ -1488,6 +1488,7 @@ state Running in CProgressOnThePath_ArrayHandler
 		parent.Relic_SteelSwords.PushBack(parent.CreateEntry().initItems(group + "_55", PotP_E_Primary, PotP_I_Relic, PotP_U_Steel, 'Abarad')							.compilevariations(''));
 		parent.Relic_SteelSwords.PushBack(parent.CreateEntry().initItems(group + "_56", PotP_E_Primary, PotP_I_Relic, PotP_U_Steel, 'q402 Skellige sword 3')			.compilevariations(''));
 		parent.Relic_SteelSwords.PushBack(parent.CreateEntry().initItems(group + "_57", PotP_E_Primary, PotP_I_Relic, PotP_U_Steel, 'Wolf')								.compilevariations(''));
+		parent.Relic_SteelSwords.PushBack(parent.CreateEntry().initItems(group + "_59", PotP_E_Primary, PotP_I_Relic, PotP_U_Steel, 'Top Notch Steel')					.compilevariations(''));
 
 		if (PotP_IsUsingNextGen()) 
 		{
@@ -1581,7 +1582,8 @@ state Running in CProgressOnThePath_ArrayHandler
 		parent.Relic_SilverSwords.PushBack(parent.CreateEntry().initItems(group + "_38", PotP_E_Primary, PotP_I_Relic, PotP_U_Silve, 'Weeper')								.compilevariations('Weeper_crafted'));
 		parent.Relic_SilverSwords.PushBack(parent.CreateEntry().initItems(group + "_39", PotP_E_Primary, PotP_I_Relic, PotP_U_Silve, 'Zerrikanterment')						.compilevariations(''));
 		parent.Relic_SilverSwords.PushBack(parent.CreateEntry().initItems(group + "_40", PotP_E_Primary, PotP_I_Relic, PotP_U_Silve, 'q505 crafted sword')					.compilevariations(''));
-
+		parent.Relic_SilverSwords.PushBack(parent.CreateEntry().initItems(group + "_42", PotP_E_Primary, PotP_I_Relic, PotP_U_Silve, 'Top Notch Silver')					.compilevariations(''));
+		
 		if (PotP_IsUsingNextGen()) 
 		{
 			parent.Relic_SilverSwords.PushBack(parent.CreateEntry().initItems(group + "_41", PotP_E_Primary, PotP_I_Relic, PotP_U_Silve, 'Silver Vixen')					.compilevariations(''));
