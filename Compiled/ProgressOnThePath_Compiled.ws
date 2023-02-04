@@ -62,7 +62,7 @@ statemachine class CProgressOnThePath extends SU_BaseBootstrappedMod {
 
 	//---------------------------------------------------
 
-	private function LoadStorage() 
+	public function LoadStorage() 
 	{ 
 		if (!this.PotP_PersistentStorage)
 		{
