@@ -58,165 +58,205 @@ echo "- Fetching latest release from Github..."
 echo ""
 
 $response = Invoke-RestMethod -Uri "https://api.github.com/repos/Faen668/Progress-On-The-Path/releases"
+$latestversion = $response[0].name
+$latestAssetUrl = "https://github.com/Faen668/Progress-On-The-Path/releases/latest/download/Progress-on-the-Path.zip"
 
 echo ""
-write-host "- Downloading Progress on the Path $($response[0].name)"
+write-host "- Downloading Progress on the Path $($latestversion)"
 echo ""
 
 $extractingFolder = "./__install_PotP"
 
-$latestAssetUrl = "https://github.com/Faen668/Progress-On-The-Path/releases/download/5.1.1/Progress-on-the-Path.zip"
+
 $latestAssetName = "Progress-on-the-Path.zip"
 Invoke-WebRequest -Uri $latestAssetUrl -OutFile $latestAssetName
 
 Expand-Archive -Force -LiteralPath $latestAssetName -DestinationPath ./$extractingFolder
 remove-item $latestAssetName -recurse -force
 
-$installMessage = "- Installing release {0}" -f $response[0].name
+$installMessage = "- Installing release {0}" -f $latestversion
 
 echo ""
 echo $installMessage
 echo ""
 
-if (test-path mods/modProgressOnThePath) {
+if (test-path mods/modProgressOnThePath) 
+{
 	Remove-Item mods/modProgressOnThePath -force -recurse
+}
+
+if (test-path dlc/dlcProgressOnThePath) 
+{
+	Remove-Item dlc/dlcProgressOnThePath -force -recurse
+}
+
+if (test-path bin/config/r4game/user_config_matrix/pc/modProgressOnThePath.xml) 
+{
+	Remove-Item bin/config/r4game/user_config_matrix/pc/modProgressOnThePath.xml -force
 }
 
 $children = Get-ChildItem ./$extractingFolder
 foreach ($child in $children) {
   $fullpath = "{0}/{1}" -f $extractingFolder, $child
   copy-item $fullpath . -force -recurse
-  write-host "    - $($child.name) Installed"
+}
+
+#Install Scripts
+echo ""
+echo "- Installing Scripts"
+$children = Get-ChildItem mods/modProgressOnThePath -recurse -exclude *.csv, *.w3strings, *.bundle, *.store, *.cache, *.txt, *.bat
+foreach ($child in $children | Where-Object -Property PSIsContainer -eq $false)
+{
+  Write-Host -ForegroundColor green 'Installed' -NoNewline; Write-Host " - $($child.name)"
+}
+
+#Install Localisation
+echo ""
+echo "- Installing Localisation"
+$children = Get-ChildItem mods/modProgressOnThePath -recurse -exclude *.ws, *.bundle, *.store, *.cache, *.txt, *.bat
+foreach ($child in $children | Where-Object -Property PSIsContainer -eq $false)
+{
+  Write-Host -ForegroundColor green 'Installed' -NoNewline; Write-Host " - $($child.name)"
+}
+
+#Install Bundles
+echo ""
+echo "- Installing Mod Bundle"
+$children = Get-ChildItem mods/modProgressOnThePath -recurse -exclude *.ws, *.csv, *.w3strings, *.txt, *.bat
+foreach ($child in $children | Where-Object -Property PSIsContainer -eq $false)
+{
+  Write-Host -ForegroundColor green 'Installed' -NoNewline; Write-Host " - $($child.name)"
+}
+
+#Install Bundles
+echo ""
+echo "- Installing DLC Bundle"
+$children = Get-ChildItem dlc/dlcProgressOnThePath -recurse -exclude *.ws, *.csv, *.w3strings, *.txt, *.bat
+foreach ($child in $children | Where-Object -Property PSIsContainer -eq $false)
+{
+  Write-Host -ForegroundColor green 'Installed' -NoNewline; Write-Host " - $($child.name)"
 }
 
 if (test-path $extractingFolder) {
   remove-item $extractingFolder -recurse -force
 }
 
+$installedMessage = "=== Progress on the Path {0} installed ===" -f $latestversion
+
 echo ""
-write-Host '- Open the following two txt files:'
-echo ""
-Write-Host -ForegroundColor green 'bin\config\r4game\user_config_matrix\pc\dx11filelist.txt'
-echo ""
-Write-Host -ForegroundColor green 'bin\config\r4game\user_config_matrix\pc\dx12filelist.txt'
-echo ""
-write-Host '- If the line ' -NoNewline; Write-Host -ForegroundColor green 'modProgressOnThePath.xml;' -NoNewline; Write-Host ' does not exist in either of the files, add it.'
-echo ""
-write-Host '- A ' -NoNewline; Write-Host -ForegroundColor green 'README' -NoNewline; Write-Host ' file with all keybinds and settings can be found in the modProgressOnThePath folder.'
+write-host $installedMessage -ForegroundColor green -BackgroundColor black
 echo ""
 
-$shouldShowKeybinds = Read-Host "- Would you like to view the README Now? [Y/N]"
-while($shouldShowKeybinds -ne "y")
-{
-    if ($shouldShowKeybinds -eq 'n') 
-	{
-		break
-	}
-
-	write-Host '*** Please Type ' -NoNewline; Write-Host -ForegroundColor darkgreen 'Y' -NoNewline; Write-Host ' to install the mod or ' -NoNewline; Write-Host -ForegroundColor darkred 'N' -NoNewline; Write-Host ' to exit.'
-	echo ""
-	$shouldShowKeybinds = Read-Host "- Would you like to view the README Now? [Y/N]"
-}
+echo ""
+pause
 
 cls
-write-host -BackgroundColor darkred "                                    "
-write-host -ForegroundColor white -BackgroundColor darkred "  Progress on the Path Installer    "
-write-host -BackgroundColor darkred "                                    "
+write-host -BackgroundColor darkred "                                      "
+write-host -ForegroundColor white -BackgroundColor darkred "   Installation Step: User Settings   "
+write-host -BackgroundColor darkred "                                      "
 echo ""
 
-if ($shouldShowKeybinds -eq 'y')
-{
-	write-Host '- Open the following two files:'
-	Write-Host -ForegroundColor green '\Documents\The Witcher 3\user.settings'
-	Write-Host -ForegroundColor green '\Documents\The Witcher 3\dx12user.settings'
-	echo ""
-	echo "- At the top of the files copy and paste the following:"
-	echo ""
-	write-host -ForegroundColor gray -BackgroundColor black "[ProgressOnThePath_PreviewSettings]"
-	write-host -ForegroundColor gray -BackgroundColor black "ProgressOnThePath_Preview=0"
-	write-host -ForegroundColor gray -BackgroundColor black "ProgressOnThePath_Preview_Hide=false"
-	write-host -ForegroundColor gray -BackgroundColor black "ProgressOnThePath_Preview_Comp=true"
-	write-host -ForegroundColor gray -BackgroundColor black "ProgressOnThePath_Preview_Igno=false"
-	write-host -ForegroundColor gray -BackgroundColor black "ProgressOnThePath_Preview_Iden=false"
-	write-host -ForegroundColor gray -BackgroundColor black "ProgressOnThePath_Preview_QArea=0"
-	write-host -ForegroundColor gray -BackgroundColor black "ProgressOnThePath_Preview_QType=0"
-	write-host -ForegroundColor gray -BackgroundColor black "ProgressOnThePath_Preview_IType=0"
-	write-host -ForegroundColor gray -BackgroundColor black "ProgressOnThePath_Preview_GArea=0"
-	write-host -ForegroundColor gray -BackgroundColor black "ProgressOnThePath_Preview_GType=0"
-	write-host -ForegroundColor gray -BackgroundColor black "ProgressOnThePath_Preview_WArea=0"
-	write-host -ForegroundColor gray -BackgroundColor black "ProgressOnThePath_Preview_WType=0"
-	echo ""
-	write-host -ForegroundColor gray -BackgroundColor black "[ProgressOnThePath_GeneralSettings]"
-	write-host -ForegroundColor gray -BackgroundColor black "ProgressOnThePath_MeditationUpdate=true"
-	write-host -ForegroundColor gray -BackgroundColor black "ProgressOnThePath_EnableHotKey=true"
-	write-host -ForegroundColor gray -BackgroundColor black "ProgressOnThePath_EventMapPins_ShowMapPins=true"
-	write-host -ForegroundColor gray -BackgroundColor black "ProgressOnThePath_EventMapPins_MapPinDescription=true"
-	write-host -ForegroundColor gray -BackgroundColor black "ProgressOnThePath_EventMapPins_MapPinRadius=30"
-	write-host -ForegroundColor gray -BackgroundColor black "ProgressOnThePath_EventMapPins_MapPinType=1"
-	write-host -ForegroundColor gray -BackgroundColor black "ProgressOnThePath_EventMapPins_ShowMiniMap=false"
-	write-host -ForegroundColor gray -BackgroundColor black "ProgressOnThePath_EventMapPins_ArrowPointers=false"
-	write-host -ForegroundColor gray -BackgroundColor black "ProgressOnThePath_EventMapPins_HighlightedPointers=false"
-	echo ""
-	write-host -ForegroundColor gray -BackgroundColor black "[ProgressOnThePath_NotificationSettings]"
-	write-host -ForegroundColor gray -BackgroundColor black "ProgressOnThePath_GlobalNotification_Time=7"
-	write-host -ForegroundColor gray -BackgroundColor black "ProgressOnThePath_GlobalNotification_Size=18"
-	write-host -ForegroundColor gray -BackgroundColor black "ProgressOnThePath_GlobalNotification_Font=1"
-	write-host -ForegroundColor gray -BackgroundColor black "ProgressOnThePath_FullNotification_Quest=true"
-	write-host -ForegroundColor gray -BackgroundColor black "ProgressOnThePath_FullNotification_World=true"
-	write-host -ForegroundColor gray -BackgroundColor black "ProgressOnThePath_FullNotification_Items=true"
-	write-host -ForegroundColor gray -BackgroundColor black "ProgressOnThePath_FullNotification_Gwent=true"
-	write-host -ForegroundColor gray -BackgroundColor black "ProgressOnThePath_FullNotification_Event=true"
-	write-host -ForegroundColor gray -BackgroundColor black "ProgressOnThePath_FullNotification_Nulls=true"
-	write-host -ForegroundColor gray -BackgroundColor black "ProgressOnThePath_BackNotification_Quest=true"
-	write-host -ForegroundColor gray -BackgroundColor black "ProgressOnThePath_BackNotification_World=true"
-	write-host -ForegroundColor gray -BackgroundColor black "ProgressOnThePath_BackNotification_Items=true"
-	write-host -ForegroundColor gray -BackgroundColor black "ProgressOnThePath_BackNotification_Gwent=true"
-	write-host -ForegroundColor gray -BackgroundColor black "ProgressOnThePath_BackNotification_Event=true"
-	write-host -ForegroundColor gray -BackgroundColor black "ProgressOnThePath_MiscNotification_Event=true"
-	write-host -ForegroundColor gray -BackgroundColor black "ProgressOnThePath_MiscNotification_Enter=true"
-	echo ""
+write-Host '- Open the following two files:'
+echo ""
+Write-Host -ForegroundColor green '\Documents\The Witcher 3\user.settings'
+Write-Host -ForegroundColor green '\Documents\The Witcher 3\dx12user.settings'
+echo ""
+echo "- At the top of the files copy and paste the following:"
+echo ""
+write-host -ForegroundColor yellow "[ProgressOnThePath_PreviewSettings]"
+write-host -ForegroundColor yellow "ProgressOnThePath_Preview=0"
+write-host -ForegroundColor yellow "ProgressOnThePath_Preview_Hide=false"
+write-host -ForegroundColor yellow "ProgressOnThePath_Preview_Comp=true"
+write-host -ForegroundColor yellow "ProgressOnThePath_Preview_Igno=false"
+write-host -ForegroundColor yellow "ProgressOnThePath_Preview_Iden=false"
+write-host -ForegroundColor yellow "ProgressOnThePath_Preview_QArea=0"
+write-host -ForegroundColor yellow "ProgressOnThePath_Preview_QType=0"
+write-host -ForegroundColor yellow "ProgressOnThePath_Preview_IType=0"
+write-host -ForegroundColor yellow "ProgressOnThePath_Preview_GArea=0"
+write-host -ForegroundColor yellow "ProgressOnThePath_Preview_GType=0"
+write-host -ForegroundColor yellow "ProgressOnThePath_Preview_WArea=0"
+write-host -ForegroundColor yellow "ProgressOnThePath_Preview_WType=0"
+echo ""
+write-host -ForegroundColor yellow "[ProgressOnThePath_GeneralSettings]"
+write-host -ForegroundColor yellow "ProgressOnThePath_MeditationUpdate=true"
+write-host -ForegroundColor yellow "ProgressOnThePath_EnableHotKey=true"
+write-host -ForegroundColor yellow "ProgressOnThePath_EventMapPins_ShowMapPins=true"
+write-host -ForegroundColor yellow "ProgressOnThePath_EventMapPins_MapPinDescription=true"
+write-host -ForegroundColor yellow "ProgressOnThePath_EventMapPins_MapPinRadius=30"
+write-host -ForegroundColor yellow "ProgressOnThePath_EventMapPins_MapPinType=1"
+write-host -ForegroundColor yellow "ProgressOnThePath_EventMapPins_ShowMiniMap=false"
+write-host -ForegroundColor yellow "ProgressOnThePath_EventMapPins_ArrowPointers=false"
+write-host -ForegroundColor yellow "ProgressOnThePath_EventMapPins_HighlightedPointers=false"
+echo ""
+write-host -ForegroundColor yellow "[ProgressOnThePath_NotificationSettings]"
+write-host -ForegroundColor yellow "ProgressOnThePath_GlobalNotification_Time=7"
+write-host -ForegroundColor yellow "ProgressOnThePath_GlobalNotification_Size=18"
+write-host -ForegroundColor yellow "ProgressOnThePath_GlobalNotification_Font=1"
+write-host -ForegroundColor yellow "ProgressOnThePath_FullNotification_Quest=true"
+write-host -ForegroundColor yellow "ProgressOnThePath_FullNotification_World=true"
+write-host -ForegroundColor yellow "ProgressOnThePath_FullNotification_Items=true"
+write-host -ForegroundColor yellow "ProgressOnThePath_FullNotification_Gwent=true"
+write-host -ForegroundColor yellow "ProgressOnThePath_FullNotification_Event=true"
+write-host -ForegroundColor yellow "ProgressOnThePath_FullNotification_Nulls=true"
+write-host -ForegroundColor yellow "ProgressOnThePath_BackNotification_Quest=true"
+write-host -ForegroundColor yellow "ProgressOnThePath_BackNotification_World=true"
+write-host -ForegroundColor yellow "ProgressOnThePath_BackNotification_Items=true"
+write-host -ForegroundColor yellow "ProgressOnThePath_BackNotification_Gwent=true"
+write-host -ForegroundColor yellow "ProgressOnThePath_BackNotification_Event=true"
+write-host -ForegroundColor yellow "ProgressOnThePath_MiscNotification_Event=true"
+write-host -ForegroundColor yellow "ProgressOnThePath_MiscNotification_Enter=true"
+echo ""
 
-	write-Host '- Open the following file:'
-	Write-Host -ForegroundColor green '\Documents\The Witcher 3\input.settings'
-	echo ""
-	echo "- At the top of the files copy and paste the following:"
-	echo ""
-	write-host -ForegroundColor gray -BackgroundColor black "[Exploration]"
-	write-host -ForegroundColor gray -BackgroundColor black "IK_NumPad5=(Action=UpdateProgressOnThePath)"
-	write-host -ForegroundColor gray -BackgroundColor black "IK_NumPad6=(Action=DisplayProgressPreview)"
-	write-host -ForegroundColor gray -BackgroundColor black "[Horse]"
-	write-host -ForegroundColor gray -BackgroundColor black "IK_NumPad5=(Action=UpdateProgressOnThePath)"
-	write-host -ForegroundColor gray -BackgroundColor black "IK_NumPad6=(Action=DisplayProgressPreview)"
-	write-host -ForegroundColor gray -BackgroundColor black "[Swimming]"
-	write-host -ForegroundColor gray -BackgroundColor black "IK_NumPad5=(Action=UpdateProgressOnThePath)"
-	write-host -ForegroundColor gray -BackgroundColor black "IK_NumPad6=(Action=DisplayProgressPreview)"
-	write-host -ForegroundColor gray -BackgroundColor black "[Boat]"
-	write-host -ForegroundColor gray -BackgroundColor black "IK_NumPad5=(Action=UpdateProgressOnThePath)"
-	write-host -ForegroundColor gray -BackgroundColor black "IK_NumPad6=(Action=DisplayProgressPreview)"
-	write-host -ForegroundColor gray -BackgroundColor black "[BoatPassenger]"
-	write-host -ForegroundColor gray -BackgroundColor black "IK_NumPad5=(Action=UpdateProgressOnThePath)"
-	write-host -ForegroundColor gray -BackgroundColor black "IK_NumPad6=(Action=DisplayProgressPreview)"
-	write-host -ForegroundColor gray -BackgroundColor black "[Combat]"
-	write-host -ForegroundColor gray -BackgroundColor black "IK_NumPad5=(Action=UpdateProgressOnThePath)"
-	write-host -ForegroundColor gray -BackgroundColor black "IK_NumPad6=(Action=DisplayProgressPreview)"
-	write-host -ForegroundColor gray -BackgroundColor black "[Diving]"
-	write-host -ForegroundColor gray -BackgroundColor black "IK_NumPad5=(Action=UpdateProgressOnThePath)"
-	write-host -ForegroundColor gray -BackgroundColor black "IK_NumPad6=(Action=DisplayProgressPreview)"
-	echo ""
+write-host -BackgroundColor darkred "                                           "
+write-host -ForegroundColor white -BackgroundColor darkred "   Installation Step: Hotkeys (Optional)   "
+write-host -BackgroundColor darkred "                                           "
+echo ""
+write-Host '- Open the following file:'
+echo ""
+Write-Host -ForegroundColor green '\Documents\The Witcher 3\input.settings'
+echo ""
+echo "- At the top of the file copy and paste the following:"
+echo ""
+write-host -ForegroundColor yellow "[Exploration]"
+write-host -ForegroundColor yellow "IK_NumPad5=(Action=UpdateProgressOnThePath)"
+write-host -ForegroundColor yellow "IK_NumPad6=(Action=DisplayProgressPreview)"
+write-host -ForegroundColor yellow "[Horse]"
+write-host -ForegroundColor yellow "IK_NumPad5=(Action=UpdateProgressOnThePath)"
+write-host -ForegroundColor yellow "IK_NumPad6=(Action=DisplayProgressPreview)"
+write-host -ForegroundColor yellow "[Swimming]"
+write-host -ForegroundColor yellow "IK_NumPad5=(Action=UpdateProgressOnThePath)"
+write-host -ForegroundColor yellow "IK_NumPad6=(Action=DisplayProgressPreview)"
+write-host -ForegroundColor yellow "[Boat]"
+write-host -ForegroundColor yellow "IK_NumPad5=(Action=UpdateProgressOnThePath)"
+write-host -ForegroundColor yellow "IK_NumPad6=(Action=DisplayProgressPreview)"
+write-host -ForegroundColor yellow "[BoatPassenger]"
+write-host -ForegroundColor yellow "IK_NumPad5=(Action=UpdateProgressOnThePath)"
+write-host -ForegroundColor yellow "IK_NumPad6=(Action=DisplayProgressPreview)"
+write-host -ForegroundColor yellow "[Combat]"
+write-host -ForegroundColor yellow "IK_NumPad5=(Action=UpdateProgressOnThePath)"
+write-host -ForegroundColor yellow "IK_NumPad6=(Action=DisplayProgressPreview)"
+write-host -ForegroundColor yellow "[Diving]"
+write-host -ForegroundColor yellow "IK_NumPad5=(Action=UpdateProgressOnThePath)"
+write-host -ForegroundColor yellow "IK_NumPad6=(Action=DisplayProgressPreview)"
+echo ""
 
-	write-Host '- Open the following file:'
-	Write-Host -ForegroundColor green '\The Witcher 3\bin\config\r4game\user_config_matrix\pc\input.xml'
-	echo ""
-	echo "- At the top of the files copy and paste the following:"
-	echo ""	
-	
-	
-	write-host -ForegroundColor gray -BackgroundColor black "<!-- Progress on the Path Begin --> "
-	write-host -ForegroundColor gray -BackgroundColor black "<Var builder="Input" id="UpdateProgressOnThePath" 		displayName="UpdateProgressOnThePath" 		displayType="INPUTPC" actions="UpdateProgressOnThePath"/>"
-	write-host -ForegroundColor gray -BackgroundColor black "<Var builder="Input" id="DisplayProgressPreview" 		displayName="DisplayProgressPreview" 		displayType="INPUTPC" actions="DisplayProgressPreview"/>"
-	write-host -ForegroundColor gray -BackgroundColor black "<!-- Progress on the Path End -->"
-	write-host -ForegroundColor gray -BackgroundColor black ""
-}
+write-Host '- Open the following file:'
+echo ""
+Write-Host -ForegroundColor green '\The Witcher 3\bin\config\r4game\user_config_matrix\pc\input.xml'
+echo ""
+Write-Host '- Copy and paste the following code block into the file just before ' -NoNewline; Write-Host -ForegroundColor green '<!-- [BASE_CharacterMovement] -->'
+echo ""	
+
+write-host -ForegroundColor yellow "<!-- Progress on the Path Begin --> "
+write-host -ForegroundColor yellow "<Var builder="Input" id="UpdateProgressOnThePath" 		displayName="UpdateProgressOnThePath" 		displayType="INPUTPC" actions="UpdateProgressOnThePath"/>"
+write-host -ForegroundColor yellow "<Var builder="Input" id="DisplayProgressPreview" 		displayName="DisplayProgressPreview" 		displayType="INPUTPC" actions="DisplayProgressPreview"/>"
+write-host -ForegroundColor yellow "<!-- Progress on the Path End -->"
+write-host -ForegroundColor yellow ""
+
+write-host -BackgroundColor darkred "                             "
+write-host -ForegroundColor white -BackgroundColor darkred "   Installation Finished   "
+write-host -BackgroundColor darkred "                             "
+echo ""
 
 echo "- I hope you enjoy using the mod!"
 echo ""
