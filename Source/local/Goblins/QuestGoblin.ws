@@ -10,29 +10,59 @@ statemachine class CProgressOnThePath_QuestGoblin
 {	
 	public var filename: name;
 		default filename = 'PotP Quest Goblin';
-		
-	public var last_addition_time: float;	
-	public var quest_array: array<CJournalQuest>;
+
+	public var quest_entity_array: array<PotP_PreviewEntry>;
+	public var quest_lookup_array: array<string>;
+
+	public var manager: CWitcherJournalManager;
 	public var master: CProgressOnThePath;
+	public var storage: CProgressOnThePath_Storage;
+	public var last_addition_time: float;
 	
 	//---------------------------------------------------
 
 	public function initialise(master: CProgressOnThePath)
 	{
 		this.master = master;
+		this.storage = master.PotP_PersistentStorage;
+		
+		this.quest_entity_array = master.PotP_ArrayManager.MasterList_Quests;
+		this.quest_lookup_array = master.PotP_ArrayManager.MasterList_Quests_Lookup;
+		this.manager = theGame.GetJournalManager();
 	}
 	
 	//---------------------------------------------------
 	
 	public function _OnQuestUpdate(journalQuest : CJournalQuest) 
 	{
-		this.quest_array.PushBack(journalQuest);
-		this.last_addition_time = theGame.GetEngineTimeAsSeconds();
-		
-		if (!this.IsInState('QuestUpdated')) 
-		{
-			this.GotoState('QuestUpdated');
+		if (this.IsInState('Disabled')) 
+		{ 
+			return;
 		}
+
+		if ( quest_lookup_array.Contains(journalQuest.baseName) )
+		{
+			this.storage.MasterList_QuestGoblin.PushBack(journalQuest);
+			this.last_addition_time = theGame.GetEngineTimeAsSeconds();
+			
+			if (!this.IsInState('QuestUpdated')) 
+			{ 
+				this.GotoState('QuestUpdated'); 
+			}
+		}
+	}
+}
+
+//---------------------------------------------------
+//-- States -----------------------------------------
+//---------------------------------------------------
+
+state Disabled in CProgressOnThePath_QuestGoblin 
+{
+	event OnEnterState(previous_state_name: name) 
+	{
+		super.OnEnterState(previous_state_name);
+		PotP_Logger("Entered state [Disabled]", , parent.filename);
 	}
 }
 
@@ -46,8 +76,15 @@ state Idle in CProgressOnThePath_QuestGoblin
 	{
 		super.OnEnterState(previous_state_name);
 		PotP_Logger("Entered state [Idle]", , parent.filename);
-		
-		parent.quest_array.Clear();
+
+		if (parent.storage.MasterList_QuestGoblin.Size() > 0)
+		{
+			parent.GotoState('QuestUpdated');
+		}
+		else
+		{
+			parent.master.PotP_Notifications.NotifyPlayerFromBackgroundProcess();
+		}
 	}
 }
 
@@ -62,62 +99,47 @@ state QuestUpdated in CProgressOnThePath_QuestGoblin
 		super.OnEnterState(previous_state_name);
 		PotP_Logger("Entered state [QuestUpdated]", , parent.filename);
 	
-		this._QuestUpdated_ProcessQuest();
+		this._QuestUpdated_Entry();
 	}
 
 //---------------------------------------------------
 
-	entry function _QuestUpdated_ProcessQuest() 
-	{
-		var current_time: float = theGame.GetEngineTimeAsSeconds();
+	entry function _QuestUpdated_Entry() 
+	{	
+		var current_time, sleep_time: float;
+
+		while (PotP_IsPlayerBusy()) 
+		{
+			PotP_Logger("Waiting For Player Busy Check...", , parent.filename);
+			Sleep(5);
+		}
 		
-		while ((current_time - parent.last_addition_time < 5) || PotP_IsPlayerBusy()) 
+		current_time = theGame.GetEngineTimeAsSeconds();
+		sleep_time = 3;
+		
+		while (current_time - parent.last_addition_time < sleep_time)
 		{
 			current_time = theGame.GetEngineTimeAsSeconds();
-			SleepOneFrame();
+			Sleep(1);
 		}
-		this._QuestUpdated_BuildAndSend();
+
+		this.ProcessQuest();
+		parent.storage.MasterList_QuestGoblin.Erase(0);
+		parent.GotoState('Idle');
 	}
 
 //---------------------------------------------------
 	
-	latent function _QuestUpdated_BuildAndSend() 
-	{
-		var QstManager: CWitcherJournalManager = theGame.GetJournalManager();
-		var i, x, status: int;
-		
-		var pData_E: array<PotP_PreviewEntry> = parent.master.PotP_ArrayManager.MasterList_Quests;
-		var pData_L: array<string> = parent.master.PotP_ArrayManager.MasterList_Quests_Lookup;
-		
-		while (PotP_IsPlayerBusy()) 
-		{
-			SleepOneFrame();
+	latent function ProcessQuest() 
+	{	
+		var Idx: int = parent.quest_lookup_array.FindFirst(parent.storage.MasterList_QuestGoblin[0].baseName);
+		var status: int = parent.manager.GetEntryStatus(parent.storage.MasterList_QuestGoblin[0]);
+
+		if (Idx != -1 && parent.quest_entity_array[Idx].UpdateQuestEntry(status))
+		{			
+			parent.quest_entity_array[Idx].AddToBackgroundQueue(status);
 		}
-
-		for ( i = 0; i < parent.quest_array.Size(); i += 1 ) 
-		{
-			status = QstManager.GetEntryStatus(parent.quest_array[i]);
-
-			x = pData_L.FindFirst(parent.quest_array[i].baseName);
-			if (x == -1)
-			{	
-				parent.quest_array.Erase(i);
-				continue;
-			}
 			
-			if (pData_E[x].UpdateQuestEntry(status))
-			{
-				pData_E[x].AddToBackgroundQueue(status);
-				parent.quest_array.Erase(i);
-			}				
-		}
-	
-		while (PotP_IsPlayerBusy()) 
-		{
-			SleepOneFrame();
-		}
-		
-		parent.master.PotP_Notifications.NotifyPlayerFromBackgroundProcess();
-		parent.GotoState('Idle');		
+		SleepOneFrame();		
 	}
 }

@@ -53,7 +53,7 @@ function PotP_IsPlayerBusy(): bool
 	return thePlayer.IsInNonGameplayCutscene()
 		|| theGame.IsLoadingScreenVideoPlaying()
 		|| thePlayer.IsInGameplayScene()
-		|| !thePlayer.IsActionAllowed(EIAB_DrawWeapon)
+		|| (!thePlayer.IsActionAllowed(EIAB_DrawWeapon) && theGame.GetCommonMapManager().GetCurrentArea() != AN_Wyzima)
 		|| thePlayer.IsCiri()
 		|| theGame.IsDialogOrCutscenePlaying()
 		|| theGame.IsCurrentlyPlayingNonGameplayScene()

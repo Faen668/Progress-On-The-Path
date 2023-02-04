@@ -11,21 +11,21 @@ statemachine class CProgressOnThePath_ItemsGoblin extends IInventoryScriptedList
 	public var filename: name; 
 		default filename = 'PotP Item Goblin';
 	
-	public var last_addition_time: float;
-	public var itm_array: array<SItemUniqueId>;
-	
-	public var itm_list: array<name>;
 	public var ent_list: array<PotP_PreviewEntry>;
-	
+	public var itm_list: array<name>;
+
 	public var player_inv: CInventoryComponent;
-	
 	public var master: CProgressOnThePath;
+	public var storage: CProgressOnThePath_Storage;
+	public var last_addition_time: float;
 	
 	//---------------------------------------------------
 
 	public function initialise(PotP_BaseClass: CProgressOnThePath)
 	{
 		this.master = PotP_BaseClass;
+		this.storage = master.PotP_PersistentStorage;
+		
 		this.itm_list = master.PotP_ArrayManager.SupportedItemsList;
 		this.ent_list = master.PotP_ArrayManager.SupportedItemsList_Entity;
 		this.player_inv = thePlayer.inv;
@@ -49,8 +49,9 @@ statemachine class CProgressOnThePath_ItemsGoblin extends IInventoryScriptedList
 			
 		if ( itm_list.Contains(player_inv.GetItemName(itemId)) )
 		{
-			this.itm_array.PushBack(itemId);
-		
+			this.storage.MasterList_ItemsGoblin.PushBack(itemId);
+			this.last_addition_time = theGame.GetEngineTimeAsSeconds();
+			
 			if (!this.IsInState('ItemAdded')) 
 			{ 
 				this.GotoState('ItemAdded'); 
@@ -82,8 +83,8 @@ state Idle in CProgressOnThePath_ItemsGoblin
 	{
 		super.OnEnterState(previous_state_name);
 		PotP_Logger("Entered state [Idle]", , parent.filename);
-
-		if (parent.itm_array.Size() > 0)
+		
+		if (parent.storage.MasterList_ItemsGoblin.Size() > 0)
 		{
 			parent.GotoState('ItemAdded');
 		}
@@ -111,21 +112,26 @@ state ItemAdded in CProgressOnThePath_ItemsGoblin
 //---------------------------------------------------
 
 	entry function ItemAdded_Entry()
-	{
-		var item : SItemUniqueId;
-		
+	{	
+		var current_time, sleep_time: float;
+
 		while (PotP_IsPlayerBusy()) 
 		{
 			PotP_Logger("Waiting For Player Busy Check...", , parent.filename);
 			Sleep(5);
 		}
 		
-		SleepOneFrame();
+		current_time = theGame.GetEngineTimeAsSeconds();
+		sleep_time = 3;
 		
-		item = parent.itm_array[0];
+		while (current_time - parent.last_addition_time < sleep_time)
+		{
+			current_time = theGame.GetEngineTimeAsSeconds();
+			Sleep(1);
+		}
 		
 		this.ProcessItem();
-		parent.itm_array.Erase(0);
+		parent.storage.MasterList_ItemsGoblin.Erase(0);
 		parent.GotoState('Idle');
 	}
 
@@ -137,7 +143,7 @@ state ItemAdded in CProgressOnThePath_ItemsGoblin
 		var item_name: name;
 		var entry_data: PotP_PreviewEntry;
 
-		item_name = parent.player_inv.GetItemName(parent.itm_array[0]);
+		item_name = parent.player_inv.GetItemName(parent.storage.MasterList_ItemsGoblin[0]);
 			
 		Edx = parent.itm_list.FindFirst(item_name);
 		if (Edx == -1)
@@ -148,7 +154,7 @@ state ItemAdded in CProgressOnThePath_ItemsGoblin
 		entry_data = parent.ent_list[Edx];
 		
 		parent.player_inv.GetItemQualityFromName(item_name, min, max);
-		if ( !entry_data.IsCollected() && (min >= 4 || parent.player_inv.ItemHasTag(parent.itm_array[0], 'GwintCard') ) ) 
+		if ( entry_data.IsPlayable() && (min >= 4 || parent.player_inv.ItemHasTag(parent.storage.MasterList_ItemsGoblin[0], 'GwintCard') ) ) 
 		{
 			entry_data.AddToBackgroundQueue();
 			entry_data.SetCompleted();

@@ -27,12 +27,6 @@ statemachine class CProgressOnThePath extends SU_BaseBootstrappedMod {
 	public var PotP_WorldGoblin: 		CProgressOnThePath_WorldGoblin;
 	public var PotP_EventListener: 		CProgressOnThePath_EventListener;
 	public var PotP_MeditationListener: CProgressOnThePath_MeditationListener;
-
-	public var PotP_QuestBook: 			CProgressOnTheBath_QuestPreviewBook;
-	public var PotP_WorldBook: 			CProgressOnTheBath_WorldPreviewBook;
-	public var PotP_ItemsBook: 			CProgressOnTheBath_ItemsPreviewBook;
-	public var PotP_MissaBook: 			CProgressOnTheBath_MissaPreviewBook;
-	public var PotP_GwentBook: 			CProgressOnTheBath_GwentPreviewBook;
 		
 	public var LastUpdateTime: float;
 		default LastUpdateTime = 0;
@@ -67,12 +61,6 @@ statemachine class CProgressOnThePath extends SU_BaseBootstrappedMod {
 		PotP_PinManager = new CProgressOnThePath_MapPins in this;
 		PotP_EventListener = new CProgressOnThePath_EventListener in this;
 		PotP_MeditationListener = new CProgressOnThePath_MeditationListener in this;
-
-		PotP_QuestBook = new CProgressOnTheBath_QuestPreviewBook in this;
-		PotP_WorldBook = new CProgressOnTheBath_WorldPreviewBook in this;
-		PotP_ItemsBook = new CProgressOnTheBath_ItemsPreviewBook in this;
-		PotP_MissaBook = new CProgressOnTheBath_MissaPreviewBook in this;
-		PotP_GwentBook = new CProgressOnTheBath_GwentPreviewBook in this;
 		
 		this.GotoState('Initialising');
 	}	
@@ -261,13 +249,14 @@ state Initialising in CProgressOnThePath
 //---------------------------------------------------
 	
 	entry function Initialising_Main() 
-	{	
-		while (PotP_IsPlayerBusy()) 
+	{		
+		parent.PotP_ArrayManager.initialise(parent);
+		
+		while (PotP_IsPlayerBusy() || parent.PotP_ArrayManager.IsInState('Running')) 
 		{
-			SleepOneFrame();
+			Sleep(1);
 		}
-
-		parent.PotP_ArrayManager		.initialise(parent);
+	
 		parent.PotP_UpdaterClass		.initialise(parent);
 		parent.PotP_PinManager			.initialise(parent);
 		parent.PotP_QuestPreview		.initialise(parent);
@@ -282,22 +271,29 @@ state Initialising in CProgressOnThePath
 		parent.PotP_EventListener		.initialise(parent);
 		parent.PotP_MeditationListener	.initialise(parent);
 		parent.PotP_PopupManager		.initialise(parent);
-
-		parent.PotP_QuestBook			.initialise(parent);
-		parent.PotP_WorldBook			.initialise(parent);
-		parent.PotP_ItemsBook			.initialise(parent);
-		parent.PotP_MissaBook			.initialise(parent);
-		parent.PotP_GwentBook			.initialise(parent);
 			
 		this.SetModVersion();
-		this.AddGlosssaryEntries();
+		
+		(new ProgressOnTheBath_TutorialBook1 in this).addBook();
+		(new ProgressOnTheBath_TutorialBook2 in this).addBook();
+		(new ProgressOnTheBath_TutorialBook3 in this).addBook();
+		(new ProgressOnTheBath_TutorialBook4 in this).addBook();
+		(new ProgressOnTheBath_TutorialBook5 in this).addBook();
+		(new ProgressOnTheBath_TutorialBook6 in this).addBook();
+		(new ProgressOnTheBath_TutorialBook7 in this).addBook();
+		
+		(new CProgressOnTheBath_QuestPreviewBook in this).addBook(parent);
+		(new CProgressOnTheBath_WorldPreviewBook in this).addBook(parent);
+		(new CProgressOnTheBath_ItemsPreviewBook in this).addBook(parent);
+		(new CProgressOnTheBath_MissaPreviewBook in this).addBook(parent);
+		(new CProgressOnTheBath_GwentPreviewBook in this).addBook(parent);
 
 		parent.PotP_PinManager.GotoState('Idle');
 		parent.PotP_WorldGoblin.GotoState('Idle');
 		parent.PotP_EventListener.GotoState('Idle');
 		parent.PotP_MeditationListener.GotoState('Idle');
 		
-		//GetWitcherPlayer().DisplayHudMessage("Progress on the Path: Ready To Use");
+		GetWitcherPlayer().DisplayHudMessage("Progress on the Path: Ready To Use");
 		parent.GotoState('Idle');
 	}
 	
@@ -307,7 +303,7 @@ state Initialising in CProgressOnThePath
 	{		
 		if (FactsQuerySum(initStr) != 1) 
 		{
-			this.LoadDefaults();
+			//this.LoadDefaults();
 			FactsSet(initStr, 1);
 			FactsSet(VersStr, curVersionInt);
 
@@ -331,111 +327,6 @@ state Initialising in CProgressOnThePath
 		{
 			if (FactsQuerySum(VersStr) < 510) { FactsSet(VersStr, 510); hasUpdated = true; }
 		}
-	}
-	
-	//---------------------------------------------------
-	
-	latent function AddGlosssaryEntries() 
-	{
-		var TutorialBook1: ProgressOnTheBath_TutorialBook1;
-		var TutorialBook2: ProgressOnTheBath_TutorialBook2;
-		var TutorialBook3: ProgressOnTheBath_TutorialBook3;
-		var TutorialBook4: ProgressOnTheBath_TutorialBook4;
-		var TutorialBook5: ProgressOnTheBath_TutorialBook5;
-		var TutorialBook6: ProgressOnTheBath_TutorialBook6;
-		var TutorialBook7: ProgressOnTheBath_TutorialBook7;
-
-		TutorialBook1 = new ProgressOnTheBath_TutorialBook1 in thePlayer;
-		TutorialBook2 = new ProgressOnTheBath_TutorialBook2 in thePlayer;
-		TutorialBook3 = new ProgressOnTheBath_TutorialBook3 in thePlayer;
-		TutorialBook4 = new ProgressOnTheBath_TutorialBook4 in thePlayer;
-		TutorialBook5 = new ProgressOnTheBath_TutorialBook5 in thePlayer;
-		TutorialBook6 = new ProgressOnTheBath_TutorialBook6 in thePlayer;
-		TutorialBook7 = new ProgressOnTheBath_TutorialBook7 in thePlayer;
-		
-		parent.PotP_QuestBook.drop_down_label = GetLocStringByKeyExt("panel_glossary_potp_previews");
-		parent.PotP_WorldBook.drop_down_label = GetLocStringByKeyExt("panel_glossary_potp_previews");
-		parent.PotP_ItemsBook.drop_down_label = GetLocStringByKeyExt("panel_glossary_potp_previews");
-		parent.PotP_MissaBook.drop_down_label = GetLocStringByKeyExt("panel_glossary_potp_previews");
-		parent.PotP_GwentBook.drop_down_label = GetLocStringByKeyExt("panel_glossary_potp_previews");
-		
-		TutorialBook1.drop_down_label = GetLocStringByKeyExt("panel_glossary_potp_tutorial");
-		TutorialBook2.drop_down_label = GetLocStringByKeyExt("panel_glossary_potp_tutorial");
-		TutorialBook3.drop_down_label = GetLocStringByKeyExt("panel_glossary_potp_tutorial");
-		TutorialBook4.drop_down_label = GetLocStringByKeyExt("panel_glossary_potp_tutorial");
-		TutorialBook5.drop_down_label = GetLocStringByKeyExt("panel_glossary_potp_tutorial");
-		TutorialBook6.drop_down_label = GetLocStringByKeyExt("panel_glossary_potp_tutorial");
-		TutorialBook7.drop_down_label = GetLocStringByKeyExt("panel_glossary_potp_tutorial");
-		
-		parent.PotP_QuestBook.drop_down_tag = 'ProgressOnThePath_Previews';
-		parent.PotP_WorldBook.drop_down_tag = 'ProgressOnThePath_Previews';
-		parent.PotP_ItemsBook.drop_down_tag = 'ProgressOnThePath_Previews';
-		parent.PotP_MissaBook.drop_down_tag = 'ProgressOnThePath_Previews';
-		parent.PotP_GwentBook.drop_down_tag = 'ProgressOnThePath_Previews';
-
-		TutorialBook1.drop_down_tag = 'ProgressOnThePath_Tutorials';
-		TutorialBook2.drop_down_tag = 'ProgressOnThePath_Tutorials';
-		TutorialBook3.drop_down_tag = 'ProgressOnThePath_Tutorials';
-		TutorialBook4.drop_down_tag = 'ProgressOnThePath_Tutorials';
-		TutorialBook5.drop_down_tag = 'ProgressOnThePath_Tutorials';
-		TutorialBook6.drop_down_tag = 'ProgressOnThePath_Tutorials';
-		TutorialBook7.drop_down_tag = 'ProgressOnThePath_Tutorials';
-		
-		parent.PotP_QuestBook.title = GetLocStringByKeyExt("PotP_PreviewBook_Quest_Name");
-		parent.PotP_WorldBook.title = GetLocStringByKeyExt("PotP_PreviewBook_World_Name");
-		parent.PotP_ItemsBook.title = GetLocStringByKeyExt("PotP_PreviewBook_Items_Name");
-		parent.PotP_MissaBook.title = GetLocStringByKeyExt("PotP_PreviewBook_Missa_Name");
-		parent.PotP_GwentBook.title = GetLocStringByKeyExt("PotP_PreviewBook_Gwent_Name");
-
-		TutorialBook1.title = GetLocStringByKeyExt("ProgressOnTheBath_TutorialBook1_Name");
-		TutorialBook2.title = GetLocStringByKeyExt("ProgressOnTheBath_TutorialBook2_Name");
-		TutorialBook3.title = GetLocStringByKeyExt("ProgressOnTheBath_TutorialBook3_Name");
-		TutorialBook4.title = GetLocStringByKeyExt("ProgressOnTheBath_TutorialBook4_Name");
-		TutorialBook5.title = GetLocStringByKeyExt("ProgressOnTheBath_TutorialBook5_Name");
-		TutorialBook6.title = GetLocStringByKeyExt("ProgressOnTheBath_TutorialBook6_Name");
-		TutorialBook7.title = GetLocStringByKeyExt("ProgressOnTheBath_TutorialBook7_Name");
-		
-		parent.PotP_QuestBook.icon_path = "icons/PotP/qp.png";
-		parent.PotP_WorldBook.icon_path = "icons/PotP/map.png";
-		parent.PotP_GwentBook.icon_path = "icons/PotP/gwint_north.png";
-		parent.PotP_ItemsBook.icon_path = "icons/PotP/collect.png";
-		parent.PotP_MissaBook.icon_path = "icons/PotP/qp_miss.png";
-		
-		TutorialBook1.icon_path = "icons/PotP/qp_alt.png";
-		TutorialBook2.icon_path = "icons/PotP/qp_alt.png";
-		TutorialBook3.icon_path = "icons/PotP/qp_alt.png";
-		TutorialBook4.icon_path = "icons/PotP/qp_alt.png";
-		TutorialBook5.icon_path = "icons/PotP/qp_alt.png";
-		TutorialBook6.icon_path = "icons/PotP/qp_alt.png";
-		TutorialBook7.icon_path = "icons/PotP/qp_alt.png";
-		
-		parent.PotP_QuestBook.sort_index = 30005;
-		parent.PotP_WorldBook.sort_index = 30004;
-		parent.PotP_ItemsBook.sort_index = 30003;
-		parent.PotP_GwentBook.sort_index = 30002;
-		parent.PotP_MissaBook.sort_index = 30001;
-		
-		TutorialBook1.sort_index = 30010;
-		TutorialBook2.sort_index = 30011;
-		TutorialBook3.sort_index = 30012;
-		TutorialBook4.sort_index = 30013;
-		TutorialBook5.sort_index = 30014;
-		TutorialBook6.sort_index = 30015;
-		TutorialBook7.sort_index = 30016;
-		
-		SU_addGlossaryEntry(parent.PotP_QuestBook);
-		SU_addGlossaryEntry(parent.PotP_WorldBook);
-		SU_addGlossaryEntry(parent.PotP_ItemsBook);
-		SU_addGlossaryEntry(parent.PotP_MissaBook);
-		SU_addGlossaryEntry(parent.PotP_GwentBook);
-		
-		SU_addGlossaryEntry(TutorialBook1);
-		SU_addGlossaryEntry(TutorialBook2);
-		SU_addGlossaryEntry(TutorialBook3);
-		SU_addGlossaryEntry(TutorialBook4);
-		SU_addGlossaryEntry(TutorialBook5);
-		SU_addGlossaryEntry(TutorialBook6);
-		SU_addGlossaryEntry(TutorialBook7);
 	}
 	
 	//---------------------------------------------------
