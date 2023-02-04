@@ -8,6 +8,7 @@
 class CProgressOnThePath_Notifications
 {
 	private var BackGroundProcessingArray_Count: int;
+	private var BackGroundProcessingArray_OverFlow: int;
 	private var BackGroundProcessingArray_Name: array<string>;
 	private var BackGroundProcessingArray_Icon: array<string>;
 
@@ -83,6 +84,7 @@ class CProgressOnThePath_Notifications
 		BackGroundProcessingArray_Name.Clear();
 		BackGroundProcessingArray_Icon.Clear();
 		BackGroundProcessingArray_Count = 0;
+		BackGroundProcessingArray_OverFlow = 0;
 
 		BackGroundQuestArray_Name.Clear();
 		BackGroundQuestArray_Icon.Clear();
@@ -213,6 +215,10 @@ class CProgressOnThePath_Notifications
 		Notification += "<font size='" + GetNotificationFontSize() + "'>" + "InProgres List - " + this.master.PotP_PersistentStorage.MasterList_InProgres_V.Size() + "</font>" + "<br/>";
 		Notification += "<font size='" + GetNotificationFontSize() + "'>" + "IsIgnored List - " + this.master.PotP_PersistentStorage.MasterList_IsIgnored_V.Size() + "</font>" + "<br/>";
 		Notification += "<font size='" + GetNotificationFontSize() + "'>" + "Collected List - " + this.master.PotP_PersistentStorage.MasterList_Collected_V.Size() + "</font>" + "<br/>";
+		Notification +=" <br/>";
+		Notification += "<font size='" + GetNotificationFontSize() + "'>" + "Items Goblin - " + this.master.PotP_PersistentStorage.MasterList_ItemsGoblin.Size() + "</font>" + "<br/>";
+		Notification += "<font size='" + GetNotificationFontSize() + "'>" + "Quest Goblin - " + this.master.PotP_PersistentStorage.MasterList_QuestGoblin.Size() + "</font>" + "<br/>";
+		Notification +=" <br/>";
 		Notification += "<font size='" + GetNotificationFontSize() + "'>" + "Pending Messages - " + this.master.PotP_PersistentStorage.MasterList_Pl_Messages.Size() + "</font>" + "<br/>";
 		
 		theGame.GetGuiManager().ShowNotification(Notification, GetNotificationTime(), true);
@@ -297,15 +303,15 @@ class CProgressOnThePath_Notifications
 
 		if (BackGroundItemArray_Name.FindFirst(InsertedString) == -1 ) 
 		{
-			BackGroundProcessingArray_Count += 1;
-			
 			if (BackGroundProcessingArray_Count > 20) 
 			{
+				BackGroundProcessingArray_OverFlow += 1;
 				return;
 			}
 			
 			BackGroundItemArray_Name.PushBack(InsertedString);
 			BackGroundItemArray_Icon.PushBack(thePlayer.GetInventory().GetItemIconPathByName(entry_data.item_name));
+			BackGroundProcessingArray_Count += 1;
 		}
 	}
 
@@ -322,15 +328,15 @@ class CProgressOnThePath_Notifications
 		
 		if (BackGroundWorldMapArray_Name.FindFirst(InsertedString) == -1 ) 
 		{
-			BackGroundProcessingArray_Count += 1;
-			
 			if (BackGroundProcessingArray_Count > 20) 
 			{
+				BackGroundProcessingArray_OverFlow += 1;
 				return;
 			}
 			
 			BackGroundWorldMapArray_Name.PushBack(InsertedString);
 			BackGroundWorldMapArray_Icon.PushBack(entry_data.icon_path);
+			BackGroundProcessingArray_Count += 1;
 		}
 	}
 	
@@ -357,16 +363,15 @@ class CProgressOnThePath_Notifications
 			
 		if (BackGroundQuestArray_Name.FindFirst(InsertedString) == -1 ) 
 		{
-			BackGroundProcessingArray_Count += 1;
-			
 			if (BackGroundProcessingArray_Count > 20) 
 			{
+				BackGroundProcessingArray_OverFlow += 1;
 				return;
 			}
 			
 			BackGroundQuestArray_Name.PushBack(InsertedString);
 			BackGroundQuestArray_Icon.PushBack(entry_data.icon_path);
-			LogChannel('PotP Notification Script', "Inserted - " + InsertedString + " into the background quest array");
+			BackGroundProcessingArray_Count += 1;
 		}
 	}
 	
@@ -523,7 +528,7 @@ class CProgressOnThePath_Notifications
 	
 	private function FormatMessage_BackGroundProcessingArray() : string 
 	{
-		var over_limit		: string = StrReplace(GetLocStringByKeyExt("ProgressOnThePath_MoreEntries"), "[COUNTS]", (BackGroundProcessingArray_Count - BackGroundProcessingArray_Name.Size()));
+		var over_limit		: string = StrReplace(GetLocStringByKeyExt("ProgressOnThePath_MoreEntries"), "[COUNTS]", (BackGroundProcessingArray_OverFlow));
 		var Notification 	: string = "";
 		var i, f			: int = 0;
 
@@ -536,7 +541,7 @@ class CProgressOnThePath_Notifications
 			Notification += FormatItemIcon(BackGroundProcessingArray_Icon[i]) + FormatLine_BackGroundProcessingArray(BackGroundProcessingArray_Name[i]);
 		}
 		
-		if (BackGroundProcessingArray_Count > BackGroundProcessingArray_Name.Size()) 
+		if (BackGroundProcessingArray_OverFlow > 0) 
 		{
 			Notification += "<font size='" + GetNotificationFontSize() + "'>" + GetNotificationColour() + over_limit + "</font>";
 		}

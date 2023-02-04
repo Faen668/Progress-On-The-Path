@@ -293,7 +293,7 @@ state Initialising in CProgressOnThePath
 		parent.PotP_EventListener.GotoState('Idle');
 		parent.PotP_MeditationListener.GotoState('Idle');
 		
-		GetWitcherPlayer().DisplayHudMessage("Progress on the Path: Ready To Use");
+		//GetWitcherPlayer().DisplayHudMessage("Progress on the Path: Ready To Use");
 		parent.GotoState('Idle');
 	}
 	
