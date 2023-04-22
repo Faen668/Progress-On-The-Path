@@ -3,24 +3,7 @@
 //---------------------------------------------------
 
 class CProgressOnThePath_Notifications
-{
-	private var BackGroundProcessingArray_Count: int;
-	private var BackGroundProcessingArray_OverFlow: int;
-	private var BackGroundProcessingArray_Name: array<string>;
-	private var BackGroundProcessingArray_Icon: array<string>;
-
-	private var BackGroundQuestArray_Name: array<string>;
-	private var BackGroundQuestArray_Icon: array<string>;
-	private var BackGroundQuestArray_Count: int;
-	
-	private var BackGroundItemArray_Name: array<string>;
-	private var BackGroundItemArray_Icon: array<string>;
-	private var BackGroundItemArray_Count: int;
-
-	private var BackGroundWorldMapArray_Name: array<string>;
-	private var BackGroundWorldMapArray_Icon: array<string>;
-	private var BackGroundWorldMapArray_Count: int;
-	
+{	
 	private var TrackerUpdateArray_Count: int;
 	private var TrackerUpdateArray_Name: array<string>;
 	private var TrackerUpdateArray_Icon: array<string>;
@@ -42,12 +25,14 @@ class CProgressOnThePath_Notifications
 		default fontsize = 18;
 
 	public var master: CProgressOnThePath;
+	public var storage: CProgressOnThePath_Storage;
 	
 	//---------------------------------------------------
 
 	public function initialise(PotP_BaseClass: CProgressOnThePath) : CProgressOnThePath_Notifications
 	{
 		this.master = PotP_BaseClass;
+		this.storage = PotP_BaseClass.PotP_PersistentStorage;
 		return this;
 	}
 	
@@ -72,28 +57,6 @@ class CProgressOnThePath_Notifications
 		WorldMapUpdateArray_Icon.Clear();
 		
 		TrackerUpdateArray_Count = 0;
-	}
-
-	//---------------------------------------------------
-	
-	public function ResetBackGroundProcessingArray()
-	{
-		BackGroundProcessingArray_Name.Clear();
-		BackGroundProcessingArray_Icon.Clear();
-		BackGroundProcessingArray_Count = 0;
-		BackGroundProcessingArray_OverFlow = 0;
-
-		BackGroundQuestArray_Name.Clear();
-		BackGroundQuestArray_Icon.Clear();
-		BackGroundQuestArray_Count = 0;
-		
-		BackGroundItemArray_Name.Clear();
-		BackGroundItemArray_Icon.Clear();
-		BackGroundItemArray_Count = 0;
-		
-		BackGroundWorldMapArray_Name.Clear();
-		BackGroundWorldMapArray_Icon.Clear();
-		BackGroundWorldMapArray_Count = 0;
 	}
 	
 	//---------------------------------------------------
@@ -166,7 +129,7 @@ class CProgressOnThePath_Notifications
 
 	private function GetTotalCount() : float 
 	{
-		var TotalEntList: array<PotP_PreviewEntry> = this.master.PotP_ArrayManager.TotalEntList;
+		var TotalEntList: array<PotP_PreviewEntry> = this.master.PotP_PersistentStorage.pArrayStorage.TotalEntList;
 		var GwentManager: CR4GwintManager = theGame.GetGwintManager();
 		var i, CardsFound: int;
 
@@ -208,15 +171,15 @@ class CProgressOnThePath_Notifications
 		var Notification : string = "";
 		
 		Notification += "<font size='" + GetNotificationFontSize() + "'>" + GetNotificationHeader() + "</font>";
-		Notification += "<font size='" + GetNotificationFontSize() + "'>" + "Completed List - " + this.master.PotP_PersistentStorage.MasterList_Completed_V.Size() + "</font>" + "<br/>";
-		Notification += "<font size='" + GetNotificationFontSize() + "'>" + "InProgres List - " + this.master.PotP_PersistentStorage.MasterList_InProgres_V.Size() + "</font>" + "<br/>";
-		Notification += "<font size='" + GetNotificationFontSize() + "'>" + "IsIgnored List - " + this.master.PotP_PersistentStorage.MasterList_IsIgnored_V.Size() + "</font>" + "<br/>";
-		Notification += "<font size='" + GetNotificationFontSize() + "'>" + "Collected List - " + this.master.PotP_PersistentStorage.MasterList_Collected_V.Size() + "</font>" + "<br/>";
+		Notification += "<font size='" + GetNotificationFontSize() + "'>" + "Completed List - " + storage.MasterList_Completed_V.Size() + "</font>" + "<br/>";
+		Notification += "<font size='" + GetNotificationFontSize() + "'>" + "InProgres List - " + storage.MasterList_InProgres_V.Size() + "</font>" + "<br/>";
+		Notification += "<font size='" + GetNotificationFontSize() + "'>" + "IsIgnored List - " + storage.MasterList_IsIgnored_V.Size() + "</font>" + "<br/>";
+		Notification += "<font size='" + GetNotificationFontSize() + "'>" + "Collected List - " + storage.MasterList_Collected_V.Size() + "</font>" + "<br/>";
 		Notification +=" <br/>";
-		Notification += "<font size='" + GetNotificationFontSize() + "'>" + "Items Goblin - " + this.master.PotP_PersistentStorage.MasterList_ItemsGoblin.Size() + "</font>" + "<br/>";
-		Notification += "<font size='" + GetNotificationFontSize() + "'>" + "Quest Goblin - " + this.master.PotP_PersistentStorage.MasterList_QuestGoblin.Size() + "</font>" + "<br/>";
+		Notification += "<font size='" + GetNotificationFontSize() + "'>" + "Items Goblin - " + storage.MasterList_ItemsGoblin.Size() + "</font>" + "<br/>";
+		Notification += "<font size='" + GetNotificationFontSize() + "'>" + "Quest Goblin - " + storage.MasterList_QuestGoblin.Size() + "</font>" + "<br/>";
 		Notification +=" <br/>";
-		Notification += "<font size='" + GetNotificationFontSize() + "'>" + "Pending Messages - " + this.master.PotP_PersistentStorage.MasterList_Pl_Messages.Size() + "</font>" + "<br/>";
+		Notification += "<font size='" + GetNotificationFontSize() + "'>" + "Pending Messages - " + storage.MasterList_Pl_Messages.Size() + "</font>" + "<br/>";
 		
 		theGame.GetGuiManager().ShowNotification(Notification, GetNotificationTime(), true);
 	}
@@ -298,17 +261,18 @@ class CProgressOnThePath_Notifications
 	{
 		var InsertedString: string = GetLocStringByKeyExt("PotP_NotificationLine_Updated") + entry_data.localname;
 
-		if (BackGroundItemArray_Name.FindFirst(InsertedString) == -1 ) 
+		if (storage.pItemsStorageArray_Name.FindFirst(InsertedString) == -1 ) 
 		{
-			if (BackGroundProcessingArray_Count > 20) 
+			if (storage.BackGroundProcessingArray_Count > 20) 
 			{
-				BackGroundProcessingArray_OverFlow += 1;
+				storage.BackGroundProcessingArray_Oflow += 1;
 				return;
 			}
 			
-			BackGroundItemArray_Name.PushBack(InsertedString);
-			BackGroundItemArray_Icon.PushBack(thePlayer.GetInventory().GetItemIconPathByName(entry_data.item_name));
-			BackGroundProcessingArray_Count += 1;
+			storage.pItemsStorageArray_Name.PushBack(InsertedString);
+			storage.pItemsStorageArray_Icon.PushBack(thePlayer.GetInventory().GetItemIconPathByName(entry_data.item_name));
+			storage.BackGroundProcessingArray_Count += 1;
+			storage.BackGroundProcessingArray_bItems = true;
 		}
 	}
 
@@ -323,17 +287,18 @@ class CProgressOnThePath_Notifications
 			InsertedString = GetLocStringByKeyExt("PotP_NotificationLine_BanditC") + entry_data.localname;
 		}
 		
-		if (BackGroundWorldMapArray_Name.FindFirst(InsertedString) == -1 ) 
+		if (storage.pWorldStorageArray_Name.FindFirst(InsertedString) == -1 ) 
 		{
-			if (BackGroundProcessingArray_Count > 20) 
+			if (storage.BackGroundProcessingArray_Count > 20) 
 			{
-				BackGroundProcessingArray_OverFlow += 1;
+				storage.BackGroundProcessingArray_Oflow += 1;
 				return;
 			}
 			
-			BackGroundWorldMapArray_Name.PushBack(InsertedString);
-			BackGroundWorldMapArray_Icon.PushBack(entry_data.icon_path);
-			BackGroundProcessingArray_Count += 1;
+			storage.pWorldStorageArray_Name.PushBack(InsertedString);
+			storage.pWorldStorageArray_Icon.PushBack(entry_data.icon_path);
+			storage.BackGroundProcessingArray_Count += 1;
+			storage.BackGroundProcessingArray_bWorld = true;
 		}
 	}
 	
@@ -358,17 +323,18 @@ class CProgressOnThePath_Notifications
 			return;
 		}
 			
-		if (BackGroundQuestArray_Name.FindFirst(InsertedString) == -1 ) 
+		if (storage.pQuestStorageArray_Name.FindFirst(InsertedString) == -1 ) 
 		{
-			if (BackGroundProcessingArray_Count > 20) 
+			if (storage.BackGroundProcessingArray_Count > 20) 
 			{
-				BackGroundProcessingArray_OverFlow += 1;
+				storage.BackGroundProcessingArray_Oflow += 1;
 				return;
 			}
 			
-			BackGroundQuestArray_Name.PushBack(InsertedString);
-			BackGroundQuestArray_Icon.PushBack(entry_data.icon_path);
-			BackGroundProcessingArray_Count += 1;
+			storage.pQuestStorageArray_Name.PushBack(InsertedString);
+			storage.pQuestStorageArray_Icon.PushBack(entry_data.icon_path);
+			storage.BackGroundProcessingArray_Count += 1;
+			storage.BackGroundProcessingArray_bQuest = true;
 		}
 	}
 	
@@ -411,63 +377,63 @@ class CProgressOnThePath_Notifications
 		var temp_QuestIconArray, temp_ItemsIconArray, temp_WorldMapIconArray: array <string>;
 		var i, f: int;
 		
-		temp_QuestNameArray = BackGroundQuestArray_Name;
-		temp_QuestIconArray = BackGroundQuestArray_Icon;
+		temp_QuestNameArray = storage.pQuestStorageArray_Name;
+		temp_QuestIconArray = storage.pQuestStorageArray_Icon;
 
-		temp_ItemsNameArray = BackGroundItemArray_Name;
-		temp_ItemsIconArray = BackGroundItemArray_Icon;
+		temp_ItemsNameArray = storage.pItemsStorageArray_Name;
+		temp_ItemsIconArray = storage.pItemsStorageArray_Icon;
 
-		temp_WorldMapNameArray = BackGroundWorldMapArray_Name;
-		temp_WorldMapIconArray = BackGroundWorldMapArray_Icon;
+		temp_WorldMapNameArray = storage.pWorldStorageArray_Name;
+		temp_WorldMapIconArray = storage.pWorldStorageArray_Icon;
 		
 		if (temp_QuestNameArray.Size() > 0) 
 		{ 
-			ArraySortStrings(BackGroundQuestArray_Name);
+			ArraySortStrings(storage.pQuestStorageArray_Name);
 			
-			for (i = 0; i < BackGroundQuestArray_Name.Size(); i += 1) 
+			for (i = 0; i < storage.pQuestStorageArray_Name.Size(); i += 1) 
 			{ 
-				f = temp_QuestNameArray.FindFirst(BackGroundQuestArray_Name[i]); 
-				BackGroundQuestArray_Icon[i] = temp_QuestIconArray[f]; 
+				f = temp_QuestNameArray.FindFirst(storage.pQuestStorageArray_Name[i]); 
+				storage.pQuestStorageArray_Icon[i] = temp_QuestIconArray[f]; 
 			}
 			
-			for (i = 0; i < BackGroundQuestArray_Name.Size(); i += 1) 
+			for (i = 0; i < storage.pQuestStorageArray_Name.Size(); i += 1) 
 			{
-				BackGroundProcessingArray_Name.PushBack(BackGroundQuestArray_Name[i]);
-				BackGroundProcessingArray_Icon.PushBack(BackGroundQuestArray_Icon[i]);
+				storage.BackGroundProcessingArray_Name.PushBack(storage.pQuestStorageArray_Name[i]);
+				storage.BackGroundProcessingArray_Icon.PushBack(storage.pQuestStorageArray_Icon[i]);
 			}
 		}
 
 		if (temp_ItemsNameArray.Size() > 0) 
 		{ 
-			ArraySortStrings(BackGroundItemArray_Name);
+			ArraySortStrings(storage.pItemsStorageArray_Name);
 			
-			for (i = 0; i < BackGroundItemArray_Name.Size(); i += 1) 
+			for (i = 0; i < storage.pItemsStorageArray_Name.Size(); i += 1) 
 			{ 
-				f = temp_ItemsNameArray.FindFirst(BackGroundItemArray_Name[i]); 
-				BackGroundItemArray_Icon[i] = temp_ItemsIconArray[f]; 
+				f = temp_ItemsNameArray.FindFirst(storage.pItemsStorageArray_Name[i]); 
+				storage.pItemsStorageArray_Icon[i] = temp_ItemsIconArray[f]; 
 			}
 			
-			for (i = 0; i < BackGroundItemArray_Name.Size(); i += 1) 
+			for (i = 0; i < storage.pItemsStorageArray_Name.Size(); i += 1) 
 			{
-				BackGroundProcessingArray_Name.PushBack(BackGroundItemArray_Name[i]);
-				BackGroundProcessingArray_Icon.PushBack(BackGroundItemArray_Icon[i]);
+				storage.BackGroundProcessingArray_Name.PushBack(storage.pItemsStorageArray_Name[i]);
+				storage.BackGroundProcessingArray_Icon.PushBack(storage.pItemsStorageArray_Icon[i]);
 			}
 		}
 
-		if (temp_WorldMapNameArray.Size() > 0) 
+		if (storage.pWorldStorageArray_Name.Size() > 0) 
 		{ 
-			ArraySortStrings(BackGroundWorldMapArray_Name);
+			ArraySortStrings(storage.pWorldStorageArray_Name);
 			
-			for (i = 0; i < BackGroundWorldMapArray_Name.Size(); i += 1) 
+			for (i = 0; i < storage.pWorldStorageArray_Name.Size(); i += 1) 
 			{ 
-				f = temp_WorldMapNameArray.FindFirst(BackGroundWorldMapArray_Name[i]); 
-				BackGroundWorldMapArray_Icon[i] = temp_WorldMapIconArray[f]; 
+				f = temp_WorldMapNameArray.FindFirst(storage.pWorldStorageArray_Name[i]); 
+				storage.pWorldStorageArray_Icon[i] = temp_WorldMapIconArray[f]; 
 			}
 			
-			for (i = 0; i < BackGroundWorldMapArray_Name.Size(); i += 1) 
+			for (i = 0; i < storage.pWorldStorageArray_Name.Size(); i += 1) 
 			{
-				BackGroundProcessingArray_Name.PushBack(BackGroundWorldMapArray_Name[i]);
-				BackGroundProcessingArray_Icon.PushBack(BackGroundWorldMapArray_Icon[i]);
+				storage.BackGroundProcessingArray_Name.PushBack(storage.pWorldStorageArray_Name[i]);
+				storage.BackGroundProcessingArray_Icon.PushBack(storage.pWorldStorageArray_Icon[i]);
 			}
 		}
 	}
@@ -525,7 +491,7 @@ class CProgressOnThePath_Notifications
 	
 	private function FormatMessage_BackGroundProcessingArray() : string 
 	{
-		var over_limit		: string = StrReplace(GetLocStringByKeyExt("ProgressOnThePath_MoreEntries"), "[COUNTS]", (BackGroundProcessingArray_OverFlow));
+		var over_limit		: string = StrReplace(GetLocStringByKeyExt("ProgressOnThePath_MoreEntries"), "[COUNTS]", (storage.BackGroundProcessingArray_Oflow));
 		var Notification 	: string = "";
 		var i, f			: int = 0;
 
@@ -533,12 +499,12 @@ class CProgressOnThePath_Notifications
 		
 		Notification += "<font size='" + GetNotificationFontSize() + "'>" + GetNotificationHeader() + "</font>";
 			
-		for (i = 0; i < BackGroundProcessingArray_Name.Size(); i += 1) 
+		for (i = 0; i < storage.BackGroundProcessingArray_Name.Size(); i += 1) 
 		{
-			Notification += FormatItemIcon(BackGroundProcessingArray_Icon[i]) + FormatLine_BackGroundProcessingArray(BackGroundProcessingArray_Name[i]);
+			Notification += FormatItemIcon(storage.BackGroundProcessingArray_Icon[i]) + FormatLine_BackGroundProcessingArray(storage.BackGroundProcessingArray_Name[i]);
 		}
 		
-		if (BackGroundProcessingArray_OverFlow > 0) 
+		if (storage.BackGroundProcessingArray_Oflow > 0) 
 		{
 			Notification += "<font size='" + GetNotificationFontSize() + "'>" + GetNotificationColour() + over_limit + "</font>";
 		}
@@ -594,11 +560,12 @@ class CProgressOnThePath_Notifications
 
 	public function NotifyPlayerFromBackgroundProcess() 
 	{
-		if (this.BackNotificationsEnabled() && this.BackGroundProcessingArray_Count > 0) 
+		if (storage.pQuestStorageArray_Name.Size() > 0 || storage.pWorldStorageArray_Name.Size() > 0 || storage.pItemsStorageArray_Name.Size() > 0)
 		{
+			PotP_Logger('PotP Notifications', "Pushing Basckground Notification...");
 			theGame.GetGuiManager().ShowNotification(FormatMessage_BackGroundProcessingArray(), GetNotificationTime(), true);
+			storage.ResetBackGroundProcessingArray();
 		}
-		this.ResetBackGroundProcessingArray();
 	}	
 	
 	//---------------------------------------------------	
@@ -610,17 +577,6 @@ class CProgressOnThePath_Notifications
 			|| (bool) PotP_GetNotificationValue('ProgressOnThePath_FullNotification_Items')
 			|| (bool) PotP_GetNotificationValue('ProgressOnThePath_FullNotification_Gwent')
 			|| (bool) PotP_GetNotificationValue('ProgressOnThePath_FullNotification_Event');
-	}	
-
-	//---------------------------------------------------	
-
-	private function BackNotificationsEnabled() : bool 
-	{
-		return (bool) PotP_GetNotificationValue('ProgressOnThePath_BackNotification_Quest') 
-			|| (bool) PotP_GetNotificationValue('ProgressOnThePath_BackNotification_World') 
-			|| (bool) PotP_GetNotificationValue('ProgressOnThePath_BackNotification_Items')
-			|| (bool) PotP_GetNotificationValue('ProgressOnThePath_BackNotification_Gwent')
-			|| (bool) PotP_GetNotificationValue('ProgressOnThePath_BackNotification_Event');
-	}	
+	}
 }
 

@@ -83,7 +83,7 @@ state UpdateAll in CProgressOnThePath_Event_Updater
 	latent function UpdateAll_Main() 
 	{
 		var master: CProgressOnThePath = parent.master;
-		var pData_E: array<PotP_PreviewEntry> = master.PotP_ArrayManager.MasterList_Events;
+		var pData_E: array<PotP_PreviewEntry> = master.PotP_PersistentStorage.pEventStorage.MasterList_Events;
 		var Idx: int;
 		
 		for ( Idx = 0; Idx < pData_E.Size(); Idx += 1 )
@@ -159,7 +159,7 @@ quest function PotP_CompleteEvent(fact_name: name, optional fact_name_string: st
 	}
 	
 	//Assign pEvent_List to the master list of available Events.
-	pEvent_List = master.PotP_ArrayManager.MasterList_Events;
+	pEvent_List = master.PotP_PersistentStorage.pEventStorage.MasterList_Events;
 	
 	//Travserse the available events and find a match for the fact name in the entity.
 	for (Idx = 0; Idx < pEvent_List.Size(); Idx += 1)
@@ -192,7 +192,7 @@ function PotP_CompleteEventByString(fact_name: string)
 	}
 	
 	//Assign pEvent_List to the master list of available Events.
-	pEvent_List = master.PotP_ArrayManager.MasterList_Events;
+	pEvent_List = master.PotP_PersistentStorage.pEventStorage.MasterList_Events;
 	
 	//Travserse the available events and find a match for the fact name in the entity.
 	for (Idx = 0; Idx < pEvent_List.Size(); Idx += 1)
@@ -225,7 +225,7 @@ quest function PotP_UnlockEvent(UUID: string, Location: string, Fact: string)
 	}
 	
 	//Assign pEvent_List to the master list of available Events.
-	pEvent_List = master.PotP_ArrayManager.MasterList_Events;
+	pEvent_List = master.PotP_PersistentStorage.pEventStorage.MasterList_Events;
 	
 	//Travserse the available events and find a match for the fact name in the entity.
 	for (Idx = 0; Idx < pEvent_List.Size(); Idx += 1)

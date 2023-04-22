@@ -138,20 +138,20 @@ exec function pt_complete()
 	
 	if (GetPotP(master, 'pt_complete'))
 	{
-		for ( Idx = 0; Idx < master.PotP_ArrayManager.MasterList_Events.Size(); Idx += 1 ) {
-			master.PotP_ArrayManager.MasterList_Events[Idx].SetCompleted();
+		for ( Idx = 0; Idx < master.PotP_PersistentStorage.pEventStorage.MasterList_Events.Size(); Idx += 1 ) {
+			master.PotP_PersistentStorage.pEventStorage.MasterList_Events[Idx].SetCompleted();
 		}
 		
-		for ( Idx = 0; Idx < master.PotP_ArrayManager.MasterList_Quests.Size(); Idx += 1 ) {
-			master.PotP_ArrayManager.MasterList_Quests[Idx].SetCompleted();
+		for ( Idx = 0; Idx < master.PotP_PersistentStorage.pQuestStorage.MasterList_Quests.Size(); Idx += 1 ) {
+			master.PotP_PersistentStorage.pQuestStorage.MasterList_Quests[Idx].SetCompleted();
 		}
 
-		for ( Idx = 0; Idx < master.PotP_ArrayManager.MasterList_World.Size(); Idx += 1 ) {
-			master.PotP_ArrayManager.MasterList_World[Idx].SetCompleted();
+		for ( Idx = 0; Idx < master.PotP_PersistentStorage.pWorldStorage.MasterList_World.Size(); Idx += 1 ) {
+			master.PotP_PersistentStorage.pWorldStorage.MasterList_World[Idx].SetCompleted();
 		}
 
-		for ( Idx = 0; Idx < master.PotP_ArrayManager.MasterList_Items.Size(); Idx += 1 ) {
-			master.PotP_ArrayManager.MasterList_Items[Idx].SetCompleted();
+		for ( Idx = 0; Idx < master.PotP_PersistentStorage.pItemsStorage.MasterList_Items.Size(); Idx += 1 ) {
+			master.PotP_PersistentStorage.pItemsStorage.MasterList_Items[Idx].SetCompleted();
 		}	
 	}
 }

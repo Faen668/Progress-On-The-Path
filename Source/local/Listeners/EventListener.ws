@@ -81,7 +81,7 @@ state Checking in CProgressOnThePath_EventListener
 		var events_array	: array<PotP_PreviewEntry>;
 		var i: int;
 		
-		events_array = parent.master.PotP_ArrayManager.MasterList_Events;
+		events_array = parent.master.PotP_PersistentStorage.pEventStorage.MasterList_Events;
 		
 		for ( i = 0; i < events_array.Size(); i += 1 ) 
 		{

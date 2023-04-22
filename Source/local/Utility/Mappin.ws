@@ -51,7 +51,7 @@ statemachine class CProgressOnThePath_MapPins extends SU_MapPin {
 		.pin()
 			.tag				(entry_data.uuid)
 			.label				(GetLocStringByKeyExt("ProgressOnThePath_Default_MapPin_Name"))
-			.description		(this.GetPinDesc(entry_data.description))
+			.description		(this.GetPinDesc(entry_data.GetEventDescription()))
 			.type				(this.GetPinType())
 			.filtered_type		("QuestVermentino")
 			.radius				(this.GetPinSize())
@@ -262,8 +262,8 @@ state Updating in CProgressOnThePath_MapPins
 		
 		parent.InitialiseBuilder();
 		
-		for (Idx = 0; Idx < parent.master.PotP_ArrayManager.MasterList_Events.Size(); Idx += 1)  {
-			parent.RefreshPin(parent.master.PotP_ArrayManager.MasterList_Events[Idx]);
+		for (Idx = 0; Idx < parent.master.PotP_PersistentStorage.pEventStorage.MasterList_Events.Size(); Idx += 1)  {
+			parent.RefreshPin(parent.master.PotP_PersistentStorage.pEventStorage.MasterList_Events[Idx]);
 		}
 		
 		parent.Build();	

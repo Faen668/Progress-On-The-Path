@@ -127,7 +127,6 @@ class PotP_PreviewEntry
 	//Event Only Variables
 	var region_string	: string;
 	var position		: Vector;
-	var description		: string;
 	
 	//Quest Only Variables
 	var is_dlc1 		: bool;
@@ -138,6 +137,7 @@ class PotP_PreviewEntry
 	var storage			: CProgressOnThePath_Storage;
 	var mappins			: CProgressOnThePath_MapPins;
 	var notifications	: CProgressOnThePath_Notifications;
+	
 	var type			: PotP_Preview_Entry_Type;
 	var arrayType		: PotP_Preview_Array_Type;
 	var filter			: int;
@@ -179,7 +179,7 @@ class PotP_PreviewEntry
 		this.localname 		= GetLocStringByKeyExt("option_" + uuid);
 		this.icon_path		= GetQuestIconPath();
 		this.popup_line 	= GetQuestlocalisedNotificationLine(filter);
-		
+
 		return this;
 	}
 	
@@ -194,7 +194,6 @@ class PotP_PreviewEntry
 		this.SetType();
 		
 		this.region_string 	= pin_region;
-		this.description 	= GetLocStringByKeyExt(factname + "_Description");
 		this.position 		= pin_position;
 		
 		this.localname 		= GetLocStringByKeyExt("option_" + uuid);
@@ -546,6 +545,7 @@ class PotP_PreviewEntry
 		case PotP_A_Gwent:
 			if ( (bool) PotP_GetNotificationValue('ProgressOnThePath_BackNotification_Gwent') ) 
 			{
+				PotP_Logger("Adding " + this.item_name, , this.fileName);
 				notifications.AddToBackGroundArray_Item(this);
 			}
 			break;
@@ -562,7 +562,7 @@ class PotP_PreviewEntry
 	function UnlockEvent() : void
 	{
 		FactsSet(this.entryname + "_unlocked", 1);
-		PotP_Logger("Unlocked Event " + this.localname);
+		//PotP_Logger("Unlocked Event " + this.localname);
 	}
 	
 	//---------------------------------------------------
@@ -570,6 +570,13 @@ class PotP_PreviewEntry
 	function IsEventUnlocked() : bool
 	{
 		return FactsQuerySum(this.entryname + "_unlocked") > 0;	
+	}
+
+	//---------------------------------------------------
+	
+	function GetEventDescription() : string
+	{
+		return GetLocStringByKeyExt(this.entryname + "_Description");
 	}
 	
 	//---------------------------------------------------
@@ -620,8 +627,6 @@ class PotP_PreviewEntry
 	{
 		var gwintManager 	: CR4GwintManager;
 		var cardDefinition 	: SCardDefinition;
-		
-		PotP_Logger("Preset Type = " + preset_type, , this.fileName);
 		
 		if (preset_type != PotP_G_None)
 		{
@@ -814,7 +819,7 @@ class PotP_PreviewEntry
 	function addvariation(variation_name: name)
 	{
 		this.variations.PushBack(variation_name);
-		PotP_Logger("Variation [" + variation_name + "] Assigned to Base Item " + this.item_name,, this.fileName);
+		//PotP_Logger("Variation [" + variation_name + "] Assigned to Base Item " + this.item_name,, this.fileName);
 	}
 	
 	//---------------------------------------------------
@@ -1036,8 +1041,8 @@ exec function pt_changestatus(identifier: string, optional value: pStatus)
 
 	if (!GetPotP(master, "Storage")) { return; }
 
-	EntList = master.PotP_ArrayManager.TotalEntList;	
-	IdeList = master.PotP_ArrayManager.TotalIdeList;
+	EntList = master.PotP_PersistentStorage.pArrayStorage.TotalEntList;	
+	IdeList = master.PotP_PersistentStorage.pArrayStorage.TotalIdeList;
 	Idx = IdeList.FindFirst(identifier);
 	
 	if (Idx == -1) { return; }

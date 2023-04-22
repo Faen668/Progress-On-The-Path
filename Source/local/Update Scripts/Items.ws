@@ -73,7 +73,7 @@ state Updating in CProgressOnThePath_Relic_Updater
 	latent function Updating_Main() 
 	{
 		var GwentManager: CR4GwintManager = theGame.GetGwintManager();
-		var pData_E: array<PotP_PreviewEntry> 	= parent.master.PotP_ArrayManager.MasterList_Items;
+		var pData_E: array<PotP_PreviewEntry> 	= parent.master.PotP_PersistentStorage.pItemsStorage.MasterList_Items;
 		var Idx: int;
 		
 		for ( Idx = 0; Idx < pData_E.Size(); Idx += 1 )

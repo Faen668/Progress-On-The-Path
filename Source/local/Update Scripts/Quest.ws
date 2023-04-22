@@ -5,15 +5,17 @@
 statemachine class CProgressOnThePath_Quest_Updater
 {
 	public var filename: name;
-		default filename = 'PotP Quest Script';
+	default filename = 'PotP Quest Script';
 	
 	public var master: CProgressOnThePath;
+	public var storage: CProgressOnThePath_Storage;
 	
 	//---------------------------------------------------
 
-	public function initialise(PotP_BaseClass: CProgressOnThePath) : CProgressOnThePath_Quest_Updater
+	public function initialise(master: CProgressOnThePath) : CProgressOnThePath_Quest_Updater
 	{
-		this.master = PotP_BaseClass;
+		this.master = master;
+		this.storage = master.PotP_PersistentStorage;
 		return this;
 	}
 
@@ -74,29 +76,28 @@ state Updating in CProgressOnThePath_Quest_Updater
 	{
 		var QstManager: CWitcherJournalManager = theGame.GetJournalManager();	
 		var ent_arr: array<CJournalBase>;
-		var pData_E: array<PotP_PreviewEntry> 	= parent.master.PotP_ArrayManager.MasterList_Quests;
-		var pData_L: array<string> 				= parent.master.PotP_ArrayManager.MasterList_Quests_Lookup;
-		var i, x, status: int;
+		
+		var quest_entity_array: array<PotP_PreviewEntry> 	= parent.master.PotP_PersistentStorage.pQuestStorage.MasterList_Quests;
+		var quest_lookup_array: array<string> 				= parent.master.PotP_PersistentStorage.pQuestStorage.MasterList_Quests_Lookup;
+		
+		var Idx, Edx, status: int;
 		
 		QstManager.GetActivatedOfType('CJournalQuest', ent_arr );
 
-		for ( i = 0; i < ent_arr.Size(); i += 1 ) 
+		for ( Idx = 0; Idx < ent_arr.Size(); Idx += 1 ) 
 		{
-			status = QstManager.GetEntryStatus(ent_arr[i]);
+			status = QstManager.GetEntryStatus(ent_arr[Idx]);
 			
-			x = pData_L.FindFirst(ent_arr[i].baseName);
-			if (x == -1)
+			Edx = quest_lookup_array.FindFirst(ent_arr[Idx].baseName);
+			if (Edx == -1)
 			{	
-				PotP_Logger("Unsupported Quest Found - " + ent_arr[i].baseName, , parent.filename);
+				PotP_Logger("Unsupported Quest Found - " + ent_arr[Idx].baseName, , parent.filename);
 				continue;
 			}
 			
-			if (pData_E[x].UpdateQuestEntry(status))
+			if (quest_entity_array[Edx].UpdateQuestEntry(status) && (status == JS_Success || status == JS_Failed))
 			{
-				if (status == JS_Success || status == JS_Failed)
-				{
-					pData_E[x].AddToNotificationQueue();
-				}
+				quest_entity_array[Edx].AddToNotificationQueue();
 			}				
 		}
 	}

@@ -10,7 +10,6 @@ statemachine class CProgressOnThePath extends SU_BaseBootstrappedMod {
 	public saved var PotP_PersistentStorage: CProgressOnThePath_Storage;
 	
 	public var PotP_UpdaterClass:		CProgressOnThePath_UpdaterClass;
-	public var PotP_ArrayManager: 		CProgressOnThePath_ArrayHandler;
 	public var PotP_PinManager: 		CProgressOnThePath_MapPins;
 	public var PotP_QuestPreview: 		CProgressOnThePath_QuestPreview;
 	public var PotP_WorldPreview: 		CProgressOnThePath_WorldPreview;
@@ -51,28 +50,12 @@ statemachine class CProgressOnThePath extends SU_BaseBootstrappedMod {
 		PotP_ItemsPreview = new CProgressOnThePath_ItemsPreview in this;
 		PotP_GwentPreview = new CProgressOnThePath_GwentPreview in this;
 		PotP_MissablePreview = new CProgressOnThePath_MissablePreview in this;
-		PotP_ArrayManager = new CProgressOnThePath_ArrayHandler in this;
 		PotP_Notifications = new CProgressOnThePath_Notifications in this;
 		PotP_PinManager = new CProgressOnThePath_MapPins in this;
 		PotP_EventListener = new CProgressOnThePath_EventListener in this;
 		PotP_MeditationListener = new CProgressOnThePath_MeditationListener in this;
 		
 		this.GotoState('Initialising');
-	}	
-
-	//---------------------------------------------------
-
-	public function LoadStorage() 
-	{ 
-		if (!this.PotP_PersistentStorage)
-		{
-			this.PotP_PersistentStorage = new CProgressOnThePath_Storage in this;
-			PotP_Logger("Progress On The Path: New storage instance created.", , this.fileName);
-		}
-		else
-		{
-			PotP_Logger("Progress On The Path: Loading Saved Storage...", , this.fileName);
-		}
 	}	
 	
 	//---------------------------------------------------
@@ -213,10 +196,10 @@ state Idle in CProgressOnThePath
 state Initialising in CProgressOnThePath 
 {
 	private var curVersionStr: string;
-		default curVersionStr = "5.1.4";
+		default curVersionStr = "5.2";
 		
 	private var curVersionInt: int;
-		default curVersionInt = 514;
+		default curVersionInt = 520;
 	
 	private var hasUpdated: bool;
 		default hasUpdated = false;
@@ -241,14 +224,24 @@ state Initialising in CProgressOnThePath
 	
 	entry function Initialising_Main() 
 	{		
-		parent.LoadStorage();
-		parent.PotP_ArrayManager.initialise(parent);
-		
-		while (PotP_IsPlayerBusy() || parent.PotP_ArrayManager.IsInState('Running')) 
+		while (theGame.IsLoadingScreenVideoPlaying()) 
 		{
-			Sleep(1);
+		  Sleep(1);
 		}
-	
+		
+		PotP_Logger("Loading Screen Finished", , parent.fileName);
+		
+		while ( PotP_IsPlayerBusy() ) 
+		{
+			Sleep(0.5);
+		}
+		
+		PotP_Logger("Player is no longer busy", , parent.fileName);
+		
+		Sleep(0.5);
+		
+		PotP_LoadStorageCollection(parent);
+
 		parent.PotP_UpdaterClass		.initialise(parent);
 		parent.PotP_PinManager			.initialise(parent);
 		parent.PotP_QuestPreview		.initialise(parent);
@@ -262,6 +255,7 @@ state Initialising in CProgressOnThePath
 		parent.PotP_WorldGoblin			.initialise(parent);
 		parent.PotP_EventListener		.initialise(parent);
 		parent.PotP_MeditationListener	.initialise(parent);
+		
 		parent.PotP_PopupManager		.initialise(parent);
 			
 		this.SetModVersion();
@@ -317,7 +311,7 @@ state Initialising in CProgressOnThePath
 	{
 		if (FactsQuerySum(VersStr) < curVersionInt) 
 		{
-			if (FactsQuerySum(VersStr) < 514) { FactsSet(VersStr, 514); hasUpdated = true; }
+			if (FactsQuerySum(VersStr) < 520) { FactsSet(VersStr, 520); hasUpdated = true; }
 		}
 	}
 	

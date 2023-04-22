@@ -78,7 +78,7 @@ state Checking in CProgressOnThePath_WorldGoblin
 	entry function Checking_Main()
 	{	
 		var MapManager: CCommonMapManager = theGame.GetCommonMapManager();		
-		var pData_E: array<PotP_PreviewEntry> = parent.master.PotP_ArrayManager.MasterList_World;		
+		var pData_E: array<PotP_PreviewEntry> = parent.master.PotP_PersistentStorage.pWorldStorage.MasterList_World;		
 		var Idx: int;
 
 		for ( Idx = 0; Idx < pData_E.Size(); Idx += 1 )

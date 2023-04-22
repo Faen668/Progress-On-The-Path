@@ -13,17 +13,19 @@ statemachine class CProgressOnThePath_ItemsGoblin extends IInventoryScriptedList
 	public var player_inv: CInventoryComponent;
 	public var master: CProgressOnThePath;
 	public var storage: CProgressOnThePath_Storage;
+	public var notifications: CProgressOnThePath_Notifications;
 	public var last_addition_time: float;
 	
 	//---------------------------------------------------
 
-	public function initialise(PotP_BaseClass: CProgressOnThePath)
+	public function initialise(master: CProgressOnThePath)
 	{
-		this.master = PotP_BaseClass;
+		this.master = master;
 		this.storage = master.PotP_PersistentStorage;
+		this.notifications = master.PotP_Notifications;
 		
-		this.itm_list = master.PotP_ArrayManager.SupportedItemsList;
-		this.ent_list = master.PotP_ArrayManager.SupportedItemsList_Entity;
+		this.itm_list = storage.pItemsStorage.SupportedItemsList;
+		this.ent_list = storage.pItemsStorage.SupportedItemsList_Entity;
 		this.player_inv = thePlayer.inv;
 		
 		player_inv.AddListener(this);
@@ -86,7 +88,7 @@ state Idle in CProgressOnThePath_ItemsGoblin
 		}
 		else
 		{
-			parent.master.PotP_Notifications.NotifyPlayerFromBackgroundProcess();
+			parent.notifications.NotifyPlayerFromBackgroundProcess();
 		}
 	}
 }
@@ -152,6 +154,7 @@ state ItemAdded in CProgressOnThePath_ItemsGoblin
 		parent.player_inv.GetItemQualityFromName(item_name, min, max);
 		if ( entry_data.IsPlayable() && (min >= 4 || parent.player_inv.ItemHasTag(parent.storage.MasterList_ItemsGoblin[0], 'GwintCard') ) ) 
 		{
+			PotP_Logger("Processing " + entry_data.item_name, , parent.filename);
 			entry_data.AddToBackgroundQueue();
 			entry_data.SetCompleted();
 		}

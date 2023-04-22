@@ -22,8 +22,8 @@ statemachine class CProgressOnThePath_QuestGoblin
 		this.master = master;
 		this.storage = master.PotP_PersistentStorage;
 		
-		this.quest_entity_array = master.PotP_ArrayManager.MasterList_Quests;
-		this.quest_lookup_array = master.PotP_ArrayManager.MasterList_Quests_Lookup;
+		this.quest_entity_array = storage.pQuestStorage.MasterList_Quests;
+		this.quest_lookup_array = storage.pQuestStorage.MasterList_Quests_Lookup;
 		this.manager = theGame.GetJournalManager();
 	}
 	

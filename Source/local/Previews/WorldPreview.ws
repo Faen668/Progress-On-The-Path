@@ -60,37 +60,37 @@ class CProgressOnThePath_WorldPreview
 	
 	private function generate(): string 
 	{
-		build("PotP_Preview_Camps_1", master.PotP_ArrayManager.BanditCamps_WhiteOrchard);
-		build("PotP_Preview_Camps_2", master.PotP_ArrayManager.BanditCamps_Velen);
-		build("PotP_Preview_Camps_3", master.PotP_ArrayManager.BanditCamps_Novigrad);
-		build("PotP_Preview_Camps_4", master.PotP_ArrayManager.BanditCamps_Skellige);
-		build("PotP_Preview_Camps_5", master.PotP_ArrayManager.BanditCamps_Toussaint);
+		build("PotP_Preview_Camps_1", master.PotP_PersistentStorage.pWorldStorage.BanditCamps_WhiteOrchard);
+		build("PotP_Preview_Camps_2", master.PotP_PersistentStorage.pWorldStorage.BanditCamps_Velen);
+		build("PotP_Preview_Camps_3", master.PotP_PersistentStorage.pWorldStorage.BanditCamps_Novigrad);
+		build("PotP_Preview_Camps_4", master.PotP_PersistentStorage.pWorldStorage.BanditCamps_Skellige);
+		build("PotP_Preview_Camps_5", master.PotP_PersistentStorage.pWorldStorage.BanditCamps_Toussaint);
 		
-		build("PotP_Preview_DensM_1", master.PotP_ArrayManager.MonsterDens_Velen);
-		build("PotP_Preview_DensM_2", master.PotP_ArrayManager.MonsterDens_Novigrad);
-		build("PotP_Preview_DensM_3", master.PotP_ArrayManager.MonsterDens_Skellige);
-		build("PotP_Preview_DensM_4", master.PotP_ArrayManager.MonsterDens_Toussaint);
+		build("PotP_Preview_DensM_1", master.PotP_PersistentStorage.pWorldStorage.MonsterDens_Velen);
+		build("PotP_Preview_DensM_2", master.PotP_PersistentStorage.pWorldStorage.MonsterDens_Novigrad);
+		build("PotP_Preview_DensM_3", master.PotP_PersistentStorage.pWorldStorage.MonsterDens_Skellige);
+		build("PotP_Preview_DensM_4", master.PotP_PersistentStorage.pWorldStorage.MonsterDens_Toussaint);
 		
-		build("PotP_Preview_NestM_1", master.PotP_ArrayManager.MonsterNests_WhiteOrchard);
-		build("PotP_Preview_NestM_2", master.PotP_ArrayManager.MonsterNests_Velen);
-		build("PotP_Preview_NestM_3", master.PotP_ArrayManager.MonsterNests_Novigrad);
-		build("PotP_Preview_NestM_4", master.PotP_ArrayManager.MonsterNests_Skellige);
-		build("PotP_Preview_NestM_5", master.PotP_ArrayManager.MonsterNests_Toussaint);
+		build("PotP_Preview_NestM_1", master.PotP_PersistentStorage.pWorldStorage.MonsterNests_WhiteOrchard);
+		build("PotP_Preview_NestM_2", master.PotP_PersistentStorage.pWorldStorage.MonsterNests_Velen);
+		build("PotP_Preview_NestM_3", master.PotP_PersistentStorage.pWorldStorage.MonsterNests_Novigrad);
+		build("PotP_Preview_NestM_4", master.PotP_PersistentStorage.pWorldStorage.MonsterNests_Skellige);
+		build("PotP_Preview_NestM_5", master.PotP_PersistentStorage.pWorldStorage.MonsterNests_Toussaint);
 		
-		build("PotP_Preview_Place_1", master.PotP_ArrayManager.PlacesOfPower_WhiteOrchard);
-		build("PotP_Preview_Place_2", master.PotP_ArrayManager.PlacesOfPower_Velen);
-		build("PotP_Preview_Place_3", master.PotP_ArrayManager.PlacesOfPower_Novigrad);
-		build("PotP_Preview_Place_4", master.PotP_ArrayManager.PlacesOfPower_Skellige);
-		build("PotP_Preview_Place_5", master.PotP_ArrayManager.PlacesOfPower_KaerMorhen);
-		build("PotP_Preview_Place_6", master.PotP_ArrayManager.PlacesOfPower_Toussaint);
-		build("PotP_Preview_Place_7", master.PotP_ArrayManager.PlacesOfPower_TheSpiral);
+		build("PotP_Preview_Place_1", master.PotP_PersistentStorage.pWorldStorage.PlacesOfPower_WhiteOrchard);
+		build("PotP_Preview_Place_2", master.PotP_PersistentStorage.pWorldStorage.PlacesOfPower_Velen);
+		build("PotP_Preview_Place_3", master.PotP_PersistentStorage.pWorldStorage.PlacesOfPower_Novigrad);
+		build("PotP_Preview_Place_4", master.PotP_PersistentStorage.pWorldStorage.PlacesOfPower_Skellige);
+		build("PotP_Preview_Place_5", master.PotP_PersistentStorage.pWorldStorage.PlacesOfPower_KaerMorhen);
+		build("PotP_Preview_Place_6", master.PotP_PersistentStorage.pWorldStorage.PlacesOfPower_Toussaint);
+		build("PotP_Preview_Place_7", master.PotP_PersistentStorage.pWorldStorage.PlacesOfPower_TheSpiral);
 		
-		build("PotP_Preview_SignP_1", master.PotP_ArrayManager.Signposts_WhiteOrchard);
-		build("PotP_Preview_SignP_2", master.PotP_ArrayManager.Signposts_Velen);	
-		build("PotP_Preview_SignP_3", master.PotP_ArrayManager.Signposts_Novigrad);
-		build("PotP_Preview_SignP_4", master.PotP_ArrayManager.Signposts_Skellige);
-		build("PotP_Preview_SignP_5", master.PotP_ArrayManager.Signposts_KaerMorhen);
-		build("PotP_Preview_SignP_6", master.PotP_ArrayManager.Signposts_Toussaint);
+		build("PotP_Preview_SignP_1", master.PotP_PersistentStorage.pWorldStorage.Signposts_WhiteOrchard);
+		build("PotP_Preview_SignP_2", master.PotP_PersistentStorage.pWorldStorage.Signposts_Velen);	
+		build("PotP_Preview_SignP_3", master.PotP_PersistentStorage.pWorldStorage.Signposts_Novigrad);
+		build("PotP_Preview_SignP_4", master.PotP_PersistentStorage.pWorldStorage.Signposts_Skellige);
+		build("PotP_Preview_SignP_5", master.PotP_PersistentStorage.pWorldStorage.Signposts_KaerMorhen);
+		build("PotP_Preview_SignP_6", master.PotP_PersistentStorage.pWorldStorage.Signposts_Toussaint);
 		return this.message;
 	}
 	

@@ -6,4 +6,4 @@ set gamePath=F:\Steam\steamapps\common\The Witcher 3
 REM do not update anything below this line
 set modPath=%cd%\..
 set modName=ProgressOnThePath
-set modKitPath=D:\Games\Witcher 3 Files\Witcher 3 - Mod Kit\bin\x64
+set modKitPath=D:\Games\Modding\Modding - Witcher 3\Mod Kit\bin\x64

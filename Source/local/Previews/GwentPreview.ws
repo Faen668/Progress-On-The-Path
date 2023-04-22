@@ -67,15 +67,15 @@ class CProgressOnThePath_GwentPreview
 			return "";
 		}
 		
-		build("PotP_Preview_Gwent_1", master.PotP_ArrayManager.Gwent_MonstersDeck);
-		build("PotP_Preview_Gwent_2", master.PotP_ArrayManager.Gwent_NeutralDeck);
-		build("PotP_Preview_Gwent_3", master.PotP_ArrayManager.Gwent_NilfgaardDeck);
-		build("PotP_Preview_Gwent_4", master.PotP_ArrayManager.Gwent_NorthernRealms);
-		build("PotP_Preview_Gwent_5", master.PotP_ArrayManager.Gwent_Scoiatael);
+		build("PotP_Preview_Gwent_1", master.PotP_PersistentStorage.pItemsStorage.Gwent_MonstersDeck);
+		build("PotP_Preview_Gwent_2", master.PotP_PersistentStorage.pItemsStorage.Gwent_NeutralDeck);
+		build("PotP_Preview_Gwent_3", master.PotP_PersistentStorage.pItemsStorage.Gwent_NilfgaardDeck);
+		build("PotP_Preview_Gwent_4", master.PotP_PersistentStorage.pItemsStorage.Gwent_NorthernRealms);
+		build("PotP_Preview_Gwent_5", master.PotP_PersistentStorage.pItemsStorage.Gwent_Scoiatael);
 		
 		if (GwentManager.IsDeckUnlocked(GwintFaction_Skellige))
 		{
-			build("PotP_Preview_Gwent_6", master.PotP_ArrayManager.Gwent_Skellige);
+			build("PotP_Preview_Gwent_6", master.PotP_PersistentStorage.pItemsStorage.Gwent_Skellige);
 		}
 		return this.message;
 	}

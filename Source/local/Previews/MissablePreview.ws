@@ -50,19 +50,19 @@ class CProgressOnThePath_MissablePreview
 	{
 		var start: float = theGame.GetLocalTimeAsMilliseconds();
 		
-		build("PotP_Preview_Missable_00", master.PotP_ArrayManager.MissableQuests_InstantFails);
-		build("PotP_Preview_Missable_01", master.PotP_ArrayManager.MissableQuests_Q001);
-		build("PotP_Preview_Missable_02", master.PotP_ArrayManager.MissableQuests_Q401);
-		build("PotP_Preview_Missable_03", master.PotP_ArrayManager.MissableQuests_SQ101);
-		build("PotP_Preview_Missable_12", master.PotP_ArrayManager.MissableQuests_Q301);
-		build("PotP_Preview_Missable_04", master.PotP_ArrayManager.MissableQuests_Q303);
-		build("PotP_Preview_Missable_05", master.PotP_ArrayManager.MissableQuests_SQ106);
-		build("PotP_Preview_Missable_06", master.PotP_ArrayManager.MissableQuests_Q501);
-		build("PotP_Preview_Missable_07", master.PotP_ArrayManager.MissableQuests_Q206);
-		build("PotP_Preview_Missable_08", master.PotP_ArrayManager.MissableQuests_Q210);
-		build("PotP_Preview_Missable_09", master.PotP_ArrayManager.MissableQuests_Q112);
-		build("PotP_Preview_Missable_10", master.PotP_ArrayManager.MissableQuests_Q403);
-		build("PotP_Preview_Missable_11", master.PotP_ArrayManager.MissableQuests_Q702);
+		build("PotP_Preview_Missable_00", master.PotP_PersistentStorage.pQuestStorage.MissableQuests_InstantFails);
+		build("PotP_Preview_Missable_01", master.PotP_PersistentStorage.pQuestStorage.MissableQuests_Q001);
+		build("PotP_Preview_Missable_02", master.PotP_PersistentStorage.pQuestStorage.MissableQuests_Q401);
+		build("PotP_Preview_Missable_03", master.PotP_PersistentStorage.pQuestStorage.MissableQuests_SQ101);
+		build("PotP_Preview_Missable_12", master.PotP_PersistentStorage.pQuestStorage.MissableQuests_Q301);
+		build("PotP_Preview_Missable_04", master.PotP_PersistentStorage.pQuestStorage.MissableQuests_Q303);
+		build("PotP_Preview_Missable_05", master.PotP_PersistentStorage.pQuestStorage.MissableQuests_SQ106);
+		build("PotP_Preview_Missable_06", master.PotP_PersistentStorage.pQuestStorage.MissableQuests_Q501);
+		build("PotP_Preview_Missable_07", master.PotP_PersistentStorage.pQuestStorage.MissableQuests_Q206);
+		build("PotP_Preview_Missable_08", master.PotP_PersistentStorage.pQuestStorage.MissableQuests_Q210);
+		build("PotP_Preview_Missable_09", master.PotP_PersistentStorage.pQuestStorage.MissableQuests_Q112);
+		build("PotP_Preview_Missable_10", master.PotP_PersistentStorage.pQuestStorage.MissableQuests_Q403);
+		build("PotP_Preview_Missable_11", master.PotP_PersistentStorage.pQuestStorage.MissableQuests_Q702);
 		
 		PotP_Logger("Missable Preview Took " + (theGame.GetLocalTimeAsMilliseconds() - start) + " Milliseconds To Generate");
 		return this.message;
