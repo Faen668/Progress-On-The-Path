@@ -108,8 +108,9 @@ function PotP_LoadStorageCollection(master: CProgressOnThePath, optional force_r
 	if (!master.PotP_PersistentStorage.pQuestStorage)
 	{
 		master.PotP_PersistentStorage.pQuestStorage = new CProgressOnThePath_QuestStorage in master.PotP_PersistentStorage;
-		master.PotP_PersistentStorage.pQuestStorage.inititalise(master);
 		PotP_Logger("New quest storage instance created.", , 'PotP Storage');
+		master.PotP_PersistentStorage.pQuestStorage.inititalise(master);
+		PotP_Logger("New quest storage instance initialised.", , 'PotP Storage');
 	}
 	else 
 	{
@@ -129,8 +130,9 @@ function PotP_LoadStorageCollection(master: CProgressOnThePath, optional force_r
 	if (!master.PotP_PersistentStorage.pEventStorage)
 	{	
 		master.PotP_PersistentStorage.pEventStorage = new CProgressOnThePath_EventStorage in master.PotP_PersistentStorage;
-		master.PotP_PersistentStorage.pEventStorage.inititalise(master);
 		PotP_Logger("New event storage instance created.", , 'PotP Storage');
+		master.PotP_PersistentStorage.pEventStorage.inititalise(master);
+		PotP_Logger("New event storage instance initialised.", , 'PotP Storage');
 	}
 	else 
 	{
@@ -150,8 +152,9 @@ function PotP_LoadStorageCollection(master: CProgressOnThePath, optional force_r
 	if (!master.PotP_PersistentStorage.pWorldStorage)
 	{
 		master.PotP_PersistentStorage.pWorldStorage = new CProgressOnThePath_WorldStorage in master.PotP_PersistentStorage;
-		master.PotP_PersistentStorage.pWorldStorage.inititalise(master);
 		PotP_Logger("New world storage instance created.", , 'PotP Storage');
+		master.PotP_PersistentStorage.pWorldStorage.inititalise(master);
+		PotP_Logger("New world storage instance initialised.", , 'PotP Storage');
 	}
 	else 
 	{
@@ -171,8 +174,9 @@ function PotP_LoadStorageCollection(master: CProgressOnThePath, optional force_r
 	if (!master.PotP_PersistentStorage.pItemsStorage)
 	{
 		master.PotP_PersistentStorage.pItemsStorage = new CProgressOnThePath_ItemsStorage in master.PotP_PersistentStorage;
-		master.PotP_PersistentStorage.pItemsStorage.inititalise(master);
 		PotP_Logger("New items storage instance created.", , 'PotP Storage');
+		master.PotP_PersistentStorage.pItemsStorage.inititalise(master);
+		PotP_Logger("New items storage instance initialised.", , 'PotP Storage');
 	}
 	else 
 	{
@@ -204,6 +208,8 @@ function PotP_ApplyDLCFacts() : void
 	FactsSet("PotP_UsingW3EE",					(int) PotP_UsingW3EE());
 	FactsSet("PotP_UsingSezonBurz", 			(int) PotP_UsingSezonBurz());
 	FactsSet("PotP_UsingCosWiecej", 			(int) PotP_UsingCosWiecej());
+	
+	PotP_Logger("DLC Facts Applied...", , 'PotP Storage');
 }
 
 function PotP_ModAddedOrRemoved(section : name) : bool

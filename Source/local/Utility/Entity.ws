@@ -88,6 +88,7 @@ enum PotP_Preview_World_Filter
 	PotP_I_Nests	 = 3,
 	PotP_I_Place	 = 4,
 	PotP_I_Signs	 = 5,
+	PotP_I_Sites	 = 6,
 }
 
 enum PotP_Preview_Quest_Filter
@@ -246,7 +247,7 @@ class PotP_PreviewEntry
 
 	// init function called when creating the instance of this Gwent Card.
 	function initGwent(uuid: string, type: PotP_Preview_Entry_Type, filter: PotP_Preview_Gwent_Filter, item_name: name, optional card_type: PotP_Preview_CardType): PotP_PreviewEntry 
-	{
+	{	
 		this.type 		 	= type;
 		this.item_name 	 	= item_name;
 		this.uuid 		 	= uuid;
@@ -884,6 +885,7 @@ class PotP_PreviewEntry
 			case PotP_I_Nests: return "icons/PotP/tracked_monsternest_dark.png";
 			case PotP_I_Place: return "icons/PotP/tracked_placeofpower_dark.png";
 			case PotP_I_Signs: return "icons/PotP/tracked_roadsign_dark.png";
+			case PotP_I_Sites: return "icons/PotP/tracked_AbandonedSite_dark.png";
 		}
 	}
 	
@@ -907,7 +909,10 @@ class PotP_PreviewEntry
 			
 		case PotP_I_Signs:
 			return GetLocStringByKeyExt("PotP_NotificationLine_SignP");
-		
+
+		case PotP_I_Sites:
+			return GetLocStringByKeyExt("PotP_NotificationLine_Sites");
+			
 		default:
 			return "";
 		}

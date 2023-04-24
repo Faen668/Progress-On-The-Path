@@ -131,10 +131,15 @@ statemachine class CProgressOnThePath extends SU_BaseBootstrappedMod {
 			activefilters  = PotP_GwentPreview.GetActiveFilters() + "</p><br/>";
 			description    = PotP_GwentPreview.GetBookDescription();
 			countstring	   = PotP_GwentPreview.GetTotalCountsForPreview();
-		
+
 			if (PotP_GwentPreview.IsCompleted())
 			{
 				description = "<p align=\"center\">" + GetLocStringByKeyExt("ProgressOnThePath_FilterComplete") + "</p>";
+			}
+			
+			if (!PotP_GwentPreview.CanAccess())
+			{
+				description = "<p align=\"center\">" + GetLocStringByKeyExt("ProgressOnThePath_FilterGwentDeck") + "</p>";
 			}
 			
 			if (description == "")
@@ -196,10 +201,10 @@ state Idle in CProgressOnThePath
 state Initialising in CProgressOnThePath 
 {
 	private var curVersionStr: string;
-		default curVersionStr = "5.2";
+		default curVersionStr = "5.2.1";
 		
 	private var curVersionInt: int;
-		default curVersionInt = 520;
+		default curVersionInt = 521;
 	
 	private var hasUpdated: bool;
 		default hasUpdated = false;
@@ -311,7 +316,7 @@ state Initialising in CProgressOnThePath
 	{
 		if (FactsQuerySum(VersStr) < curVersionInt) 
 		{
-			if (FactsQuerySum(VersStr) < 520) { FactsSet(VersStr, 520); hasUpdated = true; }
+			if (FactsQuerySum(VersStr) < 521) { PotP_LoadStorageCollection(parent, 'World'); FactsSet(VersStr, 521); hasUpdated = true; }
 		}
 	}
 	

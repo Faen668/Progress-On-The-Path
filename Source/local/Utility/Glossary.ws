@@ -156,6 +156,11 @@ class CProgressOnTheBath_GwentPreviewBook extends SU_GlossaryEntry
 		{
 			description = "<p align=\"center\">" + GetLocStringByKeyExt("ProgressOnThePath_FilterComplete") + "</p>";
 		}
+
+		if (!master.PotP_GwentPreview.CanAccess())
+		{
+			description = "<p align=\"center\">" + GetLocStringByKeyExt("ProgressOnThePath_FilterGwentDeck") + "</p>";
+		}
 		
 		if (description == "")
 		{

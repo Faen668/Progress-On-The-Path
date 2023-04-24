@@ -1,0 +1,2115 @@
+;meta[language=en]
+; id      |key(hex)|key(str)| text
+2116568000|4d5f8b0c||Mods
+2116568001|dd4fefec||Progress on the Path
+2116568002|d49a469c||Progress on the Path - Tutorials
+2116568003|7d28b0e9||Progress on the Path - Previews
+2116568004|ddc26e1a||Quest Progress
+2116568005|d6b6996a||World Map Progress
+2116568006|681839fc||Collectable Items Progress
+2116568007|a74bd5f7||Missable Quest Progress
+2116568008|72edb8a1||Gwent Card Progress
+2116568009|00514e10||Thank you for installing Progress on the Path.<br/><br/>Please make sure to check the Glossary pages for helpful hints and tips about using the mod!
+2116568010|c7e5cef0||Mod Updated To Version: 
+2116568011|30071bc7||Completed:
+2116568012|6b50fb1c||Nothing To Update...
+2116568013|de08153c||Progress on the Path: 
+2116568014|58bba806|| Quest(DYNAMC_REPLACE)
+2116568015|581301be|| Event(DYNAMC_REPLACE)
+2116568016|58a9682b|| Place(DYNAMC_REPLACE) of Power
+2116568017|5880afde|| Monster Nest(DYNAMC_REPLACE)
+2116568018|58808a4f|| Monster Den(DYNAMC_REPLACE)
+2116568019|582fa51f|| Gwent Card(DYNAMC_REPLACE)
+2116568020|58d26977|| Signpost(DYNAMC_REPLACE)
+2116568021|57ed6536|| Bandit Camp(DYNAMC_REPLACE)
+2116568022|58c29297|| Relic(DYNAMC_REPLACE)
+2116568023|a1f82a15|| Main Quest(DYNAMC_REPLACE)
+2116568024|a1f82a16|| Main Quest(DYNAMC_REPLACE) (HOS)
+2116568025|a1f82a17|| Main Quest(DYNAMC_REPLACE) (B&W)
+2116568026|a1fb01bc|| Side Quest(DYNAMC_REPLACE)
+2116568027|a1fb01bd|| Side Quest(DYNAMC_REPLACE) (HOS)
+2116568028|a1fb01be|| Side Quest(DYNAMC_REPLACE) (B&W)
+2116568029|a1fb9803|| Treasure Hunt(DYNAMC_REPLACE)
+2116568030|a1fb9804|| Treasure Hunt(DYNAMC_REPLACE) (HOS)
+2116568031|a1fb9805|| Treasure Hunt(DYNAMC_REPLACE) (B&W)
+2116568032|a1f3d388|| Monster Hunt Contract(DYNAMC_REPLACE)
+2116568033|a1f3d389|| Monster Hunt Contract(DYNAMC_REPLACE) (HOS)
+2116568034|a1f3d38a|| Monster Hunt Contract(DYNAMC_REPLACE) (B&W)
+2116568035|a1faeb1e|| Scavenger Hunt(DYNAMC_REPLACE)
+2116568036|ebed1a97|| Gear Set Item(DYNAMC_REPLACE)
+2116568037|e36c36df||Updated: 
+2116568038|dd4b4067||Updated Bandit Camp: 
+2116568039|95a545f5||(QUESTNAME)
+2116568040|a3654f97|| (Complete)
+2116568041|2b6dd930|| (In Progress)
+2116568042|58e4b68d|| Troph(DYNAMC_REPLACE_TROPHY)
+2116568043|a0d29f68||ies
+2116568044|a0d29f69||y
+2116568045|032a8b15||s
+2116568046|4bf7ed86||<font color="#479c9d">Perform A Full Update       :    When Meditating</font>
+2116568047|df0f8f94||<font color="#479c9d">Perform A Full Update       :    Via Hotkey:</font> <font size="16"> (Default 'Numpad 5')</font>
+2116568048|144932d3||<font color="#7FD8BE">Global Settings       :   Notification Font Size</font>
+2116568049|1449a59f||<font color="#7FD8BE">Global Settings       :   Notification Display Time</font> <font size="16">(Freq in seconds)</font>
+2116568050|14435f21||<font color="#7FD8BE">Global Settings       :   Notification Text Colour</font>
+2116568051|22a207fc||<font color="#FF7D63">Main Update Notification       :   Include Quest Updates</font>
+2116568052|21f961b4||<font color="#FF7D63">Main Update Notification       :   Include Random Event Updates</font>
+2116568053|22160515||<font color="#FF7D63">Main Update Notification       :   Include Gwent Card Updates</font>
+2116568054|2230d6da||<font color="#FF7D63">Main Update Notification       :   Include Item Updates</font>
+2116568055|22f40aac||<font color="#FF7D63">Main Update Notification       :   Include Map Pin Updates</font>
+2116568056|2277dae6||<font color="#FF7D63">Main Update Notification       :   Show Null Updates</font> <font size="16">(Nothing To Update...)</font>
+2116568058|7256be9b||<br/><br/><br/><br/><br/><br/>Nothing to show<br/><br/>Check the active filters for this preview to show any incomplete entries
+2116568059|459e97c6||<br/><br/><br/><br/><br/><br/>All entries complete for this preview
+2116568060|fc14e3d2||~~ Quest Progress REPLACECOUNT ~~
+2116568061|e0eb8682||~~ World Map Progress REPLACECOUNT ~~
+2116568062|c39636b0||~~ Collectable Items Progress REPLACECOUNT ~~
+2116568063|76858eeb||~~ Gwent Card Progress REPLACECOUNT ~~
+2116568064|440b26ce||~~ Missable Quest Progress REPLACECOUNT ~~
+2116568065|ceceee85||<font color="#7FD8BE">Global             :   Show Completed Entries</font>
+2116568066|ced18ad5||<font color="#7FD8BE">Global             :   Show Ignored Entries</font>
+2116568067|ced17e7a||<font color="#7FD8BE">Global             :   Show Entry UUID's</font>
+2116568069|0c226cce||<font color="#8EA4C8">World Map     :   Filter By Region</font>
+2116568070|78b2b359||All
+2116568071|78b2b35a||White Orchard
+2116568072|78b2b35b||Velen
+2116568073|78b2b35c||Novigrad
+2116568074|78b2b35d||Skellige
+2116568075|78b2b35e||Toussaint
+2116568076|78b2b35f||Kaer Morhen
+2116568077|dfa87709||<font color="#7FD8BE">Global             :   Hotkey Opens</font> <font size="16"> (Default 'Numpad 6')</font>
+2116568078|5cae1f9d||Quest Progress
+2116568079|5cae1f9e||World Map Progress
+2116568080|5cae1f9f||Collectable Items Progress
+2116568081|5cae1fa0||Gwent Card Progress
+2116568082|5cae1fa1||Missable Quest Progress
+2116568083|0bcddfc8||<font color="#C8566B">Quests             :   Filter By Region</font>
+2116568084|3b4d4fd3||All
+2116568085|3b4d4fd4||White Orchard
+2116568086|3b4d4fd5||Velen
+2116568087|3b4d4fd6||Novigrad
+2116568088|3b4d4fd7||Skellige
+2116568089|3b4d4fd8||Toussaint
+2116568090|3b4d4fd9||Kaer Morhen
+2116568091|3b4d4fda||Vizima
+2116568092|0b65e26d||<font color="#DE8971">Items              :   Filter By Type</font>
+2116568093|b4ef3d38||All
+2116568094|b4ef3d39||Armor
+2116568095|b4ef3d3a||Boots
+2116568096|b4ef3d3b||Trousers
+2116568097|b4ef3d3c||Gloves
+2116568098|b4ef3d3d||Headgear
+2116568099|b4ef3d3e||Steel Swords
+2116568100|b4ef3d3f||Silver Swords
+2116568101|b4ef3d40||Crossbows
+2116568102|b4ef3d41||Trophies
+2116568103|0c2b2b7b||<font color="#8EA4C8">World Map     :   Filter By Type</font>
+2116568104|99867ac6||All
+2116568105|99867ac7||Bandit Camps
+2116568106|99867ac8||Monster Dens
+2116568107|99867ac9||Monster Nests
+2116568108|99867aca||Places of Power
+2116568109|99867acb||Signposts
+2116568110|0bd69e75||<font color="#C8566B">Quests             :   Filter By Type</font>
+2116568111|5c211740||All
+2116568112|5c211741||Random Events
+2116568113|5c211742||Main Quests
+2116568114|5c211743||Side Quests
+2116568115|5c211744||Contracts
+2116568116|5c211745||Scavenger Hunts
+2116568117|5c211746||Treasure Hunts
+2116568118|0b49b36b||<font color="#DE8971">Gwent              :   Filter By Faction</font>
+2116568119|4b22c6b6||All
+2116568120|4b22c6b7||Monsters
+2116568121|4b22c6b8||Nilfgaard
+2116568122|4b22c6b9||Northern Realms
+2116568123|4b22c6ba||Scoia'tael
+2116568124|4b22c6bb||Skellige
+2116568125|4b22c6bc||Neutral Cards
+2116568126|0b40f4be||<font color="#DE8971">Gwent              :   Filter By Region</font>
+2116568127|2a4eff49||All
+2116568128|2a4eff4a||White Orchard
+2116568129|2a4eff4b||Velen
+2116568130|2a4eff4c||Novigrad
+2116568131|2a4eff4d||Skellige
+2116568132|2a4eff4e||Toussaint
+2116568133|2a4eff4f||Kaer Morhen
+2116568134|2a4eff50||Vizima
+2116568135|60d44628||<font color="#F56C77">Mini Map Pins          :   Show On Minimap</font>
+2116568136|f7c956ff||<font color="#F56C77">Mini Map Pins          :   Arrow Pointers</font>
+2116568137|841c1d49||<font color="#F56C77">Mini Map Pins          :   Highlighted Arrows</font>
+2116568138|534cd15d||<font color="#F56C77">World Map Pins          :   Show Map Pins</font>
+2116568139|fee1e9c3||<font color="#F56C77">World Map Pins          :   Show Descriptions</font>
+2116568140|cf0d466b||<font color="#F56C77">World Map Pins          :   Map Pin Radius</font>
+2116568141|6ca40b53||<font color="#F56C77">World Map Pins          :   Map Pin Type</font>
+2116568142|1e4f4362||Quest Giver
+2116568143|1e4f4363||Quest Giver (HOS)
+2116568144|1e4f4364||Quest Giver (B&W)
+2116568145|1e4f4365||Main Story Quest
+2116568146|1e4f4366||Question Mark
+2116568147|2fcfad5e||Random Event
+2116568148|7b750dc9||A Random Event Is Available At This Location
+2116568149|9351d2e7||Black (Default)
+2116568150|9351d2e8||<font color="#233067">Blue</font>
+2116568151|9351d2e9||<font color="#630F0F">Red</font>
+2116568152|9351d2ea||<font color="#084A23">Green</font>
+2116568153|9351d2eb||<font color="#431C53">Purple</font>
+2116568154|40cba021||PotP: Update Progress Tracker
+2116568155|23dccff9||PotP: Preview Key
+2116568156|8e7a9799||General
+2116568157|83ef12ac||Preview
+2116568158|ab556075||Updating The Tracker
+2116568159|ab50e47b||<font color="#CD7D03">Updating The Tracker:</font><br/>Progress on the Path is fully automatic and monitors gameplay completion using a system of background monitors while you are getting on with your whirling, twirling and bee hive burning.<br/><br/>Background monitoring comes with a few options in the Mod Menu for you to play with and customize to your liking. You are able to customize the frequency with which the background monitor will update the player and also suppress / enable notifications for the different tracking categories you are interested in being updated about. There are also several other ways Progress on the Path can be updated:<br/><br/><font color="#18B3F1">While Meditating</font> - With the 'Perform A Full Update When Meditating' option enabled, the tracker will perform a full update automatically when the player starts meditation, the update will only run once per meditation session.<br/><br/><font color="#18B3F1">Hotkey</font> - The update hotkey (Default NumPad 5) can be used to run a full update whenever you like, a notification will display on-screen after the update which can also be customized in the mod menu.
+2116568160|ad0a3914||Progress Previews
+2116568161|ad05bd1a||Progress Previews:</font><br/>You can preview your current completion progress by hitting the configurable hotkey (default Numpad 6) or by selecting one of the preview entries in the glossary section.<br/><br/>Depending on your settings in the mod menu, the previews will display the tracked entries with specific tags attached.<br/><br/>Missable entries will appear under their own sub category.<br/><br/>The <font color="#26CAD6">(Mod Added)</font> tag will be applied to all entries being dynamically tracked from supported mods.<br/><br/>The <font color="#C8566B">(In Progress)</font> tag will be applied to all quests that are active in the players journal.<br/><br/>The <font color="#A1EF7A">(Completed)</font> tag will be applied to all entries that have been completed / collected.<br/><br/>The <font color="#D7D23A">(Ignored)</font> tag will be applied to any entries that have been manually set as ignored. The mod will never automatically set an option to ignored, you can use this to hide / ignore entries you don't have any interest in.<br/><br/>The previews will also display the names of any filters you have enabled in the mod menu at the top of the preview under the header.
+2116568162|aebf11b3||Item Tracking
+2116568163|aeba95b9||<font color="#CD7D03">Item Tracking:</font><br/>Progress on the Path supports dynamic tracking of over 350 rare, unique or otherwise difficult to find items as well as hundreds of Mod Added items available from the different supported mods.<br/><br/>The background monitoring system will evaluate all items as they are added to your inventory or stash and update them accordingly in the previews if they are collectable.<br/><br/>Dropping or selling collectable items will not affect their completion status in the tracker so feel free to do whatever you want with them after collecting them for the first time.<br/><br/><font color="#CD7D03">Gwent Card Tracking:</font><br/>Progress on the Path tracks all collectable Gwent Cards in its own preview message. As well as displaying a list of all cards, the preview also contains sublists categorizing the cards on how they are obtained.
+2116568164|b073ea52||Quest Tracking
+2116568165|b06f6e58||<font color="#CD7D03">Quest Tracking:</font><br/>Quest tracking is quite simple under the hood. The background monitoring system will automatically update tracked quests to their correct status as you start and complete them in the game.<br/><br/>If there is a quest you are not able to do due to in-game decisions or some other reason, you can manually toggle the quest as 'Completed' or 'Ignored' using console commands which will be explained in the 'Console Commands' Section.
+2116568166|b228c2f1||World Map Tracking
+2116568167|b22446f7||<font color="#CD7D03">World Map Tracking:</font><br/>World Map Tracking does exactly what the name suggests, as you play and discover signposts, blow up monster nests and gorge on places of power, the background monitoring system will update them and show periodic notifications (if enabled) telling you what's updating as your playing.
+2116568168|b3dd9b90||Notifications
+2116568169|b3d91f96||<font color="#CD7D03">Notifications:</font><br/>Progress on the Path comes with quite a sophisticated Notification system. You can configure the text colour, font size and a few other things in the mod menu or just disable notifications all together if you're not interested in what's being updated.
+2116568170|b592742f||Console Commands
+2116568171|b58df835||<font color="#CD7D03">Console Commands:</font><br/>Progress on the Path comes with a very handy console command to aid you as you are playing, the command is:<br/><br/>pt_changestatus()<br/><br/>As the name suggests, this command will allow you to change the status of any entry in any of the preview messages by simply passing a couple of parameters with the command.<br/><br/>The first parameter is the 'Unique Identifier' of the entry. This can be seen by enabling the 'Show Entry UUID's' option in the Mod Menu.<br/><br/>The second parameter is the new 'Status' you want the entry to adopt, you write this is an enum so it should be typed as completed, ignored, or left blank to restore the entry to its default 'Not Completed' status.<br/><br/>As an example:<br/><font color="#18B3F1">pt_changestatus(XD1452, ignored)</font> would update the entry to 'Ignored'<br/><font color="#18B3F1">pt_changestatus(XD1452, completed)</font> would update the entry to 'Completed'<br/><font color="#18B3F1">pt_changestatus(XD1452)</font> would revert the entry to 'Not Started'.
+2116568172|8343d2b5||Kaer Morhen
+2116568173|8343d2b6||Lilac and Gooseberries
+2116568174|8343d2b7||The Beast of White Orchard
+2116568175|8343d2b8||The Incident at White Orchard
+2116568176|96ce2f66||Imperial Audience
+2116568177|d5c9505f||The Nilfgaardian Connection
+2116568178|d5c95060||Bloody Baron
+2116568179|d5c95061||Ciri's Story: The King of the Wolves
+2116568180|d5c95062||Family Matters
+2116568181|d5c95063||A Princess in Distress
+2116568182|d5c95064||Ciri's Story: The Race
+2116568183|d5c95065||Ciri's Story: Out of the Shadows
+2116568184|d5c95066||Hunting a Witch
+2116568185|d5c95067||Wandering in the Dark
+2116568186|d5c9507d||Ladies of the Wood
+2116568187|d5c9507e||The Whispering Hillock
+2116568188|d5c9507f||Ciri's Story: Fleeing the Bog
+2116568189|77955f5b||Pyres of Novigrad
+2116568190|77955f5c||Novigrad Dreaming
+2116568191|77955f5d||Broken Flowers
+2116568192|77955f5e||Get Junior
+2116568193|77955f5f||Ciri's Story: Visiting Junior
+2116568194|77955f60||Count Reuven's Treasure
+2116568195|77955f61||A Favor for Radovid
+2116568196|77955f62||The Play's the Thing
+2116568197|77955f63||A Poet Under Pressure
+2116568198|77955f79||Ciri's Story: Breakneck Speed
+2116568199|25271843||Destination: Skellige
+2116568200|25271844||The King is Dead – Long Live the King
+2116568201|25271845||Echoes of the Past
+2116568202|25271846||Missing Persons
+2116568203|25271847||Nameless
+2116568204|25271848||The Calm Before the Storm
+2116568205|25271849||A Mysterious Passenger
+2116568206|5115867c||Ugly Baby
+2116568207|5115867d||Disturbance
+2116568208|5115867e||To Bait a Forktail...
+2116568209|5115867f||The Final Trial
+2116568210|51158680||No Place Like Home
+2116568211|51158681||Va Fail, Elaine
+2116568212|51158682||Brothers In Arms: Velen
+2116568213|51158683||Brothers In Arms: Novigrad
+2116568214|51158684||Brothers In Arms: Skellige
+2116568215|5115869a||Brothers In Arms: Nilfgaard
+2116568216|5115869b||The Isle of Mists
+2116568217|5115869c||The Battle of Kaer Morhen
+2116568218|5115869d||Blood on the Battlefield
+2116568219|5115fadb||Bald Mountain
+2116568220|5115fadc||Final Preparations
+2116568221|5115fadd||Blindingly Obvious
+2116568222|5115fade||The Great Escape
+2116568223|5115fadf||Payback
+2116568224|5115fae0||Through Time and Space
+2116568225|5115fae1||Battle Preparations
+2116568226|5115fae2||The Sunstone
+2116568227|5115fae3||Veni Vidi Vigo
+2116568228|5115faf9||Child of the Elder Blood
+2116568229|5115fafa||Skjall's Grave
+2116568230|5115fafb||On Thin Ice
+2116568231|5115fafc||Tedd Deireadh, The Final Age
+2116568232|5115fafd||Something Ends, Something Begins
+2116568233|d3efe963||Evil's Soft First Touches
+2116568234|d3efe964||Dead Man's Party
+2116568235|d3efe965||Open Sesame!
+2116568236|d3efe966||Open Sesame: Witcher Seasonings
+2116568237|d3efe967||Open Sesame: Breaking and Entering
+2116568238|d3efe968||Open Sesame: The Safecracker
+2116568239|d3efe969||Scenes From a Marriage
+2116568240|d3efe96a||Whatsoever a Man Soweth...
+2116568241|69fc0376||Envoys, Wineboys
+2116568242|69fc0377||The Beast of Toussaint
+2116568243|69fc0378||Blood Run
+2116568244|69fc0379||La Cage au Fou
+2116568245|69fc037a||Where Children Toil, Toys Waste Away
+2116568246|69fc037b||Wine is Sacred
+2116568247|69fc037c||The Man from Cintra
+2116568248|69fc037d||Capture the Castle
+2116568249|69fc037e||The Night of Long Fangs
+2116568250|69fc0394||Beyond Hill and Dale...
+2116568251|69fc0395||Blood Simple
+2116568252|69fc0396||What Lies Unseen
+2116568253|69fc0397||Tesham Mutna
+2116568254|69fc0398||Pomp and Strange Circumstance
+2116568255|69fc0399||Burlap is the New Stripe
+2116568256|69fc039a||Be It Ever So Humble...
+2116568257|28ebf2b8||A Frying Pan, Spick and Span
+2116568258|28ebf2b9||Epilogue: Faithful Friend <font size="17">(Empress Ending Only)</font>
+2116568259|28ebf2ba||Missing in Action
+2116568260|28ebf2bb||On Death's Bed
+2116568261|28ebf2bc||Precious Cargo
+2116568262|28ebf2bd||Twisted Firestarter
+2116568263|2b2b1240||A Dog's Life
+2116568264|2b2b1241||A Favor for a Friend
+2116568265|2b2b1242||A Greedy God
+2116568266|2b2b1243||A Towerful of Mice
+2116568267|2b2b1244||An Invitation from Keira Metz
+2116568268|2b2b1245||Bitter Harvest
+2116568269|2b2b1246||Blood Ties
+2116568270|2b2b1247||Ciri's Room
+2116568271|2b2b1248||Death By Fire
+2116568272|2b2b125e||Defender of the Faith
+2116568273|2b2b125f||Fake Papers
+2116568274|2b2b1260||Fists of Fury: Velen
+2116568275|2b2b1261||Fools' Gold
+2116568276|2b2b1262||For the Advancement of Learning
+2116568277|2b2b1263||Forefathers' Eve
+2116568278|2b2b1264||Funeral Pyres
+2116568279|2b2b1265||Ghosts of the Past
+2116568280|2b2b1266||Gwent: Velen Players
+2116568281|2b2b1267||Hazardous Goods
+2116568282|2b2b127d||Last Rites
+2116568283|2b2b127e||Love's Cruel Snares
+2116568284|2b2b127f||Lynch Mob
+2116568285|2b2b1280||Magic Lamp
+2116568286|2b2b1281||Races: Crow's Perch
+2116568287|2b2b1282||Return to Crookback Bog
+2116568288|2b2b1283||Take What You Want
+2116568289|2b2b1284||The Fall of the House of Reardon
+2116568290|2b2b1285||The Truth is in the Stars
+2116568291|2b2b129c||Thou Shalt Not Pass
+2116568292|2b2b129d||Where the Cat and Wolf Play...
+2116568293|2b2b129e||Wild at Heart
+2116568294|2b2b129f||Witcher Wannabe
+2116568295|2b2b12a0||In the Eternal Fire's Shadow
+2116568296|2b2b1356||Little Sisters
+2116568297|881632b8||A Barnful of Trouble
+2116568298|881632b9||A Dangerous Game
+2116568299|881632ba||A Deadly Plot
+2116568300|881632bb||A Feast for Crows
+2116568301|881632bc||A Final Kindness
+2116568302|881632bd||A Matter of Life and Death
+2116568303|881632be||A Midnight Clear
+2116568304|881632bf||A Tome Entombed
+2116568305|881632c0||A Walk on the Waterfront
+2116568306|881632d6||An Eye for an Eye
+2116568307|881632d7||Avid Collector
+2116568308|881632d8||Cabaret
+2116568309|881632d9||Carnal Sins
+2116568310|881632da||Empty Coop
+2116568311|881632db||Enchanting: Quality Has Its Price
+2116568312|881632dc||Enchanting: Start-up Costs
+2116568313|881632dd||Fencing Lessons
+2116568314|881632de||Fists of Fury: Novigrad
+2116568315|881632df||Gwent: Big City Players
+2116568316|881632f5||Gwent: Playing Innkeeps
+2116568317|881632f6||Gwent: Playing Thaler
+2116568318|881632f7||Haunted House
+2116568319|881632f8||Hey, You Wanna Look at my Stuff?
+2116568320|881632f9||Hidden Messages of the Nilfgaardian Kind
+2116568321|881632fa||High Stakes
+2116568322|881632fb||Honor Among Thieves
+2116568323|881632fc||It Takes Three to Tango
+2116568324|881632fd||Little Red
+2116568325|881632fe||Message from an Old Friend
+2116568326|88163314||Novigrad Hospitality
+2116568327|88163315||Novigrad, Closed City
+2116568328|88163316||Now or Never
+2116568329|88163317||Of Dairy and Darkness
+2116568330|88163318||Of Swords and Dumplings
+2116568331|88163319||Out On Your Arse!
+2116568332|8816331a||Race: The Great Erasmus Vegelbud Memorial Derby
+2116568333|8816331b||Races: Swift as the Western Winds
+2116568334|8816331c||Reason of State
+2116568335|8816331d||Redania's Most Wanted
+2116568336|88163333||Rose on a Red Field
+2116568337|88163334||Rough Neighborhood
+2116568338|88163335||Spooked Mare
+2116568339|88163336||The Dwarven Document Dilemma
+2116568340|88163337||The Gangs of Novigrad
+2116568341|88163338||The Nobleman Statuette
+2116568342|88163339||The Soldier Statuette
+2116568343|8816333a||The Taxman Cometh
+2116568344|8816333b||The Volunteer
+2116568345|8816333c||Warehouse of Woe
+2116568346|88163352||Without a Trace
+2116568347|88163353||Novigrad, Closed City II
+2116568348|88163354||Enchanting: Mastery Demands Sacrifice
+2116568349|881633ce||Ciri's Sole Memento
+2116568350|f7f89fa0||A Bard's Beloved
+2116568351|f7f89fa1||A Hallowed Horn
+2116568352|f7f89fa2||Abandoned Sawmill
+2116568353|f7f89fa3||An Unpaid Debt
+2116568354|f7f89fa4||Armed Assault
+2116568355|f7f89fa5||Brave Fools Die Young
+2116568356|f7f89fa6||Coronation
+2116568357|f7f89fa7||Crime and Punishment
+2116568358|f7f89fa8||Finders Keepers
+2116568359|f7f89fbe||Fists of Fury: Champion of Champions
+2116568360|f7f89fbf||Fists of Fury: Skellige
+2116568361|f7f89fc0||Flesh for Sale
+2116568362|f7f89fc1||For Fame and Glory
+2116568363|f7f89fc2||Free Spirit
+2116568364|f7f89fc3||From a Land Far, Far Away
+2116568365|f7f89fc4||Gwent: Skellige Style
+2116568366|f7f89fc5||Hard Times
+2116568367|f7f89fc6||In Wolf's Clothing
+2116568368|f7f89fc7||Iron Maiden
+2116568369|f7f89fdd||King's Gambit
+2116568370|f7f89fde||Master of the Arena
+2116568371|f7f89fdf||Peace Disturbed
+2116568372|f7f89fe0||Possession
+2116568373|f7f89fe1||Practicum in Advanced Alchemy
+2116568374|f7f89fe2||Shock Therapy
+2116568375|f7f89fe3||Stranger in a Strange Land
+2116568376|f7f89fe4||Taken as a Lass
+2116568377|f7f89fe5||The Cave of Dreams
+2116568378|f7f89fe6||The Family Blade
+2116568379|f7f89ffc||The Heroes' Pursuits: Fayrlund
+2116568380|f7f89ffd||The Heroes' Pursuits: For the Goddess' Glory
+2116568381|f7f89ffe||The Heroes' Pursuits: Fyresdal
+2116568382|f7f89fff||The Heroes' Pursuits: Kaer Trolde
+2116568383|f7f8a000||The Last Wish
+2116568384|f7f8a001||The Lord of Undvik
+2116568385|f7f8a002||The Nithing
+2116568386|f7f8a003||The Path of Warriors
+2116568387|f7f8a004||The Price of Honor
+2116568388|f7f8a005||The Sad Tale of the Grossbart Brothers
+2116568389|f7f8a01b||The Tower Outta Nowheres
+2116568390|f7f8a01c||Worthy of Trust
+2116568391|23ff3536||Berengar's Blade
+2116568392|23ff3537||Greenhouse Effect
+2116568393|23ff3538||Monster Slayer
+2116568394|23ff3539||The Bastion
+2116568395|23ff353a||The Witchers' Forge
+2116568396|e8bf00de||A Knight's Tales
+2116568397|e8bf00df||A Portrait of the Witcher as an Old Man
+2116568398|e8bf00e0||Amidst the Mill's Grist
+2116568399|e8bf00e1||Big Feet to Fill
+2116568400|e8bf00e2||Big Feet to Fill: The First Group
+2116568401|e8bf00e3||Big Feet to Fill: The Second Group
+2116568402|e8bf00e4||Big Feet to Fill: The Third Group
+2116568403|e8bf00e5||Big Feet to Fill: The Forth Group
+2116568404|e8bf00e6||Big Feet to Fill: The Fifth Group
+2116568405|e8bf00fc||Duck, Duck, Goosed!
+2116568406|e8bf00fd||Extreme Cosplay
+2116568407|e8bf00fe||Father Knows Worst
+2116568408|e8bf00ff||Fists of Fury: Toussaint
+2116568409|e8bf0100||Goodness, Gracious, Great Balls of Granite!
+2116568410|e8bf0101||Gwent: Never Fear, Skellige's Here
+2116568411|e8bf0102||Gwent: To Everything - Turn, Turn, Tournament!
+2116568412|e8bf0103||Knight for Hire
+2116568413|e8bf0104||Master Master Master Master!
+2116568414|e8bf0105||Mutual of Beauclair's Wild Kingdom
+2116568415|e8bf011b||No Place Like Home
+2116568416|e8bf011c||Of Sheers and a Witcher I Sing
+2116568417|e8bf011d||Paperchase
+2116568418|e8bf011e||Raging Wolf
+2116568419|e8bf011f||The Hunger Game
+2116568420|e8bf0120||The Perks of Being a Jailbird
+2116568421|e8bf0121||The Warble of a Smitten Knight
+2116568422|e8bf0122||The Words of the Prophets Are Written on Sarcophagi
+2116568423|e8bf0123||There Can Be Only One
+2116568424|e8bf0124||Till Death Do You Part
+2116568425|e8bf013a||Turn and Face the Strange
+2116568426|e8bf013b||Vintner's Contract: Chuchote Cave
+2116568427|e8bf013c||Vintner's Contract: Cleaning Those Hard-to-Reach Places
+2116568428|e8bf013d||Vintner's Contract: Duchaton Crest
+2116568429|e8bf013e||Vintner's Contract: Dun Tynne Hillside
+2116568430|e8bf013f||Vintner's Contract: Rivecalme Storehouse
+2116568431|e8bf0140||Wine Wars: Belgaard
+2116568432|e8bf0141||Wine Wars: Consorting
+2116568433|e8bf0142||Wine Wars: Coronata
+2116568434|e8bf0143||Wine Wars: The Deus in the Machina
+2116568435|e8bf0159||Wine Wars: Vermentino
+2116568436|e8bf01f4||A Night To Remember
+2116568437|e787091a||Black Pearl
+2116568438|e787091b||Collect 'Em All
+2116568439|e787091c||Following the Thread
+2116568440|e787091d||Gwent: Old Pals
+2116568441|e787091e||Master Armorers
+2116568442|0fc3d7b3||Contract: Devil by the Well
+2116568443|efaf01a5||Contract: Jenny o' the Woods
+2116568444|efaf01a6||Contract: Missing Brother
+2116568445|efaf01a7||Contract: Mysterious Tracks
+2116568446|efaf01a8||Contract: Patrol Gone Missing
+2116568447|efaf01a9||Contract: Phantom of the Trade Route
+2116568448|efaf01aa||Contract: Shrieker
+2116568449|efaf01ab||Contract: Swamp Thing
+2116568450|efaf01ac||Contract: The Beast of Honorton
+2116568451|efaf01ad||Contract: The Griffin from the Highlands
+2116568452|efaf01c3||Contract: The Merry Widow
+2116568453|efaf01c4||Contract: The Mystery of the Byways Murders
+2116568454|efaf01c5||Contract: Woodland Beast
+2116568455|3d85cd33||Contract: An Elusive Thief
+2116568456|3d85cd34||Contract: Deadly Delights
+2116568457|3d85cd35||Contract: Doors Slamming Shut
+2116568458|3d85cd36||Contract: Lord of the Wood
+2116568459|3d85cd37||Contract: The Apiarian Phantom
+2116568460|3d85cd38||Contract: The Creature from Oxenfurt Forest
+2116568461|3d85cd39||Contract: The Oxenfurt Drunk
+2116568462|3d85cd3a||Contract: The White Lady
+2116568463|ad683a1b||Contract: Dragon
+2116568464|ad683a1c||Contract: Here Comes the Groom
+2116568465|ad683a1d||Contract: Missing Miners
+2116568466|ad683a1e||Contract: Missing Son
+2116568467|ad683a1f||Contract: Muire D'yaeblen
+2116568468|ad683a20||Contract: Skellige's Most Wanted
+2116568469|ad683a21||Contract: Strange Beast
+2116568470|ad683a22||Contract: The Phantom of Eldberg
+2116568471|ad683a23||In the Heart of the Woods
+2116568472|e142b5c3||Contract: Big Game Hunter
+2116568473|e142b5c4||Contract: Bovine Blues
+2116568474|e142b5c5||Contract: The Tufo Monster
+2116568475|e142b5c6||Contract: Equine Phantoms
+2116568476|e142b5c7||Contract: Feet as Cold as Ice
+2116568477|df49e0e3||Deserter Gold
+2116568478|df49e0e4||Dirty Funds
+2116568479|df49e0e5||Temerian Valuables
+2116568480|8efbee75||A Costly Mistake
+2116568481|8efbee76||A Plea Ignored
+2116568482|8efbee77||An Unfortunate Turn of Events
+2116568483|8efbee78||Battlefield Loot
+2116568484|8efbee79||Blood Gold
+2116568485|8efbee7a||Don't Play with the Gods
+2116568486|8efbee7b||Dowry
+2116568487|8efbee7c||Hidden from the World
+2116568488|8efbee7d||Lost Goods
+2116568489|8efbee93||Out of the Frying Pan, into the Fire
+2116568490|8efbee94||Queen Zuleyka's Treasure
+2116568491|8efbee95||Sunken Chest
+2116568492|8efbee96||Sunken Treasure
+2116568493|8efbee97||The Dead Have No Defense
+2116568494|8efbee98||The Things Men Do For Coin...
+2116568495|8efbee99||Tough Luck
+2116568496|365fee63||A Dark Legacy
+2116568497|365fee64||A Surprise Inheritance
+2116568498|365fee65||Coast of Wrecks
+2116568499|365fee66||From Ofier's Distant Shores
+2116568500|365fee67||The Cursed Chapel
+2116568501|365fee68||The Drakenborg Redemption
+2116568502|365fee69||The Royal Air Force
+2116568503|365fee6a||The Secret Life of Count Romilly
+2116568504|365fee6b||The Sword, Famine and Perfidy
+2116568505|365fee81||Tinker, Hunter, Soldier, Spy
+2116568506|a6425b4b||Family Fortune
+2116568507|a6425b4c||Freya Be Praised!
+2116568508|a6425b4d||Hidden in the Depths
+2116568509|a6425b4e||Inheritance
+2116568510|a6425b4f||Ironsides' Treasure
+2116568511|a6425b50||Nilfgaardian Treasure
+2116568512|a6425b51||Not Only Eagles Dare
+2116568513|a6425b52||Pearls of the Coast
+2116568514|a6425b53||Precious Haul
+2116568515|a6425b69||Ruins, Hidden Treasure, You Know...
+2116568516|a6425b6a||Shortcut
+2116568517|a6425b6b||Unlucky's Treasure
+2116568518|a6425b6c||X Marks the Spot
+2116568519|03acba93||Applied Escapology
+2116568520|03acba94||Around the World in... Eight Days
+2116568521|03acba95||But Other Than That, How Did You Enjoy the Play?
+2116568522|03acba96||Coin Doesn't Stink
+2116568523|03acba97||Don't Take Candy from a Stranger
+2116568524|03acba98||Filibert Always Pays His Debts
+2116568525|03acba99||Spoontaneous Profits!
+2116568526|03acba9a||The Black Widow
+2116568527|03acba9b||The Curse of Carnarvon
+2116568528|03acbab1||The Inconstant Gardener
+2116568529|03acbab2||The Last Exploits of Selina's Gang
+2116568530|03acbab3||The Suffering of Young Francois
+2116568531|03acbab4||The Toussaint Prison Experiment
+2116568532|03acbab5||Waiting for Goe and Doh
+2116568533|03acbab6||What Was This About Again?
+2116568534|5a55f5e5||Scavenger Hunt: Viper School Gear
+2116568535|5a55f5e6||Scavenger Hunt: Grandmaster Manticore Gear
+2116568536|5a55f5e7||Scavenger Hunt: Commando Gear
+2116568537|5a55f5e8||Scavenger Hunt: Infiltrator's Gear
+2116568538|5a55f5e9||Scavenger Hunt: Mastercrafted Tordarroch Gear
+2116568539|5a55f5ea||Scavenger Hunt: Forgotten Wolf School Gear Diagrams
+2116568540|cdc2a6fb||Scavenger Hunt: Griffin School Gear
+2116568541|cdc2a6fc||Scavenger Hunt: Griffin School Gear - Part 1
+2116568542|cdc2a6fd||Scavenger Hunt: Griffin School Gear - Part 2
+2116568543|cdc2a6fe||Scavenger Hunt: Griffin School Gear - Part 3
+2116568544|cdc2a6ff||Scavenger Hunt: Griffin School Gear - Part 4
+2116568545|cdc2a700||Scavenger Hunt: Grandmaster Griffin Gear
+2116568546|10dd2837||Scavenger Hunt: Cat School Gear
+2116568547|10dd2838||Scavenger Hunt: Cat School Gear - Part 1
+2116568548|10dd2839||Scavenger Hunt: Cat School Gear - Part 2
+2116568549|10dd283a||Scavenger Hunt: Cat School Gear - Part 3
+2116568550|10dd283b||Scavenger Hunt: Cat School Gear - Part 4
+2116568551|10dd283c||Scavenger Hunt: Grandmaster Feline Gear
+2116568552|c1e5046e||Scavenger Hunt: Bear School Gear
+2116568553|c1e5046f||Scavenger Hunt: Bear School Gear - Part 1
+2116568554|c1e50470||Scavenger Hunt: Bear School Gear - Part 2
+2116568555|c1e50471||Scavenger Hunt: Bear School Gear - Part 3
+2116568556|c1e50472||Scavenger Hunt: Bear School Gear - Part 4
+2116568557|c1e50473||Scavenger Hunt: Grandmaster Ursine Gear
+2116568558|213f438f||Scavenger Hunt: Wolf School Gear
+2116568559|213f4390||Scavenger Hunt: Wolf School Gear - Part 1
+2116568560|213f4391||Scavenger Hunt: Wolf School Gear - Part 2
+2116568561|213f4392||Scavenger Hunt: Wolf School Gear - Part 3
+2116568562|213f4393||Scavenger Hunt: Wolf School Gear - Part 4
+2116568563|213f4394||Scavenger Hunt: Wolf School Gear - Part 5
+2116568564|213f4395||Scavenger Hunt: Wolf School Gear - Part 6
+2116568565|213f4396||Scavenger Hunt: Grandmaster Wolven Gear
+2116568566|cace194c||At the Mercy of Strangers
+2116568567|cace194d||Caravan Attack
+2116568568|cace194e||The Troll Bridge Crossing
+2116568569|cace194f||The Crossing of Lindenvale
+2116568570|cace1950||A Most Deadly Crossing
+2116568571|cace1951||Face Me if You Dare!
+2116568572|cace1952||Harassing a Troll
+2116568573|cace1953||Highway Robbery
+2116568574|cace1954||Highwayman's Cache
+2116568575|cace196a||Heatherton Looters
+2116568576|cace196b||Codgers' Quarry Looters
+2116568577|cace196c||Toderas Looters
+2116568578|cace196d||Man's Best Friend
+2116568579|cace196e||The Grateful Merchant
+2116568580|a4c7402c||A Warm Welcome
+2116568581|a4c7402d||At the Mercy of Strangers
+2116568582|a4c7402e||Drunken Rabble
+2116568583|a4c7402f||The Defender of Maid Bilberry
+2116568584|a4c74030||Unlearned Lessons
+2116568585|a4c74031||Karmic Justice
+2116568586|a4c74032||Never Trust Children
+2116568587|a4c74033||Dye Pit Racists
+2116568588|a4c74034||The Racists of Novigrad
+2116568589|a4c7404a||Strangers in the Night
+2116568590|a4c7404b||Strumpet in Distress
+2116568591|a4c7404c||Suspicious Shakedown
+2116568592|a4c7404d||The Flame of Hatred
+2116568593|a4c7404e||The Most Truest of Basilisks
+2116568594|a4c7404f||The Price of Passage
+2116568595|a4c74050||Witch Hunter Raids
+2116568596|a4c74051||Another Price of Passage
+2116568597|a4c74052||The Final Price of Passage
+2116568598|a4c74053||The Ambush
+2116568599|14a9ad14||Call of the Wild
+2116568600|14a9ad15||Farting Trolls
+2116568601|14a9ad16||Siren's Call
+2116568602|14a9ad17||Sweet Bait
+2116568603|14a9ad18||The Four Faces of Hemdall
+2116568604|14a9ad19||Woe is Me
+2116568605|14a9ad1a||Yustianna Disturbed
+2116568606|d8a2b5aa||Trail of Echoes
+2116568607|81c62691||Abandoned Village
+2116568608|81c62692||Broken Bridge
+2116568609|81c62693||Cackler Bridge
+2116568610|81c62694||Crossroads
+2116568611|81c62695||Ford
+2116568612|81c62696||Mill
+2116568613|81c62697||Nilfgaardian Garrison
+2116568614|81c62698||Ransacked Village
+2116568615|81c62699||Sawmill
+2116568616|81c626af||Woesong Bridge
+2116568617|81c626b0||King Desmond Bridge
+2116568618|75568b4f||Bastion
+2116568619|75568b54||Chort's Cave
+2116568620|75568b55||Circle of Elements
+2116568621|75568b50||Iron Mine
+2116568622|75568b51||Kaer Morhen
+2116568623|75568b56||Kaer Morhen Courtyard
+2116568624|75568b57||Kaer Morhen Valley
+2116568625|75568b52||Lakeside Hut
+2116568626|75568b53||Ruined Watchtower
+2116568627|75568b6d||Trials' Cave
+2116568628|5efa9087||Abandoned Tower
+2116568629|5efa9088||Ancient Oak
+2116568630|5efa9089||Bandits' Camp
+2116568631|5efa908a||Benek
+2116568632|5efa908b||Blackbough
+2116568633|5efa908c||Boatmaker's Hut
+2116568634|5efa908d||Border Post
+2116568635|5efa908e||Burned Ruins
+2116568636|5efa908f||Byways
+2116568637|5efa90a5||Claywich
+2116568638|5efa90a6||Coast of Wrecks
+2116568639|5efa90a7||Codgers' Quarry
+2116568640|5efa90a8||Condyle
+2116568641|5efa919d||Crookback Bog
+2116568642|5efa90a9||Crossroads
+2116568643|5efa90aa||Crow's Perch
+2116568644|5efa9127||Castle Village
+2116568645|5efa90ab||Destroyed Bastion
+2116568646|5efa90ac||Devil's Pit
+2116568647|5efa90ad||Downwarren
+2116568648|5efa90ae||Dragonslayer's Grotto
+2116568649|5efa90c4||Drudge
+2116568650|5efa90c5||Duen Hen
+2116568651|5efa90c6||Ferry Station
+2116568652|5efa90c7||Forest Hut
+2116568653|5efa90c8||Frischlow
+2116568654|5efa90c9||Fyke Isle
+2116568655|5efa90ca||Grotto
+2116568656|5efa90cb||Hanged Man's Tree
+2116568657|5efa90cc||Hangmans' Alley
+2116568658|5efa90cd||Harpy Feeding Ground
+2116568659|5efa90e3||Heatherton
+2116568660|5efa90e4||Hindhold
+2116568661|5efa919f||Honorton
+2116568662|5efa90e5||House of Respite
+2116568663|5efa90e6||Inn at the Crossroads
+2116568664|5efa90e7||Isolated Shack
+2116568665|5efa90e8||Kimbolt Way
+2116568666|5efa90e9||Lindenvale
+2116568667|5efa90ea||Lornruk
+2116568668|5efa90eb||Lurtch
+2116568669|5efa90ec||Maurauder's Bridge
+2116568670|5efa9102||Midcopse
+2116568671|5efa91a0||Mowshurst
+2116568672|5efa9103||Mulbrydale
+2116568673|5efa9104||Nilfgaardian Army Group 'Center' Camp
+2116568674|5efa9105||Olena's Grove
+2116568675|5efa9106||Oreton
+2116568676|5efa91a1||Oxenfurt Bridge
+2116568677|5efa91a2||Pellar's Hut
+2116568678|5efa9107||Reardon Manor
+2116568679|5efa9108||Refugees' Camp
+2116568680|5efa9109||Road to Bald Mountain
+2116568681|5efa910a||Ruined Tower
+2116568682|5efa910b||Stonecutter's Settlement
+2116568683|5efa9121||The Orphans of Crookback Bog
+2116568684|5efa9122||Toderas
+2116568685|5efa9123||Troll Bridge
+2116568686|5efa9124||Wastrel Manor
+2116568687|5efa9125||White Eagle Fort
+2116568688|5efa91a3||Witch's Hut
+2116568689|5efa9126||Wolven Glade
+2116568690|5efa91a4||Nilfgaardian Camp
+2116568691|c74e3b11||Aeramas' Abandoned Manor
+2116568692|c74e3b12||Alness
+2116568693|c74e3b13||Arette
+2116568694|c74e3b14||Arnskrone Castle Ruins
+2116568695|c74e3c10||Barrengarth
+2116568696|c74e3b15||Bowdon
+2116568697|c74e3b16||Brunwich
+2116568698|c74e3b17||Carsten
+2116568699|c74e3b18||Cavern
+2116568700|c74e3b19||Crane Cape
+2116568701|c74e3c11||Crippled Kate's
+2116568702|c74e3b2f||Crossroads
+2116568703|c74e3b30||Cunny of the Goose
+2116568704|c74e3b31||Dancing Windmill
+2116568705|c74e3b32||Drahim Castle
+2116568706|c74e3b33||Draken Hollow Outpost
+2116568707|c74e3b34||Electors' Square
+2116568708|c74e3b35||Erde
+2116568709|c74e3b36||Est Tayiar
+2116568710|c74e3b37||Eternal Fire Chapel
+2116568711|c74e3c27||Farcorners
+2116568712|c74e3b38||Garin Estate
+2116568713|c74e3b4e||Gate of the Hierarch
+2116568714|c74e3c28||Gildorf
+2116568715|c74e3b4f||Glory Gate
+2116568716|c74e3b50||Gustfields Farm
+2116568717|c74e3c29||Harborside
+2116568718|c74e3c2a||Hattori's Workshop
+2116568719|c74e3b51||Heddel
+2116568720|c74e3b52||Herbalist's Hut
+2116568721|c74e3b53||Hierarch Square
+2116568722|c74e3b54||Honeyfill Meadworks
+2116568723|c74e3b55||Hunter's Cottage
+2116568724|c74e3b56||Isolated Hut
+2116568725|c74e3b57||Kilkerinn Ruins
+2116568726|c74e3b6d||Lighthouse
+2116568727|c74e3b6e||Loggers' Hut
+2116568728|c74e3b6f||Lucian's Windmill
+2116568729|c74e3b70||Martin Fruille's Farmstead
+2116568730|c74e3b71||Moldavie Residence
+2116568731|c74e3c2b||Novigrad Bridge
+2116568732|c74e3b72||Novigrad Docks
+2116568733|c74e3b73||Novigrad Gate
+2116568734|c74e3c2c||Oxenfurt Academy
+2116568735|c74e3b74||Oxenfurt Gate
+2116568736|c74e3b75||Oxenfurt Harbor
+2116568737|c74e3c2d||Passiflora
+2116568738|c74e3b76||Portside Gate
+2116568739|c74e3b8c||Sarrasin Grange
+2116568740|c74e3b8d||Seven Cats Inn
+2116568741|c74e3c2e||Sigi Reuven's Bathhouse
+2116568742|c74e3c2f||Silverton
+2116568743|c74e3b8e||Southern Gate
+2116568744|c74e3b8f||St. Gregory's Bridge
+2116568745|c74e3b90||Temerian Partisan Hideout
+2116568746|c74e3c30||The Bits
+2116568747|c74e3b91||Tretogor Gate
+2116568748|c74e3b92||Upper Mill
+2116568749|c74e3b93||Ursten
+2116568750|c74e3b94||Vegelbud Residence
+2116568751|c74e3b95||Vikk Watchtower
+2116568752|c74e3bab||Von Everec Estate
+2116568753|c74e3bac||Western Gate
+2116568754|c74e3bad||Wheat Fields
+2116568755|c74e3bae||Widows' Grotto
+2116568756|c74e3baf||Winespring Grange
+2116568757|c74e3bb0||Yantra
+2116568758|c74e3bb1||Zuetzer Castle
+2116568759|3730a7f9||Abandoned Sawmill
+2116568760|3730a7fa||Abandoned Village
+2116568761|3730a7fb||Ancient Crypt
+2116568762|3730a90f||Ard Hugtand
+2116568763|3730a7fc||Arinbjorn
+2116568764|3730a7fd||Bay Of Winds
+2116568765|3730a7fe||Blandare
+2116568766|3730a7ff||Boxholm
+2116568767|3730a800||Bridge to Kaer Trolde
+2116568768|3730a910||Castle Tuirseach
+2116568769|3730a801||Clan Tordarroch Forge
+2116568770|3730a817||Crossroads
+2116568771|3730a818||Distillery
+2116568772|3730a819||Dorve Ruins
+2116568773|3730a81a||Druids' Camp
+2116568774|3730a81b||Eldberg Lighthouse
+2116568775|3730a81c||Elverum Lighthouse
+2116568776|3730a81d||Fayrlund
+2116568777|3730a81e||Fornhala
+2116568778|3730a81f||Freya's Garden
+2116568779|3730a820||Fyresdal
+2116568780|3730a836||Gedyneith
+2116568781|3730a837||Giants' Toes
+2116568782|3730a838||Grotto
+2116568783|3730a839||Gull Point
+2116568784|3730a83a||Harviken
+2116568785|3730a83b||Holmstein's Port
+2116568786|3730a83c||Hov
+2116568787|3730a83d||Isolated Hut
+2116568788|3730a83e||Kaer Almhult
+2116568789|3730a911||Kaer Dhu
+2116568790|3730a83f||Kaer Gelen
+2116568791|3730a855||Kaer Muire
+2116568792|3730a912||Kaer Nyssen
+2116568793|3730a856||Kaer Trolde Harbor
+2116568794|3730a913||Kaer Trolde Village
+2116568795|3730a857||Larvik
+2116568796|3730a858||Lofoten
+2116568797|3730a859||Lofoten Cemetery
+2116568798|3730a85a||Lurthen
+2116568799|3730a85b||Marlin Coast
+2116568800|3730a914||Melusine's Cave
+2116568801|3730a85c||Miners' Camp
+2116568802|3730a85d||Old Watchtower
+2116568803|3730a85e||Palisade
+2116568804|3730a874||Rannvaig
+2116568805|3730a875||Redgill
+2116568806|3730a876||Rogne
+2116568807|3730a877||Ruined Inn
+2116568808|3730a915||Snidhall Isle
+2116568809|3730a878||Sund
+2116568810|3730a879||Svorlag
+2116568811|3730a87a||The Pali Gap Coast
+2116568812|3730a87b||Trail to Yngvar's Fang
+2116568813|3730a87c||Trottheim
+2116568814|3730a87d||Urialla Harbor
+2116568815|3730a893||Urskar
+2116568816|3730a894||Whale Graveyard
+2116568817|3730a895||Wild Shore
+2116568818|3730a896||Yngvar's Fang
+2116568819|3730a897||Yustinna's Grotto
+2116568820|3730a916||Hemdall's Shrine
+2116568821|908804bb||Abandoned Storehouse
+2116568822|908803a5||Ardaiso Quarry
+2116568823|908803a6||Arthach Palace Ruins
+2116568824|908803a7||Basane Farm
+2116568825|908804bc||Bastoy Prison Ruins
+2116568826|908803a8||Beauclair Palace
+2116568827|908803a9||Beauclair Port
+2116568828|908803aa||Belgaard Vineyard
+2116568829|908803ab||Castel Ravello Vineyard
+2116568830|908803ac||Casteldaccia Abandoned Estate
+2116568831|908803ad||Chuchote Cave
+2116568832|908803c3||Coopers' Gate
+2116568833|908803c4||Coronata Vineyard
+2116568834|908803c5||Corvo Bianco Vineyard
+2116568835|908803c6||Count de la Croix's Mill
+2116568836|908803c7||Delcinea Windmill
+2116568837|908804bd||Doren Alma Estate
+2116568838|908803c8||Dun Tynne Castle
+2116568839|908803c9||Dun Tynne Crossroads
+2116568840|908803ca||Dun Tynne Hillside
+2116568841|908803cb||Flovive
+2116568842|908803cc||Fort Astre Ruins
+2116568843|908803e2||Fort Ussar Ruins
+2116568844|908803e3||Fox Hollow
+2116568845|908803e4||Francollarts
+2116568846|908803e5||Gelenser Farm
+2116568847|908803e6||Harbor Gate
+2116568848|908803e7||Hortense Vineyard
+2116568849|908804be||Lac Célavy
+2116568850|908804bf||Lazare Lafargue's Workshop
+2116568851|908803e8||Lebioda's Gate
+2116568852|908803e9||Mere-Lachaiselongue Cemetery
+2116568853|908803ea||Metinna Gate
+2116568854|908803eb||Mont Crane Castle
+2116568855|90880401||Nilfgaardian Embassy
+2116568856|90880402||Palace Gardens
+2116568857|90880403||Plegmund's Bridge
+2116568858|90880404||Prophet Lebioda Statue
+2116568859|90880405||Rioux-Cannes Outpost
+2116568860|90880406||San Sebastian
+2116568861|90880407||Sansretour Valley
+2116568862|90880408||Seidhe Llygad Amphitheater
+2116568863|90880409||Termes Palace Ruins
+2116568864|9088040a||Tesham Mutna Ruins
+2116568865|908804c0||The Belles of Beauclair
+2116568866|90880420||The Cockatrice Inn
+2116568867|90880421||The Gran'place
+2116568868|90880422||The Silver Salamander Inn
+2116568869|90880423||Tourney Grounds
+2116568870|90880424||Toussaint Prison
+2116568871|90880425||Trading Post
+2116568872|90880426||Trastamara Hunting Cottage
+2116568873|908804c1||Vermentino Vineyard
+2116568874|908804c2||Villa Vedette
+2116568875|ff7ab81d||Igni: Mill
+2116568876|ff7ab81e||Axii: Sawmill
+2116568877|ff7ab81f||Aard: Mill
+2116568878|ff7ab820||Quen: Cackler Bridge
+2116568879|ff7ab821||Quen: Broken Bridge
+2116568880|ff7ab822||Yrden: Abandoned Village
+2116568881|be7bbd99||Igni: Fort Ussar Ruins
+2116568882|be7bbd9a||Axii: Rioux-Cannes Outpost
+2116568883|be7bbd9b||Aard: Hortense Vineyard
+2116568884|be7bbd9c||Quen: Termes Palace Ruins
+2116568885|be7bbd9d||Yrden: Arthach Palace Ruins
+2116568886|a7c1729d||Axii: Alness
+2116568887|a7c1729e||Igni: Electors' Square
+2116568888|05da0fdb||Igni: Ruined Watchtower
+2116568889|6521647b||Igni: Ancient Oak
+2116568890|6521647c||Aard: Frischlow
+2116568891|6521647d||Quen: Lornruk
+2116568892|6521647e||Quen: Road to Bald Mountain
+2116568893|6521647f||Yrden: Byways
+2116568894|65216480||Yrden: Dragonslayer's Grotto
+2116568895|17a3df85||Igni: Ancient Crypt
+2116568896|17a3df86||Igni: Svorlag
+2116568897|17a3df87||Axii: Crossroads
+2116568898|17a3df88||Axii: Fornhala
+2116568899|17a3df89||Aard: Redgill
+2116568900|17a3df8a||Quen: Kaer Trolde
+2116568901|17a3df8b||Quen: Yngvar's Fang
+2116568902|17a3df8c||Yrden: Druids Camp
+2116568903|17a3df8d||Yrden: Harviken
+2116568904|e5d2e4df||Aard: Gas Forest
+2116568905|df992ae6||Ghoul Nest 1: (Cackler Bridge)
+2116568906|df992ae5||Ghoul Nest 2: (Crossroads)
+2116568907|df992ae4||Ghoul Nest 3: (Mill)
+2116568908|8ba173bb||Drowner Nest: (Drudge)
+2116568909|8ba173d1||Drowner Nest: (Road to Bald Mountain)
+2116568910|8ba17398||Endrega Nest: (Ursten 1)
+2116568911|8ba17399||Endrega Nest: (Ursten 2)
+2116568912|8ba173b4||Ghoul Nest: (Boatmaker's Hut)
+2116568913|8ba173b2||Ghoul Nest: (Burned Ruins)
+2116568914|8ba173b3||Ghoul Nest: (Crow's Perch)
+2116568915|8ba1739a||Ghoul Nest: (Ferry Station 1)
+2116568916|8ba1739b||Ghoul Nest: (Ferry Station 2)
+2116568917|8ba1739c||Ghoul Nest: (Stonecutter's Settlement)
+2116568918|8ba17396||Harpy Nest: (Hindhold)
+2116568919|8ba173b5||Nekker Nest: (Benek)
+2116568920|8ba17394||Nekker Nest: (Codgers' Quarry)
+2116568921|8ba173b6||Nekker Nest: (Reardon Manor 1)
+2116568922|8ba173b7||Nekker Nest: (Reardon Manor 2)
+2116568923|8ba173b8||Nekker Nest: (Toderas)
+2116568924|8ba173d2||Rotfiend Nest: (Drahim Castle)
+2116568925|8ba17395||Rotfiend Nest: (Hindhold)
+2116568926|8ba17397||Rotfiend Nest: (Ursten)
+2116568927|8ba173b9||Wyvern Nest: (Grotto 1)
+2116568928|8ba173ba||Wyvern Nest: (Grotto 2)
+2116568929|6800cdcc||Drowner Nest: (Crossroads)
+2116568930|6800cdce||Harpy Nest: (Fyresdal)
+2116568931|6800cdcd||Siren Nest: (Crossroads)
+2116568932|6800cdcf||Siren Nest: (Ruined Inn)
+2116568933|6800cdd0||Siren Nest: (Bay Of Winds)
+2116568934|f81e60e7||Arachnomorph Nest: (Garin Estate)
+2116568935|f81e60e4||Forktail Nest: (Vikk Watchtower)
+2116568936|f81e60e8||Nekker Nest: (Brunwich 1)
+2116568937|f81e60e9||Nekker Nest: (Brunwich 2)
+2116568938|f81e60e5||Nekker Nest: (Hunter's Cottage)
+2116568939|f81e60e6||Wyvern Nest: (Draken Hollow Outpost)
+2116568940|79bc9835||Archespore Nest: (Count de la Croix's Mill)
+2116568941|79bc9837||Archespore Nest: (Mère-Lachaiselongue Cemetery)
+2116568942|79bc983a||Forktail Nest: (Basane Farm)
+2116568943|79bc9832||Giant centipede Nest: (Fort Astre Ruins 1)
+2116568944|79bc9833||Giant centipede Nest: (Fort Astre Ruins 2)
+2116568945|79bc9838||Giant centipede Nest: (Tesham Mutna Ruins)
+2116568946|79bc9839||Giant centipede Nest: (Trastamara Hunting Cottage)
+2116568947|79bc9834||Harpy Nest: (Rioux-Cannes Outpost)
+2116568948|79bc9836||Kikimore Nest: (Dun Tynne Castle)
+2116568949|79bc9850||Slyzard Nest: (Fort Ussar Ruins)
+2116568950|1ecd721d||Ogroid Den: (Hanged Man's Tree)
+2116568951|1ecd721e||Vampire Den: (Dragonslayer's Grotto)
+2116568952|84c7e9bb||Elementa Den: (Cavern)
+2116568953|84c7e9bc||Ogroid Den: (Ursten)
+2116568954|f4aa56a3||Specter Den: (Ancient Crypt)
+2116568955|f4aa56a4||Specter Den: (Kaer Gelen)
+2116568956|f4aa56a5||Necrophage Den: (Kaer Gelen)
+2116568957|f4aa56a6||Ogroid Den: (Fornhala)
+2116568958|82442a3b||Cursed Den: (Basane Farm)
+2116568959|82442a3c||Cursed Den: (The Pits of Brume)
+2116568960|82442a3d||Insectoid Den: (Dun Tynne Hillside)
+2116568961|82442a3e||Insectoid Den: (Rioux-Cannes Outpost)
+2116568962|82442a3f||Vampire Den: (Basane Farm)
+2116568963|c891ff04||North of Cackler Bridge
+2116568964|c891ff05||North of the Sawmill
+2116568965|c891ff06||South of the Broken Bridge
+2116568966|c891ff07||West of Crossroads
+2116568967|c891ff08||West of King Desmond Bridge
+2116568968|c891ff09||West of Ransacked Village
+2116568969|fdc8b1ec||North of Giants' Toes
+2116568970|fdc8b1ed||North of Holmstein's Port
+2116568971|fdc8b1ee||East of Rannvaig
+2116568972|fdc8b1ef||East of Whale Graveyard
+2116568973|fdc8b1f0||South of Old Watchtower
+2116568974|fdc8b1f1||Island in the Ocean
+2116568975|9cf13812||North of Fort Astre Ruins
+2116568976|9cf13813||North of Fort Ussar Ruins
+2116568977|9cf13814||North of Fox Hollow
+2116568978|9cf13815||North of Termes Palace Ruins
+2116568979|9cf13816||Northeast of Arthach Palace Ruins
+2116568980|9cf13817||Northwest of Fox Hollow
+2116568981|9cf13818||East of Basane Farm
+2116568982|9cf13819||South of Arthach Palace Ruins
+2116568983|9cf1381a||South of Fort Ussar Ruins
+2116568984|9cf13830||South of Mont Crane Castle
+2116568985|9cf13831||South of Seidhe Llygad Amphitheater
+2116568986|9cf13832||South of The Silver Salamander Inn
+2116568987|9cf13833||West of Mont Crane Castle
+2116568988|9cf13834||West of Trading Post
+2116568989|8de64504||South of Crossroads
+2116568990|8de64505||East of Widows' Grotto
+2116568991|8de64506||East of Est Tayiar
+2116568992|8de64507||East of Alness
+2116568993|8de64508||West of Erde
+2116568994|8de64509||Within Kilkerinn Ruins
+2116568995|8de6450a||North of Zuetzer Castle
+2116568996|8de6450b||East of Crane Cape
+2116568997|8de6450c||Northwest of Sarrasin Grange
+2116568998|8de64522||Northeast of Bowdon
+2116568999|8de64523||Northwest of Brunwich
+2116569000|8de64524||North of Upper Mill
+2116569001|7ae10374||Southwest of Benek
+2116569002|7ae10375||North of Road to Bald Mountain
+2116569003|7ae10376||West of Crossroads
+2116569004|7ae10377||East of Lindenvale
+2116569005|7ae10378||North of Mowshurst
+2116569006|7ae10379||North of Lindenvale
+2116569007|7ae1037a||North of Maurauder's Bridge
+2116569008|7ae1037b||Within Devil's Pit
+2116569009|7ae1037c||North of Inn at the Crossroads
+2116569010|7ae10392||East of Blackbough
+2116569011|7ae10393||North of Forest Hut
+2116569012|7ae10394||South of Forest Hut
+2116569013|7ae10395||East of Refugees' Camp
+2116569014|7ae10396||North of Coast of Wrecks
+2116569015|7ae10397||East of Condyle
+2116569016|7ae10398||South of Condyle
+2116569017|7ae10399||Within Condyle
+2116569018|7ae1039a||North of Condyle
+2116569019|7ae1039b||Southwest of Refugees' Camp
+2116569020|77b18001||Arachas
+2116569021|77b18002||Archgriffin
+2116569022|77b18003||Cave Troll
+2116569023|77b18004||Chort
+2116569024|77b18005||Cockatrice
+2116569025|77b18006||Conserved Shaelmaar
+2116569026|77b18007||Doppler
+2116569027|77b18008||Earth Elemental
+2116569028|77b18009||Ekhidna
+2116569029|77b1801f||Ekimmara
+2116569030|77b18020||Fiend
+2116569031|77b18021||Foglet
+2116569032|77b18022||Forktail
+2116569033|77b18023||Garkain
+2116569034|77b18024||Golyat
+2116569035|77b18025||Grave Hag
+2116569036|77b18026||Griffin
+2116569037|77b18027||Grottore
+2116569038|77b18028||Katakan
+2116569039|77b1803e||King of Swineherd's crown
+2116569040|77b1803f||Leshen
+2116569041|77b18040||Nekker Warrior
+2116569042|77b18041||Nightwraith
+2116569043|77b18042||Noonwraith
+2116569044|77b18043||Shaelmaar
+2116569045|77b18044||Silver Basilisk
+2116569046|77b18045||Slyzard
+2116569047|77b18046||Succubus
+2116569048|77b18047||Trophy <font color="#D79D3A">(Knight for Hire)</font>
+2116569049|77b1805d||Umbra
+2116569050|77b1805e||Water Hag
+2116569051|77b1805f||Wight
+2116569052|77b18060||Wild Hunt Hound
+2116569053|77b18061||Wraith
+2116569054|77b18062||Wyvern
+2116569055|48bcb72f||Addan Deith
+2116569056|48bcb730||Aerondight
+2116569057|48bcb731||Ami
+2116569058|48bcb732||Anathema
+2116569059|48bcb733||Anth
+2116569060|48bcb734||Arainne
+2116569061|48bcb735||Azure Wrath
+2116569062|48bcb736||Blade of Ys
+2116569063|48bcb737||Bleidd
+2116569064|48bcb74d||Bloodsword
+2116569065|48bcb74e||Breath of the North
+2116569066|48bcb74f||Cantata
+2116569067|48bcb750||Casus Foederis
+2116569068|48bcb751||Dahlia
+2116569069|48bcb752||Deargdeith
+2116569070|48bcb753||Deithwen
+2116569071|48bcb754||Fate
+2116569072|48bcb755||Fen'aeth
+2116569073|48bcb756||Gesheft
+2116569074|48bcb76c||Gynvael
+2116569075|48bcb76d||Gynvael Aedd
+2116569076|48bcb76e||Harpy
+2116569077|48bcb76f||Hav'caaren
+2116569078|48bcb770||Loathen
+2116569079|48bcb771||Maugrim
+2116569080|48bcb772||Moonblade
+2116569081|48bcb773||Naevde Seidhe
+2116569082|48bcb774||Negotiator
+2116569083|48bcb775||Pang of Conscience
+2116569084|48bcb78b||Reach of the Damned
+2116569085|48bcb78c||Rose of Shaerrawed
+2116569086|48bcb78d||Sarrim
+2116569087|48bcb78e||Tah'rel
+2116569088|48bcb78f||The Bride
+2116569089|48bcb790||Tlareg
+2116569090|48bcb791||Tor Zireael
+2116569091|48bcb792||Tor'haerne
+2116569092|48bcb793||Weeper
+2116569093|48bcb794||Zerrikanterment
+2116569094|48bcb7aa||Zireael
+2116569095|48bcb7ab||Nine-Tailed Vixen Silver Sword
+2116569096|18d42876||Aerondight
+2116569097|18d42877||Azure Wrath
+2116569098|18d42878||Bloodsword
+2116569099|18d42879||Cantata
+2116569100|18d4287a||Casus Foederis
+2116569101|18d4287b||Fate
+2116569102|18d4287c||Gesheft
+2116569103|18d4287d||Harpy
+2116569104|18d4287e||Hav'caaren
+2116569105|18d42894||Naevde Seidhe
+2116569106|18d42895||Negotiator
+2116569107|18d42896||Reach of the Damned
+2116569108|18d42897||Rose of Shaerrawed
+2116569109|18d42898||Sarrim
+2116569110|18d42899||The Adversary
+2116569111|18d4289a||The Bride
+2116569112|18d4289b||Tlareg
+2116569113|18d4289c||Weeper
+2116569114|18d4289d||Zerrikanterment
+2117171097|18d428b3||Nine-Tailed Vixen Silver Sword
+2116569115|cb00764d||Angivare
+2116569116|cb00764e||Arbitrator
+2116569117|cb00764f||Ard'aenye
+2116569118|cb007650||Ashrune
+2116569119|cb007651||Barber-Surgeon
+2116569120|cb007652||Beann'shie
+2116569121|cb007653||Belhaven blade
+2116569122|cb007654||Black Unicorn
+2116569123|cb007655||Blade from the Bits
+2116569124|cb00766b||Blave
+2116569125|cb00766c||Bloed Aedd
+2116569126|cb00766d||Caerme
+2116569127|cb00766e||Carabella
+2116569128|cb00766f||Caroline
+2116569129|cb007670||Cleaver hood
+2116569130|cb007671||D'yaebl
+2116569131|cb007672||Dancer
+2116569132|cb007673||Daystar
+2116569133|cb007674||Deireadh
+2116569134|cb00768a||Devine
+2116569135|cb00768b||Faithful Friend
+2116569136|cb00768c||Faramond's blade
+2116569137|cb00768d||Forgotten vran sword
+2116569138|cb00768e||Glory of the North
+2116569139|cb00768f||Gwestog
+2116569140|cb007690||Gwyhyr
+2116569141|cb007691||Harvall
+2116569142|cb007692||Headhunter
+2116569143|cb007693||Hen Gaidth steel sword
+2116569144|cb0076a9||Hjalmar's steel sword
+2116569145|cb0076aa||Hope
+2116569146|cb0076ab||Inis
+2116569147|cb0076ac||Iris
+2116569148|cb0076ad||Longclaw
+2116569149|cb0076ae||Lune
+2116569150|cb0076af||Mourner
+2116569151|cb0076b0||Ofieri kilij
+2116569152|cb0076b1||Ofieri saber
+2116569153|cb0076b2||Order of the Flaming Rose sword
+2116569154|cb0076c8||Poker
+2116569155|cb0076c9||Princess Xenthia's Sword
+2116569156|cb0076ca||Squire's steel sword
+2116569157|cb0076cb||Superior Dol Blathanna sword
+2116569158|cb0076cc||Tesham Mutna steel sword
+2116569159|cb0076cd||The Emmentaler
+2116569160|cb0076ce||Tir Tochair blade
+2116569161|cb0076cf||Tor Lara
+2116569162|cb0076d0||Toussaint Ducal Guard Officer's steel sword
+2116569163|cb0076d1||Toussaint Ducal Guardsman's steel sword
+2116569164|cb0076e7||Toussaint knight's steel sword
+2116569165|cb0076e8||Toussaint steel sword
+2116569166|cb0076e9||Ultimatum
+2116569167|cb0076ea||Viroledan blade
+2116569168|cb0076eb||Vitis
+2116569169|cb0076ec||Winter Blade
+2116569170|cb0076ed||Winter's Blade
+2116569171|cb0076ee||Wolf
+2116569172|cb0076ef||Nine-Tailed Vixen Steel Sword
+2116569173|a9412c18||Arbitrator
+2116569174|a9412c19||Ard'aenye
+2116569175|a9412c1a||Barber-Surgeon
+2116569176|a9412c1b||Beann'shie
+2116569177|a9412c1c||Black Unicorn
+2116569178|a9412c1d||Blade from the Bits
+2116569179|a9412c1e||Blave
+2116569180|a9412c1f||Caerme
+2116569181|a9412c20||Deireadh
+2116569182|a9412c36||Devine
+2116569183|a9412c37||Glory of the North
+2116569184|a9412c38||Gláeddyv Blathanna
+2116569185|a9412c39||Greatsword of Camelot
+2116569186|a9412c3a||Gwyhyr
+2116569187|a9412c3b||Headhunter
+2116569188|a9412c3c||Hen Gaidth steel sword
+2116569189|a9412c3d||Inis
+2116569190|a9412c3e||Iris
+2116569191|a9412c3f||Longclaw
+2116569192|a9412c55||Lune
+2116569193|a9412c56||Ofieri kilij
+2116569194|a9412c57||Ofieri saber
+2116569195|a9412c58||Order of the Flaming Rose sword
+2116569196|a9412c59||Princess Xenthia's sword
+2116569197|a9412c5a||Tesham Mutna steel sword
+2116569198|a9412c5b||The Caretaker's spade
+2116569199|a9412c5c||The Emmentaler
+2116569200|a9412c5d||Tor Lara
+2116569201|a9412c5e||Ultimatum
+2116569202|a9412c74||Vitis
+2116569203|a9412c75||Winter's Blade
+2117171098|a9412c76||Nine-Tailed Vixen Steel Sword
+2116569204|61197045||Crossbow
+2116569205|61197046||Death From Above
+2116569206|61197047||Ofieri crossbow
+2116569207|b00dad20||Death From Above
+2116569208|b00dad21||Ofieri crossbow
+2116569209|22ceae61||Eredin: King of the Wild Hunt
+2116569210|22ceae62||Eredin: Commander of the Red Riders
+2116569211|22ceae63||Eredin: Destroyer of Worlds
+2116569212|22ceae64||Eredin: Bringer of Death
+2116569213|22ceae65||Eredin Bréacc Glas: The Treacherous
+2116569214|22ceae66||Draug
+2116569215|22ceae67||Imlerith
+2116569216|22ceae68||Kayran
+2116569217|22ceae69||Leshen
+2116569218|22ceae7f||Arachas
+2116569219|22ceae80||Arachas Behemoth
+2116569220|22ceae81||Botchling
+2116569221|22ceae82||Celaeno Harpy
+2116569222|22ceae83||Cockatrice
+2116569223|22ceae84||Crone: Brewess
+2116569224|22ceae85||Crone: Weavess
+2116569225|22ceae86||Crone: Whispess
+2116569226|22ceae87||Earth Elemental
+2116569227|22ceae88||Endrega
+2116569228|22ceae9e||Fiend
+2116569229|22ceae9f||Fire Elemental
+2116569230|22ceaea0||Foglet
+2116569231|22ceaea1||Forktail
+2116569232|22ceaea2||Frightener
+2116569233|22ceaea3||Gargoyle
+2116569234|22ceaea4||Ghoul
+2116569235|22ceaea5||Grave Hag
+2116569236|22ceaea6||Griffin
+2116569237|22ceaea7||Harpy
+2116569238|22ceaebd||Ice Giant
+2116569239|22ceaebe||Nekker
+2116569240|22ceaebf||Plague Maiden
+2116569241|22ceaec0||Toad
+2116569242|22ceaec1||Vampire: Bruxa
+2116569243|22ceaec2||Vampire: Ekimmara
+2116569244|22ceaec3||Vampire: Fleder
+2116569245|22ceaec4||Vampire: Garkain
+2116569246|22ceaec5||Vampire: Katakan
+2116569247|22ceaec6||Werewolf
+2116569248|22ceaedc||Wyvern
+2116569249|aa91285a||Foltest: King of Temeria
+2116569250|aa91285b||Foltest: Lord Commander of the North
+2116569251|aa91285c||Foltest: The Siegemaster
+2116569252|aa91285d||Foltest: The Steel-Forged
+2116569253|aa91285e||Foltest: Son of Medell
+2116569254|aa91285f||Esterad Thyssen
+2116569255|aa912860||John Natalis
+2116569256|aa912861||Philippa Eilhart
+2116569257|aa912862||Vernon Roche
+2116569258|aa912878||Ballista
+2116569259|aa912879||Blue Stripes Commando
+2116569260|aa91287a||Catapult
+2116569261|aa91287b||Crinfrid Reavers Dragon Hunter
+2116569262|aa91287c||Dethmold
+2116569263|aa91287d||Dun Banner Medic
+2116569264|aa91287e||Kaedweni Siege Expert
+2116569265|aa91287f||Keira Metz
+2116569266|aa912880||Poor Fucking Infantry
+2116569267|aa912881||Prince Stennis
+2116569268|aa912897||Redanian Foot Soldier
+2116569269|aa912898||Sabrina Glevissig
+2116569270|aa912899||Sheldon Skaggs
+2116569271|aa91289a||Siege Tower
+2116569272|aa91289b||Siegfried of Denesle
+2116569273|aa91289c||Sigismund Dijkstra
+2116569274|aa91289d||Síle de Tansarville
+2116569275|aa91289e||Thaler
+2116569276|aa91289f||Trebuchet
+2116569277|aa9128a0||Ves
+2116569278|aa9128b6||Yarpen Zigrin
+2116569279|a46b105e||Cirilla Fiona Elen Riannon
+2116569280|a46b105f||Geralt of Rivia
+2116569281|a46b1060||Mysterious Elf
+2116569282|a46b1061||Triss Merigold
+2116569283|a46b1062||Yennefer of Vengerberg
+2116569284|a46b1063||Commander's Horn
+2116569285|a46b1064||Decoy
+2116569286|a46b1065||Scorch
+2116569287|a46b1066||Cow
+2116569288|a46b107c||Dandelion
+2116569289|a46b107d||Emiel Regis Rohellec Terzieff
+2116569290|a46b107e||Gaunter O'Dimm
+2116569291|a46b107f||Gaunter O'Dimm: Darkness
+2116569292|a46b1080||Olgierd von Everec
+2116569293|a46b1081||Vesemir
+2116569294|a46b1082||Villentretenmerth
+2116569295|a46b1083||Zoltan Chivay
+2116569296|a46b1084||Biting Frost
+2116569297|a46b1085||Clear Weather
+2116569298|a46b109b||Impenetrable Fog
+2116569299|a46b109c||Skellige Storm
+2116569300|a46b109d||Torrential Rain
+2116569301|bef78d94||Emhyr var Emreis: His Imperial Majesty
+2116569302|bef78d95||Emhyr var Emreis: Emperor of Nilfgaard
+2116569303|bef78d96||Emhyr var Emreis: The White Flame
+2116569304|bef78d97||Emhyr var Emreis: The Relentless
+2116569305|bef78d98||Emhyr var Emreis: Invader of the North
+2116569306|bef78d99||Letho of Gulet
+2116569307|bef78d9a||Menno Coehoorn
+2116569308|bef78d9b||Morvran Voorhis
+2116569309|bef78d9c||Tibor Eggebracht
+2116569310|bef78db2||Albrich
+2116569311|bef78db3||Assire var Anahid
+2116569312|bef78db4||Black Infantry Archer
+2116569313|bef78db5||Cahir Mawr Dyffryn aep Ceallach
+2116569314|bef78db6||Cynthia
+2116569315|bef78db7||Etolian Auxiliary Archers
+2116569316|bef78db8||Fringilla Vigo
+2116569317|bef78db9||Heavy Zerrikanian Fire Scorpion
+2116569318|bef78dba||Impera Brigade Guard
+2116569319|bef78dbb||Morteisen
+2116569320|bef78dd1||Nausicaa Cavalry Rider
+2116569321|bef78dd2||Puttkammer
+2116569322|bef78dd3||Rainfarn
+2116569323|bef78dd4||Renuald aep Matsen
+2116569324|bef78dd5||Rotten Mangonel
+2116569325|bef78dd6||Shilard Fitz-Oesterlen
+2116569326|bef78dd7||Siege Engineer
+2116569327|bef78dd8||Siege Technician
+2116569328|bef78dd9||Stefan Skellen
+2116569329|bef78dda||Sweers
+2116569330|bef78df0||Vanhemar
+2116569331|bef78df1||Vattier de Rideaux
+2116569332|bef78df2||Vreemde
+2116569333|bef78df3||Young Emissary
+2116569334|bef78df4||Zerrikanian Fire Scorpion
+2116569335|da1bc9fb||Francesca Findabair: Pureblood Elf
+2116569336|da1bc9fc||Francesca Findabair: Daisy of the Valley
+2116569337|da1bc9fd||Francesca Findabair: The Beautiful
+2116569338|da1bc9fe||Francesca Findabair: Queen of Dol Blathanna
+2116569339|da1bc9ff||Francesca Findabair: Hope of the Aen Seidhe
+2116569340|da1bca00||Eithné
+2116569341|da1bca01||Iorveth
+2116569342|da1bca02||Isengrim Faoiltiarna
+2116569343|da1bca03||Saesenthessis
+2116569344|da1bca19||Barclay Els
+2116569345|da1bca1a||Ciaran aep Easnillien
+2116569346|da1bca1b||Dennis Cranmer
+2116569347|da1bca1c||Dol Blathanna Archer
+2116569348|da1bca1d||Dol Blathanna Scout
+2116569349|da1bca1e||Dwarven Skirmisher
+2116569350|da1bca1f||Elven Skirmisher
+2116569351|da1bca20||Filavandrel aén Fidháil
+2116569352|da1bca21||Havekar Healer
+2116569353|da1bca22||Havekar Smuggler
+2116569354|da1bca38||Ida Emean aep Sivney
+2116569355|da1bca39||Mahakaman Defender
+2116569356|da1bca3a||Milva
+2116569357|da1bca3b||Riordain
+2116569358|da1bca3c||Schirrú
+2116569359|da1bca3d||Toruviel
+2116569360|da1bca3e||Vrihedd Brigade Recruit
+2116569361|da1bca3f||Vrihedd Brigade Veteran
+2116569362|da1bca40||Yaevinn
+2116569363|20752200||Crach an Craite
+2116569364|20752201||King Bran
+2116569365|20752202||Mardroeme
+2116569366|20752203||Cerys
+2116569367|20752204||Ermion
+2116569368|20752205||Hjalmar
+2116569369|20752206||Berserker
+2116569370|20752207||Birna Bran
+2116569371|20752208||Blueboy Lugos
+2116569372|2075221e||Clan Brokvar Archer
+2116569373|2075221f||Clan Dimun Pirate
+2116569374|20752220||Clan Drummond Shield Maiden
+2116569375|20752221||Clan Heymaey Skald
+2116569376|20752222||Clan Tordarroch Armorsmith
+2116569377|20752223||Clan an Craite Warrior
+2116569378|20752224||Donar an Hindar
+2116569379|20752225||Draig Bon-Dhu
+2116569380|20752226||Holger Blackhand
+2116569381|20752227||Kambi
+2116569382|2075223d||Light Longship
+2116569383|2075223e||Madman Lugos
+2116569384|2075223f||Olaf
+2116569385|20752240||Svanrige
+2116569386|20752241||Udalryk
+2116569387|20752242||War Longship
+2116569388|20752243||Young Berserker
+2116569389|0fef8f8c||Eredin Bréacc Glas
+2116569390|0fef8f8d||Ghost in the Tree
+2116569391|0fef8f8e||Gaunter O'Dimm
+2116569392|0fef8f8f||Unseen Elder
+2116569393|0fef8f90||Ge'els
+2116569394|0fef8f91||Caranthir Ar-Feiniel
+2116569395|0fef8f92||Emiel Regis Rohellec Terzieff
+2116569396|0fef8f93||Imlerith
+2116569397|0fef8f94||Abaya
+2116569398|0fef8faa||Adda
+2116569399|0fef8fab||Anabelle
+2116569400|0fef8fac||Arachas
+2116569401|0fef8fad||Arachas Behemoth
+2116569402|0fef8fae||Avallac'h
+2116569403|0fef8faf||Blood Moon
+2116569404|0fef8fb0||Caretaker
+2116569405|0fef8fb1||Cow
+2116569406|0fef8fb2||Crone: Brewess
+2116569407|0fef8fb3||Crone: Weavess
+2116569408|0fef8fc9||Crone: Whispess
+2116569409|0fef8fca||Dagon
+2116569410|0fef8fcb||Dettlaff van der Eretein
+2116569411|0fef8fcc||Draug
+2116569412|0fef8fcd||Drowner
+2116569413|0fef8fce||Earth Elemental
+2116569414|0fef8fcf||Fire Elemental
+2116569415|0fef8fd0||Foglet
+2116569416|0fef8fd1||Frightener
+2116569417|0fef8fd2||Gael
+2116569418|0fef8fe8||Ghoul
+2116569419|0fef8fe9||Golyat
+2116569420|0fef8fea||Harpy
+2116569421|0fef8feb||Hubert Rejk
+2116569422|0fef8fec||Iris von Everec
+2116569423|0fef8fed||Iris' Companions
+2116569424|0fef8fee||Kayran
+2116569425|0fef8fef||Kiyan
+2116569426|0fef8ff0||Morvudd
+2116569427|0fef8ff1||Myrhyff
+2116569428|0fef9007||Naglfar
+2116569429|0fef9008||Nekker
+2116569430|0fef9009||Nithral
+2116569431|0fef900a||Operator
+2116569432|0fef900b||Orianna
+2116569433|0fef900c||Queen of the Night
+2116569434|0fef900d||Savolla
+2116569435|0fef900e||Siren
+2116569436|0fef900f||Sleeping Giant
+2116569437|0fef9010||Toad Prince
+2116569438|0fef9026||Vampire: Alp
+2116569439|0fef9027||Vampire: Ekimmara
+2116569440|0fef9028||Vampire: Fleder
+2116569441|0fef9029||Vampire: Garkain
+2116569442|0fef902a||Vampire: Plumard
+2116569443|0fef902b||Vran Warrior
+2116569444|0fef902c||White Frost
+2116569445|0fef902d||Wild Hunt Hound
+2116569446|0fef902e||Wild Hunt Navigator
+2116569447|0fef902f||Wild Hunt Rider
+2116569448|0fef9045||Wild Hunt Warrior
+2116569449|0fef9046||Wolf
+2116569450|0fef9047||Woodland Spirit
+2116569451|0fef9048||Yghern
+2116569452|7087bfc9||Azar Javed
+2116569453|7087bfca||Geralt of Rivia
+2116569454|7087bfcb||Biting Frost
+2116569455|7087bfcc||Cirilla Fiona Elen Riannon
+2116569456|7087bfcd||Clear Weather
+2116569457|7087bfce||Decoy
+2116569458|7087bfcf||Eskel
+2116569459|7087bfd0||Impenetrable Fog
+2116569460|7087bfd1||Lambert
+2116569461|7087bfe7||Mardroeme
+2116569462|7087bfe8||Professor
+2116569463|7087bfe9||Torrential Rain
+2116569464|7087bfea||Vesemir
+2116569465|7087bfeb||Yennefer of Vengerberg
+2116569466|0592fc7f||Morvran Voorhis
+2116569467|0592fc80||Emhyr var Emreis
+2116569468|0592fc81||Usurper
+2116569469|0592fc82||Jan Calveit
+2116569470|0592fc83||False Ciri
+2116569471|0592fc84||Ardal aep Dahy
+2116569472|0592fc85||Anna Henrietta
+2116569473|0592fc86||Letho of Gulet
+2116569474|0592fc87||Alba Division Spearman
+2116569475|0592fc9d||Albrich
+2116569476|0592fc9e||Alchemist
+2116569477|0592fc9f||Artorius Vigo
+2116569478|0592fca0||Assire var Anahid
+2116569479|0592fca1||Auckes
+2116569480|0592fca2||Black Infantry Archer
+2116569481|0592fca3||Cahir Mawr Dyffryn aep Ceallach
+2116569482|0592fca4||Cantarella
+2116569483|0592fca5||Catriona Plague
+2116569484|0592fca6||Cynthia
+2116569485|0592fcbc||Damien de la Tour
+2116569486|0592fcbd||Ducal Guard
+2116569487|0592fcbe||Etolian Auxiliary Archers
+2116569488|0592fcbf||Fringilla Vigo
+2116569489|0592fcc0||Gregoire de Gorgon
+2116569490|0592fcc1||Heavy Zerrikanian Fire Scorpion
+2116569491|0592fcc2||Joachim de Wett
+2116569492|0592fcc3||Leo Bonhart
+2116569493|0592fcc4||Menno Coehoorn
+2116569494|0592fcc5||Milton de Peyrac-Peyran
+2116569495|0592fcdb||Nausicaa Cavalry Rider
+2116569496|0592fcdc||Palmerin de Launfal
+2116569497|0592fcdd||Peter Saar Gwynleve
+2116569498|0592fcde||Puttkammer
+2116569499|0592fcdf||Rainfarn
+2116569500|0592fce0||Rience
+2116569501|0592fce1||Rotten Mangonel
+2116569502|0592fce2||Serrit
+2116569503|0592fce3||Shilard Fitz-Oesterlen
+2116569504|0592fce4||Siege Engineer
+2116569505|0592fcfa||Stefan Skellen
+2116569506|0592fcfb||Sweers
+2116569507|0592fcfc||Syanna
+2116569508|0592fcfd||Tibor Eggebracht
+2116569509|0592fcfe||Vanhemar
+2116569510|0592fcff||Vattier de Rideaux
+2116569511|0592fd00||Vicovaro Medic
+2116569512|0592fd01||Vilgefortz
+2116569513|0592fd02||Vivienne de Tabris
+2116569514|0592fd03||Vreemde
+2116569515|0592fd19||Young Emissary
+2116569516|0592fd1a||Zerrikanian Fire Scorpion
+2116569517|743c0fa6||Brouver Hoog
+2116569518|743c0fa7||Eithné
+2116569519|743c0fa8||Ithlinne Aegli aep Aevenien
+2116569520|743c0fa9||Francesca Findabair
+2116569521|743c0faa||Dana Méadbh
+2116569522|743c0fab||Iorveth
+2116569523|743c0fac||Morénn
+2116569524|743c0fad||Saskia
+2116569525|743c0fae||Aelirenn
+2116569526|743c0fc4||Aglaïs
+2116569527|743c0fc5||Barclay Els
+2116569528|743c0fc6||Braenn
+2116569529|743c0fc7||Brokilon Sentinel
+2116569530|743c0fc8||Ciaran aep Easnillien
+2116569531|743c0fc9||Dennis Cranmer
+2116569532|743c0fca||Dol Blathanna Archer
+2116569533|743c0fcb||Dol Blathanna Bomber
+2116569534|743c0fcc||Dol Blathanna Scout
+2116569535|743c0fcd||Dryad Grovekeeper
+2116569536|743c0fe3||Dwarven Chariot
+2116569537|743c0fe4||Dwarven Mercenary
+2116569538|743c0fe5||Dwarven Skirmisher
+2116569539|743c0fe6||Ele'yas
+2116569540|743c0fe7||Elven Skirmisher
+2116569541|743c0fe8||Fauve
+2116569542|743c0fe9||Filavandrel aén Fidháil
+2116569543|743c0fea||Forest of Death
+2116569544|743c0feb||Half-Elf Hunter
+2116569545|743c0fec||Éibhear Hattori
+2116569546|743c1002||Havekar Healer
+2116569547|743c1003||Havekar Smuggler
+2116569548|743c1004||Ida Emean aep Sivney
+2116569549|743c1005||Isengrim Faoiltiarna
+2116569550|743c1006||Lady Of The Lake
+2116569551|743c1007||Mahakaman Defender
+2116569552|743c1008||Malena
+2116569553|743c1009||Milva
+2116569554|743c100a||Nature's Rebuke
+2116569555|743c100b||Percival Schuttenbach
+2116569556|743c1021||Riordain
+2116569557|743c1022||Schirrú
+2116569558|743c1023||Sirssa
+2116569559|743c1024||Toruviel
+2116569560|743c1025||Treant: Boar
+2116569561|743c1026||Treant: Mantis
+2116569562|743c1027||Vernossiel
+2116569563|743c1028||Villentretenmerth
+2116569564|743c1029||Vrihedd Brigade Recruit
+2116569565|743c102a||Vrihedd Brigade Veteran
+2116569566|743c1040||Water Of Brokilon
+2116569567|743c1041||Yaevinn
+2116569568|8422eac5||Demavend III
+2116569569|8422eac6||Foltest
+2116569570|8422eac7||Calanthe
+2116569571|8422eac8||Henselt
+2116569572|8422eac9||Radovid V
+2116569573|8422eaca||John Natalis
+2116569574|8422eacb||Olgierd von Everec
+2116569575|8422eacc||Philippa Eilhart
+2116569576|8422eacd||Prince Anséis
+2116569577|8422eae3||Ballista
+2116569578|8422eae4||Beggar
+2116569579|8422eae5||Bloody Baron
+2116569580|8422eae6||Blue Stripes Commando
+2116569581|8422eae7||Boris
+2116569582|8422eae8||Botchling
+2116569583|8422eae9||Caleb Menge
+2116569584|8422eaea||Carlo Varese
+2116569585|8422eaeb||Catapult
+2116569586|8422eaec||Cleric of the Flaming Rose
+2116569587|8422eb02||Crinfrid Reavers Dragon Hunter
+2116569588|8422eb03||Crownsplitter Thug
+2116569589|8422eb04||Cutup Lackey
+2116569590|8422eb05||Dandelion
+2116569591|8422eb06||Dethmold
+2116569592|8422eb07||Sigismund Dijkstra
+2116569593|8422eb08||Dun Banner Medic
+2116569594|8422eb09||Igor The Hook
+2116569595|8422eb0a||Jacques de Aldersberg
+2116569596|8422eb0b||Kaedweni Siege Expert
+2116569597|8422eb21||Kaedweni Siege Support
+2116569598|8422eb22||Keira Metz
+2116569599|8422eb23||King of Beggars
+2116569600|8422eb24||Knight of the Flaming Rose
+2116569601|8422eb25||Lebioda
+2116569602|8422eb26||Merigold's Hailstorm
+2116569603|8422eb27||Nathaniel Pastodi
+2116569604|8422eb28||Passiflora Peaches
+2116569605|8422eb29||Poor Fucking Infantry
+2116569606|8422eb2a||Redanian Foot Soldier
+2116569607|8422eb40||Sabrina Glevissig
+2116569608|8422eb41||Shani
+2116569609|8422eb42||Sheldon Skaggs
+2116569610|8422eb43||Siege Tower
+2116569611|8422eb44||Síle de Tansarville
+2116569612|8422eb45||Prince Stennis
+2116569613|8422eb46||Tatterwing
+2116569614|8422eb47||Thaler
+2116569615|8422eb48||Trebuchet
+2116569616|8422eb49||Triss Merigold
+2116569617|8422eb5f||Vernon Roche
+2116569618|8422eb60||Ves
+2116569619|8422eb61||Vincent Meis
+2116569620|8422eb62||Vissegerd
+2116569621|8422eb63||Whoreson Junior
+2116569622|8422eb64||Witch Hunter
+2116569623|8422eb65||Yarpen Zigrin
+2116569624|8422eb66||Zoltan Chivay
+2116569625|00b28feb||Bran Tuirseach
+2116569626|00b28fec||Crach an Craite
+2116569627|00b28fed||Harald the Cripple
+2116569628|00b28fee||Eist Tuirseach
+2116569629|00b28fef||Cerys an Craite
+2116569630|00b28ff0||Hjalmar
+2116569631|00b28ff1||Kambi
+2116569632|00b28ff2||Tyr
+2116569633|00b28ff3||Clan an Craite Marauder
+2116569634|00b29009||Clan an Craite Warrior
+2116569635|00b2900a||Clan an Craite Whaler
+2116569636|00b2900b||Artis
+2116569637|00b2900c||Athak Akydalv
+2116569638|00b2900d||Birna Bran
+2116569639|00b2900e||Holger Blackhand
+2116569640|00b2900f||Blueboy Lugos
+2116569641|00b29010||Boatbuilders
+2116569642|00b29011||Clan Brokvar Archer
+2116569643|00b29012||Cave of Dreams
+2116569644|00b29028||Clan Dimun Captain
+2116569645|00b29029||Clan Dimun Corsair
+2116569646|00b2902a||Clan Dimun Smuggler
+2116569647|00b2902b||Djenge Frett
+2116569648|00b2902c||Donar an Hindar
+2116569649|00b2902d||Draig Bon-Dhu
+2116569650|00b2902e||Clan Drummond Shield Maiden
+2116569651|00b2902f||Ermion
+2116569652|00b29030||Clan Heymaey Flaminica
+2116569653|00b29031||Clan Heymaey Skald
+2116569654|00b29047||Harald Houndsnout
+2116569655|00b29048||Jutta an Dimun
+2116569656|00b29049||Knut the Callous
+2116569657|00b2904a||Light Longship
+2116569658|00b2904b||Lytta Neyd
+2116569659|00b2904c||Madman Lugos
+2116569660|00b2904d||Morkvarg
+2116569661|00b2904e||Olaf
+2116569662|00b2904f||Priestess of Freya
+2116569663|00b29050||Ragh Nar Roog
+2116569664|00b29066||Skellige Storm
+2116569665|00b29067||Skjall
+2116569666|00b29068||Sukrus
+2116569667|00b29069||Svalblod
+2116569668|00b2906a||Svanrige Tuirseach
+2116569669|00b2906b||Clan Tordarroch Armorsmith
+2116569670|00b2906c||Clan Tuirseach Skirmisher
+2116569671|00b2906d||Udalryk
+2116569672|00b2906e||Vabjorn
+2116569673|00b2906f||Vildkaarl Butcher
+2116569674|00b29085||Vildkaarl Ravager
+2116569675|00b29086||War Longship
+2116569676|00b29087||Yoana
+2116569677|bd5b83c6|| Sezon Burz Item(DYNAMC_REPLACE)
+2116569678|af3cb9af||Sezon Burz Leather Jacket
+2116569679|af3cb9b0||Sezon Burz Leather Trousers
+2116569680|af3cb9b1||Sezon Burz Leather Gloves
+2116569681|af3cb9b2||Sezon Burz Leather Boots
+2116569682|af3cb9b3||Sezon Burz Silver Sword
+2116569683|af3cb9b4||Sezon Burz Steel Sword
+2116569684|af3cb9b5||Sezon Burz Crossbow
+2116569685|22f61d00|| "Coś Więcej" Item(DYNAMC_REPLACE)
+2116569686|7109de35||"Coś Więcej" Leather Jacket
+2116569687|7109de36||"Coś Więcej" Gloves
+2116569688|7109de37||"Coś Więcej" Pants
+2116569689|7109de38||"Coś Więcej" Boots
+2116569690|7109de39||"Coś Więcej" Steel Sword
+2116569691|7109de3a||"Coś Więcej" Silver Sword
+2116569692|7109de3b||Mahakaman Rune Sihil
+2116569693|b049e098|| W3EE Item(DYNAMC_REPLACE)
+2116569694|c3cee3d8||Gothic Plate Armor
+2116569695|c3cee3d9||Gothic Plate Gauntlets
+2116569696|c3cee3da||Gothic Plate Greaves
+2116569697|c3cee3db||Gothic Plate Helm
+2116569698|c3cee3dc||Gothic Plate Sabatons
+2116569699|a71e4d44||Meteorite Silver Plate Armor
+2116569700|a71e4d45||Meteorite Silver Plate Gauntlets
+2116569701|a71e4d46||Meteorite Silver Plate Greaves
+2116569702|a71e4d47||Meteorite Silver Plate Helm
+2116569703|a71e4d48||Meteorite Silver Plate Sabatons
+2116569704|30804ecd||Dimeritium Alloy Plate Armor
+2116569705|30804ece||Dimeritium Alloy Plate Gauntlets
+2116569706|30804ecf||Dimeritium Alloy Plate Greaves
+2116569707|30804ed0||Dimeritium Alloy Plate Helm
+2116569708|30804ed1||Dimeritium Alloy Plate Sabatons
+2116569709|1900718d||New Moon Armor
+2116569710|1900718e||New Moon Boots
+2116569711|1900718f||New Moon Gauntlets
+2116569712|19007190||New Moon Trousers
+2116569713|ac248300||Nilfgaardian Armor
+2116569714|ac248301||Nilfgaardian Boots
+2116569715|ac248302||Nilfgaardian Gauntlets
+2116569716|ac248303||Nilfgaardian Trousers
+2116569717|0e7a2225||Temerian Armor
+2116569718|0e7a2226||Temerian Boots
+2116569719|0e7a2227||Temerian Gauntlets
+2116569720|0e7a2228||Temerian Trousers
+2116569721|95762b45||Undvik Armor
+2116569722|95762b46||Undvik Boots
+2116569723|95762b47||Undvik Gauntlets
+2116569724|95762b48||Undvik Trousers
+2116569725|34050d21||Tesham Mutna Armor
+2116569726|34050d22||Tesham Mutna Boots
+2116569727|34050d23||Tesham Mutna Gauntlets
+2116569728|34050d24||Tesham Mutna Mask
+2116569729|34050d25||Tesham Mutna Trousers
+2116569730|a0cc9514||Hen Gaidth Armor
+2116569731|a0cc9515||Hen Gaidth Boots
+2116569732|a0cc9516||Hen Gaidth Gauntlets
+2116569733|a0cc9517||Hen Gaidth Mask
+2116569734|a0cc9518||Hen Gaidth Trousers
+2116569735|c8ccdac8||Ofieri scale armor
+2116569736|c8ccdac9||Ofieri Boots
+2116569737|c8ccdaca||Ofieri Gauntlets
+2116569738|c8ccdacb||Ofieri Sharovary
+2116569739|aa3d4c89||Forgotten Wolven Armor
+2116569740|aa3d4c8a||Forgotten Wolven Boots
+2116569741|aa3d4c8b||Forgotten Wolven Gauntlets
+2116569742|aa3d4c8c||Forgotten Wolven Trousers
+2116569743|aa3d4c8d||Forgotten Wolven Steel Sword
+2116569744|aa3d4c8e||Forgotten Wolven Silver Sword
+2116569745|c2b97ebc||White Tiger of the West Armor
+2116569746|c2b97ebd||White Tiger of the West Boots
+2116569747|c2b97ebe||White Tiger of the West Vambraces
+2116569748|c2b97ebf||White Tiger of the West Trousers
+2116569749|9b454ce8||Armor of a Thousand Flowers
+2116569750|9b454ce9||Boots of a Thousand Flowers
+2116569751|9b454cea||Gauntlets of a Thousand Flowers
+2116569752|9b454ceb||Trousers of a Thousand Flowers
+2116569753|9b454cec||Sword of a Thousand Flowers
+2116569754|9b454ced||White Widow of the Valley of Flowers
+2116569755|12b012e1|| Shades of Iron Item(DYNAMC_REPLACE)
+2116569756|a2f5ac22||Berserker Armor
+2116569757|a2f5ac23||Berserker Greaves
+2116569758|a2f5ac24||Berserker Gauntlets
+2116569759|a2f5ac25||Berserker Pants
+2116569760|a2f5ac26||Berserker Cage
+2116569761|a2f5ac27||Berserker Helm
+2116569762|92b87c5d||Bismarck Knight Armor
+2116569763|92b87c5e||Bismarck Knight Greaves
+2116569764|92b87c5f||Bismarck Knight Gauntlets
+2116569765|92b87c60||Bismarck Knight Cuisses Plates
+2116569766|92b87c61||Bismarck Helm
+2116569767|06f39e4f||Blood Hunter's Coat
+2116569768|06f39e50||Blood Hunter's Boots
+2116569769|06f39e51||Blood Hunter's Gloves
+2116569770|06f39e52||Blood Hunter's Pants
+2116569771|06f39e53||Blood Hunter's Hat
+2116569772|06f39e54||Blood Hunter's Mask
+2116569773|98cca8e0||Crow-feathered Hunter Garb
+2116569774|98cca8e1||Crow-feathered Hunter Boots
+2116569775|98cca8e2||Crow-feathered Hunter Gloves
+2116569776|98cca8e3||Crow-feathered Hunter Pants
+2116569777|98cca8e4||Beak Mask
+2116569778|e8bba146||Fallen Knight Armor
+2116569779|e8bba147||Fallen Knight Greaves
+2116569780|e8bba148||Fallen Knight Gauntlets
+2116569781|e8bba149||Fallen Knight Leg Guards
+2116569782|e8bba14a||Fallen Knight Helm
+2116569783|e87ff381||Faraam Armor
+2116569784|e87ff382||Faraam Boots
+2116569785|e87ff383||Faraam Gauntlets
+2116569786|e87ff384||Faraam Pants
+2116569787|e87ff385||Faraam Helm
+2116569788|7b2439fe||Headtaker Coat
+2116569789|7b2439ff||Headtaker Boots
+2116569790|7b243a00||Headtaker Gloves
+2116569791|7b243a01||Headtaker Pants
+2116569792|7b243a02||Headtaker Mask
+2116569793|7690a066||Hitokiri Raiment
+2116569794|7690a067||Hitokiri Boots
+2116569795|7690a068||Hitokiri Claws
+2116569796|7690a069||Hitokiri Pants
+2116569797|7690a06a||Hitokiri Visage
+2116569798|231c66b2||Kara Armor
+2116569799|231c66b3||Kara Boots
+2116569800|231c66b4||Kara Gauntlets
+2116569801|231c66b5||Kara Pants
+2116569802|231c66b6||Kara Hat
+2116569803|5395b97b||Lionhunter Garb
+2116569804|5395b97c||Lionhunter Boots
+2116569805|5395b97d||Lionhunter Gauntlets
+2116569806|5395b97e||Lionhunter Pants
+2116569807|5395b97f||Lionhunter Silver Mask
+2116569808|645f07b2||Master Assassin Garb
+2116569809|645f07b3||Master Assassin Boots
+2116569810|645f07b4||Master Assassin Bracer
+2116569811|645f07b5||Master Assassin Pants
+2116569812|645f07b6||Master Assassin Hood
+2116569813|181c7f02||Old Hunter's Garb
+2116569814|181c7f03||Old Hunter's Boots
+2116569815|181c7f04||Old Hunter's Gloves
+2116569816|181c7f05||Old Hunter's Pants
+2116569817|181c7f06||Old Hunter's Hat
+2116569818|20ef839c||Revenant Armor
+2116569819|20ef839d||Revenant Greaves
+2116569820|20ef839e||Revenant Gauntlets
+2116569821|20ef839f||Revenant Leg Guards
+2116569822|20ef83a0||Revenant Hood
+2116569823|00e716fd||Stalker Coat
+2116569824|00e716fe||Stalker Boots
+2116569825|00e716ff||Stalker Gloves
+2116569826|00e71700||Stalker Pants
+2116569827|00e71701||Stalker Mask
+2116569828|ebfd0e35||Taifeng Armor
+2116569829|ebfd0e36||Taifeng Boots
+2116569830|ebfd0e37||Taifeng Gloves
+2116569831|ebfd0e38||Taifeng Leg Guards
+2116569832|ebfd0e39||Ronin Hat
+2116569833|1ae42c03||Unseen Hunter's Garb
+2116569834|1ae42c04||Unseen Hunter's Boots
+2116569835|1ae42c05||Unseen Hunter's Gloves
+2116569836|1ae42c06||Unseen Hunter's Pants
+2116569837|1ae42c07||Unseen Hunter's Helm
+2116569838|2534d6a3||Sithis Armor
+2116569839|2534d6a4||Sithis Hood
+2116569840|3ee47994||Aquila
+2116569841|3ee47995||Ares
+2116569842|3ee47996||Armageddon
+2116569843|3ee47997||Beastcutter
+2116569844|3ee47998||Blackdawn
+2116569845|3ee47999||Blooddusk
+2116569846|3ee4799a||Bloodletter
+2116569847|3ee4799b||Bloodshot
+2116569848|3ee4799c||Claymore
+2116569849|3ee479b2||Crownbreaker
+2116569850|3ee479b3||Cursed Khopesh
+2116569851|3ee479b4||Dragonbane
+2116569852|3ee479b5||Ejder
+2116569853|3ee479b6||Flameborn
+2116569854|3ee479b7||Frostmourne
+2116569855|3ee479b8||Gorgonslayer
+2116569856|3ee479b9||Graveripper
+2116569857|3ee479ba||Guandao
+2116569858|3ee479bb||Gwaedlif
+2116569859|3ee479d1||Hades' Grasp
+2116569860|3ee479d2||Haoma
+2116569861|3ee479d3||Heavenspire
+2116569862|3ee479d4||Hellspire
+2116569863|3ee479d5||Icarus' Tears
+2116569864|3ee479d6||Ikari
+2116569865|3ee479d7||Lionhunter
+2116569866|3ee479d8||Oathblade
+2116569867|3ee479d9||Oblivion
+2116569868|3ee479da||Peacekeeper
+2116569869|3ee479f0||Pridefall
+2116569870|3ee479f1||Rakuyo
+2116569871|3ee479f2||Realmdrifter Blade
+2116569872|3ee479f3||Realmdrifter Divider
+2116569873|3ee479f4||Saint Kukri
+2116569874|3ee479f5||Sinner
+2116569875|3ee479f6||Sithis Blade
+2116569876|3ee479f7||Voidblade
+2116569877|3ee479f8||Vulcan
+2116569878|3ee479f9||Zerrikanian Knife
+2116569879|5f545348||Aquila
+2116569880|5f545349||Ares
+2116569881|5f54534a||Armageddon
+2116569882|5f54534b||Beastcutter
+2116569883|5f54534c||Blackdawn
+2116569884|5f54534d||Blooddusk
+2116569885|5f54534e||Bloodletter
+2116569886|5f54534f||Bloodshot
+2116569887|5f545350||Claymore
+2116569888|5f545366||Crownbreaker
+2116569889|5f545367||Cursed Khopesh
+2116569890|5f545368||Dragonbane
+2116569891|5f545369||Ejder
+2116569892|5f54536a||Flameborn
+2116569893|5f54536b||Frostmourne
+2116569894|5f54536c||Gorgonslayer
+2116569895|5f54536d||Graveripper
+2116569896|5f54536e||Guandao
+2116569897|5f54536f||Gwaedlif
+2116569898|5f545385||Hades' Grasp
+2116569899|5f545386||Haoma
+2116569900|5f545387||Heavenspire
+2116569901|5f545388||Hellspire
+2116569902|5f545389||Icarus' Tears
+2116569903|5f54538a||Ikari
+2116569904|5f54538b||Lionhunter
+2116569905|5f54538c||Oathblade
+2116569906|5f54538d||Oblivion
+2116569907|5f54538e||Peacekeeper
+2116569908|5f5453a4||Pridefall
+2116569909|5f5453a5||Rakuyo
+2116569910|5f5453a6||Realmdrifter Blade
+2116569911|5f5453a7||Realmdrifter Divider
+2116569912|5f5453a8||Saint Kukri
+2116569913|5f5453a9||Sinner
+2116569914|5f5453aa||Sithis Blade
+2116569915|5f5453ab||Voidblade
+2116569916|5f5453ac||Vulcan
+2116569917|5f5453ad||Zerrikanian Knife
+2116569918|b8ab9ad1||<br/><font color="#9D75BF">Random Events: Velen [COUNTS]<br/></font>
+2116569919|b8ab9ad2||<br/><font color="#9D75BF">Random Events: Novigrad [COUNTS]<br/></font>
+2116569920|b8ab9ad3||<br/><font color="#9D75BF">Random Events: Skellige [COUNTS]<br/></font>
+2116569921|b8ab9ad4||<br/><font color="#9D75BF">Random Events: Kaer Morhen [COUNTS]<br/></font>
+2116569922|3c40028f||<br/><font color="#9D75BF">Main Quests: Prologue [COUNTS]<br/></font>
+2116569923|3c400290||<br/><font color="#9D75BF">Main Quests: Act 1 - Velen [COUNTS]<br/></font>
+2116569924|3c400291||<br/><font color="#9D75BF">Main Quests: Act 1 - Novigrad [COUNTS]<br/></font>
+2116569925|3c400292||<br/><font color="#9D75BF">Main Quests: Act 1 - Skellige [COUNTS]<br/></font>
+2116569926|3c400293||<br/><font color="#9D75BF">Main Quests: Act 2 [COUNTS]<br/></font>
+2116569927|3c400294||<br/><font color="#9D75BF">Main Quests: Act 3 [COUNTS]<br/></font>
+2116569928|3c400295||<br/><font color="#9D75BF">Main Quests: Hearts of Stone [COUNTS]<br/></font>
+2116569929|3c400296||<br/><font color="#9D75BF">Main Quests: Blood and Wine [COUNTS]<br/></font>
+2116569930|3c400297||<br/><font color="#9D75BF">Main Quests: Vizima [COUNTS]<br/></font>
+2116569931|87019e31||<br/><font color="#9D75BF">Side Quests: White Orchard [COUNTS]<br/></font>
+2116569932|87019e32||<br/><font color="#9D75BF">Side Quests: Velen [COUNTS]<br/></font>
+2116569933|87019e33||<br/><font color="#9D75BF">Side Quests: Novigrad [COUNTS]<br/></font>
+2116569934|87019e34||<br/><font color="#9D75BF">Side Quests: Skellige [COUNTS]<br/></font>
+2116569935|87019e35||<br/><font color="#9D75BF">Side Quests: Kaer Morhen [COUNTS]<br/></font>
+2116569936|87019e36||<br/><font color="#9D75BF">Side Quests: Toussaint [COUNTS]<br/></font>
+2116569937|87019e37||<br/><font color="#9D75BF">Side Quests: Non Regional [COUNTS]<br/></font>
+2116569938|436eba76||<br/><font color="#9D75BF">Monster Hunt Contracts: White Orchard [COUNTS]<br/></font>
+2116569939|436eba77||<br/><font color="#9D75BF">Monster Hunt Contracts: Velen [COUNTS]<br/></font>
+2116569940|436eba78||<br/><font color="#9D75BF">Monster Hunt Contracts: Novigrad [COUNTS]<br/></font>
+2116569941|436eba79||<br/><font color="#9D75BF">Monster Hunt Contracts: Skellige [COUNTS]<br/></font>
+2116569942|436eba7a||<br/><font color="#9D75BF">Monster Hunt Contracts: Toussaint [COUNTS]<br/></font>
+2116569943|7ca1fe43||<br/><font color="#9D75BF">Scavenger Hunts: Griffin Gear [COUNTS]<br/></font>
+2116569944|7ca1fe44||<br/><font color="#9D75BF">Scavenger Hunts: Feline Gear [COUNTS]<br/></font>
+2116569945|7ca1fe45||<br/><font color="#9D75BF">Scavenger Hunts: Ursine Gear [COUNTS]<br/></font>
+2116569946|7ca1fe46||<br/><font color="#9D75BF">Scavenger Hunts: Wolven Gear [COUNTS]<br/></font>
+2116569947|7ca1fe47||<br/><font color="#9D75BF">Scavenger Hunts: Miscellaneous [COUNTS]<br/></font>
+2116569948|cb4fbd0e||<br/><font color="#9D75BF">Treasure Hunts: White Orchard [COUNTS]<br/></font>
+2116569949|cb4fbd0f||<br/><font color="#9D75BF">Treasure Hunts: Velen [COUNTS]<br/></font>
+2116569950|cb4fbd10||<br/><font color="#9D75BF">Treasure Hunts: Novigrad [COUNTS]<br/></font>
+2116569951|cb4fbd11||<br/><font color="#9D75BF">Treasure Hunts: Skellige [COUNTS]<br/></font>
+2116569952|cb4fbd12||<br/><font color="#9D75BF">Treasure Hunts: Toussaint [COUNTS]<br/></font>
+2116569953|6743fc1e||<br/><font color="#9D75BF">Monster Dens: Velen [COUNTS]<br/></font>
+2116569954|6743fc1f||<br/><font color="#9D75BF">Monster Dens: Novigrad [COUNTS]<br/></font>
+2116569955|6743fc20||<br/><font color="#9D75BF">Monster Dens: Skellige [COUNTS]<br/></font>
+2116569956|6743fc21||<br/><font color="#9D75BF">Monster Dens: Toussaint [COUNTS]<br/></font>
+2116569957|7889368c||<br/><font color="#9D75BF">Monster Nests: White Orchard [COUNTS]<br/></font>
+2116569958|7889368d||<br/><font color="#9D75BF">Monster Nests: Velen [COUNTS]<br/></font>
+2116569959|7889368e||<br/><font color="#9D75BF">Monster Nests: Novigrad [COUNTS]<br/></font>
+2116569960|7889368f||<br/><font color="#9D75BF">Monster Nests: Skellige [COUNTS]<br/></font>
+2116569961|78893690||<br/><font color="#9D75BF">Monster Nests: Toussaint [COUNTS]<br/></font>
+2116569962|ed4219fe||<br/><font color="#9D75BF">Places of Power: White Orchard [COUNTS]<br/></font>
+2116569963|ed4219ff||<br/><font color="#9D75BF">Places of Power: Velen [COUNTS]<br/></font>
+2116569964|ed421a00||<br/><font color="#9D75BF">Places of Power: Novigrad [COUNTS]<br/></font>
+2116569965|ed421a01||<br/><font color="#9D75BF">Places of Power: Skellige [COUNTS]<br/></font>
+2116569966|ed421a02||<br/><font color="#9D75BF">Places of Power: Kaer Morhen [COUNTS]<br/></font>
+2116569967|ed421a03||<br/><font color="#9D75BF">Places of Power: Toussaint [COUNTS]<br/></font>
+2116569968|ed421a04||<br/><font color="#9D75BF">Places of Power: The Spiral [COUNTS]<br/></font>
+2116569969|872ff84a||<br/><font color="#9D75BF">Signposts: White Orchard [COUNTS]<br/></font>
+2116569970|872ff84b||<br/><font color="#9D75BF">Signposts: Velen [COUNTS]<br/></font>
+2116569971|872ff84c||<br/><font color="#9D75BF">Signposts: Novigrad [COUNTS]<br/></font>
+2116569972|872ff84d||<br/><font color="#9D75BF">Signposts: Skellige [COUNTS]<br/></font>
+2116569973|872ff84e||<br/><font color="#9D75BF">Signposts: Kaer Morhen [COUNTS]<br/></font>
+2116569974|872ff84f||<br/><font color="#9D75BF">Signposts: Toussaint [COUNTS]<br/></font>
+2116569975|2b7b0049||<br/><font color="#9D75BF">Bandit Camps: White Orchard [COUNTS]<br/></font>
+2116569976|2b7b004a||<br/><font color="#9D75BF">Bandit Camps: Velen [COUNTS]<br/></font>
+2116569977|2b7b004b||<br/><font color="#9D75BF">Bandit Camps: Novigrad [COUNTS]<br/></font>
+2116569978|2b7b004c||<br/><font color="#9D75BF">Bandit Camps: Skellige [COUNTS]<br/></font>
+2116569979|2b7b004d||<br/><font color="#9D75BF">Bandit Camps: Toussaint [COUNTS]<br/></font>
+2116569980|cbe357e0||<br/><font color="#9D75BF">Monster Trophies: [COUNTS]<br/></font>
+2116569981|4bba596a||<br/><font color="#9D75BF">Relics: Silver Swords [COUNTS]<br/></font>
+2116569982|4bba596b||<br/><font color="#9D75BF">Relics: Steel Swords [COUNTS]<br/></font>
+2116569983|4bba596c||<br/><font color="#9D75BF">Relics: Crossbows [COUNTS]<br/></font>
+2116569984|053f1e7b||<br/><font color="#9D75BF">Armor Set Pieces: Thousand Flowers Set [COUNTS]<br/></font>
+2116569985|053f1e7c||<br/><font color="#9D75BF">Armor Set Pieces: Forgotten Wolven Set [COUNTS]<br/></font>
+2116569986|053f1e7d||<br/><font color="#9D75BF">Armor Set Pieces: Hen Gaidth Set [COUNTS]<br/></font>
+2116569987|053f1e7e||<br/><font color="#9D75BF">Armor Set Pieces: New Moon Set [COUNTS]<br/></font>
+2116569988|053f1e7f||<br/><font color="#9D75BF">Armor Set Pieces: Nilfgaardian Set [COUNTS]<br/></font>
+2116569989|053f1e80||<br/><font color="#9D75BF">Armor Set Pieces: Ofieri Set [COUNTS]<br/></font>
+2116569990|053f1e81||<br/><font color="#9D75BF">Armor Set Pieces: Temerian Set [COUNTS]<br/></font>
+2116569991|053f1e82||<br/><font color="#9D75BF">Armor Set Pieces: Tesham Mutna Set [COUNTS]<br/></font>
+2116569992|053f1e83||<br/><font color="#9D75BF">Armor Set Pieces: Undvik Set [COUNTS]<br/></font>
+2116569993|053f1eab||<br/><font color="#9D75BF">Armor Set Pieces: White Tiger Set [COUNTS]<br/></font>
+2116569994|242ce9f2||<br/><font color="#9D75BF">Gwent Cards: Monsters [COUNTS]<br/></font>
+2116569995|242ce9f3||<br/><font color="#9D75BF">Gwent Cards: Neutral Cards [COUNTS]<br/></font>
+2116569996|242ce9f4||<br/><font color="#9D75BF">Gwent Cards: Nilfgaardian Empire [COUNTS]<br/></font>
+2116569997|242ce9f5||<br/><font color="#9D75BF">Gwent Cards: Northern Realms [COUNTS]<br/></font>
+2116569998|242ce9f6||<br/><font color="#9D75BF">Gwent Cards: Scoia'tael [COUNTS]<br/></font>
+2116569999|242ce9f7||<br/><font color="#9D75BF">Gwent Cards: Skellige [COUNTS]<br/></font>
+2117171000|c9e3b8f5||<br/><font color="#9D75BF">Coś Więcej Gear [COUNTS]<br/></font>
+2117171001|c9e3b8f6||<br/><font color="#9D75BF">Sezon Burz Gear [COUNTS]<br/></font>
+2117171002|c9e3b8f7||<br/><font color="#9D75BF">Gothic Gear [COUNTS]<br/></font>
+2117171003|c9e3b8f8||<br/><font color="#9D75BF">Meteorite Gear [COUNTS]<br/></font>
+2117171004|c9e3b8f9||<br/><font color="#9D75BF">Dimeritium Gear [COUNTS]<br/></font>
+2117171005|8521c16d||<br/><font color="#9D75BF">Shades of Iron: Berserker Set [COUNTS]<br/></font>
+2117171006|8521c16e||<br/><font color="#9D75BF">Shades of Iron: Bismarck Set [COUNTS]<br/></font>
+2117171007|8521c16f||<br/><font color="#9D75BF">Shades of Iron: Blood Hunter Set [COUNTS]<br/></font>
+2117171008|8521c170||<br/><font color="#9D75BF">Shades of Iron: Crow-feathered Hunter Set [COUNTS]<br/></font>
+2117171009|8521c171||<br/><font color="#9D75BF">Shades of Iron: Fallen Knight Set [COUNTS]<br/></font>
+2117171010|8521c172||<br/><font color="#9D75BF">Shades of Iron: Faraam Set [COUNTS]<br/></font>
+2117171011|8521c173||<br/><font color="#9D75BF">Shades of Iron: Headtaker Set [COUNTS]<br/></font>
+2117171012|8521c174||<br/><font color="#9D75BF">Shades of Iron: Hitokiri Set [COUNTS]<br/></font>
+2117171013|8521c175||<br/><font color="#9D75BF">Shades of Iron: Kara Set [COUNTS]<br/></font>
+2117171014|8521c18b||<br/><font color="#9D75BF">Shades of Iron: Lionhunter Set [COUNTS]<br/></font>
+2117171015|8521c18c||<br/><font color="#9D75BF">Shades of Iron: Master Assassin Set [COUNTS]<br/></font>
+2117171016|8521c18d||<br/><font color="#9D75BF">Shades of Iron: Old Hunter Set [COUNTS]<br/></font>
+2117171017|8521c18e||<br/><font color="#9D75BF">Shades of Iron: Revenant Set [COUNTS]<br/></font>
+2117171018|8521c18f||<br/><font color="#9D75BF">Shades of Iron: Stalker Set [COUNTS]<br/></font>
+2117171019|8521c190||<br/><font color="#9D75BF">Shades of Iron: Taifeng Set [COUNTS]<br/></font>
+2117171020|8521c191||<br/><font color="#9D75BF">Shades of Iron: Unseen Hunter Set [COUNTS]<br/></font>
+2117171021|8521c192||<br/><font color="#9D75BF">Shades of Iron: Sithis Set [COUNTS]<br/></font>
+2117171022|8521c193||<br/><font color="#9D75BF">Shades of Iron: Silver Swords [COUNTS]<br/></font>
+2117171023|8521c194||<br/><font color="#9D75BF">Shades of Iron: Steel Swords [COUNTS]<br/></font>
+2117171024|bedfa718||<font color="#D7D23A">~ At the Mercy of Strangers ~</font><br/>Investigate the cry for help
+2117171025|a07184f7||<font color="#D7D23A">~ At the Mercy of Strangers ~</font><br/>Talk to John Verdun
+2117171026|71a0a392||<font color="#D7D23A">~ Caravan Attack ~</font><br/>Sounds of a commotion came from over here
+2117171027|6023aa13||<font color="#D7D23A">~ The Grateful Merchant ~</font><br/>A familiar face has arrived in Crow's Perch. Perhaps it will be worth a visit.
+2117171028|adec9d47||<font color="#D7D23A">~ The Crossing of Lindenvale ~</font><br/>Looters were seen here recently
+2117171029|8f7e7b26||<font color="#D7D23A">~ A Most Deadly Crossing ~</font><br/>Looters were seen here recently
+2117171030|71105905||<font color="#D7D23A">~ The Troll Bridge Crossing ~</font><br/>Pay the toll or find another way across
+2117171031|ac7f960f||<font color="#D7D23A">~ Face Me if You Dare! ~</font><br/>Talk to the challenger
+2117171032|8e1173ee||<font color="#D7D23A">~ The Defender of Maid Bilberry ~</font><br/>Talk to Ronvid
+2117171033|6fa351cd||<font color="#D7D23A">~ Unlearned Lessons ~</font><br/>Talk to Ronvid and his friends
+2117171034|31bb4d54||<font color="#D7D23A">~ Harassing a Troll ~</font><br/>Help the troll kill the nekkers
+2117171035|cabe618a||<font color="#D7D23A">~ Highway Robbery ~</font><br/>Save the trader from the bandit attack
+2117171036|802df990||<font color="#D7D23A">~ Highwayman's Cache ~</font><br/>Talk to the bandits about crossing the bridge
+2117171037|ce11d7d2||<font color="#D7D23A">~ Heatherton Looters ~</font><br/>Confront the looters
+2117171038|a72fa917||<font color="#D7D23A">~ Codgers' Quarry Looters ~</font><br/>Confront the looters
+2117171039|452bd802||<font color="#D7D23A">~ Toderas Looters ~</font><br/>Confront the looters
+2117171040|050c3231||<font color="#D7D23A">~ Man's Best Friend ~</font><br/>Save the children from the wild dog
+2117171041|1e8fa430||<font color="#D7D23A">~ A Warm Welcome ~</font><br/>Approach the refugees
+2117171042|611aa989||<font color="#D7D23A">~ Drunken Rabble ~</font><br/>Approach the drunk butchers
+2117171043|676172ca||<font color="#D7D23A">~ Karmic Justice ~</font><br/>Confront the elves
+2117171044|de44ec01||<font color="#D7D23A">~ Never Trust Children ~</font><br/>Talk to the crying child
+2117171045|aaa3ed6b||<font color="#D7D23A">~ Dye Pit Racists ~</font><br/>Confront the men harassing the elves
+2117171046|6515875d||<font color="#D7D23A">~ The Racists of Novigrad ~</font><br/>Confront the men harassing the elf
+2117171047|01eb1b55||<font color="#D7D23A">~ Strangers in the Night ~</font><br/>Talk to the three men
+2117171048|178bc718||<font color="#D7D23A">~ Strumpet in Distress ~</font><br/>Intervene the arguing duo
+2117171049|59942a13||<font color="#D7D23A">~ Suspicious Shakedown ~</font><br/>Confront the bandits harassing the merchant
+2117171050|45526b2f||<font color="#D7D23A">~ The Flame of Hatred ~</font><br/>Talk to the priest
+2117171051|33d571b0||<font color="#D7D23A">~ The Ambush ~</font><br/>Investigate a report of bandits in the area
+2117171052|1316177d||<font color="#D7D23A">~ The Most Truest of Basilisks ~</font><br/>Investigate the beast tamer and his "Basilisk"
+2117171053|c950ced1||<font color="#D7D23A">~ The Price of Passage ~</font><br/>Approach the Redanian soldiers
+2117171054|b7d3d552||<font color="#D7D23A">~ Another Price of Passage ~</font><br/>Approach the Redanian soldiers
+2117171055|a656dbd3||<font color="#D7D23A">~ The Final Price of Passage ~</font><br/>Approach the Redanian soldiers
+2117171056|b6d831aa||<font color="#D7D23A">~ Witch Hunter Raids ~</font><br/>Interfere with the Mage's arrest
+2117171057|68304bf8||<font color="#D7D23A">~ Call of the Wild ~</font><br/>Investigate a Werewolf sighting in the area
+2117171058|6e48b0d7||<font color="#D7D23A">~ Farting Trolls ~</font><br/>Strange sounds and smells have been reported around this cave
+2117171059|1504a840||<font color="#D7D23A">~ Siren's Call ~</font><br/>Defend the man from the sirens
+2117171060|b8890ec4||<font color="#D7D23A">~ Sweet Bait ~</font><br/>Talk to the distressed child
+2117171061|9b5eb447||<font color="#D7D23A">~ The Four Faces of Hemdall ~</font><br/>Confront the pirates blocking access to the shrine
+2117171062|149dc2af||<font color="#D7D23A">~ Woe is Me ~</font><br/>Help an injured peasant on the bridge
+2117171063|9e977c3a||<font color="#D7D23A">~ Yustianna Disturbed ~</font><br/>People say bandits have been rumored to lurk here
+2117171064|7c3de1ee||<font color="#D7D23A">~ Trail of Echoes ~</font><br/>Investigate the ancient cave in the mountains
+2117171065|6ed5770e||<br/><font color="#9D75BF">The Following Quests May Fail Or Become Unavailable If Not Done Immediately<br/></font>
+2117171066|6ed5770f||<br/><font color="#9D75BF">Complete Before travelling to Vizima During 'Lilac and Gooseberries'<br/></font>
+2117171067|6ed57710||<br/><font color="#9D75BF">Complete Before taking Uma from Crow's Perch During 'Ugly Baby'<br/></font>
+2117171068|6ed57711||<br/><font color="#9D75BF">Complete Before Accepting 'A Favor for a Friend'<br/></font>
+2117171069|6ed57712||<br/><font color="#9D75BF">Complete Before The Witch Hunter's Outpost Section During 'Count Reuven's Treasure'<br/></font>
+2117171070|6ed57713||<br/><font color="#9D75BF">Complete Before Accepting 'Following the Thread'<br/></font>
+2117171071|6ed57714||<br/><font color="#9D75BF">Complete Before Accepting 'On Thin Ice'<br/></font>
+2117171072|6ed57715||<br/><font color="#9D75BF">Complete Before Accepting 'King's Gambit'<br/></font>
+2117171073|6ed57716||<br/><font color="#9D75BF">Complete Before Accepting 'Battle Preparations'<br/></font>
+2117171074|6ed57717||<br/><font color="#9D75BF">Complete Before talking To Ciri About The Lodge Meeting During 'Final Preparations'<br/></font>
+2117171075|6ed5772d||<br/><font color="#9D75BF">Complete Before Travelling To The Isle Of Mists<br/></font>
+2117171076|6ed5772e||<br/><font color="#9D75BF">Complete Before Finishing 'Where Children Toil, Toys Waste Away'<br/></font>
+2117171077|6ed5772f||<br/><font color="#9D75BF">Only Playable if you do not banish Sarah during 'Novigrad Dreaming'<br/></font>
+2117171078|9bb91ca6||Plus [COUNTS] more entries...
+2117171079|df532b08||The event '[EVENTNAME]' is now available in [EVENTLOCATION]<br/><br/>Take a look at the World Map to find its location.
+2117171080|5d18f5ff||<font color="#DE8971">Gwent              :   Show Detailed Info</font>
+2117171081|1ff2eee2||<font color="#D79D3A">  - Missable:</font><br/>
+2117171082|b13ed7e8||<font color="#AECBEB">  - Leaders:</font><br/>
+2117171083|b13d0886||<font color="#AECBEB">  - Heros:</font><br/>
+2117171084|b1431210||<font color="#AECBEB">  - Units:</font><br/>
+2117171085|81a69b11||Velen
+2117171086|a59074b8||Oxenfurt
+2117171087|7e538697||Novigrad
+2117171088|9700bbdb||Crow's Perch
+2117171089|f2649ad9||Notifications
+2117171090|1a3d0454||<font color="#FFE194">Realtime Updates       :   Show Quest Updates</font>
+2117171091|19945e0c||<font color="#FFE194">Realtime Updates       :   Show Random Event Updates</font>
+2117171092|19b1016d||<font color="#FFE194">Realtime Updates       :   Show Gwent Card Updates</font>
+2117171093|19cbd332||<font color="#FFE194">Realtime Updates       :   Show Item Updates</font>
+2117171094|1a8f0704||<font color="#FFE194">Realtime Updates       :   Show Map Pin Updates</font>
+2117171095|52e566d1||<font color="#DE8971">Miscellaneous       :   New Event Unlocked Notification</font>
+2117171096|52e1fb0f||<font color="#DE8971">Miscellaneous       :   Manually Toggled Notification</font>
+2117171099|699977ff||<font size="17" color="#C8566B"> (In Progress)</font>
+2117171100|69997744||<font size="17" color="#2ba84a"> (Completed)</font>
+2117171101|699977f6||<font size="17" color="#ff686b"> (Ignored)</font>
+2117171102|6999786c||<font size="17" color="#26CAD6"> (Mod Added)</font>
+2117171103|69997874||<font size="17" color="#D79D3A"> (Missable)</font>
+2117171104|69997725||<font size="17" color="#C8566B"> (Bought)</font>
+2117171105|6999785b||<font size="17" color="#C8566B"> (Lootable)</font>
+2117171106|699978f9||<font size="17" color="#C8566B"> (Quest Reward)</font>
+2117171107|699979b0||<font size="17" color="#C8566B"> (Won)</font>
+2117171108|1705070e||Notification Settings
+2117171109|34990b66||<font color="#2ba84a">Enabled</font>
+2117171110|34992518||<font color="#ECE1A2">Lite Mode</font>
+2117171111|3499071c||<font color="#C8566B">Disabled</font>
+2117171112|cb0076f0||Witcher's Steel Sword
+2117171113|48bcb7ac||Witcher's Silver Sword
+2117171114|54240837||<br/><br/><br/><br/><br/><br/>Access to Gwent Deck Required for this preview

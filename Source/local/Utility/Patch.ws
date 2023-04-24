@@ -13,6 +13,7 @@ function PotP_UsingShadesOfIron() : bool
 
 function PotP_UsingGwentRedux() : bool 
 {
+	return false;
 	return StrLen(GetLocStringById(2114287601)) > 0;
 }
 

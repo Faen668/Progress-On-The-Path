@@ -142,6 +142,7 @@
 					<Option id="3" displayName="QT_Option_WType_3">	<Entry varId="ProgressOnThePath_Preview_WType" value="3"/></Option>
 					<Option id="4" displayName="QT_Option_WType_4">	<Entry varId="ProgressOnThePath_Preview_WType" value="4"/></Option>
 					<Option id="5" displayName="QT_Option_WType_5">	<Entry varId="ProgressOnThePath_Preview_WType" value="5"/></Option>
+					<Option id="6" displayName="QT_Option_WType_6">	<Entry varId="ProgressOnThePath_Preview_WType" value="6"/></Option>
 				</OptionsArray>
 			</Var>	
 			

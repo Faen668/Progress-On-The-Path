@@ -34,7 +34,14 @@ class CProgressOnThePath_GwentPreview
 	
 	public function IsCompleted() : bool 
 	{
-		return this.completed_count == this.total_count;
+		return this.CanAccess() && this.completed_count == this.total_count;
+	}	
+
+	//---------------------------------------------------
+	
+	public function CanAccess() : bool 
+	{
+		return theGame.GetGwintManager().HasLootedCard();
 	}	
 	
 	//---------------------------------------------------

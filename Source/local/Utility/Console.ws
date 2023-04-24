@@ -45,11 +45,8 @@ exec function pt_LogPins(PinType: name) {
 		}
 		
 		LogChannel('Progress on the Path Map Pin', "baseName = " + MapPins[Idx].entityName);
-		
-		if (MapPins[Idx].entityType == 'RoadSign') {
-			LogChannel('Progress on the Path Map Pin', "LocaName = " + GetLocStringByKeyExt("Map_Location_"+NameToString(MapPins[Idx].entityName)));
-			LogChannel('Progress on the Path Map Pin', "");
-		}
+		LogChannel('Progress on the Path Map Pin', "LocaName = " + GetLocStringByKeyExt("Map_Location_"+NameToString(MapPins[Idx].entityName)));
+		LogChannel('Progress on the Path Map Pin', "");
 	}
 }
 

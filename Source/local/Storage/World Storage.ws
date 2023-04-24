@@ -8,6 +8,12 @@ statemachine class CProgressOnThePath_WorldStorage
 	
 	var MasterList_World			:array<PotP_PreviewEntry>;
 	
+	var AbandonedSites_WhiteOrchard	: array<PotP_PreviewEntry>;
+	var AbandonedSites_Velen		: array<PotP_PreviewEntry>;
+	var AbandonedSites_Novigrad		: array<PotP_PreviewEntry>;
+	var AbandonedSites_Skellige		: array<PotP_PreviewEntry>;
+	var AbandonedSites_Toussaint	: array<PotP_PreviewEntry>;
+	
 	var BanditCamps_WhiteOrchard	: array<PotP_PreviewEntry>;
 	var BanditCamps_Velen			: array<PotP_PreviewEntry>;
 	var BanditCamps_Novigrad		: array<PotP_PreviewEntry>;
@@ -53,7 +59,7 @@ statemachine class CProgressOnThePath_WorldStorage
 		this.master = master;
 		this.GotoState('Build');
 	}
-
+	
 //---------------------------------------------------
 	
 	function CreateEntry() : PotP_PreviewEntry
@@ -103,6 +109,7 @@ state Build in CProgressOnThePath_WorldStorage
 
 		parent.MasterList_World.Clear();
 		
+		this.Build_Sites();
 		this.Build_Camp();
 		this.Build_Dens();
 		this.Build_Nest();
@@ -125,6 +132,85 @@ state Build in CProgressOnThePath_WorldStorage
 		parent.GotoState('Idle');
 	}
 
+	//---------------------------------------------------
+	//-- Functions --------------------------------------
+	//---------------------------------------------------
+	
+	latent function Build_Sites()
+	{
+		var group: string = "PotP_TrackingGroup_WorldMap_AbandonedSites_WhiteOrchard";
+		
+		parent.AbandonedSites_WhiteOrchard.Clear();
+		parent.AbandonedSites_WhiteOrchard.PushBack(parent.CreateEntry().initWorld(group + "_01", PotP_R_WO, PotP_I_Sites, PotP_E_Primary, 'lumbermill_camp_mp'));     
+		parent.AbandonedSites_WhiteOrchard.PushBack(parent.CreateEntry().initWorld(group + "_02", PotP_R_WO, PotP_I_Sites, PotP_E_Primary, 'road_protection_shrine')); 
+		
+		PotP_SortPreviewData(parent.AbandonedSites_WhiteOrchard, PotP_A_World, parent.master);
+
+		//------------------------------------------------------
+		
+		group = "PotP_TrackingGroup_WorldMap_AbandonedSites_Velen";
+		
+		parent.AbandonedSites_Velen.Clear();
+		parent.AbandonedSites_Velen.PushBack(parent.CreateEntry().initWorld(group + "_01", PotP_R_VE, PotP_I_Sites, PotP_E_Primary, 'nml_mp_de29'));     
+		parent.AbandonedSites_Velen.PushBack(parent.CreateEntry().initWorld(group + "_02", PotP_R_VE, PotP_I_Sites, PotP_E_Primary, 'cp5_town_resc'));
+		parent.AbandonedSites_Velen.PushBack(parent.CreateEntry().initWorld(group + "_03", PotP_R_VE, PotP_I_Sites, PotP_E_Primary, 'nml_mp_gr11_b')); 		
+		parent.AbandonedSites_Velen.PushBack(parent.CreateEntry().initWorld(group + "_04", PotP_R_VE, PotP_I_Sites, PotP_E_Primary, 'nml_mp_gr12_town')); 		
+		parent.AbandonedSites_Velen.PushBack(parent.CreateEntry().initWorld(group + "_05", PotP_R_VE, PotP_I_Sites, PotP_E_Primary, 'nml_mp_gr27')); 		
+		parent.AbandonedSites_Velen.PushBack(parent.CreateEntry().initWorld(group + "_06", PotP_R_VE, PotP_I_Sites, PotP_E_Primary, 'nml_mp_sb10')); 		
+		parent.AbandonedSites_Velen.PushBack(parent.CreateEntry().initWorld(group + "_07", PotP_R_VE, PotP_I_Sites, PotP_E_Primary, 'nml_mp_sb14')); 		
+		parent.AbandonedSites_Velen.PushBack(parent.CreateEntry().initWorld(group + "_08", PotP_R_VE, PotP_I_Sites, PotP_E_Primary, 'nml_mp_sb3')); 		
+		parent.AbandonedSites_Velen.PushBack(parent.CreateEntry().initWorld(group + "_09", PotP_R_VE, PotP_I_Sites, PotP_E_Primary, 'nml_mp_tm3')); 		
+		parent.AbandonedSites_Velen.PushBack(parent.CreateEntry().initWorld(group + "_10", PotP_R_VE, PotP_I_Sites, PotP_E_Primary, 'nml_mp_tm4')); 		
+		parent.AbandonedSites_Velen.PushBack(parent.CreateEntry().initWorld(group + "_11", PotP_R_VE, PotP_I_Sites, PotP_E_Primary, 'ep1_poi_08_mp_rt')); 		
+		parent.AbandonedSites_Velen.PushBack(parent.CreateEntry().initWorld(group + "_12", PotP_R_VE, PotP_I_Sites, PotP_E_Primary, 'ep1_poi_30_mp')); 				
+		
+		PotP_SortPreviewData(parent.AbandonedSites_Velen, PotP_A_World, parent.master);
+
+		//------------------------------------------------------
+		
+		group = "PotP_TrackingGroup_WorldMap_AbandonedSites_Novigrad";
+		
+		parent.AbandonedSites_Novigrad.Clear();
+		parent.AbandonedSites_Novigrad.PushBack(parent.CreateEntry().initWorld(group + "_01", PotP_R_NO, PotP_I_Sites, PotP_E_Primary, 'ep1_poi20_mp'));     
+		parent.AbandonedSites_Novigrad.PushBack(parent.CreateEntry().initWorld(group + "_02", PotP_R_NO, PotP_I_Sites, PotP_E_Primary, 'ep1_poi_37_mp'));
+		parent.AbandonedSites_Novigrad.PushBack(parent.CreateEntry().initWorld(group + "_03", PotP_R_NO, PotP_I_Sites, PotP_E_Primary, 'ep1_poi07_mp')); 		
+		parent.AbandonedSites_Novigrad.PushBack(parent.CreateEntry().initWorld(group + "_04", PotP_R_NO, PotP_I_Sites, PotP_E_Primary, 'ep1_poi06_mp')); 					
+		
+		PotP_SortPreviewData(parent.AbandonedSites_Novigrad, PotP_A_World, parent.master);
+
+		//------------------------------------------------------
+		
+		group = "PotP_TrackingGroup_WorldMap_AbandonedSites_Skellige";
+		
+		parent.AbandonedSites_Skellige.Clear();
+		parent.AbandonedSites_Skellige.PushBack(parent.CreateEntry().initWorld(group + "_01", PotP_R_SK, PotP_I_Sites, PotP_E_Primary, 'sk34_mp'));     
+		parent.AbandonedSites_Skellige.PushBack(parent.CreateEntry().initWorld(group + "_02", PotP_R_SK, PotP_I_Sites, PotP_E_Primary, 'sk33_mp'));
+		parent.AbandonedSites_Skellige.PushBack(parent.CreateEntry().initWorld(group + "_03", PotP_R_SK, PotP_I_Sites, PotP_E_Primary, 'sk52_mp_skellige')); 		
+		parent.AbandonedSites_Skellige.PushBack(parent.CreateEntry().initWorld(group + "_04", PotP_R_SK, PotP_I_Sites, PotP_E_Primary, 'sk75_mp_skellige')); 					
+		parent.AbandonedSites_Skellige.PushBack(parent.CreateEntry().initWorld(group + "_05", PotP_R_SK, PotP_I_Sites, PotP_E_Primary, 'sk51_mp_skellige')); 					
+		
+		PotP_SortPreviewData(parent.AbandonedSites_Skellige, PotP_A_World, parent.master);
+
+		//------------------------------------------------------
+		
+		group = "PotP_TrackingGroup_WorldMap_AbandonedSites_Toussaint";
+		
+		parent.AbandonedSites_Toussaint.Clear();
+		parent.AbandonedSites_Toussaint.PushBack(parent.CreateEntry().initWorld(group + "_01", PotP_R_TO, PotP_I_Sites, PotP_E_Primary, 'poi_bar_a_03_mp'));     
+		parent.AbandonedSites_Toussaint.PushBack(parent.CreateEntry().initWorld(group + "_02", PotP_R_TO, PotP_I_Sites, PotP_E_Primary, 'poi_bar_b_04_mp'));
+		parent.AbandonedSites_Toussaint.PushBack(parent.CreateEntry().initWorld(group + "_03", PotP_R_TO, PotP_I_Sites, PotP_E_Primary, 'poi_car_b_03_mp')); 		
+		parent.AbandonedSites_Toussaint.PushBack(parent.CreateEntry().initWorld(group + "_04", PotP_R_TO, PotP_I_Sites, PotP_E_Primary, 'poi_gor_b_12_mp')); 	
+		parent.AbandonedSites_Toussaint.PushBack(parent.CreateEntry().initWorld(group + "_05", PotP_R_TO, PotP_I_Sites, PotP_E_Primary, 'poi_gor_c_03_mp'));     
+		parent.AbandonedSites_Toussaint.PushBack(parent.CreateEntry().initWorld(group + "_06", PotP_R_TO, PotP_I_Sites, PotP_E_Primary, 'poi_gor_d_06_mp'));
+		parent.AbandonedSites_Toussaint.PushBack(parent.CreateEntry().initWorld(group + "_07", PotP_R_TO, PotP_I_Sites, PotP_E_Primary, 'poi_ved_a_02_mp')); 		
+		parent.AbandonedSites_Toussaint.PushBack(parent.CreateEntry().initWorld(group + "_08", PotP_R_TO, PotP_I_Sites, PotP_E_Primary, 'lw_poi_ww_cor_2_mp')); 	
+		parent.AbandonedSites_Toussaint.PushBack(parent.CreateEntry().initWorld(group + "_09", PotP_R_TO, PotP_I_Sites, PotP_E_Primary, 'lw_poi_ww_ver_10_mp'));     
+		parent.AbandonedSites_Toussaint.PushBack(parent.CreateEntry().initWorld(group + "_10", PotP_R_TO, PotP_I_Sites, PotP_E_Primary, 'lw_poi_ww_ver_12_mp'));
+		parent.AbandonedSites_Toussaint.PushBack(parent.CreateEntry().initWorld(group + "_11", PotP_R_TO, PotP_I_Sites, PotP_E_Primary, 'lw_ww_poi_bel_5_mp')); 					
+		
+		PotP_SortPreviewData(parent.AbandonedSites_Toussaint, PotP_A_World, parent.master);
+	}
+	
 	//---------------------------------------------------
 	//-- Functions --------------------------------------
 	//---------------------------------------------------

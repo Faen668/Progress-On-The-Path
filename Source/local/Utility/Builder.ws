@@ -89,6 +89,13 @@ class ProgressOnThepath_StringBuilder
 	
 	//---------------------------------------------------
 	
+	private function FormatHeaderIcon(data: PotP_PreviewEntry, header: string) : string
+	{
+		return StrReplace(header, "[ICON_PATH]", "<img src='img://" + data.icon_path + "' height='20' width='20' vspace='-5' />&nbsp;");
+	}
+	
+	//---------------------------------------------------
+	
 	public function build() : PotP_Builder_Result
 	{
 		var messagebody, entry_line: string = "";		
@@ -119,7 +126,7 @@ class ProgressOnThepath_StringBuilder
 			{
 				if (!n_headerAdded)
 				{
-					messagebody += header;
+					messagebody += this.FormatHeaderIcon(n_entryList[Idx], header);
 					n_headerAdded = true;
 				}
 				messagebody += entry_line + "<br/>";
@@ -137,7 +144,7 @@ class ProgressOnThepath_StringBuilder
 				// Attempt to add main header if normal array is empty.
 				if (!n_headerAdded)
 				{
-					messagebody += header;
+					messagebody += this.FormatHeaderIcon(m_entryList[Idx], header);
 					n_headerAdded = true;
 				}
 				
@@ -322,6 +329,13 @@ class ProgressOnThepath_GwentCardBuilder
 		// Used internally to hold 'missable' entries.
 		l_entryList.PushBack(_quest);
 	}
+
+	//---------------------------------------------------
+	
+	private function FormatHeaderIcon(data: PotP_PreviewEntry, header: string) : string
+	{
+		return StrReplace(header, "[ICON_PATH]", "<img src='img://" + data.icon_path + "' height='20' width='20' vspace='-5' />&nbsp;");
+	}
 	
 	//---------------------------------------------------
 	
@@ -361,7 +375,7 @@ class ProgressOnThepath_GwentCardBuilder
 			{
 				if (!n_headerAdded)
 				{
-					messagebody += this.header;
+					messagebody += this.FormatHeaderIcon(l_entryList[Idx], header);
 					n_headerAdded = true;
 				}
 
@@ -384,7 +398,7 @@ class ProgressOnThepath_GwentCardBuilder
 				// Attempt to add main header if normal array is empty.
 				if (!n_headerAdded)
 				{
-					messagebody += header;
+					messagebody += this.FormatHeaderIcon(h_entryList[Idx], header);
 					n_headerAdded = true;
 				}
 				
@@ -407,7 +421,7 @@ class ProgressOnThepath_GwentCardBuilder
 				// Attempt to add main header if normal array is empty.
 				if (!n_headerAdded)
 				{
-					messagebody += header;
+					messagebody += this.FormatHeaderIcon(u_entryList[Idx], header);
 					n_headerAdded = true;
 				}
 				

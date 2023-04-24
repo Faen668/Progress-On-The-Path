@@ -1,4 +1,8 @@
 :: encode the strings from the csv file in /strings and creates all the
 :: w3strings files
 
-w3strings.exe -d en.w3strings
+call variables.cmd
+
+cd "%modpath%\Strings"
+
+"%modkitpath%\w3strings\w3strings" -d en.w3strings

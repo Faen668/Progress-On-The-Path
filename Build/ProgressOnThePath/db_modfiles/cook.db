@@ -78,6 +78,13 @@
             "id": "F84BA3C0-A66DBDF9-3F84A781-A8FB0E35"
         },
         {
+            "path": "gameplay\\gui_new\\icons\\potp\\tracked_abandonedsite_dark.png",
+            "level": 0,
+            "seed": 1,
+            "consumed": 1,
+            "id": "AADE4FC1-73EBDA3A-27265DD5-6335F69A"
+        },
+        {
             "path": "gameplay\\gui_new\\icons\\potp\\tracked_banditcamp.png",
             "level": 0,
             "seed": 1,

@@ -286,6 +286,11 @@ class CProgressOnThePath_Notifications
 		{
 			InsertedString = GetLocStringByKeyExt("PotP_NotificationLine_BanditC") + entry_data.localname;
 		}
+
+		if (entry_data.filter == PotP_I_Sites)
+		{
+			InsertedString = GetLocStringByKeyExt("PotP_NotificationLine_AbandonedSite") + entry_data.localname;
+		}
 		
 		if (storage.pWorldStorageArray_Name.FindFirst(InsertedString) == -1 ) 
 		{

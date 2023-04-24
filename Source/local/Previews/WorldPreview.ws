@@ -60,6 +60,12 @@ class CProgressOnThePath_WorldPreview
 	
 	private function generate(): string 
 	{
+		build("PotP_Preview_Sites_1", master.PotP_PersistentStorage.pWorldStorage.AbandonedSites_WhiteOrchard);
+		build("PotP_Preview_Sites_2", master.PotP_PersistentStorage.pWorldStorage.AbandonedSites_Velen);
+		build("PotP_Preview_Sites_3", master.PotP_PersistentStorage.pWorldStorage.AbandonedSites_Novigrad);
+		build("PotP_Preview_Sites_4", master.PotP_PersistentStorage.pWorldStorage.AbandonedSites_Skellige);
+		build("PotP_Preview_Sites_5", master.PotP_PersistentStorage.pWorldStorage.AbandonedSites_Toussaint);
+	
 		build("PotP_Preview_Camps_1", master.PotP_PersistentStorage.pWorldStorage.BanditCamps_WhiteOrchard);
 		build("PotP_Preview_Camps_2", master.PotP_PersistentStorage.pWorldStorage.BanditCamps_Velen);
 		build("PotP_Preview_Camps_3", master.PotP_PersistentStorage.pWorldStorage.BanditCamps_Novigrad);

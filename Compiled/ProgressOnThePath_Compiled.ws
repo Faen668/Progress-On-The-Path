@@ -131,10 +131,15 @@ statemachine class CProgressOnThePath extends SU_BaseBootstrappedMod {
 			activefilters  = PotP_GwentPreview.GetActiveFilters() + "</p><br/>";
 			description    = PotP_GwentPreview.GetBookDescription();
 			countstring	   = PotP_GwentPreview.GetTotalCountsForPreview();
-		
+
 			if (PotP_GwentPreview.IsCompleted())
 			{
 				description = "<p align=\"center\">" + GetLocStringByKeyExt("ProgressOnThePath_FilterComplete") + "</p>";
+			}
+			
+			if (!PotP_GwentPreview.CanAccess())
+			{
+				description = "<p align=\"center\">" + GetLocStringByKeyExt("ProgressOnThePath_FilterGwentDeck") + "</p>";
 			}
 			
 			if (description == "")
@@ -196,10 +201,10 @@ state Idle in CProgressOnThePath
 state Initialising in CProgressOnThePath 
 {
 	private var curVersionStr: string;
-		default curVersionStr = "5.2";
+		default curVersionStr = "5.2.1";
 		
 	private var curVersionInt: int;
-		default curVersionInt = 520;
+		default curVersionInt = 521;
 	
 	private var hasUpdated: bool;
 		default hasUpdated = false;
@@ -311,7 +316,7 @@ state Initialising in CProgressOnThePath
 	{
 		if (FactsQuerySum(VersStr) < curVersionInt) 
 		{
-			if (FactsQuerySum(VersStr) < 520) { FactsSet(VersStr, 520); hasUpdated = true; }
+			if (FactsQuerySum(VersStr) < 521) { PotP_LoadStorageCollection(parent, 'World'); FactsSet(VersStr, 521); hasUpdated = true; }
 		}
 	}
 	
@@ -1025,7 +1030,14 @@ class CProgressOnThePath_GwentPreview
 	
 	public function IsCompleted() : bool 
 	{
-		return this.completed_count == this.total_count;
+		return this.CanAccess() && this.completed_count == this.total_count;
+	}	
+
+	//---------------------------------------------------
+	
+	public function CanAccess() : bool 
+	{
+		return theGame.GetGwintManager().HasLootedCard();
 	}	
 	
 	//---------------------------------------------------
@@ -1500,6 +1512,12 @@ class CProgressOnThePath_WorldPreview
 	
 	private function generate(): string 
 	{
+		build("PotP_Preview_Sites_1", master.PotP_PersistentStorage.pWorldStorage.AbandonedSites_WhiteOrchard);
+		build("PotP_Preview_Sites_2", master.PotP_PersistentStorage.pWorldStorage.AbandonedSites_Velen);
+		build("PotP_Preview_Sites_3", master.PotP_PersistentStorage.pWorldStorage.AbandonedSites_Novigrad);
+		build("PotP_Preview_Sites_4", master.PotP_PersistentStorage.pWorldStorage.AbandonedSites_Skellige);
+		build("PotP_Preview_Sites_5", master.PotP_PersistentStorage.pWorldStorage.AbandonedSites_Toussaint);
+	
 		build("PotP_Preview_Camps_1", master.PotP_PersistentStorage.pWorldStorage.BanditCamps_WhiteOrchard);
 		build("PotP_Preview_Camps_2", master.PotP_PersistentStorage.pWorldStorage.BanditCamps_Velen);
 		build("PotP_Preview_Camps_3", master.PotP_PersistentStorage.pWorldStorage.BanditCamps_Novigrad);
@@ -1879,9 +1897,15 @@ state Build in CProgressOnThePath_ItemsStorage
 		
 		parent.MasterList_Items.Clear();
 		
-		this.BuildVanilla();
+		this.BuildVanilla();	
 		this.BuildModAdded();
-		this.BuildGwentCards();
+		
+		if (PotP_UsingGwentRedux()) {
+			this.BuildGwentReduxCards();
+		}
+		else {
+			this.BuildGwentCards();
+		}		
 
 		for ( Idx = 0; Idx < parent.MasterList_Items.Size(); Idx += 1 ) 
 		{
@@ -2638,564 +2662,560 @@ state Build in CProgressOnThePath_ItemsStorage
 		}
 	}
 
+	latent function BuildGwentReduxCards()
+	{
+		var group: string = "PotP_TrackingGroup_GwentCards_Monsters_Redux";
+		
+		parent.Gwent_MonstersDeck.Clear();
+		parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_01", PotP_E_Primary, PotP_I_Monst, 'BASEDECK', PotP_G_Lead)				.compilevariations(''));
+		parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_02", PotP_E_Primary, PotP_I_Monst, 'gwint_card_eredin_bronze')			.compilevariations(''));
+		parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_03", PotP_E_Primary, PotP_I_Monst, 'gwint_card_eredin_silver')			.compilevariations(''));
+		parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_04", PotP_E_Missable,PotP_I_Monst, 'gwint_card_eredin_gold')			.compilevariations(''));
+		parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_05", PotP_E_Primary, PotP_I_Monst, 'gwint_card_eredin_platinium')		.compilevariations(''));
+		parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_06", PotP_E_Primary, PotP_I_Monst, 'gwint_card_caranthir')				.compilevariations(''));
+		parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_07", PotP_E_Primary, PotP_I_Monst, 'gwint_card_emiel')					.compilevariations(''));
+		parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_08", PotP_E_Primary, PotP_I_Monst, 'gwint_card_imlerith')				.compilevariations(''));
+		parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_09", PotP_E_Primary, PotP_I_Monst, 'gwint_card_grave_hag')				.compilevariations(''));
+		parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_10", PotP_E_Primary, PotP_I_Monst, 'gwint_card_striga')					.compilevariations(''));
+		parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_11", PotP_E_Primary, PotP_I_Monst, 'gwint_card_plague_maiden')			.compilevariations(''));
+		parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_12", PotP_E_Primary, PotP_I_Monst, 'gwint_card_arachas')				.compilevariations(''));
+		parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_13", PotP_E_Primary, PotP_I_Monst, 'gwint_card_arachas_behemoth')		.compilevariations(''));
+		parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_14", PotP_E_Primary, PotP_I_Monst, 'gwint_card_avallach')				.compilevariations(''));
+		parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_15", PotP_E_Primary, PotP_I_Monst, 'gwint_card_moon')					.compilevariations(''));
+		parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_16", PotP_E_Primary, PotP_I_Monst, 'gwint_card_ghoul3')					.compilevariations(''));
+		parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_17", PotP_E_Primary, PotP_I_Monst, 'gwint_card_cow')					.compilevariations(''));
+		parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_18", PotP_E_Primary, PotP_I_Monst, 'gwint_card_crone_weavess')			.compilevariations(''));
+		parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_19", PotP_E_Primary, PotP_I_Monst, 'gwint_card_crone_whispess')			.compilevariations(''));
+		parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_20", PotP_E_Primary, PotP_I_Monst, 'gwint_card_crone_brewess')			.compilevariations(''));
+		parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_21", PotP_E_Primary, PotP_I_Monst, 'gwint_card_dagon')					.compilevariations(''));
+		parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_22", PotP_E_Primary, PotP_I_Monst, 'gwint_card_dettlaff')				.compilevariations(''));
+		parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_23", PotP_E_Primary, PotP_I_Monst, 'gwint_card_draug')					.compilevariations(''));
+		parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_24", PotP_E_Primary, PotP_I_Monst, 'gwint_card_endrega')				.compilevariations(''));
+		parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_25", PotP_E_Primary, PotP_I_Monst, 'gwint_card_earth_elemental')		.compilevariations(''));
+		parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_26", PotP_E_Primary, PotP_I_Monst, 'gwint_card_fire_elemental')			.compilevariations(''));
+		parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_27", PotP_E_Primary, PotP_I_Monst, 'gwint_card_fogling')				.compilevariations(''));
+		parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_28", PotP_E_Primary, PotP_I_Monst, 'gwint_card_frightener')				.compilevariations(''));
+		parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_29", PotP_E_Primary, PotP_I_Monst, 'gwint_card_katakan')				.compilevariations(''));
+		parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_30", PotP_E_Primary, PotP_I_Monst, 'gwint_card_ghoul')					.compilevariations(''));
+		parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_31", PotP_E_Primary, PotP_I_Monst, 'gwint_card_forktail')				.compilevariations(''));
+		parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_32", PotP_E_Primary, PotP_I_Monst, 'gwint_card_harpy')					.compilevariations(''));
+		parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_33", PotP_E_Primary, PotP_I_Monst, 'gwint_card_griffin')				.compilevariations(''));
+		parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_34", PotP_E_Primary, PotP_I_Monst, 'gwint_card_iris')					.compilevariations(''));
+		parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_35", PotP_E_Primary, PotP_I_Monst, 'gwint_card_celaeno_harpy')			.compilevariations(''));
+		parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_36", PotP_E_Primary, PotP_I_Monst, 'gwint_card_kayran')					.compilevariations(''));
+		parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_37", PotP_E_Primary, PotP_I_Monst, 'gwint_card_ghoul2')					.compilevariations(''));
+		parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_38", PotP_E_Primary, PotP_I_Monst, 'gwint_card_fiend')					.compilevariations(''));
+		parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_39", PotP_E_Primary, PotP_I_Monst, 'gwint_card_ice_giant')				.compilevariations(''));
+		parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_40", PotP_E_Primary, PotP_I_Monst, 'gwint_card_wildhunt_drakkar')		.compilevariations(''));
+		parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_41", PotP_E_Primary, PotP_I_Monst, 'gwint_card_nekker')					.compilevariations('gwint_card_nekker2', 'gwint_card_nekker3'));
+		parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_42", PotP_E_Primary, PotP_I_Monst, 'gwint_card_nithral')				.compilevariations(''));
+		parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_43", PotP_E_Primary, PotP_I_Monst, 'gwint_card_mrmirror')				.compilevariations(''));
+		parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_44", PotP_E_Primary, PotP_I_Monst, 'gwint_card_bruxa')					.compilevariations(''));
+		parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_45", PotP_E_Primary, PotP_I_Monst, 'gwint_card_gargoyle')				.compilevariations(''));
+		parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_46", PotP_E_Primary, PotP_I_Monst, 'gwint_card_savolla')				.compilevariations(''));
+		parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_47", PotP_E_Primary, PotP_I_Monst, 'gwint_card_dol_dwarf')				.compilevariations('gwint_card_dol_dwarf2', 'gwint_card_dol_dwarf3'));
+		parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_48", PotP_E_Primary, PotP_I_Monst, 'gwint_card_cockatrice')				.compilevariations(''));
+		parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_49", PotP_E_Primary, PotP_I_Monst, 'gwint_card_toad')					.compilevariations(''));
+		parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_50", PotP_E_Primary, PotP_I_Monst, 'gwint_card_alp')					.compilevariations(''));
+		parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_51", PotP_E_Primary, PotP_I_Monst, 'gwint_card_ekkima')					.compilevariations(''));
+		parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_52", PotP_E_Primary, PotP_I_Monst, 'gwint_card_fleder')					.compilevariations(''));
+		parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_53", PotP_E_Primary, PotP_I_Monst, 'gwint_card_garkain')				.compilevariations(''));
+		parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_54", PotP_E_Primary, PotP_I_Monst, 'gwint_card_arachas2')				.compilevariations(''));
+		parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_55", PotP_E_Primary, PotP_I_Monst, 'gwint_card_mrmirror_foglet')		.compilevariations(''));
+		parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_56", PotP_E_Primary, PotP_I_Monst, 'gwint_card_white')					.compilevariations(''));
+		parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_57", PotP_E_Primary, PotP_I_Monst, 'gwint_card_wildhunt_hound')			.compilevariations(''));
+		parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_58", PotP_E_Primary, PotP_I_Monst, 'gwint_card_wildhunt_navigator')		.compilevariations(''));
+		parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_59", PotP_E_Primary, PotP_I_Monst, 'gwint_card_wildhunt_rider')			.compilevariations('gwint_card_wildhunt_rider2', 'gwint_card_wildhunt_rider3'));
+		parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_60", PotP_E_Primary, PotP_I_Monst, 'gwint_card_wildhunt_warrior')		.compilevariations(''));
+		parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_61", PotP_E_Primary, PotP_I_Monst, 'gwint_card_arachas3')				.compilevariations(''));
+		parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_62", PotP_E_Primary, PotP_I_Monst, 'gwint_card_leshen')					.compilevariations(''));
+		parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_63", PotP_E_Primary, PotP_I_Monst, 'gwint_card_centipede')				.compilevariations(''));
+		
+		PotP_SortPreviewData(parent.Gwent_MonstersDeck, PotP_A_Gwent, parent.master);
+
+		//------------------------------------------------------
+
+		group = "PotP_TrackingGroup_GwentCards_NeutralCards_Redux";
+		
+		parent.Gwent_NeutralDeck.Clear();
+		parent.Gwent_NeutralDeck.PushBack(parent.CreateEntry().initGwent(group + "_01", PotP_E_Primary, PotP_I_Neutr, 'gwint_card_azar_javed')		.compilevariations(''));
+		parent.Gwent_NeutralDeck.PushBack(parent.CreateEntry().initGwent(group + "_02", PotP_E_Primary, PotP_I_Neutr, 'gwint_card_geralt')			.compilevariations('gwint_card_gog_geralt'));
+		parent.Gwent_NeutralDeck.PushBack(parent.CreateEntry().initGwent(group + "_03", PotP_E_Primary, PotP_I_Neutr, 'BASEDECK')					.compilevariations(''));
+		parent.Gwent_NeutralDeck.PushBack(parent.CreateEntry().initGwent(group + "_04", PotP_E_Primary, PotP_I_Neutr, 'gwint_card_ciri')			.compilevariations('gwint_card_gog_ciri'));
+		parent.Gwent_NeutralDeck.PushBack(parent.CreateEntry().initGwent(group + "_05", PotP_E_Primary, PotP_I_Neutr, 'BASEDECK')					.compilevariations(''));
+		parent.Gwent_NeutralDeck.PushBack(parent.CreateEntry().initGwent(group + "_06", PotP_E_Primary, PotP_I_Neutr, 'gwint_card_dummy')			.compilevariations(''));
+		parent.Gwent_NeutralDeck.PushBack(parent.CreateEntry().initGwent(group + "_07", PotP_E_Primary, PotP_I_Neutr, 'BASEDECK')					.compilevariations(''));
+		parent.Gwent_NeutralDeck.PushBack(parent.CreateEntry().initGwent(group + "_08", PotP_E_Primary, PotP_I_Neutr, 'BASEDECK')					.compilevariations(''));
+		parent.Gwent_NeutralDeck.PushBack(parent.CreateEntry().initGwent(group + "_09", PotP_E_Primary, PotP_I_Neutr, 'BASEDECK')					.compilevariations(''));
+		parent.Gwent_NeutralDeck.PushBack(parent.CreateEntry().initGwent(group + "_10", PotP_E_Primary, PotP_I_Neutr, 'gwint_card_horn')			.compilevariations(''));
+		parent.Gwent_NeutralDeck.PushBack(parent.CreateEntry().initGwent(group + "_11", PotP_E_Primary, PotP_I_Neutr, 'gwint_card_professor')		.compilevariations(''));
+		parent.Gwent_NeutralDeck.PushBack(parent.CreateEntry().initGwent(group + "_12", PotP_E_Primary, PotP_I_Neutr, 'BASEDECK')					.compilevariations(''));
+		parent.Gwent_NeutralDeck.PushBack(parent.CreateEntry().initGwent(group + "_13", PotP_E_Primary, PotP_I_Neutr, 'gwint_card_vesemir')			.compilevariations(''));
+		parent.Gwent_NeutralDeck.PushBack(parent.CreateEntry().initGwent(group + "_14", PotP_E_Primary, PotP_I_Neutr, 'gwint_card_yennefer')		.compilevariations(''));
+		
+		PotP_SortPreviewData(parent.Gwent_NeutralDeck, PotP_A_Gwent, parent.master);
+
+		//------------------------------------------------------
+		
+		group = "PotP_TrackingGroup_GwentCards_NilfgaardianEmpire_Redux";
+		
+		parent.Gwent_NilfgaardDeck.Clear();
+		parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_01", PotP_E_Primary, PotP_I_Nilfg, 'BASEDECK', PotP_G_Lead)			.compilevariations(''));
+		parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_02", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_emhyr_bronze')			.compilevariations(''));
+		parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_03", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_emhyr_silver')			.compilevariations(''));
+		parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_04", PotP_E_Missable,PotP_I_Nilfg, 'gwint_card_emhyr_gold')			.compilevariations(''));
+		parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_05", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_emhyr_platinium')		.compilevariations(''));
+		parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_06", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_moorvran')				.compilevariations(''));
+		parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_07", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_henrietta')				.compilevariations(''));
+		parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_08", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_letho')					.compilevariations(''));
+		parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_09", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_impera_brigade1')		.compilevariations(''));
+		parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_10", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_albrich')				.compilevariations(''));
+		parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_11", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_siege_support')			.compilevariations(''));
+		parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_12", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_artorius')				.compilevariations(''));
+		parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_13", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_assire')				.compilevariations(''));
+		parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_14", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_impera_brigade3')		.compilevariations(''));
+		parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_15", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_black_archer')			.compilevariations(''));
+		parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_16", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_cahir')					.compilevariations(''));
+		parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_17", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_renuald')				.compilevariations(''));
+		parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_18", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_catriona')				.compilevariations(''));
+		parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_19", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_cynthia')				.compilevariations(''));
+		parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_20", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_nausicaa3')				.compilevariations(''));
+		parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_21", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_nausicaa2')				.compilevariations(''));
+		parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_22", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_archer_support')		.compilevariations(''));
+		parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_23", PotP_E_Missable,PotP_I_Nilfg, 'gwint_card_fringilla')				.compilevariations(''));
+		parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_24", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_young_emissary2')		.compilevariations(''));
+		parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_25", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_heavy_zerri')			.compilevariations(''));
+		parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_26", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_joachim')				.compilevariations(''));
+		parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_27", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_impera_brigade4')		.compilevariations(''));
+		parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_28", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_menno')					.compilevariations(''));
+		parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_29", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_milton')				.compilevariations(''));
+		parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_30", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_nausicaa')				.compilevariations(''));
+		parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_31", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_palmerin')				.compilevariations(''));
+		parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_32", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_morteisen')				.compilevariations(''));
+		parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_33", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_puttkammer')			.compilevariations(''));
+		parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_34", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_rainfarn')				.compilevariations(''));
+		parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_35", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_archer_support2')		.compilevariations(''));
+		parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_36", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_rotten')				.compilevariations(''));
+		parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_37", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_impera_brigade2')		.compilevariations(''));
+		parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_38", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_shilard')				.compilevariations(''));
+		parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_39", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_combat_engineer')		.compilevariations(''));
+		parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_40", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_stefan')				.compilevariations(''));
+		parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_41", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_sweers')				.compilevariations(''));
+		parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_42", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_syanna')				.compilevariations(''));
+		parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_43", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_tibor')					.compilevariations(''));
+		parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_44", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_vanhemar')				.compilevariations(''));
+		parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_45", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_vattier')				.compilevariations(''));
+		parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_46", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_vicovaro')				.compilevariations(''));
+		parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_47", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_black_archer2')			.compilevariations(''));
+		parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_48", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_vivienne')				.compilevariations(''));
+		parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_49", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_vreemde')				.compilevariations(''));
+		parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_50", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_young_emissary')		.compilevariations(''));
+		parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_51", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_zerri')					.compilevariations(''));
+		
+		PotP_SortPreviewData(parent.Gwent_NilfgaardDeck, PotP_A_Gwent, parent.master);
+
+		//------------------------------------------------------
+		
+		group = "PotP_TrackingGroup_GwentCards_NorthernRealms_Redux";
+		
+		parent.Gwent_NorthernRealms.Clear();
+		parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_01", PotP_E_Primary, 	PotP_I_North, 'BASEDECK', PotP_G_Lead)			.compilevariations(''));
+		parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_02", PotP_E_Primary, 	PotP_I_North, 'gwint_card_foltest_bronze')		.compilevariations(''));
+		parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_03", PotP_E_Primary, 	PotP_I_North, 'gwint_card_foltest_silver')		.compilevariations(''));
+		parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_04", PotP_E_Missable,	PotP_I_North, 'gwint_card_foltest_gold')		.compilevariations(''));
+		parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_05", PotP_E_Primary, 	PotP_I_North, 'gwint_card_foltest_platinium')	.compilevariations(''));
+		parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_06", PotP_E_Missable,	PotP_I_North, 'gwint_card_natalis')				.compilevariations(''));
+		parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_07", PotP_E_Primary, 	PotP_I_North, 'gwint_card_olgierd')				.compilevariations(''));
+		parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_08", PotP_E_Primary, 	PotP_I_North, 'gwint_card_philippa')			.compilevariations(''));
+		parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_09", PotP_E_Primary, 	PotP_I_North, 'gwint_card_anseis')				.compilevariations(''));
+		parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_10", PotP_E_Primary, 	PotP_I_North, 'BASEDECK')						.compilevariations(''));
+		parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_11", PotP_E_Primary, 	PotP_I_North, 'gwint_card_beggar')				.compilevariations(''));
+		parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_12", PotP_E_Primary, 	PotP_I_North, 'gwint_card_bloody_baron')		.compilevariations(''));
+		parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_13", PotP_E_Primary, 	PotP_I_North, 'gwint_card_blue_stripes1')		.compilevariations('gwint_card_blue_stripes2', 'gwint_card_blue_stripes3'));
+		parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_14", PotP_E_Primary, 	PotP_I_North, 'gwint_card_boris')				.compilevariations(''));
+		parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_15", PotP_E_Primary, 	PotP_I_North, 'gwint_card_botchling')			.compilevariations(''));
+		parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_16", PotP_E_Primary, 	PotP_I_North, 'gwint_card_catapult2')			.compilevariations(''));
+		parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_17", PotP_E_Primary, 	PotP_I_North, 'gwint_card_carlo')				.compilevariations(''));
+		parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_18", PotP_E_Primary, 	PotP_I_North, 'gwint_card_catapult')			.compilevariations(''));
+		parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_19", PotP_E_Primary, 	PotP_I_North, 'gwint_card_cleric_rose')			.compilevariations(''));
+		parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_20", PotP_E_Primary, 	PotP_I_North, 'gwint_card_crinfrid')			.compilevariations('gwint_card_crinfrid2', 'gwint_card_crinfrid3'));
+		parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_21", PotP_E_Primary, 	PotP_I_North, 'gwint_card_crownsplitter')		.compilevariations(''));
+		parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_22", PotP_E_Primary, 	PotP_I_North, 'gwint_card_cutup')				.compilevariations(''));
+		parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_23", PotP_E_Missable,	PotP_I_North, 'gwint_card_dandelion')			.compilevariations(''));
+		parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_24", PotP_E_Primary, 	PotP_I_North, 'BASEDECK')						.compilevariations(''));
+		parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_25", PotP_E_Primary, 	PotP_I_North, 'gwint_card_dijkstra')			.compilevariations(''));
+		parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_26", PotP_E_Primary, 	PotP_I_North, 'BASEDECK')						.compilevariations(''));
+		parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_27", PotP_E_Primary, 	PotP_I_North, 'gwint_card_igor')				.compilevariations(''));
+		parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_28", PotP_E_Primary, 	PotP_I_North, 'gwint_card_jacques')				.compilevariations(''));
+		parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_29", PotP_E_Primary, 	PotP_I_North, 'BASEDECK')						.compilevariations(''));
+		parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_30", PotP_E_Primary, 	PotP_I_North, 'BASEDECK')						.compilevariations(''));
+		parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_31", PotP_E_Primary, 	PotP_I_North, 'BASEDECK')						.compilevariations(''));
+		parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_32", PotP_E_Primary, 	PotP_I_North, 'gwint_card_francis')				.compilevariations(''));
+		parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_33", PotP_E_Primary, 	PotP_I_North, 'gwint_card_knight_rose')			.compilevariations(''));
+		parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_34", PotP_E_Primary, 	PotP_I_North, 'gwint_card_lebioda')				.compilevariations(''));
+		parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_35", PotP_E_Primary, 	PotP_I_North, 'gwint_card_hailstorm')			.compilevariations(''));
+		parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_36", PotP_E_Primary, 	PotP_I_North, 'gwint_card_nathaniel')			.compilevariations(''));
+		parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_37", PotP_E_Primary, 	PotP_I_North, 'gwint_card_peach')				.compilevariations(''));
+		parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_38", PotP_E_Primary, 	PotP_I_North, 'BASEDECK')						.compilevariations(''));
+		parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_39", PotP_E_Primary, 	PotP_I_North, 'BASEDECK')						.compilevariations(''));
+		parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_40", PotP_E_Primary, 	PotP_I_North, 'BASEDECK')						.compilevariations(''));
+		parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_41", PotP_E_Primary, 	PotP_I_North, 'BASEDECK')						.compilevariations(''));
+		parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_42", PotP_E_Primary, 	PotP_I_North, 'BASEDECK')						.compilevariations(''));
+		parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_43", PotP_E_Primary, 	PotP_I_North, 'gwint_card_siege_tower')			.compilevariations(''));
+		parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_44", PotP_E_Primary, 	PotP_I_North, 'BASEDECK')						.compilevariations(''));
+		parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_45", PotP_E_Primary, 	PotP_I_North, 'BASEDECK')						.compilevariations(''));
+		parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_46", PotP_E_Primary, 	PotP_I_North, 'gwint_card_wyvern')				.compilevariations(''));
+		parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_47", PotP_E_Primary, 	PotP_I_North, 'gwint_card_thaler')				.compilevariations(''));
+		parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_48", PotP_E_Primary, 	PotP_I_North, 'BASEDECK')						.compilevariations(''));
+		parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_49", PotP_E_Primary, 	PotP_I_North, 'gwint_card_triss')				.compilevariations(''));
+		parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_50", PotP_E_Primary, 	PotP_I_North, 'gwint_card_vernon')				.compilevariations(''));
+		parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_51", PotP_E_Primary, 	PotP_I_North, 'BASEDECK')						.compilevariations(''));
+		parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_52", PotP_E_Primary, 	PotP_I_North, 'gwint_card_vincent')				.compilevariations(''));
+		parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_53", PotP_E_Primary, 	PotP_I_North, 'gwint_card_esterad')				.compilevariations(''));
+		parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_54", PotP_E_Primary, 	PotP_I_North, 'gwint_card_whoreson')			.compilevariations(''));
+		parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_55", PotP_E_Primary, 	PotP_I_North, 'BASEDECK')						.compilevariations(''));
+		parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_56", PotP_E_Primary, 	PotP_I_North, 'BASEDECK')						.compilevariations(''));
+		parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_57", PotP_E_Primary, 	PotP_I_North, 'gwint_card_zoltan')				.compilevariations(''));
+		
+		PotP_SortPreviewData(parent.Gwent_NorthernRealms, PotP_A_Gwent, parent.master);
+
+		//------------------------------------------------------
+		
+		group = "PotP_TrackingGroup_GwentCards_Scoiatael_Redux";
+		
+		parent.Gwent_Scoiatael.Clear();	
+		parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_01", PotP_E_Primary, 	PotP_I_Scoia, 'BASEDECK', PotP_G_Lead)				.compilevariations(''));
+		parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_02", PotP_E_Primary, 	PotP_I_Scoia, 'gwint_card_francesca_bronze')		.compilevariations(''));
+		parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_03", PotP_E_Primary, 	PotP_I_Scoia, 'gwint_card_francesca_silver')		.compilevariations(''));
+		parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_04", PotP_E_Missable,	PotP_I_Scoia, 'gwint_card_francesca_gold')			.compilevariations(''));
+		parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_05", PotP_E_Primary, 	PotP_I_Scoia, 'gwint_card_francesca_platinium')		.compilevariations(''));
+		parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_06", PotP_E_Missable, 	PotP_I_Scoia, 'gwint_card_iorveth')					.compilevariations(''));
+		parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_07", PotP_E_Primary,	PotP_I_Scoia, 'gwint_card_morenn')					.compilevariations(''));
+		parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_08", PotP_E_Primary,	PotP_I_Scoia, 'gwint_card_saskia')					.compilevariations(''));
+		parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_09", PotP_E_Primary, 	PotP_I_Scoia, 'gwint_card_havekar_nurse3')			.compilevariations(''));
+		parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_10", PotP_E_Primary, 	PotP_I_Scoia, 'gwint_card_aglais')					.compilevariations(''));
+		parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_11", PotP_E_Primary, 	PotP_I_Scoia, 'gwint_card_barclay')					.compilevariations(''));
+		parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_12", PotP_E_Primary, 	PotP_I_Scoia, 'gwint_card_braenn')					.compilevariations(''));
+		parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_13", PotP_E_Primary, 	PotP_I_Scoia, 'gwint_card_mahakam5')				.compilevariations(''));
+		parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_14", PotP_E_Primary, 	PotP_I_Scoia, 'gwint_card_ciaran')					.compilevariations(''));
+		parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_15", PotP_E_Primary, 	PotP_I_Scoia, 'gwint_card_dennis')					.compilevariations(''));
+		parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_16", PotP_E_Primary, 	PotP_I_Scoia, 'gwint_card_dol_archer')				.compilevariations(''));
+		parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_17", PotP_E_Primary, 	PotP_I_Scoia, 'gwint_card_dol_infantry2')			.compilevariations(''));
+		parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_18", PotP_E_Primary, 	PotP_I_Scoia, 'gwint_card_dol_infantry')			.compilevariations(''));
+		parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_19", PotP_E_Primary, 	PotP_I_Scoia, 'gwint_card_grovekeeper')				.compilevariations(''));
+		parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_20", PotP_E_Primary, 	PotP_I_Scoia, 'gwint_card_mahakam3')				.compilevariations(''));
+		parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_21", PotP_E_Primary, 	PotP_I_Scoia, 'gwint_card_mahakam4')				.compilevariations(''));
+		parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_22", PotP_E_Primary, 	PotP_I_Scoia, 'gwint_card_elf_skirmisher2')			.compilevariations(''));
+		parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_23", PotP_E_Primary, 	PotP_I_Scoia, 'gwint_card_elf_skirmisher3')			.compilevariations(''));
+		parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_24", PotP_E_Primary, 	PotP_I_Scoia, 'gwint_card_elf_skirmisher')			.compilevariations(''));
+		parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_25", PotP_E_Primary, 	PotP_I_Scoia, 'gwint_card_fauve')					.compilevariations(''));
+		parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_26", PotP_E_Primary, 	PotP_I_Scoia, 'gwint_card_filavandrel')				.compilevariations(''));
+		parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_27", PotP_E_Primary, 	PotP_I_Scoia, 'gwint_card_scorch')					.compilevariations(''));
+		parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_28", PotP_E_Primary, 	PotP_I_Scoia, 'gwint_card_dol_infantry3')			.compilevariations(''));
+		parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_29", PotP_E_Primary, 	PotP_I_Scoia, 'gwint_card_havekar_nurse2')			.compilevariations(''));
+		parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_30", PotP_E_Primary, 	PotP_I_Scoia, 'gwint_card_havekar_nurse')			.compilevariations(''));
+		parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_31", PotP_E_Primary, 	PotP_I_Scoia, 'gwint_card_havekar_support')			.compilevariations(''));
+		parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_32", PotP_E_Primary,	PotP_I_Scoia, 'gwint_card_ida')						.compilevariations(''));
+		parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_33", PotP_E_Missable, 	PotP_I_Scoia, 'gwint_card_isengrim')				.compilevariations(''));
+		parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_34", PotP_E_Primary, 	PotP_I_Scoia, 'gwint_card_vrihedd_brigade2')		.compilevariations(''));
+		parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_35", PotP_E_Primary,	PotP_I_Scoia, 'gwint_card_mahakam')					.compilevariations(''));
+		parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_36", PotP_E_Primary,	PotP_I_Scoia, 'gwint_card_havekar_support3')		.compilevariations(''));
+		parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_37", PotP_E_Primary, 	PotP_I_Scoia, 'gwint_card_milva')					.compilevariations(''));
+		parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_38", PotP_E_Primary, 	PotP_I_Scoia, 'gwint_card_nature')					.compilevariations(''));
+		parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_39", PotP_E_Primary, 	PotP_I_Scoia, 'gwint_card_mahakam2')				.compilevariations(''));
+		parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_40", PotP_E_Primary, 	PotP_I_Scoia, 'gwint_card_riordain')				.compilevariations(''));
+		parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_41", PotP_E_Primary, 	PotP_I_Scoia, 'gwint_card_schirru')					.compilevariations(''));
+		parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_42", PotP_E_Primary, 	PotP_I_Scoia, 'gwint_card_eithne')					.compilevariations(''));
+		parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_43", PotP_E_Primary, 	PotP_I_Scoia, 'gwint_card_toruviel')				.compilevariations(''));
+		parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_44", PotP_E_Primary, 	PotP_I_Scoia, 'gwint_card_treant_boar')				.compilevariations(''));
+		parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_45", PotP_E_Primary, 	PotP_I_Scoia, 'gwint_card_treant_mantis')			.compilevariations(''));
+		parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_46", PotP_E_Primary, 	PotP_I_Scoia, 'gwint_card_havekar_support2')		.compilevariations(''));
+		parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_47", PotP_E_Primary, 	PotP_I_Scoia, 'gwint_card_villen')					.compilevariations(''));
+		parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_48", PotP_E_Primary, 	PotP_I_Scoia, 'gwint_card_vrihedd_cadet')			.compilevariations(''));
+		parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_49", PotP_E_Primary, 	PotP_I_Scoia, 'gwint_card_vrihedd_brigade')			.compilevariations(''));
+		parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_50", PotP_E_Primary, 	PotP_I_Scoia, 'gwint_card_water')					.compilevariations(''));
+		parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_51", PotP_E_Primary, 	PotP_I_Scoia, 'gwint_card_yaevinn')					.compilevariations(''));
+		
+		PotP_SortPreviewData(parent.Gwent_Scoiatael, PotP_A_Gwent, parent.master);
+
+		//------------------------------------------------------
+		
+		group = "PotP_TrackingGroup_GwentCards_Skellige_Redux";
+		
+		parent.Gwent_Skellige.Clear();
+		parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_01", PotP_E_Primary, PotP_I_Skell, 'gwint_card_king_bran_bronze')			.compilevariations(''));
+		parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_02", PotP_E_Primary, PotP_I_Skell, 'BASEDECK', PotP_G_Lead)					.compilevariations(''));
+		parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_03", PotP_E_Primary, PotP_I_Skell, 'gwint_card_king_bran_silver')			.compilevariations(''));
+		parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_04", PotP_E_Primary, PotP_I_Skell, 'gwint_card_king_bran_gold')				.compilevariations(''));
+		parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_05", PotP_E_Primary, PotP_I_Skell, 'gwint_card_king_bran_platinium')		.compilevariations(''));
+		parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_06", PotP_E_Primary, PotP_I_Skell, 'BASEDECK')								.compilevariations(''));
+		parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_07", PotP_E_Primary, PotP_I_Skell, 'gwint_card_cock')						.compilevariations(''));
+		parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_08", PotP_E_Primary, PotP_I_Skell, 'gwint_card_tyr')						.compilevariations(''));
+		parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_09", PotP_E_Primary, PotP_I_Skell, 'gwint_card_clan_an_craite_marauder')	.compilevariations(''));
+		parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_10", PotP_E_Primary, PotP_I_Skell, 'BASEDECK')								.compilevariations(''));
+		parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_11", PotP_E_Primary, PotP_I_Skell, 'gwint_card_clan_an_craite_whaler')		.compilevariations(''));
+		parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_12", PotP_E_Primary, PotP_I_Skell, 'gwint_card_artis')						.compilevariations(''));
+		parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_13", PotP_E_Primary, PotP_I_Skell, 'gwint_card_athak')						.compilevariations(''));
+		parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_14", PotP_E_Primary, PotP_I_Skell, 'BASEDECK')								.compilevariations(''));
+		parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_15", PotP_E_Primary, PotP_I_Skell, 'BASEDECK')								.compilevariations(''));
+		parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_16", PotP_E_Primary, PotP_I_Skell, 'BASEDECK')								.compilevariations(''));
+		parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_17", PotP_E_Primary, PotP_I_Skell, 'gwint_card_boatbuilders')				.compilevariations(''));
+		parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_18", PotP_E_Primary, PotP_I_Skell, 'BASEDECK')								.compilevariations(''));
+		parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_19", PotP_E_Primary, PotP_I_Skell, 'gwint_card_dreams')						.compilevariations(''));
+		parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_20", PotP_E_Primary, PotP_I_Skell, 'gwint_card_clan_dimun_captain')			.compilevariations(''));
+		parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_21", PotP_E_Primary, PotP_I_Skell, 'gwint_card_clan_dimun_pirate')			.compilevariations(''));
+		parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_22", PotP_E_Primary, PotP_I_Skell, 'gwint_card_clan_dimun_smuggler')		.compilevariations(''));
+		parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_23", PotP_E_Primary, PotP_I_Skell, 'gwint_card_djenge_frett')				.compilevariations(''));
+		parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_24", PotP_E_Primary, PotP_I_Skell, 'BASEDECK')								.compilevariations(''));
+		parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_25", PotP_E_Primary, PotP_I_Skell, 'gwint_card_draig')						.compilevariations(''));
+		parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_26", PotP_E_Primary, PotP_I_Skell, 'BASEDECK')								.compilevariations(''));
+		parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_27", PotP_E_Primary, PotP_I_Skell, 'gwint_card_ermion')						.compilevariations(''));
+		parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_28", PotP_E_Primary, PotP_I_Skell, 'BASEDECK')								.compilevariations(''));
+		parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_29", PotP_E_Primary, PotP_I_Skell, 'BASEDECK')								.compilevariations(''));
+		parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_30", PotP_E_Primary, PotP_I_Skell, 'gwint_card_cerys')						.compilevariations(''));
+		parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_31", PotP_E_Primary, PotP_I_Skell, 'gwint_card_jutta')						.compilevariations(''));
+		parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_32", PotP_E_Primary, PotP_I_Skell, 'gwint_card_knut')						.compilevariations(''));
+		parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_33", PotP_E_Primary, PotP_I_Skell, 'BASEDECK')								.compilevariations(''));
+		parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_34", PotP_E_Primary, PotP_I_Skell, 'gwint_card_coral')						.compilevariations(''));
+		parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_35", PotP_E_Primary, PotP_I_Skell, 'BASEDECK')								.compilevariations(''));
+		parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_36", PotP_E_Primary, PotP_I_Skell, 'gwint_card_werewolf')					.compilevariations(''));
+		parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_37", PotP_E_Primary, PotP_I_Skell, 'gwint_card_olaf')						.compilevariations(''));
+		parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_38", PotP_E_Primary, PotP_I_Skell, 'gwint_card_freya')						.compilevariations(''));
+		parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_39", PotP_E_Primary, PotP_I_Skell, 'gwint_card_ragh_nar_roog')				.compilevariations(''));
+		parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_40", PotP_E_Primary, PotP_I_Skell, 'gwint_card_skellige_storm')				.compilevariations(''));
+		parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_41", PotP_E_Primary, PotP_I_Skell, 'gwint_card_skjall')						.compilevariations(''));
+		parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_42", PotP_E_Primary, PotP_I_Skell, 'gwint_card_sukrus')						.compilevariations(''));
+		parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_43", PotP_E_Primary, PotP_I_Skell, 'gwint_card_svalblod')					.compilevariations(''));
+		parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_44", PotP_E_Primary, PotP_I_Skell, 'BASEDECK')								.compilevariations(''));
+		parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_45", PotP_E_Primary, PotP_I_Skell, 'BASEDECK')								.compilevariations(''));
+		parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_46", PotP_E_Primary, PotP_I_Skell, 'gwint_card_clan_tuirseach_skirmisher')	.compilevariations(''));
+		parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_47", PotP_E_Primary, PotP_I_Skell, 'BASEDECK')								.compilevariations(''));
+		parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_48", PotP_E_Primary, PotP_I_Skell, 'gwint_card_vabjorn')					.compilevariations(''));
+		parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_49", PotP_E_Primary, PotP_I_Skell, 'BASEDECK')								.compilevariations(''));
+		parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_50", PotP_E_Primary, PotP_I_Skell, 'BASEDECK')								.compilevariations(''));
+		parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_51", PotP_E_Primary, PotP_I_Skell, 'BASEDECK')								.compilevariations(''));
+		parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_52", PotP_E_Primary, PotP_I_Skell, 'gwint_card_yoana')						.compilevariations(''));
+		
+		PotP_SortPreviewData(parent.Gwent_Skellige, PotP_A_Gwent, parent.master);
+	}
+	
 	latent function BuildGwentCards()
 	{
-		var group	: string;
-	
-		if (PotP_UsingGwentRedux())
-		{
-			group = "PotP_TrackingGroup_GwentCards_Monsters_Redux";
-			
-			parent.Gwent_MonstersDeck.Clear();
-			parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_01", PotP_E_Primary, PotP_I_Monst, 'BASEDECK', PotP_G_Lead)				.compilevariations(''));
-			parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_02", PotP_E_Primary, PotP_I_Monst, 'gwint_card_eredin_bronze')			.compilevariations(''));
-			parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_03", PotP_E_Primary, PotP_I_Monst, 'gwint_card_eredin_silver')			.compilevariations(''));
-			parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_04", PotP_E_Missable,PotP_I_Monst, 'gwint_card_eredin_gold')			.compilevariations(''));
-			parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_05", PotP_E_Primary, PotP_I_Monst, 'gwint_card_eredin_platinium')		.compilevariations(''));
-			parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_06", PotP_E_Primary, PotP_I_Monst, 'gwint_card_caranthir')				.compilevariations(''));
-			parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_07", PotP_E_Primary, PotP_I_Monst, 'gwint_card_emiel')					.compilevariations(''));
-			parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_08", PotP_E_Primary, PotP_I_Monst, 'gwint_card_imlerith')				.compilevariations(''));
-			parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_09", PotP_E_Primary, PotP_I_Monst, 'gwint_card_grave_hag')				.compilevariations(''));
-			parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_10", PotP_E_Primary, PotP_I_Monst, 'gwint_card_striga')					.compilevariations(''));
-			parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_11", PotP_E_Primary, PotP_I_Monst, 'gwint_card_plague_maiden')			.compilevariations(''));
-			parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_12", PotP_E_Primary, PotP_I_Monst, 'gwint_card_arachas')				.compilevariations(''));
-			parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_13", PotP_E_Primary, PotP_I_Monst, 'gwint_card_arachas_behemoth')		.compilevariations(''));
-			parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_14", PotP_E_Primary, PotP_I_Monst, 'gwint_card_avallach')				.compilevariations(''));
-			parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_15", PotP_E_Primary, PotP_I_Monst, 'gwint_card_moon')					.compilevariations(''));
-			parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_16", PotP_E_Primary, PotP_I_Monst, 'gwint_card_ghoul3')					.compilevariations(''));
-			parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_17", PotP_E_Primary, PotP_I_Monst, 'gwint_card_cow')					.compilevariations(''));
-			parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_18", PotP_E_Primary, PotP_I_Monst, 'gwint_card_crone_weavess')			.compilevariations(''));
-			parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_19", PotP_E_Primary, PotP_I_Monst, 'gwint_card_crone_whispess')			.compilevariations(''));
-			parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_20", PotP_E_Primary, PotP_I_Monst, 'gwint_card_crone_brewess')			.compilevariations(''));
-			parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_21", PotP_E_Primary, PotP_I_Monst, 'gwint_card_dagon')					.compilevariations(''));
-			parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_22", PotP_E_Primary, PotP_I_Monst, 'gwint_card_dettlaff')				.compilevariations(''));
-			parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_23", PotP_E_Primary, PotP_I_Monst, 'gwint_card_draug')					.compilevariations(''));
-			parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_24", PotP_E_Primary, PotP_I_Monst, 'gwint_card_endrega')				.compilevariations(''));
-			parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_25", PotP_E_Primary, PotP_I_Monst, 'gwint_card_earth_elemental')		.compilevariations(''));
-			parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_26", PotP_E_Primary, PotP_I_Monst, 'gwint_card_fire_elemental')			.compilevariations(''));
-			parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_27", PotP_E_Primary, PotP_I_Monst, 'gwint_card_fogling')				.compilevariations(''));
-			parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_28", PotP_E_Primary, PotP_I_Monst, 'gwint_card_frightener')				.compilevariations(''));
-			parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_29", PotP_E_Primary, PotP_I_Monst, 'gwint_card_katakan')				.compilevariations(''));
-			parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_30", PotP_E_Primary, PotP_I_Monst, 'gwint_card_ghoul')					.compilevariations(''));
-			parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_31", PotP_E_Primary, PotP_I_Monst, 'gwint_card_forktail')				.compilevariations(''));
-			parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_32", PotP_E_Primary, PotP_I_Monst, 'gwint_card_harpy')					.compilevariations(''));
-			parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_33", PotP_E_Primary, PotP_I_Monst, 'gwint_card_griffin')				.compilevariations(''));
-			parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_34", PotP_E_Primary, PotP_I_Monst, 'gwint_card_iris')					.compilevariations(''));
-			parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_35", PotP_E_Primary, PotP_I_Monst, 'gwint_card_celaeno_harpy')			.compilevariations(''));
-			parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_36", PotP_E_Primary, PotP_I_Monst, 'gwint_card_kayran')					.compilevariations(''));
-			parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_37", PotP_E_Primary, PotP_I_Monst, 'gwint_card_ghoul2')					.compilevariations(''));
-			parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_38", PotP_E_Primary, PotP_I_Monst, 'gwint_card_fiend')					.compilevariations(''));
-			parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_39", PotP_E_Primary, PotP_I_Monst, 'gwint_card_ice_giant')				.compilevariations(''));
-			parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_40", PotP_E_Primary, PotP_I_Monst, 'gwint_card_wildhunt_drakkar')		.compilevariations(''));
-			parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_41", PotP_E_Primary, PotP_I_Monst, 'gwint_card_nekker')					.compilevariations('gwint_card_nekker2', 'gwint_card_nekker3'));
-			parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_42", PotP_E_Primary, PotP_I_Monst, 'gwint_card_nithral')				.compilevariations(''));
-			parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_43", PotP_E_Primary, PotP_I_Monst, 'gwint_card_mrmirror')				.compilevariations(''));
-			parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_44", PotP_E_Primary, PotP_I_Monst, 'gwint_card_bruxa')					.compilevariations(''));
-			parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_45", PotP_E_Primary, PotP_I_Monst, 'gwint_card_gargoyle')				.compilevariations(''));
-			parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_46", PotP_E_Primary, PotP_I_Monst, 'gwint_card_savolla')				.compilevariations(''));
-			parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_47", PotP_E_Primary, PotP_I_Monst, 'gwint_card_dol_dwarf')				.compilevariations('gwint_card_dol_dwarf2', 'gwint_card_dol_dwarf3'));
-			parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_48", PotP_E_Primary, PotP_I_Monst, 'gwint_card_cockatrice')				.compilevariations(''));
-			parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_49", PotP_E_Primary, PotP_I_Monst, 'gwint_card_toad')					.compilevariations(''));
-			parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_50", PotP_E_Primary, PotP_I_Monst, 'gwint_card_alp')					.compilevariations(''));
-			parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_51", PotP_E_Primary, PotP_I_Monst, 'gwint_card_ekkima')					.compilevariations(''));
-			parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_52", PotP_E_Primary, PotP_I_Monst, 'gwint_card_fleder')					.compilevariations(''));
-			parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_53", PotP_E_Primary, PotP_I_Monst, 'gwint_card_garkain')				.compilevariations(''));
-			parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_54", PotP_E_Primary, PotP_I_Monst, 'gwint_card_arachas2')				.compilevariations(''));
-			parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_55", PotP_E_Primary, PotP_I_Monst, 'gwint_card_mrmirror_foglet')		.compilevariations(''));
-			parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_56", PotP_E_Primary, PotP_I_Monst, 'gwint_card_white')					.compilevariations(''));
-			parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_57", PotP_E_Primary, PotP_I_Monst, 'gwint_card_wildhunt_hound')			.compilevariations(''));
-			parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_58", PotP_E_Primary, PotP_I_Monst, 'gwint_card_wildhunt_navigator')		.compilevariations(''));
-			parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_59", PotP_E_Primary, PotP_I_Monst, 'gwint_card_wildhunt_rider')			.compilevariations('gwint_card_wildhunt_rider2', 'gwint_card_wildhunt_rider3'));
-			parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_60", PotP_E_Primary, PotP_I_Monst, 'gwint_card_wildhunt_warrior')		.compilevariations(''));
-			parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_61", PotP_E_Primary, PotP_I_Monst, 'gwint_card_arachas3')				.compilevariations(''));
-			parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_62", PotP_E_Primary, PotP_I_Monst, 'gwint_card_leshen')					.compilevariations(''));
-			parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_63", PotP_E_Primary, PotP_I_Monst, 'gwint_card_centipede')				.compilevariations(''));
-			
-			PotP_SortPreviewData(parent.Gwent_MonstersDeck, PotP_A_Gwent, parent.master);
+		var group	: string = "PotP_TrackingGroup_GwentCards_Monsters";
+		
+		parent.Gwent_MonstersDeck.Clear();
+		parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_01", PotP_E_Primary, PotP_I_Monst, 'BASEDECK', PotP_G_Lead)				.compilevariations(''));
+		parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_02", PotP_E_Primary, PotP_I_Monst, 'gwint_card_eredin_bronze')			.compilevariations(''));
+		parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_03", PotP_E_Primary, PotP_I_Monst, 'gwint_card_eredin_silver')			.compilevariations(''));
+		parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_04", PotP_E_Missable,PotP_I_Monst, 'gwint_card_eredin_gold')			.compilevariations(''));
+		parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_05", PotP_E_Primary, PotP_I_Monst, 'gwint_card_eredin_platinium')		.compilevariations(''));
+		parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_06", PotP_E_Primary, PotP_I_Monst, 'gwint_card_draug')					.compilevariations(''));
+		parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_07", PotP_E_Primary, PotP_I_Monst, 'gwint_card_imlerith')				.compilevariations(''));
+		parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_08", PotP_E_Primary, PotP_I_Monst, 'gwint_card_kayran')					.compilevariations(''));
+		parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_09", PotP_E_Primary, PotP_I_Monst, 'gwint_card_leshen')					.compilevariations(''));
+		parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_10", PotP_E_Primary, PotP_I_Monst, 'gwint_card_arachas')				.compilevariations('gwint_card_arachas2', 'gwint_card_arachas3'));
+		parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_11", PotP_E_Primary, PotP_I_Monst, 'gwint_card_arachas_behemoth')		.compilevariations(''));
+		parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_12", PotP_E_Primary, PotP_I_Monst, 'gwint_card_botchling')				.compilevariations(''));
+		parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_13", PotP_E_Primary, PotP_I_Monst, 'gwint_card_celaeno_harpy')			.compilevariations(''));
+		parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_14", PotP_E_Primary, PotP_I_Monst, 'gwint_card_cockatrice')				.compilevariations(''));
+		parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_15", PotP_E_Primary, PotP_I_Monst, 'gwint_card_crone_brewess')			.compilevariations(''));
+		parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_16", PotP_E_Primary, PotP_I_Monst, 'gwint_card_crone_weavess')			.compilevariations(''));
+		parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_17", PotP_E_Primary, PotP_I_Monst, 'gwint_card_crone_whispess')			.compilevariations(''));
+		parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_18", PotP_E_Primary, PotP_I_Monst, 'gwint_card_earth_elemental')		.compilevariations(''));
+		parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_19", PotP_E_Primary, PotP_I_Monst, 'gwint_card_endrega')				.compilevariations(''));
+		parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_20", PotP_E_Primary, PotP_I_Monst, 'gwint_card_fiend')					.compilevariations(''));
+		parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_21", PotP_E_Primary, PotP_I_Monst, 'gwint_card_fire_elemental')			.compilevariations(''));
+		parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_22", PotP_E_Primary, PotP_I_Monst, 'gwint_card_fogling')				.compilevariations(''));
+		parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_23", PotP_E_Primary, PotP_I_Monst, 'gwint_card_forktail')				.compilevariations(''));
+		parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_24", PotP_E_Primary, PotP_I_Monst, 'gwint_card_frightener')				.compilevariations(''));
+		parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_25", PotP_E_Primary, PotP_I_Monst, 'gwint_card_gargoyle')				.compilevariations(''));
+		parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_26", PotP_E_Primary, PotP_I_Monst, 'gwint_card_ghoul')					.compilevariations('gwint_card_ghoul2', 'gwint_card_ghoul3'));
+		parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_27", PotP_E_Primary, PotP_I_Monst, 'gwint_card_grave_hag')				.compilevariations(''));
+		parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_28", PotP_E_Primary, PotP_I_Monst, 'gwint_card_griffin')				.compilevariations(''));
+		parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_29", PotP_E_Primary, PotP_I_Monst, 'gwint_card_harpy')					.compilevariations(''));
+		parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_30", PotP_E_Primary, PotP_I_Monst, 'gwint_card_ice_giant')				.compilevariations(''));
+		parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_31", PotP_E_Primary, PotP_I_Monst, 'gwint_card_nekker')					.compilevariations('gwint_card_nekker2', 'gwint_card_nekker3'));
+		parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_32", PotP_E_Primary, PotP_I_Monst, 'gwint_card_plague_maiden')			.compilevariations(''));
+		parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_33", PotP_E_Primary, PotP_I_Monst, 'gwint_card_toad')					.compilevariations(''));
+		parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_34", PotP_E_Primary, PotP_I_Monst, 'gwint_card_bruxa')					.compilevariations(''));
+		parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_35", PotP_E_Primary, PotP_I_Monst, 'gwint_card_ekkima')					.compilevariations(''));
+		parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_36", PotP_E_Primary, PotP_I_Monst, 'gwint_card_fleder')					.compilevariations(''));
+		parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_37", PotP_E_Primary, PotP_I_Monst, 'gwint_card_garkain')				.compilevariations(''));
+		parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_38", PotP_E_Primary, PotP_I_Monst, 'gwint_card_katakan')				.compilevariations(''));
+		parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_39", PotP_E_Primary, PotP_I_Monst, 'gwint_card_werewolf')				.compilevariations(''));
+		parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_40", PotP_E_Primary, PotP_I_Monst, 'gwint_card_wyvern')					.compilevariations(''));
+		
+		PotP_SortPreviewData(parent.Gwent_MonstersDeck, PotP_A_Gwent, parent.master);	
 
-			//------------------------------------------------------
-	
-			group = "PotP_TrackingGroup_GwentCards_NeutralCards_Redux";
-			
-			parent.Gwent_NeutralDeck.Clear();
-			parent.Gwent_NeutralDeck.PushBack(parent.CreateEntry().initGwent(group + "_01", PotP_E_Primary, PotP_I_Neutr, 'gwint_card_azar_javed')		.compilevariations(''));
-			parent.Gwent_NeutralDeck.PushBack(parent.CreateEntry().initGwent(group + "_02", PotP_E_Primary, PotP_I_Neutr, 'gwint_card_geralt')			.compilevariations('gwint_card_gog_geralt'));
-			parent.Gwent_NeutralDeck.PushBack(parent.CreateEntry().initGwent(group + "_03", PotP_E_Primary, PotP_I_Neutr, 'BASEDECK')					.compilevariations(''));
-			parent.Gwent_NeutralDeck.PushBack(parent.CreateEntry().initGwent(group + "_04", PotP_E_Primary, PotP_I_Neutr, 'gwint_card_ciri')			.compilevariations('gwint_card_gog_ciri'));
-			parent.Gwent_NeutralDeck.PushBack(parent.CreateEntry().initGwent(group + "_05", PotP_E_Primary, PotP_I_Neutr, 'BASEDECK')					.compilevariations(''));
-			parent.Gwent_NeutralDeck.PushBack(parent.CreateEntry().initGwent(group + "_06", PotP_E_Primary, PotP_I_Neutr, 'gwint_card_dummy')			.compilevariations(''));
-			parent.Gwent_NeutralDeck.PushBack(parent.CreateEntry().initGwent(group + "_07", PotP_E_Primary, PotP_I_Neutr, 'BASEDECK')					.compilevariations(''));
-			parent.Gwent_NeutralDeck.PushBack(parent.CreateEntry().initGwent(group + "_08", PotP_E_Primary, PotP_I_Neutr, 'BASEDECK')					.compilevariations(''));
-			parent.Gwent_NeutralDeck.PushBack(parent.CreateEntry().initGwent(group + "_09", PotP_E_Primary, PotP_I_Neutr, 'BASEDECK')					.compilevariations(''));
-			parent.Gwent_NeutralDeck.PushBack(parent.CreateEntry().initGwent(group + "_10", PotP_E_Primary, PotP_I_Neutr, 'gwint_card_horn')			.compilevariations(''));
-			parent.Gwent_NeutralDeck.PushBack(parent.CreateEntry().initGwent(group + "_11", PotP_E_Primary, PotP_I_Neutr, 'gwint_card_professor')		.compilevariations(''));
-			parent.Gwent_NeutralDeck.PushBack(parent.CreateEntry().initGwent(group + "_12", PotP_E_Primary, PotP_I_Neutr, 'BASEDECK')					.compilevariations(''));
-			parent.Gwent_NeutralDeck.PushBack(parent.CreateEntry().initGwent(group + "_13", PotP_E_Primary, PotP_I_Neutr, 'gwint_card_vesemir')			.compilevariations(''));
-			parent.Gwent_NeutralDeck.PushBack(parent.CreateEntry().initGwent(group + "_14", PotP_E_Primary, PotP_I_Neutr, 'gwint_card_yennefer')		.compilevariations(''));
-			
-			PotP_SortPreviewData(parent.Gwent_NeutralDeck, PotP_A_Gwent, parent.master);
+		group = "PotP_TrackingGroup_GwentCards_NeutralCards";
+		
+		parent.Gwent_NeutralDeck.Clear();
+		parent.Gwent_NeutralDeck.PushBack(parent.CreateEntry().initGwent(group + "_01", PotP_E_Primary, PotP_I_Neutr, 'gwint_card_ciri')				.compilevariations('gwint_card_gog_ciri'));
+		parent.Gwent_NeutralDeck.PushBack(parent.CreateEntry().initGwent(group + "_02", PotP_E_Primary, PotP_I_Neutr, 'gwint_card_geralt')				.compilevariations('gwint_card_gog_geralt'));
+		parent.Gwent_NeutralDeck.PushBack(parent.CreateEntry().initGwent(group + "_03", PotP_E_Primary, PotP_I_Neutr, 'gwint_card_avallach')			.compilevariations(''));
+		parent.Gwent_NeutralDeck.PushBack(parent.CreateEntry().initGwent(group + "_04", PotP_E_Primary, PotP_I_Neutr, 'gwint_card_triss')				.compilevariations(''));
+		parent.Gwent_NeutralDeck.PushBack(parent.CreateEntry().initGwent(group + "_05", PotP_E_Primary, PotP_I_Neutr, 'gwint_card_yennefer')			.compilevariations(''));
+		parent.Gwent_NeutralDeck.PushBack(parent.CreateEntry().initGwent(group + "_06", PotP_E_Primary, PotP_I_Neutr, 'gwint_card_horn')				.compilevariations(''));
+		parent.Gwent_NeutralDeck.PushBack(parent.CreateEntry().initGwent(group + "_07", PotP_E_Primary, PotP_I_Neutr, 'gwint_card_dummy')				.compilevariations(''));
+		parent.Gwent_NeutralDeck.PushBack(parent.CreateEntry().initGwent(group + "_08", PotP_E_Primary, PotP_I_Neutr, 'gwint_card_scorch')				.compilevariations(''));
+		parent.Gwent_NeutralDeck.PushBack(parent.CreateEntry().initGwent(group + "_09", PotP_E_Primary, PotP_I_Neutr, 'gwint_card_cow')					.compilevariations(''));
+		parent.Gwent_NeutralDeck.PushBack(parent.CreateEntry().initGwent(group + "_10", PotP_E_Missable,PotP_I_Neutr, 'gwint_card_dandelion')			.compilevariations(''));
+		parent.Gwent_NeutralDeck.PushBack(parent.CreateEntry().initGwent(group + "_11", PotP_E_Primary, PotP_I_Neutr, 'gwint_card_emiel')				.compilevariations(''));
+		parent.Gwent_NeutralDeck.PushBack(parent.CreateEntry().initGwent(group + "_12", PotP_E_Primary, PotP_I_Neutr, 'gwint_card_mrmirror')			.compilevariations(''));
+		parent.Gwent_NeutralDeck.PushBack(parent.CreateEntry().initGwent(group + "_13", PotP_E_Primary, PotP_I_Neutr, 'gwint_card_mrmirror_foglet')		.compilevariations(''));
+		parent.Gwent_NeutralDeck.PushBack(parent.CreateEntry().initGwent(group + "_14", PotP_E_Primary, PotP_I_Neutr, 'gwint_card_olgierd')				.compilevariations(''));
+		parent.Gwent_NeutralDeck.PushBack(parent.CreateEntry().initGwent(group + "_15", PotP_E_Primary, PotP_I_Neutr, 'gwint_card_vesemir')				.compilevariations(''));
+		parent.Gwent_NeutralDeck.PushBack(parent.CreateEntry().initGwent(group + "_16", PotP_E_Primary, PotP_I_Neutr, 'gwint_card_villen')				.compilevariations(''));
+		parent.Gwent_NeutralDeck.PushBack(parent.CreateEntry().initGwent(group + "_17", PotP_E_Primary, PotP_I_Neutr, 'gwint_card_zoltan')				.compilevariations(''));
+		parent.Gwent_NeutralDeck.PushBack(parent.CreateEntry().initGwent(group + "_18", PotP_E_Primary, PotP_I_Neutr, 'BASEDECK')						.compilevariations(''));
+		parent.Gwent_NeutralDeck.PushBack(parent.CreateEntry().initGwent(group + "_19", PotP_E_Primary, PotP_I_Neutr, 'BASEDECK')						.compilevariations(''));
+		parent.Gwent_NeutralDeck.PushBack(parent.CreateEntry().initGwent(group + "_20", PotP_E_Primary, PotP_I_Neutr, 'BASEDECK')						.compilevariations(''));
+		parent.Gwent_NeutralDeck.PushBack(parent.CreateEntry().initGwent(group + "_21", PotP_E_Primary, PotP_I_Neutr, 'gwint_card_skellige_storm')		.compilevariations(''));
+		parent.Gwent_NeutralDeck.PushBack(parent.CreateEntry().initGwent(group + "_22", PotP_E_Primary, PotP_I_Neutr, 'BASEDECK')						.compilevariations(''));
+		
+		PotP_SortPreviewData(parent.Gwent_NeutralDeck, PotP_A_Gwent, parent.master);	
 
-			//------------------------------------------------------
-			
-			group = "PotP_TrackingGroup_GwentCards_NilfgaardianEmpire_Redux";
-			
-			parent.Gwent_NilfgaardDeck.Clear();
-			parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_01", PotP_E_Primary, PotP_I_Nilfg, 'BASEDECK', PotP_G_Lead)			.compilevariations(''));
-			parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_02", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_emhyr_bronze')			.compilevariations(''));
-			parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_03", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_emhyr_silver')			.compilevariations(''));
-			parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_04", PotP_E_Missable,PotP_I_Nilfg, 'gwint_card_emhyr_gold')			.compilevariations(''));
-			parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_05", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_emhyr_platinium')		.compilevariations(''));
-			parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_06", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_moorvran')				.compilevariations(''));
-			parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_07", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_henrietta')				.compilevariations(''));
-			parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_08", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_letho')					.compilevariations(''));
-			parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_09", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_impera_brigade1')		.compilevariations(''));
-			parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_10", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_albrich')				.compilevariations(''));
-			parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_11", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_siege_support')			.compilevariations(''));
-			parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_12", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_artorius')				.compilevariations(''));
-			parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_13", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_assire')				.compilevariations(''));
-			parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_14", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_impera_brigade3')		.compilevariations(''));
-			parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_15", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_black_archer')			.compilevariations(''));
-			parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_16", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_cahir')					.compilevariations(''));
-			parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_17", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_renuald')				.compilevariations(''));
-			parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_18", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_catriona')				.compilevariations(''));
-			parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_19", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_cynthia')				.compilevariations(''));
-			parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_20", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_nausicaa3')				.compilevariations(''));
-			parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_21", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_nausicaa2')				.compilevariations(''));
-			parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_22", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_archer_support')		.compilevariations(''));
-			parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_23", PotP_E_Missable,PotP_I_Nilfg, 'gwint_card_fringilla')				.compilevariations(''));
-			parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_24", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_young_emissary2')		.compilevariations(''));
-			parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_25", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_heavy_zerri')			.compilevariations(''));
-			parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_26", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_joachim')				.compilevariations(''));
-			parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_27", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_impera_brigade4')		.compilevariations(''));
-			parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_28", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_menno')					.compilevariations(''));
-			parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_29", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_milton')				.compilevariations(''));
-			parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_30", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_nausicaa')				.compilevariations(''));
-			parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_31", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_palmerin')				.compilevariations(''));
-			parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_32", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_morteisen')				.compilevariations(''));
-			parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_33", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_puttkammer')			.compilevariations(''));
-			parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_34", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_rainfarn')				.compilevariations(''));
-			parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_35", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_archer_support2')		.compilevariations(''));
-			parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_36", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_rotten')				.compilevariations(''));
-			parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_37", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_impera_brigade2')		.compilevariations(''));
-			parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_38", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_shilard')				.compilevariations(''));
-			parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_39", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_combat_engineer')		.compilevariations(''));
-			parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_40", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_stefan')				.compilevariations(''));
-			parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_41", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_sweers')				.compilevariations(''));
-			parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_42", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_syanna')				.compilevariations(''));
-			parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_43", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_tibor')					.compilevariations(''));
-			parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_44", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_vanhemar')				.compilevariations(''));
-			parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_45", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_vattier')				.compilevariations(''));
-			parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_46", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_vicovaro')				.compilevariations(''));
-			parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_47", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_black_archer2')			.compilevariations(''));
-			parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_48", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_vivienne')				.compilevariations(''));
-			parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_49", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_vreemde')				.compilevariations(''));
-			parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_50", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_young_emissary')		.compilevariations(''));
-			parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_51", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_zerri')					.compilevariations(''));
-			
-			PotP_SortPreviewData(parent.Gwent_NilfgaardDeck, PotP_A_Gwent, parent.master);
+		group = "PotP_TrackingGroup_GwentCards_NilfgaardianEmpire";
+		
+		parent.Gwent_NilfgaardDeck.Clear();
+		parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_01", PotP_E_Primary, PotP_I_Nilfg, 'BASEDECK', PotP_G_Lead)		.compilevariations(''));
+		parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_02", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_emhyr_bronze')		.compilevariations(''));
+		parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_03", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_emhyr_silver')		.compilevariations(''));
+		parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_04", PotP_E_Missable,PotP_I_Nilfg, 'gwint_card_emhyr_gold')		.compilevariations(''));
+		parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_05", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_emhyr_platinium')	.compilevariations(''));
+		parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_06", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_letho')				.compilevariations(''));
+		parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_07", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_menno')				.compilevariations(''));
+		parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_08", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_moorvran')			.compilevariations(''));
+		parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_09", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_tibor')				.compilevariations(''));
+		parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_10", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_albrich')			.compilevariations(''));
+		parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_11", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_assire')			.compilevariations(''));
+		parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_12", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_black_archer')		.compilevariations('gwint_card_black_archer2'));
+		parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_13", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_cahir')				.compilevariations(''));
+		parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_14", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_cynthia')			.compilevariations(''));
+		parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_15", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_archer_support')	.compilevariations('gwint_card_archer_support2'));
+		parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_16", PotP_E_Missable,PotP_I_Nilfg, 'gwint_card_fringilla')			.compilevariations(''));
+		parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_17", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_heavy_zerri')		.compilevariations(''));
+		parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_18", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_impera_brigade')	.compilevariations('gwint_card_impera_brigade2', 'gwint_card_impera_brigade3', 'gwint_card_impera_brigade4'));
+		parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_19", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_morteisen')			.compilevariations(''));
+		parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_20", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_nausicaa')			.compilevariations('gwint_card_nausicaa2', 'gwint_card_nausicaa3'));
+		parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_21", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_puttkammer')		.compilevariations(''));
+		parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_22", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_rainfarn')			.compilevariations(''));
+		parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_23", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_renuald')			.compilevariations(''));
+		parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_24", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_rotten')			.compilevariations(''));
+		parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_25", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_shilard')			.compilevariations(''));
+		parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_26", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_combat_engineer')	.compilevariations(''));
+		parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_27", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_siege_support')		.compilevariations(''));
+		parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_28", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_stefan')			.compilevariations(''));
+		parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_29", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_sweers')			.compilevariations(''));
+		parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_30", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_vanhemar')			.compilevariations(''));
+		parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_31", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_vattier')			.compilevariations(''));
+		parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_32", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_vreemde')			.compilevariations(''));
+		parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_33", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_young_emissary')	.compilevariations('gwint_card_young_emissary2'));
+		parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_34", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_zerri')				.compilevariations(''));
+		
+		PotP_SortPreviewData(parent.Gwent_NilfgaardDeck, PotP_A_Gwent, parent.master);	
 
-			//------------------------------------------------------
-			
-			group = "PotP_TrackingGroup_GwentCards_NorthernRealms_Redux";
-			
-			parent.Gwent_NorthernRealms.Clear();
-			parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_01", PotP_E_Primary, 	PotP_I_North, 'BASEDECK', PotP_G_Lead)			.compilevariations(''));
-			parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_02", PotP_E_Primary, 	PotP_I_North, 'gwint_card_foltest_bronze')		.compilevariations(''));
-			parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_03", PotP_E_Primary, 	PotP_I_North, 'gwint_card_foltest_silver')		.compilevariations(''));
-			parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_04", PotP_E_Missable,	PotP_I_North, 'gwint_card_foltest_gold')		.compilevariations(''));
-			parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_05", PotP_E_Primary, 	PotP_I_North, 'gwint_card_foltest_platinium')	.compilevariations(''));
-			parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_06", PotP_E_Missable,	PotP_I_North, 'gwint_card_natalis')				.compilevariations(''));
-			parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_07", PotP_E_Primary, 	PotP_I_North, 'gwint_card_olgierd')				.compilevariations(''));
-			parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_08", PotP_E_Primary, 	PotP_I_North, 'gwint_card_philippa')			.compilevariations(''));
-			parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_09", PotP_E_Primary, 	PotP_I_North, 'gwint_card_anseis')				.compilevariations(''));
-			parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_10", PotP_E_Primary, 	PotP_I_North, 'BASEDECK')						.compilevariations(''));
-			parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_11", PotP_E_Primary, 	PotP_I_North, 'gwint_card_beggar')				.compilevariations(''));
-			parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_12", PotP_E_Primary, 	PotP_I_North, 'gwint_card_bloody_baron')		.compilevariations(''));
-			parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_13", PotP_E_Primary, 	PotP_I_North, 'gwint_card_blue_stripes1')		.compilevariations('gwint_card_blue_stripes2', 'gwint_card_blue_stripes3'));
-			parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_14", PotP_E_Primary, 	PotP_I_North, 'gwint_card_boris')				.compilevariations(''));
-			parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_15", PotP_E_Primary, 	PotP_I_North, 'gwint_card_botchling')			.compilevariations(''));
-			parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_16", PotP_E_Primary, 	PotP_I_North, 'gwint_card_catapult2')			.compilevariations(''));
-			parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_17", PotP_E_Primary, 	PotP_I_North, 'gwint_card_carlo')				.compilevariations(''));
-			parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_18", PotP_E_Primary, 	PotP_I_North, 'gwint_card_catapult')			.compilevariations(''));
-			parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_19", PotP_E_Primary, 	PotP_I_North, 'gwint_card_cleric_rose')			.compilevariations(''));
-			parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_20", PotP_E_Primary, 	PotP_I_North, 'gwint_card_crinfrid')			.compilevariations('gwint_card_crinfrid2', 'gwint_card_crinfrid3'));
-			parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_21", PotP_E_Primary, 	PotP_I_North, 'gwint_card_crownsplitter')		.compilevariations(''));
-			parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_22", PotP_E_Primary, 	PotP_I_North, 'gwint_card_cutup')				.compilevariations(''));
-			parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_23", PotP_E_Missable,	PotP_I_North, 'gwint_card_dandelion')			.compilevariations(''));
-			parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_24", PotP_E_Primary, 	PotP_I_North, 'BASEDECK')						.compilevariations(''));
-			parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_25", PotP_E_Primary, 	PotP_I_North, 'gwint_card_dijkstra')			.compilevariations(''));
-			parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_26", PotP_E_Primary, 	PotP_I_North, 'BASEDECK')						.compilevariations(''));
-			parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_27", PotP_E_Primary, 	PotP_I_North, 'gwint_card_igor')				.compilevariations(''));
-			parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_28", PotP_E_Primary, 	PotP_I_North, 'gwint_card_jacques')				.compilevariations(''));
-			parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_29", PotP_E_Primary, 	PotP_I_North, 'BASEDECK')						.compilevariations(''));
-			parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_30", PotP_E_Primary, 	PotP_I_North, 'BASEDECK')						.compilevariations(''));
-			parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_31", PotP_E_Primary, 	PotP_I_North, 'BASEDECK')						.compilevariations(''));
-			parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_32", PotP_E_Primary, 	PotP_I_North, 'gwint_card_francis')				.compilevariations(''));
-			parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_33", PotP_E_Primary, 	PotP_I_North, 'gwint_card_knight_rose')			.compilevariations(''));
-			parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_34", PotP_E_Primary, 	PotP_I_North, 'gwint_card_lebioda')				.compilevariations(''));
-			parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_35", PotP_E_Primary, 	PotP_I_North, 'gwint_card_hailstorm')			.compilevariations(''));
-			parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_36", PotP_E_Primary, 	PotP_I_North, 'gwint_card_nathaniel')			.compilevariations(''));
-			parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_37", PotP_E_Primary, 	PotP_I_North, 'gwint_card_peach')				.compilevariations(''));
-			parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_38", PotP_E_Primary, 	PotP_I_North, 'BASEDECK')						.compilevariations(''));
-			parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_39", PotP_E_Primary, 	PotP_I_North, 'BASEDECK')						.compilevariations(''));
-			parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_40", PotP_E_Primary, 	PotP_I_North, 'BASEDECK')						.compilevariations(''));
-			parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_41", PotP_E_Primary, 	PotP_I_North, 'BASEDECK')						.compilevariations(''));
-			parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_42", PotP_E_Primary, 	PotP_I_North, 'BASEDECK')						.compilevariations(''));
-			parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_43", PotP_E_Primary, 	PotP_I_North, 'gwint_card_siege_tower')			.compilevariations(''));
-			parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_44", PotP_E_Primary, 	PotP_I_North, 'BASEDECK')						.compilevariations(''));
-			parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_45", PotP_E_Primary, 	PotP_I_North, 'BASEDECK')						.compilevariations(''));
-			parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_46", PotP_E_Primary, 	PotP_I_North, 'gwint_card_wyvern')				.compilevariations(''));
-			parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_47", PotP_E_Primary, 	PotP_I_North, 'gwint_card_thaler')				.compilevariations(''));
-			parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_48", PotP_E_Primary, 	PotP_I_North, 'BASEDECK')						.compilevariations(''));
-			parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_49", PotP_E_Primary, 	PotP_I_North, 'gwint_card_triss')				.compilevariations(''));
-			parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_50", PotP_E_Primary, 	PotP_I_North, 'gwint_card_vernon')				.compilevariations(''));
-			parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_51", PotP_E_Primary, 	PotP_I_North, 'BASEDECK')						.compilevariations(''));
-			parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_52", PotP_E_Primary, 	PotP_I_North, 'gwint_card_vincent')				.compilevariations(''));
-			parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_53", PotP_E_Primary, 	PotP_I_North, 'gwint_card_esterad')				.compilevariations(''));
-			parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_54", PotP_E_Primary, 	PotP_I_North, 'gwint_card_whoreson')			.compilevariations(''));
-			parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_55", PotP_E_Primary, 	PotP_I_North, 'BASEDECK')						.compilevariations(''));
-			parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_56", PotP_E_Primary, 	PotP_I_North, 'BASEDECK')						.compilevariations(''));
-			parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_57", PotP_E_Primary, 	PotP_I_North, 'gwint_card_zoltan')				.compilevariations(''));
-			
-			PotP_SortPreviewData(parent.Gwent_NorthernRealms, PotP_A_Gwent, parent.master);
+		group = "PotP_TrackingGroup_GwentCards_NorthernRealms";
+		
+		parent.Gwent_NorthernRealms.Clear();
+		parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_01", PotP_E_Primary, PotP_I_North, 'BASEDECK', PotP_G_Lead)			.compilevariations(''));
+		parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_02", PotP_E_Primary, PotP_I_North, 'gwint_card_foltest_bronze')		.compilevariations(''));
+		parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_03", PotP_E_Primary, PotP_I_North, 'gwint_card_foltest_silver')		.compilevariations(''));
+		parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_04", PotP_E_Missable,PotP_I_North, 'gwint_card_foltest_gold')			.compilevariations(''));
+		parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_05", PotP_E_Primary, PotP_I_North, 'gwint_card_foltest_platinium')	.compilevariations(''));
+		parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_06", PotP_E_Primary, PotP_I_North, 'gwint_card_esterad')				.compilevariations(''));
+		parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_07", PotP_E_Missable,PotP_I_North, 'gwint_card_natalis')				.compilevariations(''));
+		parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_08", PotP_E_Primary, PotP_I_North, 'gwint_card_philippa')				.compilevariations(''));
+		parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_09", PotP_E_Primary, PotP_I_North, 'gwint_card_vernon')				.compilevariations(''));
+		parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_10", PotP_E_Primary, PotP_I_North, 'BASEDECK')						.compilevariations(''));
+		parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_11", PotP_E_Primary, PotP_I_North, 'BASEDECK')						.compilevariations(''));
+		parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_12", PotP_E_Primary, PotP_I_North, 'gwint_card_catapult')				.compilevariations('gwint_card_catapult2'));
+		parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_13", PotP_E_Primary, PotP_I_North, 'gwint_card_crinfrid')				.compilevariations('gwint_card_crinfrid2', 'gwint_card_crinfrid3'));
+		parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_14", PotP_E_Primary, PotP_I_North, 'BASEDECK')						.compilevariations(''));
+		parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_15", PotP_E_Primary, PotP_I_North, 'BASEDECK')						.compilevariations(''));
+		parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_16", PotP_E_Primary, PotP_I_North, 'BASEDECK')						.compilevariations(''));
+		parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_17", PotP_E_Primary, PotP_I_North, 'BASEDECK')						.compilevariations(''));
+		parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_18", PotP_E_Primary, PotP_I_North, 'BASEDECK')						.compilevariations(''));
+		parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_19", PotP_E_Primary, PotP_I_North, 'BASEDECK')						.compilevariations(''));
+		parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_20", PotP_E_Primary, PotP_I_North, 'BASEDECK')						.compilevariations(''));
+		parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_21", PotP_E_Primary, PotP_I_North, 'BASEDECK')						.compilevariations(''));
+		parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_22", PotP_E_Primary, PotP_I_North, 'BASEDECK')						.compilevariations(''));
+		parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_23", PotP_E_Primary, PotP_I_North, 'gwint_card_siege_tower')			.compilevariations(''));
+		parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_24", PotP_E_Primary, PotP_I_North, 'BASEDECK')						.compilevariations(''));
+		parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_25", PotP_E_Primary, PotP_I_North, 'gwint_card_dijkstra')				.compilevariations(''));
+		parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_26", PotP_E_Primary, PotP_I_North, 'BASEDECK')						.compilevariations(''));
+		parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_27", PotP_E_Primary, PotP_I_North, 'gwint_card_thaler')				.compilevariations(''));
+		parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_28", PotP_E_Primary, PotP_I_North, 'BASEDECK')						.compilevariations(''));
+		parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_29", PotP_E_Primary, PotP_I_North, 'BASEDECK')						.compilevariations(''));
+		parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_30", PotP_E_Primary, PotP_I_North, 'BASEDECK')						.compilevariations(''));
+		
+		PotP_SortPreviewData(parent.Gwent_NorthernRealms, PotP_A_Gwent, parent.master);		
 
-			//------------------------------------------------------
-			
-			group = "PotP_TrackingGroup_GwentCards_Scoiatael_Redux";
-			
-			parent.Gwent_Scoiatael.Clear();	
-			parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_01", PotP_E_Primary, 	PotP_I_Scoia, 'BASEDECK', PotP_G_Lead)				.compilevariations(''));
-			parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_02", PotP_E_Primary, 	PotP_I_Scoia, 'gwint_card_francesca_bronze')		.compilevariations(''));
-			parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_03", PotP_E_Primary, 	PotP_I_Scoia, 'gwint_card_francesca_silver')		.compilevariations(''));
-			parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_04", PotP_E_Missable,	PotP_I_Scoia, 'gwint_card_francesca_gold')			.compilevariations(''));
-			parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_05", PotP_E_Primary, 	PotP_I_Scoia, 'gwint_card_francesca_platinium')		.compilevariations(''));
-			parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_06", PotP_E_Missable, 	PotP_I_Scoia, 'gwint_card_iorveth')					.compilevariations(''));
-			parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_07", PotP_E_Primary,	PotP_I_Scoia, 'gwint_card_morenn')					.compilevariations(''));
-			parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_08", PotP_E_Primary,	PotP_I_Scoia, 'gwint_card_saskia')					.compilevariations(''));
-			parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_09", PotP_E_Primary, 	PotP_I_Scoia, 'gwint_card_havekar_nurse3')			.compilevariations(''));
-			parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_10", PotP_E_Primary, 	PotP_I_Scoia, 'gwint_card_aglais')					.compilevariations(''));
-			parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_11", PotP_E_Primary, 	PotP_I_Scoia, 'gwint_card_barclay')					.compilevariations(''));
-			parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_12", PotP_E_Primary, 	PotP_I_Scoia, 'gwint_card_braenn')					.compilevariations(''));
-			parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_13", PotP_E_Primary, 	PotP_I_Scoia, 'gwint_card_mahakam5')				.compilevariations(''));
-			parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_14", PotP_E_Primary, 	PotP_I_Scoia, 'gwint_card_ciaran')					.compilevariations(''));
-			parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_15", PotP_E_Primary, 	PotP_I_Scoia, 'gwint_card_dennis')					.compilevariations(''));
-			parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_16", PotP_E_Primary, 	PotP_I_Scoia, 'gwint_card_dol_archer')				.compilevariations(''));
-			parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_17", PotP_E_Primary, 	PotP_I_Scoia, 'gwint_card_dol_infantry2')			.compilevariations(''));
-			parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_18", PotP_E_Primary, 	PotP_I_Scoia, 'gwint_card_dol_infantry')			.compilevariations(''));
-			parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_19", PotP_E_Primary, 	PotP_I_Scoia, 'gwint_card_grovekeeper')				.compilevariations(''));
-			parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_20", PotP_E_Primary, 	PotP_I_Scoia, 'gwint_card_mahakam3')				.compilevariations(''));
-			parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_21", PotP_E_Primary, 	PotP_I_Scoia, 'gwint_card_mahakam4')				.compilevariations(''));
-			parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_22", PotP_E_Primary, 	PotP_I_Scoia, 'gwint_card_elf_skirmisher2')			.compilevariations(''));
-			parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_23", PotP_E_Primary, 	PotP_I_Scoia, 'gwint_card_elf_skirmisher3')			.compilevariations(''));
-			parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_24", PotP_E_Primary, 	PotP_I_Scoia, 'gwint_card_elf_skirmisher')			.compilevariations(''));
-			parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_25", PotP_E_Primary, 	PotP_I_Scoia, 'gwint_card_fauve')					.compilevariations(''));
-			parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_26", PotP_E_Primary, 	PotP_I_Scoia, 'gwint_card_filavandrel')				.compilevariations(''));
-			parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_27", PotP_E_Primary, 	PotP_I_Scoia, 'gwint_card_scorch')					.compilevariations(''));
-			parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_28", PotP_E_Primary, 	PotP_I_Scoia, 'gwint_card_dol_infantry3')			.compilevariations(''));
-			parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_29", PotP_E_Primary, 	PotP_I_Scoia, 'gwint_card_havekar_nurse2')			.compilevariations(''));
-			parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_30", PotP_E_Primary, 	PotP_I_Scoia, 'gwint_card_havekar_nurse')			.compilevariations(''));
-			parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_31", PotP_E_Primary, 	PotP_I_Scoia, 'gwint_card_havekar_support')			.compilevariations(''));
-			parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_32", PotP_E_Primary,	PotP_I_Scoia, 'gwint_card_ida')						.compilevariations(''));
-			parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_33", PotP_E_Missable, 	PotP_I_Scoia, 'gwint_card_isengrim')				.compilevariations(''));
-			parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_34", PotP_E_Primary, 	PotP_I_Scoia, 'gwint_card_vrihedd_brigade2')		.compilevariations(''));
-			parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_35", PotP_E_Primary,	PotP_I_Scoia, 'gwint_card_mahakam')					.compilevariations(''));
-			parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_36", PotP_E_Primary,	PotP_I_Scoia, 'gwint_card_havekar_support3')		.compilevariations(''));
-			parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_37", PotP_E_Primary, 	PotP_I_Scoia, 'gwint_card_milva')					.compilevariations(''));
-			parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_38", PotP_E_Primary, 	PotP_I_Scoia, 'gwint_card_nature')					.compilevariations(''));
-			parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_39", PotP_E_Primary, 	PotP_I_Scoia, 'gwint_card_mahakam2')				.compilevariations(''));
-			parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_40", PotP_E_Primary, 	PotP_I_Scoia, 'gwint_card_riordain')				.compilevariations(''));
-			parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_41", PotP_E_Primary, 	PotP_I_Scoia, 'gwint_card_schirru')					.compilevariations(''));
-			parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_42", PotP_E_Primary, 	PotP_I_Scoia, 'gwint_card_eithne')					.compilevariations(''));
-			parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_43", PotP_E_Primary, 	PotP_I_Scoia, 'gwint_card_toruviel')				.compilevariations(''));
-			parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_44", PotP_E_Primary, 	PotP_I_Scoia, 'gwint_card_treant_boar')				.compilevariations(''));
-			parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_45", PotP_E_Primary, 	PotP_I_Scoia, 'gwint_card_treant_mantis')			.compilevariations(''));
-			parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_46", PotP_E_Primary, 	PotP_I_Scoia, 'gwint_card_havekar_support2')		.compilevariations(''));
-			parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_47", PotP_E_Primary, 	PotP_I_Scoia, 'gwint_card_villen')					.compilevariations(''));
-			parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_48", PotP_E_Primary, 	PotP_I_Scoia, 'gwint_card_vrihedd_cadet')			.compilevariations(''));
-			parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_49", PotP_E_Primary, 	PotP_I_Scoia, 'gwint_card_vrihedd_brigade')			.compilevariations(''));
-			parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_50", PotP_E_Primary, 	PotP_I_Scoia, 'gwint_card_water')					.compilevariations(''));
-			parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_51", PotP_E_Primary, 	PotP_I_Scoia, 'gwint_card_yaevinn')					.compilevariations(''));
-			
-			PotP_SortPreviewData(parent.Gwent_Scoiatael, PotP_A_Gwent, parent.master);
+		group = "PotP_TrackingGroup_GwentCards_Scoiatael";
+		
+		parent.Gwent_Scoiatael.Clear();
+		parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_01", PotP_E_Primary, 	PotP_I_Scoia, 'BASEDECK', PotP_G_Lead)				.compilevariations(''));
+		parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_02", PotP_E_Primary, 	PotP_I_Scoia, 'gwint_card_francesca_bronze')		.compilevariations(''));
+		parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_03", PotP_E_Primary, 	PotP_I_Scoia, 'gwint_card_francesca_silver')		.compilevariations(''));
+		parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_04", PotP_E_Missable,	PotP_I_Scoia, 'gwint_card_francesca_gold')			.compilevariations(''));
+		parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_05", PotP_E_Primary, 	PotP_I_Scoia, 'gwint_card_francesca_platinium')		.compilevariations(''));
+		parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_06", PotP_E_Primary, 	PotP_I_Scoia, 'gwint_card_eithne')					.compilevariations(''));
+		parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_07", PotP_E_Missable,	PotP_I_Scoia, 'gwint_card_iorveth')					.compilevariations(''));
+		parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_08", PotP_E_Missable,	PotP_I_Scoia, 'gwint_card_isengrim')				.compilevariations(''));
+		parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_09", PotP_E_Primary, 	PotP_I_Scoia, 'gwint_card_saskia')					.compilevariations(''));
+		parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_10", PotP_E_Primary, 	PotP_I_Scoia, 'gwint_card_barclay')					.compilevariations(''));
+		parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_11", PotP_E_Primary, 	PotP_I_Scoia, 'gwint_card_ciaran')					.compilevariations(''));
+		parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_12", PotP_E_Primary, 	PotP_I_Scoia, 'gwint_card_dennis')					.compilevariations(''));
+		parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_13", PotP_E_Primary, 	PotP_I_Scoia, 'gwint_card_dol_archer')				.compilevariations(''));
+		parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_14", PotP_E_Primary, 	PotP_I_Scoia, 'gwint_card_dol_infantry')			.compilevariations('gwint_card_dol_infantry2', 'gwint_card_dol_infantry3'));
+		parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_15", PotP_E_Primary, 	PotP_I_Scoia, 'gwint_card_dol_dwarf')				.compilevariations('gwint_card_dol_dwarf2', 'gwint_card_dol_dwarf3'));
+		parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_16", PotP_E_Primary, 	PotP_I_Scoia, 'gwint_card_elf_skirmisher')			.compilevariations('gwint_card_elf_skirmisher2', 'gwint_card_elf_skirmisher3'));
+		parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_17", PotP_E_Primary, 	PotP_I_Scoia, 'gwint_card_filavandrel')				.compilevariations(''));
+		parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_18", PotP_E_Primary, 	PotP_I_Scoia, 'gwint_card_havekar_nurse')			.compilevariations('gwint_card_havekar_nurse2', 'gwint_card_havekar_nurse3'));
+		parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_19", PotP_E_Primary, 	PotP_I_Scoia, 'gwint_card_havekar_support')			.compilevariations('gwint_card_havekar_support2', 'gwint_card_havekar_support3'));
+		parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_20", PotP_E_Primary, 	PotP_I_Scoia, 'gwint_card_ida')						.compilevariations(''));
+		parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_21", PotP_E_Primary, 	PotP_I_Scoia, 'gwint_card_mahakam')					.compilevariations('gwint_card_mahakam2', 'gwint_card_mahakam3', 'gwint_card_mahakam4', 'gwint_card_mahakam5'));
+		parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_22", PotP_E_Primary, 	PotP_I_Scoia, 'gwint_card_milva')					.compilevariations(''));
+		parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_23", PotP_E_Primary, 	PotP_I_Scoia, 'gwint_card_riordain')				.compilevariations(''));
+		parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_24", PotP_E_Primary, 	PotP_I_Scoia, 'gwint_card_schirru')					.compilevariations(''));
+		parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_25", PotP_E_Primary, 	PotP_I_Scoia, 'gwint_card_toruviel')				.compilevariations(''));
+		parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_26", PotP_E_Primary, 	PotP_I_Scoia, 'gwint_card_vrihedd_cadet')			.compilevariations(''));
+		parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_27", PotP_E_Primary, 	PotP_I_Scoia, 'gwint_card_vrihedd_brigade')			.compilevariations('gwint_card_vrihedd_brigade2'));
+		parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_28", PotP_E_Primary, 	PotP_I_Scoia, 'gwint_card_yaevinn')					.compilevariations(''));
+		
+		PotP_SortPreviewData(parent.Gwent_Scoiatael, PotP_A_Gwent, parent.master);
 
-			//------------------------------------------------------
-			
-			group = "PotP_TrackingGroup_GwentCards_Skellige_Redux";
-			
-			parent.Gwent_Skellige.Clear();
-			parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_01", PotP_E_Primary, PotP_I_Skell, 'gwint_card_king_bran_bronze')			.compilevariations(''));
-			parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_02", PotP_E_Primary, PotP_I_Skell, 'BASEDECK', PotP_G_Lead)					.compilevariations(''));
-			parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_03", PotP_E_Primary, PotP_I_Skell, 'gwint_card_king_bran_silver')			.compilevariations(''));
-			parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_04", PotP_E_Primary, PotP_I_Skell, 'gwint_card_king_bran_gold')				.compilevariations(''));
-			parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_05", PotP_E_Primary, PotP_I_Skell, 'gwint_card_king_bran_platinium')		.compilevariations(''));
-			parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_06", PotP_E_Primary, PotP_I_Skell, 'BASEDECK')								.compilevariations(''));
-			parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_07", PotP_E_Primary, PotP_I_Skell, 'gwint_card_cock')						.compilevariations(''));
-			parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_08", PotP_E_Primary, PotP_I_Skell, 'gwint_card_tyr')						.compilevariations(''));
-			parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_09", PotP_E_Primary, PotP_I_Skell, 'gwint_card_clan_an_craite_marauder')	.compilevariations(''));
-			parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_10", PotP_E_Primary, PotP_I_Skell, 'BASEDECK')								.compilevariations(''));
-			parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_11", PotP_E_Primary, PotP_I_Skell, 'gwint_card_clan_an_craite_whaler')		.compilevariations(''));
-			parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_12", PotP_E_Primary, PotP_I_Skell, 'gwint_card_artis')						.compilevariations(''));
-			parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_13", PotP_E_Primary, PotP_I_Skell, 'gwint_card_athak')						.compilevariations(''));
-			parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_14", PotP_E_Primary, PotP_I_Skell, 'BASEDECK')								.compilevariations(''));
-			parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_15", PotP_E_Primary, PotP_I_Skell, 'BASEDECK')								.compilevariations(''));
-			parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_16", PotP_E_Primary, PotP_I_Skell, 'BASEDECK')								.compilevariations(''));
-			parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_17", PotP_E_Primary, PotP_I_Skell, 'gwint_card_boatbuilders')				.compilevariations(''));
-			parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_18", PotP_E_Primary, PotP_I_Skell, 'BASEDECK')								.compilevariations(''));
-			parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_19", PotP_E_Primary, PotP_I_Skell, 'gwint_card_dreams')						.compilevariations(''));
-			parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_20", PotP_E_Primary, PotP_I_Skell, 'gwint_card_clan_dimun_captain')			.compilevariations(''));
-			parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_21", PotP_E_Primary, PotP_I_Skell, 'gwint_card_clan_dimun_pirate')			.compilevariations(''));
-			parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_22", PotP_E_Primary, PotP_I_Skell, 'gwint_card_clan_dimun_smuggler')		.compilevariations(''));
-			parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_23", PotP_E_Primary, PotP_I_Skell, 'gwint_card_djenge_frett')				.compilevariations(''));
-			parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_24", PotP_E_Primary, PotP_I_Skell, 'BASEDECK')								.compilevariations(''));
-			parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_25", PotP_E_Primary, PotP_I_Skell, 'gwint_card_draig')						.compilevariations(''));
-			parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_26", PotP_E_Primary, PotP_I_Skell, 'BASEDECK')								.compilevariations(''));
-			parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_27", PotP_E_Primary, PotP_I_Skell, 'gwint_card_ermion')						.compilevariations(''));
-			parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_28", PotP_E_Primary, PotP_I_Skell, 'BASEDECK')								.compilevariations(''));
-			parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_29", PotP_E_Primary, PotP_I_Skell, 'BASEDECK')								.compilevariations(''));
-			parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_30", PotP_E_Primary, PotP_I_Skell, 'gwint_card_cerys')						.compilevariations(''));
-			parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_31", PotP_E_Primary, PotP_I_Skell, 'gwint_card_jutta')						.compilevariations(''));
-			parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_32", PotP_E_Primary, PotP_I_Skell, 'gwint_card_knut')						.compilevariations(''));
-			parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_33", PotP_E_Primary, PotP_I_Skell, 'BASEDECK')								.compilevariations(''));
-			parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_34", PotP_E_Primary, PotP_I_Skell, 'gwint_card_coral')						.compilevariations(''));
-			parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_35", PotP_E_Primary, PotP_I_Skell, 'BASEDECK')								.compilevariations(''));
-			parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_36", PotP_E_Primary, PotP_I_Skell, 'gwint_card_werewolf')					.compilevariations(''));
-			parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_37", PotP_E_Primary, PotP_I_Skell, 'gwint_card_olaf')						.compilevariations(''));
-			parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_38", PotP_E_Primary, PotP_I_Skell, 'gwint_card_freya')						.compilevariations(''));
-			parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_39", PotP_E_Primary, PotP_I_Skell, 'gwint_card_ragh_nar_roog')				.compilevariations(''));
-			parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_40", PotP_E_Primary, PotP_I_Skell, 'gwint_card_skellige_storm')				.compilevariations(''));
-			parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_41", PotP_E_Primary, PotP_I_Skell, 'gwint_card_skjall')						.compilevariations(''));
-			parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_42", PotP_E_Primary, PotP_I_Skell, 'gwint_card_sukrus')						.compilevariations(''));
-			parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_43", PotP_E_Primary, PotP_I_Skell, 'gwint_card_svalblod')					.compilevariations(''));
-			parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_44", PotP_E_Primary, PotP_I_Skell, 'BASEDECK')								.compilevariations(''));
-			parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_45", PotP_E_Primary, PotP_I_Skell, 'BASEDECK')								.compilevariations(''));
-			parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_46", PotP_E_Primary, PotP_I_Skell, 'gwint_card_clan_tuirseach_skirmisher')	.compilevariations(''));
-			parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_47", PotP_E_Primary, PotP_I_Skell, 'BASEDECK')								.compilevariations(''));
-			parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_48", PotP_E_Primary, PotP_I_Skell, 'gwint_card_vabjorn')					.compilevariations(''));
-			parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_49", PotP_E_Primary, PotP_I_Skell, 'BASEDECK')								.compilevariations(''));
-			parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_50", PotP_E_Primary, PotP_I_Skell, 'BASEDECK')								.compilevariations(''));
-			parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_51", PotP_E_Primary, PotP_I_Skell, 'BASEDECK')								.compilevariations(''));
-			parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_52", PotP_E_Primary, PotP_I_Skell, 'gwint_card_yoana')						.compilevariations(''));
-			
-			PotP_SortPreviewData(parent.Gwent_Skellige, PotP_A_Gwent, parent.master);
-		}
-		else
-		{
-			group = "PotP_TrackingGroup_GwentCards_Monsters";
-			
-			parent.Gwent_MonstersDeck.Clear();
-			parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_01", PotP_E_Primary, PotP_I_Monst, 'BASEDECK', PotP_G_Lead)				.compilevariations(''));
-			parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_02", PotP_E_Primary, PotP_I_Monst, 'gwint_card_eredin_bronze')			.compilevariations(''));
-			parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_03", PotP_E_Primary, PotP_I_Monst, 'gwint_card_eredin_silver')			.compilevariations(''));
-			parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_04", PotP_E_Missable,PotP_I_Monst, 'gwint_card_eredin_gold')			.compilevariations(''));
-			parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_05", PotP_E_Primary, PotP_I_Monst, 'gwint_card_eredin_platinium')		.compilevariations(''));
-			parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_06", PotP_E_Primary, PotP_I_Monst, 'gwint_card_draug')					.compilevariations(''));
-			parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_07", PotP_E_Primary, PotP_I_Monst, 'gwint_card_imlerith')				.compilevariations(''));
-			parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_08", PotP_E_Primary, PotP_I_Monst, 'gwint_card_kayran')					.compilevariations(''));
-			parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_09", PotP_E_Primary, PotP_I_Monst, 'gwint_card_leshen')					.compilevariations(''));
-			parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_10", PotP_E_Primary, PotP_I_Monst, 'gwint_card_arachas')				.compilevariations('gwint_card_arachas2', 'gwint_card_arachas3'));
-			parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_11", PotP_E_Primary, PotP_I_Monst, 'gwint_card_arachas_behemoth')		.compilevariations(''));
-			parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_12", PotP_E_Primary, PotP_I_Monst, 'gwint_card_botchling')				.compilevariations(''));
-			parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_13", PotP_E_Primary, PotP_I_Monst, 'gwint_card_celaeno_harpy')			.compilevariations(''));
-			parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_14", PotP_E_Primary, PotP_I_Monst, 'gwint_card_cockatrice')				.compilevariations(''));
-			parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_15", PotP_E_Primary, PotP_I_Monst, 'gwint_card_crone_brewess')			.compilevariations(''));
-			parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_16", PotP_E_Primary, PotP_I_Monst, 'gwint_card_crone_weavess')			.compilevariations(''));
-			parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_17", PotP_E_Primary, PotP_I_Monst, 'gwint_card_crone_whispess')			.compilevariations(''));
-			parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_18", PotP_E_Primary, PotP_I_Monst, 'gwint_card_earth_elemental')		.compilevariations(''));
-			parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_19", PotP_E_Primary, PotP_I_Monst, 'gwint_card_endrega')				.compilevariations(''));
-			parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_20", PotP_E_Primary, PotP_I_Monst, 'gwint_card_fiend')					.compilevariations(''));
-			parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_21", PotP_E_Primary, PotP_I_Monst, 'gwint_card_fire_elemental')			.compilevariations(''));
-			parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_22", PotP_E_Primary, PotP_I_Monst, 'gwint_card_fogling')				.compilevariations(''));
-			parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_23", PotP_E_Primary, PotP_I_Monst, 'gwint_card_forktail')				.compilevariations(''));
-			parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_24", PotP_E_Primary, PotP_I_Monst, 'gwint_card_frightener')				.compilevariations(''));
-			parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_25", PotP_E_Primary, PotP_I_Monst, 'gwint_card_gargoyle')				.compilevariations(''));
-			parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_26", PotP_E_Primary, PotP_I_Monst, 'gwint_card_ghoul')					.compilevariations('gwint_card_ghoul2', 'gwint_card_ghoul3'));
-			parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_27", PotP_E_Primary, PotP_I_Monst, 'gwint_card_grave_hag')				.compilevariations(''));
-			parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_28", PotP_E_Primary, PotP_I_Monst, 'gwint_card_griffin')				.compilevariations(''));
-			parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_29", PotP_E_Primary, PotP_I_Monst, 'gwint_card_harpy')					.compilevariations(''));
-			parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_30", PotP_E_Primary, PotP_I_Monst, 'gwint_card_ice_giant')				.compilevariations(''));
-			parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_31", PotP_E_Primary, PotP_I_Monst, 'gwint_card_nekker')					.compilevariations('gwint_card_nekker2', 'gwint_card_nekker3'));
-			parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_32", PotP_E_Primary, PotP_I_Monst, 'gwint_card_plague_maiden')			.compilevariations(''));
-			parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_33", PotP_E_Primary, PotP_I_Monst, 'gwint_card_toad')					.compilevariations(''));
-			parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_34", PotP_E_Primary, PotP_I_Monst, 'gwint_card_bruxa')					.compilevariations(''));
-			parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_35", PotP_E_Primary, PotP_I_Monst, 'gwint_card_ekkima')					.compilevariations(''));
-			parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_36", PotP_E_Primary, PotP_I_Monst, 'gwint_card_fleder')					.compilevariations(''));
-			parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_37", PotP_E_Primary, PotP_I_Monst, 'gwint_card_garkain')				.compilevariations(''));
-			parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_38", PotP_E_Primary, PotP_I_Monst, 'gwint_card_katakan')				.compilevariations(''));
-			parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_39", PotP_E_Primary, PotP_I_Monst, 'gwint_card_werewolf')				.compilevariations(''));
-			parent.Gwent_MonstersDeck.PushBack(parent.CreateEntry().initGwent(group + "_40", PotP_E_Primary, PotP_I_Monst, 'gwint_card_wyvern')					.compilevariations(''));
-			
-			PotP_SortPreviewData(parent.Gwent_MonstersDeck, PotP_A_Gwent, parent.master);	
-
-			group = "PotP_TrackingGroup_GwentCards_NeutralCards";
-			
-			parent.Gwent_NeutralDeck.Clear();
-			parent.Gwent_NeutralDeck.PushBack(parent.CreateEntry().initGwent(group + "_01", PotP_E_Primary, PotP_I_Neutr, 'gwint_card_ciri')				.compilevariations('gwint_card_gog_ciri'));
-			parent.Gwent_NeutralDeck.PushBack(parent.CreateEntry().initGwent(group + "_02", PotP_E_Primary, PotP_I_Neutr, 'gwint_card_geralt')				.compilevariations('gwint_card_gog_geralt'));
-			parent.Gwent_NeutralDeck.PushBack(parent.CreateEntry().initGwent(group + "_03", PotP_E_Primary, PotP_I_Neutr, 'gwint_card_avallach')			.compilevariations(''));
-			parent.Gwent_NeutralDeck.PushBack(parent.CreateEntry().initGwent(group + "_04", PotP_E_Primary, PotP_I_Neutr, 'gwint_card_triss')				.compilevariations(''));
-			parent.Gwent_NeutralDeck.PushBack(parent.CreateEntry().initGwent(group + "_05", PotP_E_Primary, PotP_I_Neutr, 'gwint_card_yennefer')			.compilevariations(''));
-			parent.Gwent_NeutralDeck.PushBack(parent.CreateEntry().initGwent(group + "_06", PotP_E_Primary, PotP_I_Neutr, 'gwint_card_horn')				.compilevariations(''));
-			parent.Gwent_NeutralDeck.PushBack(parent.CreateEntry().initGwent(group + "_07", PotP_E_Primary, PotP_I_Neutr, 'gwint_card_dummy')				.compilevariations(''));
-			parent.Gwent_NeutralDeck.PushBack(parent.CreateEntry().initGwent(group + "_08", PotP_E_Primary, PotP_I_Neutr, 'gwint_card_scorch')				.compilevariations(''));
-			parent.Gwent_NeutralDeck.PushBack(parent.CreateEntry().initGwent(group + "_09", PotP_E_Primary, PotP_I_Neutr, 'gwint_card_cow')					.compilevariations(''));
-			parent.Gwent_NeutralDeck.PushBack(parent.CreateEntry().initGwent(group + "_10", PotP_E_Missable,PotP_I_Neutr, 'gwint_card_dandelion')			.compilevariations(''));
-			parent.Gwent_NeutralDeck.PushBack(parent.CreateEntry().initGwent(group + "_11", PotP_E_Primary, PotP_I_Neutr, 'gwint_card_emiel')				.compilevariations(''));
-			parent.Gwent_NeutralDeck.PushBack(parent.CreateEntry().initGwent(group + "_12", PotP_E_Primary, PotP_I_Neutr, 'gwint_card_mrmirror')			.compilevariations(''));
-			parent.Gwent_NeutralDeck.PushBack(parent.CreateEntry().initGwent(group + "_13", PotP_E_Primary, PotP_I_Neutr, 'gwint_card_mrmirror_foglet')		.compilevariations(''));
-			parent.Gwent_NeutralDeck.PushBack(parent.CreateEntry().initGwent(group + "_14", PotP_E_Primary, PotP_I_Neutr, 'gwint_card_olgierd')				.compilevariations(''));
-			parent.Gwent_NeutralDeck.PushBack(parent.CreateEntry().initGwent(group + "_15", PotP_E_Primary, PotP_I_Neutr, 'gwint_card_vesemir')				.compilevariations(''));
-			parent.Gwent_NeutralDeck.PushBack(parent.CreateEntry().initGwent(group + "_16", PotP_E_Primary, PotP_I_Neutr, 'gwint_card_villen')				.compilevariations(''));
-			parent.Gwent_NeutralDeck.PushBack(parent.CreateEntry().initGwent(group + "_17", PotP_E_Primary, PotP_I_Neutr, 'gwint_card_zoltan')				.compilevariations(''));
-			parent.Gwent_NeutralDeck.PushBack(parent.CreateEntry().initGwent(group + "_18", PotP_E_Primary, PotP_I_Neutr, 'BASEDECK')						.compilevariations(''));
-			parent.Gwent_NeutralDeck.PushBack(parent.CreateEntry().initGwent(group + "_19", PotP_E_Primary, PotP_I_Neutr, 'BASEDECK')						.compilevariations(''));
-			parent.Gwent_NeutralDeck.PushBack(parent.CreateEntry().initGwent(group + "_20", PotP_E_Primary, PotP_I_Neutr, 'BASEDECK')						.compilevariations(''));
-			parent.Gwent_NeutralDeck.PushBack(parent.CreateEntry().initGwent(group + "_21", PotP_E_Primary, PotP_I_Neutr, 'gwint_card_skellige_storm')		.compilevariations(''));
-			parent.Gwent_NeutralDeck.PushBack(parent.CreateEntry().initGwent(group + "_22", PotP_E_Primary, PotP_I_Neutr, 'BASEDECK')						.compilevariations(''));
-			
-			PotP_SortPreviewData(parent.Gwent_NeutralDeck, PotP_A_Gwent, parent.master);	
-
-			group = "PotP_TrackingGroup_GwentCards_NilfgaardianEmpire";
-			
-			parent.Gwent_NilfgaardDeck.Clear();
-			parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_01", PotP_E_Primary, PotP_I_Nilfg, 'BASEDECK', PotP_G_Lead)		.compilevariations(''));
-			parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_02", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_emhyr_bronze')		.compilevariations(''));
-			parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_03", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_emhyr_silver')		.compilevariations(''));
-			parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_04", PotP_E_Missable,PotP_I_Nilfg, 'gwint_card_emhyr_gold')		.compilevariations(''));
-			parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_05", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_emhyr_platinium')	.compilevariations(''));
-			parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_06", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_letho')				.compilevariations(''));
-			parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_07", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_menno')				.compilevariations(''));
-			parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_08", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_moorvran')			.compilevariations(''));
-			parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_09", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_tibor')				.compilevariations(''));
-			parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_10", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_albrich')			.compilevariations(''));
-			parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_11", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_assire')			.compilevariations(''));
-			parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_12", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_black_archer')		.compilevariations('gwint_card_black_archer2'));
-			parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_13", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_cahir')				.compilevariations(''));
-			parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_14", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_cynthia')			.compilevariations(''));
-			parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_15", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_archer_support')	.compilevariations('gwint_card_archer_support2'));
-			parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_16", PotP_E_Missable,PotP_I_Nilfg, 'gwint_card_fringilla')			.compilevariations(''));
-			parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_17", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_heavy_zerri')		.compilevariations(''));
-			parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_18", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_impera_brigade')	.compilevariations('gwint_card_impera_brigade2', 'gwint_card_impera_brigade3', 'gwint_card_impera_brigade4'));
-			parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_19", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_morteisen')			.compilevariations(''));
-			parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_20", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_nausicaa')			.compilevariations('gwint_card_nausicaa2', 'gwint_card_nausicaa3'));
-			parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_21", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_puttkammer')		.compilevariations(''));
-			parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_22", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_rainfarn')			.compilevariations(''));
-			parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_23", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_renuald')			.compilevariations(''));
-			parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_24", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_rotten')			.compilevariations(''));
-			parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_25", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_shilard')			.compilevariations(''));
-			parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_26", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_combat_engineer')	.compilevariations(''));
-			parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_27", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_siege_support')		.compilevariations(''));
-			parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_28", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_stefan')			.compilevariations(''));
-			parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_29", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_sweers')			.compilevariations(''));
-			parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_30", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_vanhemar')			.compilevariations(''));
-			parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_31", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_vattier')			.compilevariations(''));
-			parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_32", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_vreemde')			.compilevariations(''));
-			parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_33", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_young_emissary')	.compilevariations('gwint_card_young_emissary2'));
-			parent.Gwent_NilfgaardDeck.PushBack(parent.CreateEntry().initGwent(group + "_34", PotP_E_Primary, PotP_I_Nilfg, 'gwint_card_zerri')				.compilevariations(''));
-			
-			PotP_SortPreviewData(parent.Gwent_NilfgaardDeck, PotP_A_Gwent, parent.master);	
-
-			group = "PotP_TrackingGroup_GwentCards_NorthernRealms";
-			
-			parent.Gwent_NorthernRealms.Clear();
-			parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_01", PotP_E_Primary, PotP_I_North, 'BASEDECK', PotP_G_Lead)			.compilevariations(''));
-			parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_02", PotP_E_Primary, PotP_I_North, 'gwint_card_foltest_bronze')		.compilevariations(''));
-			parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_03", PotP_E_Primary, PotP_I_North, 'gwint_card_foltest_silver')		.compilevariations(''));
-			parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_04", PotP_E_Missable,PotP_I_North, 'gwint_card_foltest_gold')			.compilevariations(''));
-			parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_05", PotP_E_Primary, PotP_I_North, 'gwint_card_foltest_platinium')	.compilevariations(''));
-			parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_06", PotP_E_Primary, PotP_I_North, 'gwint_card_esterad')				.compilevariations(''));
-			parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_07", PotP_E_Missable,PotP_I_North, 'gwint_card_natalis')				.compilevariations(''));
-			parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_08", PotP_E_Primary, PotP_I_North, 'gwint_card_philippa')				.compilevariations(''));
-			parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_09", PotP_E_Primary, PotP_I_North, 'gwint_card_vernon')				.compilevariations(''));
-			parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_10", PotP_E_Primary, PotP_I_North, 'BASEDECK')						.compilevariations(''));
-			parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_11", PotP_E_Primary, PotP_I_North, 'BASEDECK')						.compilevariations(''));
-			parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_12", PotP_E_Primary, PotP_I_North, 'gwint_card_catapult')				.compilevariations('gwint_card_catapult2'));
-			parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_13", PotP_E_Primary, PotP_I_North, 'gwint_card_crinfrid')				.compilevariations('gwint_card_crinfrid2', 'gwint_card_crinfrid3'));
-			parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_14", PotP_E_Primary, PotP_I_North, 'BASEDECK')						.compilevariations(''));
-			parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_15", PotP_E_Primary, PotP_I_North, 'BASEDECK')						.compilevariations(''));
-			parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_16", PotP_E_Primary, PotP_I_North, 'BASEDECK')						.compilevariations(''));
-			parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_17", PotP_E_Primary, PotP_I_North, 'BASEDECK')						.compilevariations(''));
-			parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_18", PotP_E_Primary, PotP_I_North, 'BASEDECK')						.compilevariations(''));
-			parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_19", PotP_E_Primary, PotP_I_North, 'BASEDECK')						.compilevariations(''));
-			parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_20", PotP_E_Primary, PotP_I_North, 'BASEDECK')						.compilevariations(''));
-			parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_21", PotP_E_Primary, PotP_I_North, 'BASEDECK')						.compilevariations(''));
-			parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_22", PotP_E_Primary, PotP_I_North, 'BASEDECK')						.compilevariations(''));
-			parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_23", PotP_E_Primary, PotP_I_North, 'gwint_card_siege_tower')			.compilevariations(''));
-			parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_24", PotP_E_Primary, PotP_I_North, 'BASEDECK')						.compilevariations(''));
-			parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_25", PotP_E_Primary, PotP_I_North, 'gwint_card_dijkstra')				.compilevariations(''));
-			parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_26", PotP_E_Primary, PotP_I_North, 'BASEDECK')						.compilevariations(''));
-			parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_27", PotP_E_Primary, PotP_I_North, 'gwint_card_thaler')				.compilevariations(''));
-			parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_28", PotP_E_Primary, PotP_I_North, 'BASEDECK')						.compilevariations(''));
-			parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_29", PotP_E_Primary, PotP_I_North, 'BASEDECK')						.compilevariations(''));
-			parent.Gwent_NorthernRealms.PushBack(parent.CreateEntry().initGwent(group + "_30", PotP_E_Primary, PotP_I_North, 'BASEDECK')						.compilevariations(''));
-			
-			PotP_SortPreviewData(parent.Gwent_NorthernRealms, PotP_A_Gwent, parent.master);		
-
-			group = "PotP_TrackingGroup_GwentCards_Scoiatael";
-			
-			parent.Gwent_Scoiatael.Clear();
-			parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_01", PotP_E_Primary, 	PotP_I_Scoia, 'BASEDECK', PotP_G_Lead)				.compilevariations(''));
-			parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_02", PotP_E_Primary, 	PotP_I_Scoia, 'gwint_card_francesca_bronze')		.compilevariations(''));
-			parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_03", PotP_E_Primary, 	PotP_I_Scoia, 'gwint_card_francesca_silver')		.compilevariations(''));
-			parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_04", PotP_E_Missable,	PotP_I_Scoia, 'gwint_card_francesca_gold')			.compilevariations(''));
-			parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_05", PotP_E_Primary, 	PotP_I_Scoia, 'gwint_card_francesca_platinium')		.compilevariations(''));
-			parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_06", PotP_E_Primary, 	PotP_I_Scoia, 'gwint_card_eithne')					.compilevariations(''));
-			parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_07", PotP_E_Missable,	PotP_I_Scoia, 'gwint_card_iorveth')					.compilevariations(''));
-			parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_08", PotP_E_Missable,	PotP_I_Scoia, 'gwint_card_isengrim')				.compilevariations(''));
-			parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_09", PotP_E_Primary, 	PotP_I_Scoia, 'gwint_card_saskia')					.compilevariations(''));
-			parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_10", PotP_E_Primary, 	PotP_I_Scoia, 'gwint_card_barclay')					.compilevariations(''));
-			parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_11", PotP_E_Primary, 	PotP_I_Scoia, 'gwint_card_ciaran')					.compilevariations(''));
-			parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_12", PotP_E_Primary, 	PotP_I_Scoia, 'gwint_card_dennis')					.compilevariations(''));
-			parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_13", PotP_E_Primary, 	PotP_I_Scoia, 'gwint_card_dol_archer')				.compilevariations(''));
-			parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_14", PotP_E_Primary, 	PotP_I_Scoia, 'gwint_card_dol_infantry')			.compilevariations('gwint_card_dol_infantry2', 'gwint_card_dol_infantry3'));
-			parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_15", PotP_E_Primary, 	PotP_I_Scoia, 'gwint_card_dol_dwarf')				.compilevariations('gwint_card_dol_dwarf2', 'gwint_card_dol_dwarf3'));
-			parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_16", PotP_E_Primary, 	PotP_I_Scoia, 'gwint_card_elf_skirmisher')			.compilevariations('gwint_card_elf_skirmisher2', 'gwint_card_elf_skirmisher3'));
-			parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_17", PotP_E_Primary, 	PotP_I_Scoia, 'gwint_card_filavandrel')				.compilevariations(''));
-			parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_18", PotP_E_Primary, 	PotP_I_Scoia, 'gwint_card_havekar_nurse')			.compilevariations('gwint_card_havekar_nurse2', 'gwint_card_havekar_nurse3'));
-			parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_19", PotP_E_Primary, 	PotP_I_Scoia, 'gwint_card_havekar_support')			.compilevariations('gwint_card_havekar_support2', 'gwint_card_havekar_support3'));
-			parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_20", PotP_E_Primary, 	PotP_I_Scoia, 'gwint_card_ida')						.compilevariations(''));
-			parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_21", PotP_E_Primary, 	PotP_I_Scoia, 'gwint_card_mahakam')					.compilevariations('gwint_card_mahakam2', 'gwint_card_mahakam3', 'gwint_card_mahakam4', 'gwint_card_mahakam5'));
-			parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_22", PotP_E_Primary, 	PotP_I_Scoia, 'gwint_card_milva')					.compilevariations(''));
-			parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_23", PotP_E_Primary, 	PotP_I_Scoia, 'gwint_card_riordain')				.compilevariations(''));
-			parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_24", PotP_E_Primary, 	PotP_I_Scoia, 'gwint_card_schirru')					.compilevariations(''));
-			parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_25", PotP_E_Primary, 	PotP_I_Scoia, 'gwint_card_toruviel')				.compilevariations(''));
-			parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_26", PotP_E_Primary, 	PotP_I_Scoia, 'gwint_card_vrihedd_cadet')			.compilevariations(''));
-			parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_27", PotP_E_Primary, 	PotP_I_Scoia, 'gwint_card_vrihedd_brigade')			.compilevariations('gwint_card_vrihedd_brigade2'));
-			parent.Gwent_Scoiatael.PushBack(parent.CreateEntry().initGwent(group + "_28", PotP_E_Primary, 	PotP_I_Scoia, 'gwint_card_yaevinn')					.compilevariations(''));
-			
-			PotP_SortPreviewData(parent.Gwent_Scoiatael, PotP_A_Gwent, parent.master);
-
-			group = "PotP_TrackingGroup_GwentCards_Skellige";
-			
-			parent.Gwent_Skellige.Clear();
-			parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_01", PotP_E_Primary, PotP_I_Skell, 'BASEDECK', PotP_G_Lead)			.compilevariations(''));
-			parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_02", PotP_E_Primary, PotP_I_Skell, 'gwint_card_king_bran_bronze')	.compilevariations(''));
-			parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_03", PotP_E_Primary, PotP_I_Skell, 'BASEDECK')						.compilevariations(''));
-			parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_04", PotP_E_Primary, PotP_I_Skell, 'gwint_card_cerys')				.compilevariations(''));
-			parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_05", PotP_E_Primary, PotP_I_Skell, 'gwint_card_ermion')				.compilevariations(''));
-			parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_06", PotP_E_Primary, PotP_I_Skell, 'BASEDECK')						.compilevariations(''));
-			parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_07", PotP_E_Primary, PotP_I_Skell, 'BASEDECK')						.compilevariations(''));
-			parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_08", PotP_E_Primary, PotP_I_Skell, 'BASEDECK')						.compilevariations(''));
-			parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_09", PotP_E_Primary, PotP_I_Skell, 'BASEDECK')						.compilevariations(''));
-			parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_10", PotP_E_Primary, PotP_I_Skell, 'BASEDECK')						.compilevariations(''));
-			parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_11", PotP_E_Primary, PotP_I_Skell, 'gwint_card_clan_dimun_pirate')	.compilevariations(''));
-			parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_12", PotP_E_Primary, PotP_I_Skell, 'BASEDECK')						.compilevariations(''));
-			parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_13", PotP_E_Primary, PotP_I_Skell, 'BASEDECK')						.compilevariations(''));
-			parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_14", PotP_E_Primary, PotP_I_Skell, 'BASEDECK')						.compilevariations(''));
-			parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_15", PotP_E_Primary, PotP_I_Skell, 'BASEDECK')						.compilevariations(''));
-			parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_16", PotP_E_Primary, PotP_I_Skell, 'BASEDECK')						.compilevariations(''));
-			parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_17", PotP_E_Primary, PotP_I_Skell, 'gwint_card_draig')				.compilevariations(''));
-			parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_18", PotP_E_Primary, PotP_I_Skell, 'BASEDECK')						.compilevariations(''));
-			parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_19", PotP_E_Primary, PotP_I_Skell, 'gwint_card_cock')				.compilevariations(''));
-			parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_20", PotP_E_Primary, PotP_I_Skell, 'BASEDECK')						.compilevariations(''));
-			parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_21", PotP_E_Primary, PotP_I_Skell, 'BASEDECK')						.compilevariations(''));
-			parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_22", PotP_E_Primary, PotP_I_Skell, 'gwint_card_olaf')				.compilevariations(''));
-			parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_23", PotP_E_Primary, PotP_I_Skell, 'BASEDECK')						.compilevariations(''));
-			parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_24", PotP_E_Primary, PotP_I_Skell, 'BASEDECK')						.compilevariations(''));
-			parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_25", PotP_E_Primary, PotP_I_Skell, 'BASEDECK')						.compilevariations(''));
-			parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_26", PotP_E_Primary, PotP_I_Skell, 'BASEDECK')						.compilevariations(''));
-			
-			PotP_SortPreviewData(parent.Gwent_Skellige, PotP_A_Gwent, parent.master);
-		}
+		group = "PotP_TrackingGroup_GwentCards_Skellige";
+		
+		parent.Gwent_Skellige.Clear();
+		parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_01", PotP_E_Primary, PotP_I_Skell, 'BASEDECK', PotP_G_Lead)			.compilevariations(''));
+		parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_02", PotP_E_Primary, PotP_I_Skell, 'gwint_card_king_bran_bronze')	.compilevariations(''));
+		parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_03", PotP_E_Primary, PotP_I_Skell, 'BASEDECK')						.compilevariations(''));
+		parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_04", PotP_E_Primary, PotP_I_Skell, 'gwint_card_cerys')				.compilevariations(''));
+		parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_05", PotP_E_Primary, PotP_I_Skell, 'gwint_card_ermion')				.compilevariations(''));
+		parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_06", PotP_E_Primary, PotP_I_Skell, 'BASEDECK')						.compilevariations(''));
+		parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_07", PotP_E_Primary, PotP_I_Skell, 'BASEDECK')						.compilevariations(''));
+		parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_08", PotP_E_Primary, PotP_I_Skell, 'BASEDECK')						.compilevariations(''));
+		parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_09", PotP_E_Primary, PotP_I_Skell, 'BASEDECK')						.compilevariations(''));
+		parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_10", PotP_E_Primary, PotP_I_Skell, 'BASEDECK')						.compilevariations(''));
+		parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_11", PotP_E_Primary, PotP_I_Skell, 'gwint_card_clan_dimun_pirate')	.compilevariations(''));
+		parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_12", PotP_E_Primary, PotP_I_Skell, 'BASEDECK')						.compilevariations(''));
+		parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_13", PotP_E_Primary, PotP_I_Skell, 'BASEDECK')						.compilevariations(''));
+		parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_14", PotP_E_Primary, PotP_I_Skell, 'BASEDECK')						.compilevariations(''));
+		parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_15", PotP_E_Primary, PotP_I_Skell, 'BASEDECK')						.compilevariations(''));
+		parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_16", PotP_E_Primary, PotP_I_Skell, 'BASEDECK')						.compilevariations(''));
+		parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_17", PotP_E_Primary, PotP_I_Skell, 'gwint_card_draig')				.compilevariations(''));
+		parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_18", PotP_E_Primary, PotP_I_Skell, 'BASEDECK')						.compilevariations(''));
+		parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_19", PotP_E_Primary, PotP_I_Skell, 'gwint_card_cock')				.compilevariations(''));
+		parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_20", PotP_E_Primary, PotP_I_Skell, 'BASEDECK')						.compilevariations(''));
+		parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_21", PotP_E_Primary, PotP_I_Skell, 'BASEDECK')						.compilevariations(''));
+		parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_22", PotP_E_Primary, PotP_I_Skell, 'gwint_card_olaf')				.compilevariations(''));
+		parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_23", PotP_E_Primary, PotP_I_Skell, 'BASEDECK')						.compilevariations(''));
+		parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_24", PotP_E_Primary, PotP_I_Skell, 'BASEDECK')						.compilevariations(''));
+		parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_25", PotP_E_Primary, PotP_I_Skell, 'BASEDECK')						.compilevariations(''));
+		parent.Gwent_Skellige.PushBack(parent.CreateEntry().initGwent(group + "_26", PotP_E_Primary, PotP_I_Skell, 'BASEDECK')						.compilevariations(''));
+		
+		PotP_SortPreviewData(parent.Gwent_Skellige, PotP_A_Gwent, parent.master);
 	}
 }
 
@@ -4262,8 +4282,9 @@ function PotP_LoadStorageCollection(master: CProgressOnThePath, optional force_r
 	if (!master.PotP_PersistentStorage.pQuestStorage)
 	{
 		master.PotP_PersistentStorage.pQuestStorage = new CProgressOnThePath_QuestStorage in master.PotP_PersistentStorage;
-		master.PotP_PersistentStorage.pQuestStorage.inititalise(master);
 		PotP_Logger("New quest storage instance created.", , 'PotP Storage');
+		master.PotP_PersistentStorage.pQuestStorage.inititalise(master);
+		PotP_Logger("New quest storage instance initialised.", , 'PotP Storage');
 	}
 	else 
 	{
@@ -4283,8 +4304,9 @@ function PotP_LoadStorageCollection(master: CProgressOnThePath, optional force_r
 	if (!master.PotP_PersistentStorage.pEventStorage)
 	{	
 		master.PotP_PersistentStorage.pEventStorage = new CProgressOnThePath_EventStorage in master.PotP_PersistentStorage;
-		master.PotP_PersistentStorage.pEventStorage.inititalise(master);
 		PotP_Logger("New event storage instance created.", , 'PotP Storage');
+		master.PotP_PersistentStorage.pEventStorage.inititalise(master);
+		PotP_Logger("New event storage instance initialised.", , 'PotP Storage');
 	}
 	else 
 	{
@@ -4304,8 +4326,9 @@ function PotP_LoadStorageCollection(master: CProgressOnThePath, optional force_r
 	if (!master.PotP_PersistentStorage.pWorldStorage)
 	{
 		master.PotP_PersistentStorage.pWorldStorage = new CProgressOnThePath_WorldStorage in master.PotP_PersistentStorage;
-		master.PotP_PersistentStorage.pWorldStorage.inititalise(master);
 		PotP_Logger("New world storage instance created.", , 'PotP Storage');
+		master.PotP_PersistentStorage.pWorldStorage.inititalise(master);
+		PotP_Logger("New world storage instance initialised.", , 'PotP Storage');
 	}
 	else 
 	{
@@ -4325,8 +4348,9 @@ function PotP_LoadStorageCollection(master: CProgressOnThePath, optional force_r
 	if (!master.PotP_PersistentStorage.pItemsStorage)
 	{
 		master.PotP_PersistentStorage.pItemsStorage = new CProgressOnThePath_ItemsStorage in master.PotP_PersistentStorage;
-		master.PotP_PersistentStorage.pItemsStorage.inititalise(master);
 		PotP_Logger("New items storage instance created.", , 'PotP Storage');
+		master.PotP_PersistentStorage.pItemsStorage.inititalise(master);
+		PotP_Logger("New items storage instance initialised.", , 'PotP Storage');
 	}
 	else 
 	{
@@ -4358,6 +4382,8 @@ function PotP_ApplyDLCFacts() : void
 	FactsSet("PotP_UsingW3EE",					(int) PotP_UsingW3EE());
 	FactsSet("PotP_UsingSezonBurz", 			(int) PotP_UsingSezonBurz());
 	FactsSet("PotP_UsingCosWiecej", 			(int) PotP_UsingCosWiecej());
+	
+	PotP_Logger("DLC Facts Applied...", , 'PotP Storage');
 }
 
 function PotP_ModAddedOrRemoved(section : name) : bool
@@ -4407,6 +4433,12 @@ statemachine class CProgressOnThePath_WorldStorage
 	
 	var MasterList_World			:array<PotP_PreviewEntry>;
 	
+	var AbandonedSites_WhiteOrchard	: array<PotP_PreviewEntry>;
+	var AbandonedSites_Velen		: array<PotP_PreviewEntry>;
+	var AbandonedSites_Novigrad		: array<PotP_PreviewEntry>;
+	var AbandonedSites_Skellige		: array<PotP_PreviewEntry>;
+	var AbandonedSites_Toussaint	: array<PotP_PreviewEntry>;
+	
 	var BanditCamps_WhiteOrchard	: array<PotP_PreviewEntry>;
 	var BanditCamps_Velen			: array<PotP_PreviewEntry>;
 	var BanditCamps_Novigrad		: array<PotP_PreviewEntry>;
@@ -4452,7 +4484,7 @@ statemachine class CProgressOnThePath_WorldStorage
 		this.master = master;
 		this.GotoState('Build');
 	}
-
+	
 //---------------------------------------------------
 	
 	function CreateEntry() : PotP_PreviewEntry
@@ -4502,6 +4534,7 @@ state Build in CProgressOnThePath_WorldStorage
 
 		parent.MasterList_World.Clear();
 		
+		this.Build_Sites();
 		this.Build_Camp();
 		this.Build_Dens();
 		this.Build_Nest();
@@ -4524,6 +4557,85 @@ state Build in CProgressOnThePath_WorldStorage
 		parent.GotoState('Idle');
 	}
 
+	//---------------------------------------------------
+	//-- Functions --------------------------------------
+	//---------------------------------------------------
+	
+	latent function Build_Sites()
+	{
+		var group: string = "PotP_TrackingGroup_WorldMap_AbandonedSites_WhiteOrchard";
+		
+		parent.AbandonedSites_WhiteOrchard.Clear();
+		parent.AbandonedSites_WhiteOrchard.PushBack(parent.CreateEntry().initWorld(group + "_01", PotP_R_WO, PotP_I_Sites, PotP_E_Primary, 'lumbermill_camp_mp'));     
+		parent.AbandonedSites_WhiteOrchard.PushBack(parent.CreateEntry().initWorld(group + "_02", PotP_R_WO, PotP_I_Sites, PotP_E_Primary, 'road_protection_shrine')); 
+		
+		PotP_SortPreviewData(parent.AbandonedSites_WhiteOrchard, PotP_A_World, parent.master);
+
+		//------------------------------------------------------
+		
+		group = "PotP_TrackingGroup_WorldMap_AbandonedSites_Velen";
+		
+		parent.AbandonedSites_Velen.Clear();
+		parent.AbandonedSites_Velen.PushBack(parent.CreateEntry().initWorld(group + "_01", PotP_R_VE, PotP_I_Sites, PotP_E_Primary, 'nml_mp_de29'));     
+		parent.AbandonedSites_Velen.PushBack(parent.CreateEntry().initWorld(group + "_02", PotP_R_VE, PotP_I_Sites, PotP_E_Primary, 'cp5_town_resc'));
+		parent.AbandonedSites_Velen.PushBack(parent.CreateEntry().initWorld(group + "_03", PotP_R_VE, PotP_I_Sites, PotP_E_Primary, 'nml_mp_gr11_b')); 		
+		parent.AbandonedSites_Velen.PushBack(parent.CreateEntry().initWorld(group + "_04", PotP_R_VE, PotP_I_Sites, PotP_E_Primary, 'nml_mp_gr12_town')); 		
+		parent.AbandonedSites_Velen.PushBack(parent.CreateEntry().initWorld(group + "_05", PotP_R_VE, PotP_I_Sites, PotP_E_Primary, 'nml_mp_gr27')); 		
+		parent.AbandonedSites_Velen.PushBack(parent.CreateEntry().initWorld(group + "_06", PotP_R_VE, PotP_I_Sites, PotP_E_Primary, 'nml_mp_sb10')); 		
+		parent.AbandonedSites_Velen.PushBack(parent.CreateEntry().initWorld(group + "_07", PotP_R_VE, PotP_I_Sites, PotP_E_Primary, 'nml_mp_sb14')); 		
+		parent.AbandonedSites_Velen.PushBack(parent.CreateEntry().initWorld(group + "_08", PotP_R_VE, PotP_I_Sites, PotP_E_Primary, 'nml_mp_sb3')); 		
+		parent.AbandonedSites_Velen.PushBack(parent.CreateEntry().initWorld(group + "_09", PotP_R_VE, PotP_I_Sites, PotP_E_Primary, 'nml_mp_tm3')); 		
+		parent.AbandonedSites_Velen.PushBack(parent.CreateEntry().initWorld(group + "_10", PotP_R_VE, PotP_I_Sites, PotP_E_Primary, 'nml_mp_tm4')); 		
+		parent.AbandonedSites_Velen.PushBack(parent.CreateEntry().initWorld(group + "_11", PotP_R_VE, PotP_I_Sites, PotP_E_Primary, 'ep1_poi_08_mp_rt')); 		
+		parent.AbandonedSites_Velen.PushBack(parent.CreateEntry().initWorld(group + "_12", PotP_R_VE, PotP_I_Sites, PotP_E_Primary, 'ep1_poi_30_mp')); 				
+		
+		PotP_SortPreviewData(parent.AbandonedSites_Velen, PotP_A_World, parent.master);
+
+		//------------------------------------------------------
+		
+		group = "PotP_TrackingGroup_WorldMap_AbandonedSites_Novigrad";
+		
+		parent.AbandonedSites_Novigrad.Clear();
+		parent.AbandonedSites_Novigrad.PushBack(parent.CreateEntry().initWorld(group + "_01", PotP_R_NO, PotP_I_Sites, PotP_E_Primary, 'ep1_poi20_mp'));     
+		parent.AbandonedSites_Novigrad.PushBack(parent.CreateEntry().initWorld(group + "_02", PotP_R_NO, PotP_I_Sites, PotP_E_Primary, 'ep1_poi_37_mp'));
+		parent.AbandonedSites_Novigrad.PushBack(parent.CreateEntry().initWorld(group + "_03", PotP_R_NO, PotP_I_Sites, PotP_E_Primary, 'ep1_poi07_mp')); 		
+		parent.AbandonedSites_Novigrad.PushBack(parent.CreateEntry().initWorld(group + "_04", PotP_R_NO, PotP_I_Sites, PotP_E_Primary, 'ep1_poi06_mp')); 					
+		
+		PotP_SortPreviewData(parent.AbandonedSites_Novigrad, PotP_A_World, parent.master);
+
+		//------------------------------------------------------
+		
+		group = "PotP_TrackingGroup_WorldMap_AbandonedSites_Skellige";
+		
+		parent.AbandonedSites_Skellige.Clear();
+		parent.AbandonedSites_Skellige.PushBack(parent.CreateEntry().initWorld(group + "_01", PotP_R_SK, PotP_I_Sites, PotP_E_Primary, 'sk34_mp'));     
+		parent.AbandonedSites_Skellige.PushBack(parent.CreateEntry().initWorld(group + "_02", PotP_R_SK, PotP_I_Sites, PotP_E_Primary, 'sk33_mp'));
+		parent.AbandonedSites_Skellige.PushBack(parent.CreateEntry().initWorld(group + "_03", PotP_R_SK, PotP_I_Sites, PotP_E_Primary, 'sk52_mp_skellige')); 		
+		parent.AbandonedSites_Skellige.PushBack(parent.CreateEntry().initWorld(group + "_04", PotP_R_SK, PotP_I_Sites, PotP_E_Primary, 'sk75_mp_skellige')); 					
+		parent.AbandonedSites_Skellige.PushBack(parent.CreateEntry().initWorld(group + "_05", PotP_R_SK, PotP_I_Sites, PotP_E_Primary, 'sk51_mp_skellige')); 					
+		
+		PotP_SortPreviewData(parent.AbandonedSites_Skellige, PotP_A_World, parent.master);
+
+		//------------------------------------------------------
+		
+		group = "PotP_TrackingGroup_WorldMap_AbandonedSites_Toussaint";
+		
+		parent.AbandonedSites_Toussaint.Clear();
+		parent.AbandonedSites_Toussaint.PushBack(parent.CreateEntry().initWorld(group + "_01", PotP_R_TO, PotP_I_Sites, PotP_E_Primary, 'poi_bar_a_03_mp'));     
+		parent.AbandonedSites_Toussaint.PushBack(parent.CreateEntry().initWorld(group + "_02", PotP_R_TO, PotP_I_Sites, PotP_E_Primary, 'poi_bar_b_04_mp'));
+		parent.AbandonedSites_Toussaint.PushBack(parent.CreateEntry().initWorld(group + "_03", PotP_R_TO, PotP_I_Sites, PotP_E_Primary, 'poi_car_b_03_mp')); 		
+		parent.AbandonedSites_Toussaint.PushBack(parent.CreateEntry().initWorld(group + "_04", PotP_R_TO, PotP_I_Sites, PotP_E_Primary, 'poi_gor_b_12_mp')); 	
+		parent.AbandonedSites_Toussaint.PushBack(parent.CreateEntry().initWorld(group + "_05", PotP_R_TO, PotP_I_Sites, PotP_E_Primary, 'poi_gor_c_03_mp'));     
+		parent.AbandonedSites_Toussaint.PushBack(parent.CreateEntry().initWorld(group + "_06", PotP_R_TO, PotP_I_Sites, PotP_E_Primary, 'poi_gor_d_06_mp'));
+		parent.AbandonedSites_Toussaint.PushBack(parent.CreateEntry().initWorld(group + "_07", PotP_R_TO, PotP_I_Sites, PotP_E_Primary, 'poi_ved_a_02_mp')); 		
+		parent.AbandonedSites_Toussaint.PushBack(parent.CreateEntry().initWorld(group + "_08", PotP_R_TO, PotP_I_Sites, PotP_E_Primary, 'lw_poi_ww_cor_2_mp')); 	
+		parent.AbandonedSites_Toussaint.PushBack(parent.CreateEntry().initWorld(group + "_09", PotP_R_TO, PotP_I_Sites, PotP_E_Primary, 'lw_poi_ww_ver_10_mp'));     
+		parent.AbandonedSites_Toussaint.PushBack(parent.CreateEntry().initWorld(group + "_10", PotP_R_TO, PotP_I_Sites, PotP_E_Primary, 'lw_poi_ww_ver_12_mp'));
+		parent.AbandonedSites_Toussaint.PushBack(parent.CreateEntry().initWorld(group + "_11", PotP_R_TO, PotP_I_Sites, PotP_E_Primary, 'lw_ww_poi_bel_5_mp')); 					
+		
+		PotP_SortPreviewData(parent.AbandonedSites_Toussaint, PotP_A_World, parent.master);
+	}
+	
 	//---------------------------------------------------
 	//-- Functions --------------------------------------
 	//---------------------------------------------------
@@ -5938,6 +6050,13 @@ class ProgressOnThepath_StringBuilder
 	
 	//---------------------------------------------------
 	
+	private function FormatHeaderIcon(data: PotP_PreviewEntry, header: string) : string
+	{
+		return StrReplace(header, "[ICON_PATH]", "<img src='img://" + data.icon_path + "' height='20' width='20' vspace='-5' />&nbsp;");
+	}
+	
+	//---------------------------------------------------
+	
 	public function build() : PotP_Builder_Result
 	{
 		var messagebody, entry_line: string = "";		
@@ -5968,7 +6087,7 @@ class ProgressOnThepath_StringBuilder
 			{
 				if (!n_headerAdded)
 				{
-					messagebody += header;
+					messagebody += this.FormatHeaderIcon(n_entryList[Idx], header);
 					n_headerAdded = true;
 				}
 				messagebody += entry_line + "<br/>";
@@ -5986,7 +6105,7 @@ class ProgressOnThepath_StringBuilder
 				// Attempt to add main header if normal array is empty.
 				if (!n_headerAdded)
 				{
-					messagebody += header;
+					messagebody += this.FormatHeaderIcon(m_entryList[Idx], header);
 					n_headerAdded = true;
 				}
 				
@@ -6171,6 +6290,13 @@ class ProgressOnThepath_GwentCardBuilder
 		// Used internally to hold 'missable' entries.
 		l_entryList.PushBack(_quest);
 	}
+
+	//---------------------------------------------------
+	
+	private function FormatHeaderIcon(data: PotP_PreviewEntry, header: string) : string
+	{
+		return StrReplace(header, "[ICON_PATH]", "<img src='img://" + data.icon_path + "' height='20' width='20' vspace='-5' />&nbsp;");
+	}
 	
 	//---------------------------------------------------
 	
@@ -6210,7 +6336,7 @@ class ProgressOnThepath_GwentCardBuilder
 			{
 				if (!n_headerAdded)
 				{
-					messagebody += this.header;
+					messagebody += this.FormatHeaderIcon(l_entryList[Idx], header);
 					n_headerAdded = true;
 				}
 
@@ -6233,7 +6359,7 @@ class ProgressOnThepath_GwentCardBuilder
 				// Attempt to add main header if normal array is empty.
 				if (!n_headerAdded)
 				{
-					messagebody += header;
+					messagebody += this.FormatHeaderIcon(h_entryList[Idx], header);
 					n_headerAdded = true;
 				}
 				
@@ -6256,7 +6382,7 @@ class ProgressOnThepath_GwentCardBuilder
 				// Attempt to add main header if normal array is empty.
 				if (!n_headerAdded)
 				{
-					messagebody += header;
+					messagebody += this.FormatHeaderIcon(u_entryList[Idx], header);
 					n_headerAdded = true;
 				}
 				
@@ -6413,11 +6539,8 @@ exec function pt_LogPins(PinType: name) {
 		}
 		
 		LogChannel('Progress on the Path Map Pin', "baseName = " + MapPins[Idx].entityName);
-		
-		if (MapPins[Idx].entityType == 'RoadSign') {
-			LogChannel('Progress on the Path Map Pin', "LocaName = " + GetLocStringByKeyExt("Map_Location_"+NameToString(MapPins[Idx].entityName)));
-			LogChannel('Progress on the Path Map Pin', "");
-		}
+		LogChannel('Progress on the Path Map Pin', "LocaName = " + GetLocStringByKeyExt("Map_Location_"+NameToString(MapPins[Idx].entityName)));
+		LogChannel('Progress on the Path Map Pin', "");
 	}
 }
 
@@ -7140,6 +7263,7 @@ enum PotP_Preview_World_Filter
 	PotP_I_Nests	 = 3,
 	PotP_I_Place	 = 4,
 	PotP_I_Signs	 = 5,
+	PotP_I_Sites	 = 6,
 }
 
 enum PotP_Preview_Quest_Filter
@@ -7298,7 +7422,7 @@ class PotP_PreviewEntry
 
 	// init function called when creating the instance of this Gwent Card.
 	function initGwent(uuid: string, type: PotP_Preview_Entry_Type, filter: PotP_Preview_Gwent_Filter, item_name: name, optional card_type: PotP_Preview_CardType): PotP_PreviewEntry 
-	{
+	{	
 		this.type 		 	= type;
 		this.item_name 	 	= item_name;
 		this.uuid 		 	= uuid;
@@ -7936,6 +8060,7 @@ class PotP_PreviewEntry
 			case PotP_I_Nests: return "icons/PotP/tracked_monsternest_dark.png";
 			case PotP_I_Place: return "icons/PotP/tracked_placeofpower_dark.png";
 			case PotP_I_Signs: return "icons/PotP/tracked_roadsign_dark.png";
+			case PotP_I_Sites: return "icons/PotP/tracked_AbandonedSite_dark.png";
 		}
 	}
 	
@@ -7959,7 +8084,10 @@ class PotP_PreviewEntry
 			
 		case PotP_I_Signs:
 			return GetLocStringByKeyExt("PotP_NotificationLine_SignP");
-		
+
+		case PotP_I_Sites:
+			return GetLocStringByKeyExt("PotP_NotificationLine_Sites");
+			
 		default:
 			return "";
 		}
@@ -8443,6 +8571,11 @@ class CProgressOnTheBath_GwentPreviewBook extends SU_GlossaryEntry
 		if (master.PotP_GwentPreview.IsCompleted())
 		{
 			description = "<p align=\"center\">" + GetLocStringByKeyExt("ProgressOnThePath_FilterComplete") + "</p>";
+		}
+
+		if (!master.PotP_GwentPreview.CanAccess())
+		{
+			description = "<p align=\"center\">" + GetLocStringByKeyExt("ProgressOnThePath_FilterGwentDeck") + "</p>";
 		}
 		
 		if (description == "")
@@ -9212,6 +9345,11 @@ class CProgressOnThePath_Notifications
 		{
 			InsertedString = GetLocStringByKeyExt("PotP_NotificationLine_BanditC") + entry_data.localname;
 		}
+
+		if (entry_data.filter == PotP_I_Sites)
+		{
+			InsertedString = GetLocStringByKeyExt("PotP_NotificationLine_AbandonedSite") + entry_data.localname;
+		}
 		
 		if (storage.pWorldStorageArray_Name.FindFirst(InsertedString) == -1 ) 
 		{
@@ -9521,6 +9659,7 @@ function PotP_UsingShadesOfIron() : bool
 
 function PotP_UsingGwentRedux() : bool 
 {
+	return false;
 	return StrLen(GetLocStringById(2114287601)) > 0;
 }
 
