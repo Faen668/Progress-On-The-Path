@@ -106,6 +106,13 @@
             "id": "CB98EE38-064A49B7-A5087195-0DCA72C8"
         },
         {
+            "path": "gameplay\\gui_new\\icons\\potp\\tracked_distressedknight_dark.png",
+            "level": 0,
+            "seed": 1,
+            "consumed": 1,
+            "id": "94156B2A-C0A45D28-B56DE910-5E39403F"
+        },
+        {
             "path": "gameplay\\gui_new\\icons\\potp\\tracked_gold.png",
             "level": 0,
             "seed": 1,
@@ -132,6 +139,13 @@
             "seed": 1,
             "consumed": 1,
             "id": "70DFF2F5-4A859505-A91133D5-F4BDC754"
+        },
+        {
+            "path": "gameplay\\gui_new\\icons\\potp\\tracked_hansebase_dark.png",
+            "level": 0,
+            "seed": 1,
+            "consumed": 1,
+            "id": "C84DE808-6C90E71A-19C86835-9DDAF643"
         },
         {
             "path": "gameplay\\gui_new\\icons\\potp\\tracked_monsterden.png",
@@ -209,6 +223,13 @@
             "seed": 1,
             "consumed": 1,
             "id": "27F5EB20-AC42945F-6AB223F6-6013160F"
+        },
+        {
+            "path": "gameplay\\gui_new\\icons\\potp\\tracked_vineyardinfestation_dark.png",
+            "level": 0,
+            "seed": 1,
+            "consumed": 1,
+            "id": "5FEB20A8-69CBF921-C175D8C6-0C55E06C"
         },
         {
             "path": "gameplay\\gui_new\\icons\\potp\\wolf.png",

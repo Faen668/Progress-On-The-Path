@@ -52,6 +52,7 @@ class CProgressOnThePath_MissablePreview
 		
 		build("PotP_Preview_Missable_00", master.PotP_PersistentStorage.pQuestStorage.MissableQuests_InstantFails);
 		build("PotP_Preview_Missable_01", master.PotP_PersistentStorage.pQuestStorage.MissableQuests_Q001);
+		build("PotP_Preview_Missable_13", master.PotP_PersistentStorage.pQuestStorage.MissableQuests_Ugly);
 		build("PotP_Preview_Missable_02", master.PotP_PersistentStorage.pQuestStorage.MissableQuests_Q401);
 		build("PotP_Preview_Missable_03", master.PotP_PersistentStorage.pQuestStorage.MissableQuests_SQ101);
 		build("PotP_Preview_Missable_12", master.PotP_PersistentStorage.pQuestStorage.MissableQuests_Q301);

@@ -33,20 +33,32 @@ exec function pt_forest()
 //-- Exec Functions ---------------------------------
 //---------------------------------------------------
 
+exec function pt_reload() 
+{
+	var master: CProgressOnThePath;
+	
+	if (GetPotP(master, 'pt_reload'))
+	{
+		PotP_LoadStorageCollection(master, 'All', true);
+	}
+}
+
+//---------------------------------------------------
+//-- Exec Functions ---------------------------------
+//---------------------------------------------------
+//pt_LogPins('BanditCamp')
 exec function pt_LogPins(PinType: name) {
 
 	var MapPins: array<SEntityMapPinInfo> = theGame.GetCommonMapManager().GetEntityMapPins(theGame.GetWorld().GetDepotPath());
-	var Idx: int;
-
+	var Idx: int;	
+	
 	for (Idx = 0; Idx < MapPins.Size(); Idx += 1) {
 	  
 		if ( MapPins[Idx].entityType != PinType ) {
 			continue;
 		}
 		
-		LogChannel('Progress on the Path Map Pin', "baseName = " + MapPins[Idx].entityName);
-		LogChannel('Progress on the Path Map Pin', "LocaName = " + GetLocStringByKeyExt("Map_Location_"+NameToString(MapPins[Idx].entityName)));
-		LogChannel('Progress on the Path Map Pin', "");
+		LogChannel('Progress on the Path Map Pin', Idx + ": baseName = " + MapPins[Idx].entityName + " | LocaName = " + GetLocStringByKeyExt("Map_Location_"+NameToString(MapPins[Idx].entityName)));
 	}
 }
 
@@ -93,6 +105,42 @@ exec function pt_reset()
 		master.PotP_PersistentStorage.MasterList_IsIgnored_V.Clear();
 		master.PotP_PersistentStorage.MasterList_InProgres_V.Clear();
 		GetWitcherPlayer().DisplayHudMessage("Progress on the Path: Reset Completed");
+	}
+}
+
+//---------------------------------------------------
+//-- Exec Functions ---------------------------------
+//---------------------------------------------------
+
+exec function pt_testtest() 
+{
+	var master: CProgressOnThePath;
+	var storage: CProgressOnThePath_Storage;
+	
+	var I, Q, W: PotP_PreviewEntry;	
+	var Edx, x, y, z: int;
+	
+	if (GetPotP(master, 'pt_testtest'))
+	{
+		storage = master.PotP_PersistentStorage;
+		
+		x = storage.pItemsStorage.MasterList_Items.Size();
+		y = storage.pQuestStorage.MasterList_Quests.Size();
+		z = storage.pWorldStorage.MasterList_World.Size();
+		
+		Edx = Min(x, y);	
+		Edx = Min(Edx, z);
+		Edx = RandRange(Edx, 0);
+		
+		I = storage.pItemsStorage.MasterList_Items[Edx];
+		Q = storage.pQuestStorage.MasterList_Quests[Edx];
+		W = storage.pWorldStorage.MasterList_World[Edx];
+		
+		I.AddToBackgroundQueue();
+		Q.AddToBackgroundQueue(2);
+		W.AddToBackgroundQueue();
+			
+		master.PotP_Notifications.NotifyPlayerFromBackgroundProcess();
 	}
 }
 

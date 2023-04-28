@@ -70,7 +70,7 @@ class CProgressOnThePath_Storage
 	}
 }
 
-function PotP_LoadStorageCollection(master: CProgressOnThePath, optional force_refresh: name) 
+function PotP_LoadStorageCollection(master: CProgressOnThePath, optional force_refresh: name, optional debug: bool) 
 {
 	if (!master.PotP_PersistentStorage) 
 	{
@@ -194,6 +194,10 @@ function PotP_LoadStorageCollection(master: CProgressOnThePath, optional force_r
 //---------------------------------------------------
 	
 	PotP_ApplyDLCFacts();
+	
+	if (debug) {
+		GetWitcherPlayer().DisplayHudMessage("Progress on the Path: Reload Completed...");
+	}
 }
 
 function PotP_ApplyDLCFacts() : void

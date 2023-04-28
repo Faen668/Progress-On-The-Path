@@ -201,10 +201,10 @@ state Idle in CProgressOnThePath
 state Initialising in CProgressOnThePath 
 {
 	private var curVersionStr: string;
-		default curVersionStr = "5.2.1";
+		default curVersionStr = "5.2.2";
 		
 	private var curVersionInt: int;
-		default curVersionInt = 521;
+		default curVersionInt = 522;
 	
 	private var hasUpdated: bool;
 		default hasUpdated = false;
@@ -283,8 +283,6 @@ state Initialising in CProgressOnThePath
 		parent.PotP_WorldGoblin.GotoState('Idle');
 		parent.PotP_EventListener.GotoState('Idle');
 		parent.PotP_MeditationListener.GotoState('Idle');
-		
-		//GetWitcherPlayer().DisplayHudMessage("Progress on the Path: Ready To Use");
 		parent.GotoState('Idle');
 	}
 	
@@ -294,7 +292,7 @@ state Initialising in CProgressOnThePath
 	{		
 		if (FactsQuerySum(initStr) != 1) 
 		{
-			//this.LoadDefaults();
+			this.LoadDefaults();
 			FactsSet(initStr, 1);
 			FactsSet(VersStr, curVersionInt);
 
@@ -316,7 +314,7 @@ state Initialising in CProgressOnThePath
 	{
 		if (FactsQuerySum(VersStr) < curVersionInt) 
 		{
-			if (FactsQuerySum(VersStr) < 521) { PotP_LoadStorageCollection(parent, 'World'); FactsSet(VersStr, 521); hasUpdated = true; }
+			if (FactsQuerySum(VersStr) < 522) { PotP_LoadStorageCollection(parent, 'World'); FactsSet(VersStr, 522); hasUpdated = true; }
 		}
 	}
 	
@@ -1285,6 +1283,7 @@ class CProgressOnThePath_MissablePreview
 		
 		build("PotP_Preview_Missable_00", master.PotP_PersistentStorage.pQuestStorage.MissableQuests_InstantFails);
 		build("PotP_Preview_Missable_01", master.PotP_PersistentStorage.pQuestStorage.MissableQuests_Q001);
+		build("PotP_Preview_Missable_13", master.PotP_PersistentStorage.pQuestStorage.MissableQuests_Ugly);
 		build("PotP_Preview_Missable_02", master.PotP_PersistentStorage.pQuestStorage.MissableQuests_Q401);
 		build("PotP_Preview_Missable_03", master.PotP_PersistentStorage.pQuestStorage.MissableQuests_SQ101);
 		build("PotP_Preview_Missable_12", master.PotP_PersistentStorage.pQuestStorage.MissableQuests_Q301);
@@ -1523,6 +1522,13 @@ class CProgressOnThePath_WorldPreview
 		build("PotP_Preview_Camps_3", master.PotP_PersistentStorage.pWorldStorage.BanditCamps_Novigrad);
 		build("PotP_Preview_Camps_4", master.PotP_PersistentStorage.pWorldStorage.BanditCamps_Skellige);
 		build("PotP_Preview_Camps_5", master.PotP_PersistentStorage.pWorldStorage.BanditCamps_Toussaint);
+
+		build("PotP_Preview_Guard_1", master.PotP_PersistentStorage.pWorldStorage.GuardedTreasure_WhiteOrchard);
+		build("PotP_Preview_Guard_2", master.PotP_PersistentStorage.pWorldStorage.GuardedTreasure_Velen);
+		build("PotP_Preview_Guard_3", master.PotP_PersistentStorage.pWorldStorage.GuardedTreasure_Novigrad);
+		build("PotP_Preview_Guard_4", master.PotP_PersistentStorage.pWorldStorage.GuardedTreasure_Skellige);
+		build("PotP_Preview_Guard_5", master.PotP_PersistentStorage.pWorldStorage.GuardedTreasure_KaerMorhen);
+		build("PotP_Preview_Guard_6", master.PotP_PersistentStorage.pWorldStorage.GuardedTreasure_Toussaint);
 		
 		build("PotP_Preview_DensM_1", master.PotP_PersistentStorage.pWorldStorage.MonsterDens_Velen);
 		build("PotP_Preview_DensM_2", master.PotP_PersistentStorage.pWorldStorage.MonsterDens_Novigrad);
@@ -1535,6 +1541,10 @@ class CProgressOnThePath_WorldPreview
 		build("PotP_Preview_NestM_4", master.PotP_PersistentStorage.pWorldStorage.MonsterNests_Skellige);
 		build("PotP_Preview_NestM_5", master.PotP_PersistentStorage.pWorldStorage.MonsterNests_Toussaint);
 		
+		build("PotP_Preview_Touss_1", master.PotP_PersistentStorage.pWorldStorage.HanseBases);
+		build("PotP_Preview_Touss_2", master.PotP_PersistentStorage.pWorldStorage.DistressedKnights_Toussaint);
+		build("PotP_Preview_Touss_3", master.PotP_PersistentStorage.pWorldStorage.InfestedVineyards_Toussaint);
+		
 		build("PotP_Preview_Place_1", master.PotP_PersistentStorage.pWorldStorage.PlacesOfPower_WhiteOrchard);
 		build("PotP_Preview_Place_2", master.PotP_PersistentStorage.pWorldStorage.PlacesOfPower_Velen);
 		build("PotP_Preview_Place_3", master.PotP_PersistentStorage.pWorldStorage.PlacesOfPower_Novigrad);
@@ -1542,6 +1552,10 @@ class CProgressOnThePath_WorldPreview
 		build("PotP_Preview_Place_5", master.PotP_PersistentStorage.pWorldStorage.PlacesOfPower_KaerMorhen);
 		build("PotP_Preview_Place_6", master.PotP_PersistentStorage.pWorldStorage.PlacesOfPower_Toussaint);
 		build("PotP_Preview_Place_7", master.PotP_PersistentStorage.pWorldStorage.PlacesOfPower_TheSpiral);
+
+		build("PotP_Preview_Distr_1", master.PotP_PersistentStorage.pWorldStorage.PersonsInDistress_Velen);
+		build("PotP_Preview_Distr_2", master.PotP_PersistentStorage.pWorldStorage.PersonsInDistress_Skellige);
+		build("PotP_Preview_Distr_3", master.PotP_PersistentStorage.pWorldStorage.PersonsInDistress_Toussaint);
 		
 		build("PotP_Preview_SignP_1", master.PotP_PersistentStorage.pWorldStorage.Signposts_WhiteOrchard);
 		build("PotP_Preview_SignP_2", master.PotP_PersistentStorage.pWorldStorage.Signposts_Velen);	
@@ -3281,6 +3295,7 @@ statemachine class CProgressOnThePath_QuestStorage
 	var MissableQuests_Q112			: array<PotP_PreviewEntry>;
 	var MissableQuests_Q403			: array<PotP_PreviewEntry>;
 	var MissableQuests_Q702			: array<PotP_PreviewEntry>;	
+	var MissableQuests_Ugly			: array<PotP_PreviewEntry>;
 	
 	var UUIDINT: int;
 	default UUIDINT = 1000;
@@ -3400,6 +3415,10 @@ statemachine class CProgressOnThePath_QuestStorage
 			this.MissableQuests_Q301.PushBack(pData);
 			break;
 
+		case "PotP_TrackingGroup_MainQuests_SkelligeAct1_07":
+			this.MissableQuests_Ugly.PushBack(pData);
+			break;
+			
 		default:
 			PotP_Logger("Unrecognised Missable Quest Detected - " + pData.localname);
 			break;
@@ -3453,6 +3472,8 @@ state Build in CProgressOnThePath_QuestStorage
 		parent.MissableQuests_Q112.Clear();
 		parent.MissableQuests_Q403.Clear();
 		parent.MissableQuests_Q702.Clear();
+		parent.MissableQuests_Q301.Clear();
+		parent.MissableQuests_Ugly.Clear();
 		
 		this.Build_Main();
 		this.Build_Side();
@@ -3550,7 +3571,7 @@ state Build in CProgressOnThePath_QuestStorage
 		parent.MainQuests_Act1_Skellige.PushBack(parent.CreateEntry().initQuest(group + "_04", PotP_E_Primary, PotP_R_SK, PotP_I_Mains, "Q205 Lofoten"));
 		parent.MainQuests_Act1_Skellige.PushBack(parent.CreateEntry().initQuest(group + "_05", PotP_E_Primary, PotP_R_SK, PotP_I_Mains, "Q205 The Garden"));
 		parent.MainQuests_Act1_Skellige.PushBack(parent.CreateEntry().initQuest(group + "_06", PotP_E_Primary, PotP_R_SK, PotP_I_Mains, "Q205 Ciri - safe heaven"));
-		parent.MainQuests_Act1_Skellige.PushBack(parent.CreateEntry().initQuest(group + "_07", PotP_E_Primary, PotP_R_SK, PotP_I_Mains, "[metaquest] Search for ugly"));
+		parent.MainQuests_Act1_Skellige.PushBack(parent.CreateEntry().initQuest(group + "_07", PotP_E_Missable, PotP_R_SK, PotP_I_Mains, "[metaquest] Search for ugly"));
 		
 		PotP_SortPreviewData(parent.MainQuests_Act1_Skellige, PotP_A_Quest, parent.master);	
 		
@@ -4244,7 +4265,7 @@ class CProgressOnThePath_Storage
 	}
 }
 
-function PotP_LoadStorageCollection(master: CProgressOnThePath, optional force_refresh: name) 
+function PotP_LoadStorageCollection(master: CProgressOnThePath, optional force_refresh: name, optional debug: bool) 
 {
 	if (!master.PotP_PersistentStorage) 
 	{
@@ -4368,6 +4389,10 @@ function PotP_LoadStorageCollection(master: CProgressOnThePath, optional force_r
 //---------------------------------------------------
 	
 	PotP_ApplyDLCFacts();
+	
+	if (debug) {
+		GetWitcherPlayer().DisplayHudMessage("Progress on the Path: Reload Completed...");
+	}
 }
 
 function PotP_ApplyDLCFacts() : void
@@ -4445,6 +4470,17 @@ statemachine class CProgressOnThePath_WorldStorage
 	var BanditCamps_Skellige		: array<PotP_PreviewEntry>;
 	var BanditCamps_Toussaint		: array<PotP_PreviewEntry>;
 	
+	var GuardedTreasure_WhiteOrchard	: array<PotP_PreviewEntry>;
+	var GuardedTreasure_Velen			: array<PotP_PreviewEntry>;
+	var GuardedTreasure_Novigrad		: array<PotP_PreviewEntry>;
+	var GuardedTreasure_Skellige		: array<PotP_PreviewEntry>;
+	var GuardedTreasure_KaerMorhen		: array<PotP_PreviewEntry>;
+	var GuardedTreasure_Toussaint		: array<PotP_PreviewEntry>;
+	
+	var DistressedKnights_Toussaint	: array<PotP_PreviewEntry>;
+	var InfestedVineyards_Toussaint	: array<PotP_PreviewEntry>;
+	var HanseBases					: array<PotP_PreviewEntry>;
+	
 	var MonsterDens_Velen			: array<PotP_PreviewEntry>;
 	var MonsterDens_Novigrad		: array<PotP_PreviewEntry>;
 	var MonsterDens_Skellige		: array<PotP_PreviewEntry>;
@@ -4456,6 +4492,10 @@ statemachine class CProgressOnThePath_WorldStorage
 	var MonsterNests_Skellige		: array<PotP_PreviewEntry>;
 	var MonsterNests_Toussaint		: array<PotP_PreviewEntry>;
 
+	var PersonsInDistress_Velen		: array<PotP_PreviewEntry>;
+	var PersonsInDistress_Skellige	: array<PotP_PreviewEntry>;
+	var PersonsInDistress_Toussaint	: array<PotP_PreviewEntry>;
+	
 	var PlacesOfPower_WhiteOrchard	: array<PotP_PreviewEntry>;
 	var PlacesOfPower_Velen			: array<PotP_PreviewEntry>;
 	var PlacesOfPower_Novigrad		: array<PotP_PreviewEntry>;
@@ -4536,10 +4576,13 @@ state Build in CProgressOnThePath_WorldStorage
 		
 		this.Build_Sites();
 		this.Build_Camp();
+		this.Build_Guard();
 		this.Build_Dens();
 		this.Build_Nest();
 		this.Build_Plac();
+		this.Build_Distr();
 		this.Build_Sign();
+		this.Build_Toussaint();
 
 		for ( Idx = 0; Idx < parent.MasterList_World.Size(); Idx += 1 ) 
 		{
@@ -4557,6 +4600,47 @@ state Build in CProgressOnThePath_WorldStorage
 		parent.GotoState('Idle');
 	}
 
+	//---------------------------------------------------
+	//-- Functions --------------------------------------
+	//---------------------------------------------------
+	
+	latent function Build_Toussaint()
+	{
+		var group: string = "PotP_TrackingGroup_WorldMap_DistressedKnights_Toussaint";
+		
+		parent.DistressedKnights_Toussaint.Clear();
+		parent.DistressedKnights_Toussaint.PushBack(parent.CreateEntry().initWorld(group + "_01", PotP_R_TO, PotP_I_Knigh, PotP_E_Primary, 'poi_bar_a_12_mp'));     
+		parent.DistressedKnights_Toussaint.PushBack(parent.CreateEntry().initWorld(group + "_02", PotP_R_TO, PotP_I_Knigh, PotP_E_Primary, 'poi_gor_a_09_mp')); 
+		parent.DistressedKnights_Toussaint.PushBack(parent.CreateEntry().initWorld(group + "_03", PotP_R_TO, PotP_I_Knigh, PotP_E_Primary, 'poi_gor_d_07_mp')); 
+		
+		PotP_SortPreviewData(parent.DistressedKnights_Toussaint, PotP_A_World, parent.master);
+
+		//------------------------------------------------------
+		
+		group = "PotP_TrackingGroup_WorldMap_InfestedVineyards_Toussaint";
+		
+		parent.InfestedVineyards_Toussaint.Clear();
+		parent.InfestedVineyards_Toussaint.PushBack(parent.CreateEntry().initWorld(group + "_01", PotP_R_TO, PotP_I_Infes, PotP_E_Primary, 'poi_dun_a_01_mp'));     
+		parent.InfestedVineyards_Toussaint.PushBack(parent.CreateEntry().initWorld(group + "_02", PotP_R_TO, PotP_I_Infes, PotP_E_Primary, 'poi_dun_a_02_mp'));
+		parent.InfestedVineyards_Toussaint.PushBack(parent.CreateEntry().initWorld(group + "_03", PotP_R_TO, PotP_I_Infes, PotP_E_Primary, 'poi_vin_a_02_mp')); 		
+		parent.InfestedVineyards_Toussaint.PushBack(parent.CreateEntry().initWorld(group + "_04", PotP_R_TO, PotP_I_Infes, PotP_E_Primary, 'lw_poi_ww_cor_1_mp')); 		
+		parent.InfestedVineyards_Toussaint.PushBack(parent.CreateEntry().initWorld(group + "_05", PotP_R_TO, PotP_I_Infes, PotP_E_Primary, 'lw_ww_poi_bel_9_mp')); 				
+		
+		PotP_SortPreviewData(parent.InfestedVineyards_Toussaint, PotP_A_World, parent.master);
+
+		//------------------------------------------------------
+		
+		group = "PotP_TrackingGroup_WorldMap_HanseBases_Toussaint";
+		
+		parent.HanseBases.Clear();
+		parent.HanseBases.PushBack(parent.CreateEntry().initWorld(group + "_01", PotP_R_TO, PotP_I_Hanse, PotP_E_Primary, 'poi_bar_a_01_mp'));     
+		parent.HanseBases.PushBack(parent.CreateEntry().initWorld(group + "_02", PotP_R_TO, PotP_I_Hanse, PotP_E_Primary, 'poi_gor_d_05_mp'));
+		parent.HanseBases.PushBack(parent.CreateEntry().initWorld(group + "_03", PotP_R_TO, PotP_I_Hanse, PotP_E_Primary, 'poi_ved_a_01_mp')); 							
+		
+		PotP_SortPreviewData(parent.HanseBases, PotP_A_World, parent.master);
+		
+	}
+	
 	//---------------------------------------------------
 	//-- Functions --------------------------------------
 	//---------------------------------------------------
@@ -4738,6 +4822,139 @@ state Build in CProgressOnThePath_WorldStorage
 		PotP_SortPreviewData(parent.BanditCamps_Velen, PotP_A_World, parent.master);
 	}
 
+	//---------------------------------------------------
+	//-- Functions --------------------------------------
+	//---------------------------------------------------
+	
+	latent function Build_Guard()
+	{
+		var group: string = "PotP_TrackingGroup_WorldMap_GuardedTreasure_WhiteOrchard";
+		
+		parent.GuardedTreasure_WhiteOrchard.Clear();
+		parent.GuardedTreasure_WhiteOrchard.PushBack(parent.CreateEntry().initWorld(group + "_01", PotP_R_WO, PotP_I_Guard, PotP_E_Primary, 'beached_boats'));
+		parent.GuardedTreasure_WhiteOrchard.PushBack(parent.CreateEntry().initWorld(group + "_02", PotP_R_WO, PotP_I_Guard, PotP_E_Primary, 'boat_wreck'));
+		parent.GuardedTreasure_WhiteOrchard.PushBack(parent.CreateEntry().initWorld(group + "_03", PotP_R_WO, PotP_I_Guard, PotP_E_Primary, 'cemetary_wraith'));
+		parent.GuardedTreasure_WhiteOrchard.PushBack(parent.CreateEntry().initWorld(group + "_04", PotP_R_WO, PotP_I_Guard, PotP_E_Primary, 'dead_horses_prologue'));
+		parent.GuardedTreasure_WhiteOrchard.PushBack(parent.CreateEntry().initWorld(group + "_05", PotP_R_WO, PotP_I_Guard, PotP_E_Primary, 'waterhag_mappin'));
+		
+		PotP_SortPreviewData(parent.GuardedTreasure_WhiteOrchard, PotP_A_World, parent.master);
+
+		//------------------------------------------------------
+		
+		group = "PotP_TrackingGroup_WorldMap_GuardedTreasure_Velen";
+		
+		parent.GuardedTreasure_Velen.Clear();
+		parent.GuardedTreasure_Velen.PushBack(parent.CreateEntry().initWorld(group + "_01", PotP_R_VE, PotP_I_Guard, PotP_E_Primary, 'nml_mp_bm1_a'));
+		parent.GuardedTreasure_Velen.PushBack(parent.CreateEntry().initWorld(group + "_02", PotP_R_VE, PotP_I_Guard, PotP_E_Primary, 'nml_mp_bm1_b'));
+		parent.GuardedTreasure_Velen.PushBack(parent.CreateEntry().initWorld(group + "_03", PotP_R_VE, PotP_I_Guard, PotP_E_Primary, 'nml_mp_bm3'));
+		parent.GuardedTreasure_Velen.PushBack(parent.CreateEntry().initWorld(group + "_04", PotP_R_VE, PotP_I_Guard, PotP_E_Primary, 'nml_mp_bm4'));
+		parent.GuardedTreasure_Velen.PushBack(parent.CreateEntry().initWorld(group + "_05", PotP_R_VE, PotP_I_Guard, PotP_E_Primary, 'nml_mp_cb19'));
+		parent.GuardedTreasure_Velen.PushBack(parent.CreateEntry().initWorld(group + "_06", PotP_R_VE, PotP_I_Guard, PotP_E_Primary, 'nml_mp_cp11'));
+		parent.GuardedTreasure_Velen.PushBack(parent.CreateEntry().initWorld(group + "_07", PotP_R_VE, PotP_I_Guard, PotP_E_Primary, 'nml_mp_cp14'));
+		parent.GuardedTreasure_Velen.PushBack(parent.CreateEntry().initWorld(group + "_08", PotP_R_VE, PotP_I_Guard, PotP_E_Primary, 'nml_mp_cp36'));
+		parent.GuardedTreasure_Velen.PushBack(parent.CreateEntry().initWorld(group + "_09", PotP_R_VE, PotP_I_Guard, PotP_E_Primary, 'nml_mp_cp38'));
+		parent.GuardedTreasure_Velen.PushBack(parent.CreateEntry().initWorld(group + "_10", PotP_R_VE, PotP_I_Guard, PotP_E_Primary, 'nml_mp_gr100'));
+		parent.GuardedTreasure_Velen.PushBack(parent.CreateEntry().initWorld(group + "_11", PotP_R_VE, PotP_I_Guard, PotP_E_Primary, 'gr15b_mp'));
+		parent.GuardedTreasure_Velen.PushBack(parent.CreateEntry().initWorld(group + "_12", PotP_R_VE, PotP_I_Guard, PotP_E_Primary, 'gf204_mp_nml'));
+		parent.GuardedTreasure_Velen.PushBack(parent.CreateEntry().initWorld(group + "_13", PotP_R_VE, PotP_I_Guard, PotP_E_Primary, 'nml_mp_mp5'));
+		parent.GuardedTreasure_Velen.PushBack(parent.CreateEntry().initWorld(group + "_14", PotP_R_VE, PotP_I_Guard, PotP_E_Primary, 'mp_wraith_nml_sp'));
+		parent.GuardedTreasure_Velen.PushBack(parent.CreateEntry().initWorld(group + "_15", PotP_R_VE, PotP_I_Guard, PotP_E_Primary, 'nml_mp_sb11'));
+		parent.GuardedTreasure_Velen.PushBack(parent.CreateEntry().initWorld(group + "_16", PotP_R_VE, PotP_I_Guard, PotP_E_Primary, 'nml_mp_sb19'));
+		parent.GuardedTreasure_Velen.PushBack(parent.CreateEntry().initWorld(group + "_17", PotP_R_VE, PotP_I_Guard, PotP_E_Primary, 'nml_mp_sb24_swamp'));
+		parent.GuardedTreasure_Velen.PushBack(parent.CreateEntry().initWorld(group + "_18", PotP_R_VE, PotP_I_Guard, PotP_E_Primary, 'de100_mp_nml'));
+		parent.GuardedTreasure_Velen.PushBack(parent.CreateEntry().initWorld(group + "_19", PotP_R_VE, PotP_I_Guard, PotP_E_Primary, 'nml_mp_de27'));
+		parent.GuardedTreasure_Velen.PushBack(parent.CreateEntry().initWorld(group + "_20", PotP_R_VE, PotP_I_Guard, PotP_E_Primary, 'nml_mp_tm100'));
+		parent.GuardedTreasure_Velen.PushBack(parent.CreateEntry().initWorld(group + "_21", PotP_R_VE, PotP_I_Guard, PotP_E_Primary, 'nml_mp_tm101'));
+		parent.GuardedTreasure_Velen.PushBack(parent.CreateEntry().initWorld(group + "_22", PotP_R_VE, PotP_I_Guard, PotP_E_Primary, 'mp_tm201_nml'));
+		parent.GuardedTreasure_Velen.PushBack(parent.CreateEntry().initWorld(group + "_23", PotP_R_VE, PotP_I_Guard, PotP_E_Primary, 'nml_mp_tm5'));
+		parent.GuardedTreasure_Velen.PushBack(parent.CreateEntry().initWorld(group + "_24", PotP_R_VE, PotP_I_Guard, PotP_E_Primary, 'ep1_poi_33_mp'));
+		
+		PotP_SortPreviewData(parent.GuardedTreasure_Velen, PotP_A_World, parent.master);
+
+		//------------------------------------------------------
+		
+		group = "PotP_TrackingGroup_WorldMap_GuardedTreasure_Novigrad";
+		
+		parent.GuardedTreasure_Novigrad.Clear();
+		parent.GuardedTreasure_Novigrad.PushBack(parent.CreateEntry().initWorld(group + "_01", PotP_R_NO, PotP_I_Guard, PotP_E_Primary, 'hs22_mp_nml'));
+		parent.GuardedTreasure_Novigrad.PushBack(parent.CreateEntry().initWorld(group + "_02", PotP_R_NO, PotP_I_Guard, PotP_E_Primary, 'nml_mp_gr33'));
+		parent.GuardedTreasure_Novigrad.PushBack(parent.CreateEntry().initWorld(group + "_03", PotP_R_NO, PotP_I_Guard, PotP_E_Primary, 'nml_mp_hs11'));
+		parent.GuardedTreasure_Novigrad.PushBack(parent.CreateEntry().initWorld(group + "_04", PotP_R_NO, PotP_I_Guard, PotP_E_Primary, 'gf202_mp_nml'));
+		parent.GuardedTreasure_Novigrad.PushBack(parent.CreateEntry().initWorld(group + "_05", PotP_R_NO, PotP_I_Guard, PotP_E_Primary, 'gf200_mp_nml'));
+		parent.GuardedTreasure_Novigrad.PushBack(parent.CreateEntry().initWorld(group + "_06", PotP_R_NO, PotP_I_Guard, PotP_E_Primary, 'gf201_mp_nml'));
+		parent.GuardedTreasure_Novigrad.PushBack(parent.CreateEntry().initWorld(group + "_07", PotP_R_NO, PotP_I_Guard, PotP_E_Primary, 'ep1_poi_24_mp'));
+		parent.GuardedTreasure_Novigrad.PushBack(parent.CreateEntry().initWorld(group + "_08", PotP_R_NO, PotP_I_Guard, PotP_E_Primary, 'ep1_poi03_mp'));
+		parent.GuardedTreasure_Novigrad.PushBack(parent.CreateEntry().initWorld(group + "_09", PotP_R_NO, PotP_I_Guard, PotP_E_Primary, 'ep1_poi_35_mp'));
+		
+		PotP_SortPreviewData(parent.GuardedTreasure_Novigrad, PotP_A_World, parent.master);
+
+		//------------------------------------------------------
+
+		group = "PotP_TrackingGroup_WorldMap_GuardedTreasure_Skellige";
+
+		parent.GuardedTreasure_Skellige.Clear();
+		parent.GuardedTreasure_Skellige.PushBack(parent.CreateEntry().initWorld(group + "_01", PotP_R_SK, PotP_I_Guard, PotP_E_Primary, 'sk1_mp_skellige'));
+		parent.GuardedTreasure_Skellige.PushBack(parent.CreateEntry().initWorld(group + "_02", PotP_R_SK, PotP_I_Guard, PotP_E_Primary, 'sk18_mp'));
+		parent.GuardedTreasure_Skellige.PushBack(parent.CreateEntry().initWorld(group + "_03", PotP_R_SK, PotP_I_Guard, PotP_E_Primary, 'sk22_mp'));
+		parent.GuardedTreasure_Skellige.PushBack(parent.CreateEntry().initWorld(group + "_04", PotP_R_SK, PotP_I_Guard, PotP_E_Primary, 'sk23_mp'));
+		parent.GuardedTreasure_Skellige.PushBack(parent.CreateEntry().initWorld(group + "_05", PotP_R_SK, PotP_I_Guard, PotP_E_Primary, 'sk26_mp'));
+		parent.GuardedTreasure_Skellige.PushBack(parent.CreateEntry().initWorld(group + "_06", PotP_R_SK, PotP_I_Guard, PotP_E_Primary, 'sk27_mp'));
+		parent.GuardedTreasure_Skellige.PushBack(parent.CreateEntry().initWorld(group + "_07", PotP_R_SK, PotP_I_Guard, PotP_E_Primary, 'sk32_mp'));
+		parent.GuardedTreasure_Skellige.PushBack(parent.CreateEntry().initWorld(group + "_08", PotP_R_SK, PotP_I_Guard, PotP_E_Primary, 'sk37_mp'));
+		parent.GuardedTreasure_Skellige.PushBack(parent.CreateEntry().initWorld(group + "_09", PotP_R_SK, PotP_I_Guard, PotP_E_Primary, 'sk46_mp'));
+		parent.GuardedTreasure_Skellige.PushBack(parent.CreateEntry().initWorld(group + "_10", PotP_R_SK, PotP_I_Guard, PotP_E_Primary, 'sk72_mp'));
+		parent.GuardedTreasure_Skellige.PushBack(parent.CreateEntry().initWorld(group + "_11", PotP_R_SK, PotP_I_Guard, PotP_E_Primary, 'sk7_mp'));
+		parent.GuardedTreasure_Skellige.PushBack(parent.CreateEntry().initWorld(group + "_12", PotP_R_SK, PotP_I_Guard, PotP_E_Primary, 'sk110_mp_skellige'));
+		parent.GuardedTreasure_Skellige.PushBack(parent.CreateEntry().initWorld(group + "_13", PotP_R_SK, PotP_I_Guard, PotP_E_Primary, 'sk106_mp_skellige'));
+		parent.GuardedTreasure_Skellige.PushBack(parent.CreateEntry().initWorld(group + "_14", PotP_R_SK, PotP_I_Guard, PotP_E_Primary, 'sk151_mp_skl'));
+		parent.GuardedTreasure_Skellige.PushBack(parent.CreateEntry().initWorld(group + "_15", PotP_R_SK, PotP_I_Guard, PotP_E_Primary, 'sk105_mp_skellige'));
+		parent.GuardedTreasure_Skellige.PushBack(parent.CreateEntry().initWorld(group + "_16", PotP_R_SK, PotP_I_Guard, PotP_E_Primary, 'sk76_mp_skl'));
+		parent.GuardedTreasure_Skellige.PushBack(parent.CreateEntry().initWorld(group + "_17", PotP_R_SK, PotP_I_Guard, PotP_E_Primary, 'sk78_mp_skl'));
+		parent.GuardedTreasure_Skellige.PushBack(parent.CreateEntry().initWorld(group + "_18", PotP_R_SK, PotP_I_Guard, PotP_E_Primary, 'sk79_mp_skl'));
+		parent.GuardedTreasure_Skellige.PushBack(parent.CreateEntry().initWorld(group + "_19", PotP_R_SK, PotP_I_Guard, PotP_E_Primary, 'sk80a_mp_skl'));
+		parent.GuardedTreasure_Skellige.PushBack(parent.CreateEntry().initWorld(group + "_20", PotP_R_SK, PotP_I_Guard, PotP_E_Primary, 'sk81_mp_skl'));
+		parent.GuardedTreasure_Skellige.PushBack(parent.CreateEntry().initWorld(group + "_21", PotP_R_SK, PotP_I_Guard, PotP_E_Primary, 'sk82_mp_skl'));
+		parent.GuardedTreasure_Skellige.PushBack(parent.CreateEntry().initWorld(group + "_22", PotP_R_SK, PotP_I_Guard, PotP_E_Primary, 'sk90_mp_skl'));
+		
+		PotP_SortPreviewData(parent.GuardedTreasure_Skellige, PotP_A_World, parent.master);
+		
+		//------------------------------------------------------
+		
+		group = "PotP_TrackingGroup_WorldMap_GuardedTreasure_KaerMorhen";
+		
+		parent.GuardedTreasure_KaerMorhen.Clear();
+		parent.GuardedTreasure_KaerMorhen.PushBack(parent.CreateEntry().initWorld(group + "_01", PotP_R_KM, PotP_I_Guard, PotP_E_Primary, 'km_poi_leshy'));
+		parent.GuardedTreasure_KaerMorhen.PushBack(parent.CreateEntry().initWorld(group + "_02", PotP_R_KM, PotP_I_Guard, PotP_E_Primary, 'km_poi_wyvern'));
+		
+		PotP_SortPreviewData(parent.GuardedTreasure_KaerMorhen, PotP_A_World, parent.master);	
+
+		//------------------------------------------------------
+		
+		group = "PotP_TrackingGroup_WorldMap_GuardedTreasure_Toussaint";
+		
+		parent.GuardedTreasure_Toussaint.Clear();
+		parent.GuardedTreasure_Toussaint.PushBack(parent.CreateEntry().initWorld(group + "_01", PotP_R_TO, PotP_I_Guard, PotP_E_Primary, 'poi_bar_a_02_mp_post'));
+		parent.GuardedTreasure_Toussaint.PushBack(parent.CreateEntry().initWorld(group + "_02", PotP_R_TO, PotP_I_Guard, PotP_E_Primary, 'poi_bar_a_08_mp_post'));
+		parent.GuardedTreasure_Toussaint.PushBack(parent.CreateEntry().initWorld(group + "_03", PotP_R_TO, PotP_I_Guard, PotP_E_Primary, 'poi_bar_a_09_mp_post'));
+		parent.GuardedTreasure_Toussaint.PushBack(parent.CreateEntry().initWorld(group + "_04", PotP_R_TO, PotP_I_Guard, PotP_E_Primary, 'poi_bar_a_11_mp'));
+		parent.GuardedTreasure_Toussaint.PushBack(parent.CreateEntry().initWorld(group + "_05", PotP_R_TO, PotP_I_Guard, PotP_E_Primary, 'poi_car_a_05_mp'));
+		parent.GuardedTreasure_Toussaint.PushBack(parent.CreateEntry().initWorld(group + "_06", PotP_R_TO, PotP_I_Guard, PotP_E_Primary, 'poi_car_a_07_mp'));
+		parent.GuardedTreasure_Toussaint.PushBack(parent.CreateEntry().initWorld(group + "_07", PotP_R_TO, PotP_I_Guard, PotP_E_Primary, 'poi_dun_b_08_mp'));
+		parent.GuardedTreasure_Toussaint.PushBack(parent.CreateEntry().initWorld(group + "_08", PotP_R_TO, PotP_I_Guard, PotP_E_Primary, 'poi_gor_a_08_mp'));
+		parent.GuardedTreasure_Toussaint.PushBack(parent.CreateEntry().initWorld(group + "_09", PotP_R_TO, PotP_I_Guard, PotP_E_Primary, 'poi_gor_d_17_mp_post'));
+		parent.GuardedTreasure_Toussaint.PushBack(parent.CreateEntry().initWorld(group + "_10", PotP_R_TO, PotP_I_Guard, PotP_E_Primary, 'poi_gor_d_19_mp'));
+		parent.GuardedTreasure_Toussaint.PushBack(parent.CreateEntry().initWorld(group + "_11", PotP_R_TO, PotP_I_Guard, PotP_E_Primary, 'poi_san_b_04_mp'));
+		parent.GuardedTreasure_Toussaint.PushBack(parent.CreateEntry().initWorld(group + "_12", PotP_R_TO, PotP_I_Guard, PotP_E_Primary, 'poi_san_b_06_mp'));
+		parent.GuardedTreasure_Toussaint.PushBack(parent.CreateEntry().initWorld(group + "_13", PotP_R_TO, PotP_I_Guard, PotP_E_Primary, 'poi_ved_a_07_mp_post'));
+		parent.GuardedTreasure_Toussaint.PushBack(parent.CreateEntry().initWorld(group + "_14", PotP_R_TO, PotP_I_Guard, PotP_E_Primary, 'poi_ved_a_08_mp_post'));
+		parent.GuardedTreasure_Toussaint.PushBack(parent.CreateEntry().initWorld(group + "_15", PotP_R_TO, PotP_I_Guard, PotP_E_Primary, 'poi_vin_b_04_mp'));
+		parent.GuardedTreasure_Toussaint.PushBack(parent.CreateEntry().initWorld(group + "_16", PotP_R_TO, PotP_I_Guard, PotP_E_Primary, 'lw_poi_ww_cor_5_mp'));
+		parent.GuardedTreasure_Toussaint.PushBack(parent.CreateEntry().initWorld(group + "_17", PotP_R_TO, PotP_I_Guard, PotP_E_Primary, 'lw_poi_ww_ver_9_mp'));
+		parent.GuardedTreasure_Toussaint.PushBack(parent.CreateEntry().initWorld(group + "_18", PotP_R_TO, PotP_I_Guard, PotP_E_Primary, 'lw_ww_poi_bel_6_mp'));
+		
+		PotP_SortPreviewData(parent.GuardedTreasure_Toussaint, PotP_A_World, parent.master);		
+	}
+	
 	//---------------------------------------------------
 	//-- Functions --------------------------------------
 	//---------------------------------------------------
@@ -4969,6 +5186,48 @@ state Build in CProgressOnThePath_WorldStorage
 		PotP_SortPreviewData(parent.PlacesOfPower_TheSpiral, PotP_A_World, parent.master);	
 	}
 
+	//---------------------------------------------------
+	//-- Functions --------------------------------------
+	//---------------------------------------------------
+	
+	latent function Build_Distr()
+	{
+		var group: string = "PotP_TrackingGroup_WorldMap_PersonsInDistress_Velen";
+		
+		parent.PersonsInDistress_Velen.Clear();
+		parent.PersonsInDistress_Velen.PushBack(parent.CreateEntry().initWorld(group + "_01", PotP_R_VE, PotP_I_Distr, PotP_E_Primary, 'nml_mp_cp13'));
+		parent.PersonsInDistress_Velen.PushBack(parent.CreateEntry().initWorld(group + "_02", PotP_R_VE, PotP_I_Distr, PotP_E_Primary, 'nml_mp_gr13'));
+		parent.PersonsInDistress_Velen.PushBack(parent.CreateEntry().initWorld(group + "_03", PotP_R_VE, PotP_I_Distr, PotP_E_Primary, 'nml_mp_gr29'));
+		parent.PersonsInDistress_Velen.PushBack(parent.CreateEntry().initWorld(group + "_04", PotP_R_VE, PotP_I_Distr, PotP_E_Primary, 'nml_mp_hs2'));
+		parent.PersonsInDistress_Velen.PushBack(parent.CreateEntry().initWorld(group + "_05", PotP_R_VE, PotP_I_Distr, PotP_E_Primary, 'nml_mp_tm12'));
+		parent.PersonsInDistress_Velen.PushBack(parent.CreateEntry().initWorld(group + "_06", PotP_R_VE, PotP_I_Distr, PotP_E_Primary, 'ep1_pan_dziedzina_mp'));
+		
+		PotP_SortPreviewData(parent.PersonsInDistress_Velen, PotP_A_World, parent.master);	
+
+		//------------------------------------------------------
+
+		group = "PotP_TrackingGroup_WorldMap_PersonsInDistress_Skellige";
+		
+		parent.PersonsInDistress_Skellige.Clear();
+		parent.PersonsInDistress_Skellige.PushBack(parent.CreateEntry().initWorld(group + "_01", PotP_R_SK, PotP_I_Distr, PotP_E_Primary, 'sk29_mp'));
+		parent.PersonsInDistress_Skellige.PushBack(parent.CreateEntry().initWorld(group + "_02", PotP_R_SK, PotP_I_Distr, PotP_E_Primary, 'sk90_mp'));
+		
+		PotP_SortPreviewData(parent.PersonsInDistress_Skellige, PotP_A_World, parent.master);	
+
+		//------------------------------------------------------
+		
+		group = "PotP_TrackingGroup_WorldMap_PersonsInDistress_Toussaint";
+		
+		parent.PersonsInDistress_Toussaint.Clear();
+		parent.PersonsInDistress_Toussaint.PushBack(parent.CreateEntry().initWorld(group + "_01", PotP_R_TO, PotP_I_Distr, PotP_E_Primary, 'poi_bar_a_02_mp'));
+		parent.PersonsInDistress_Toussaint.PushBack(parent.CreateEntry().initWorld(group + "_02", PotP_R_TO, PotP_I_Distr, PotP_E_Primary, 'poi_ved_a_05_mp'));
+		parent.PersonsInDistress_Toussaint.PushBack(parent.CreateEntry().initWorld(group + "_03", PotP_R_TO, PotP_I_Distr, PotP_E_Primary, 'lw_poi_ww_cor_3_mp'));
+		parent.PersonsInDistress_Toussaint.PushBack(parent.CreateEntry().initWorld(group + "_04", PotP_R_TO, PotP_I_Distr, PotP_E_Primary, 'lw_poi_ww_ver_11_mp'));
+		parent.PersonsInDistress_Toussaint.PushBack(parent.CreateEntry().initWorld(group + "_05", PotP_R_TO, PotP_I_Distr, PotP_E_Primary, 'lw_ww_poi_bel_7_mp'));
+		
+		PotP_SortPreviewData(parent.PersonsInDistress_Toussaint, PotP_A_World, parent.master);	
+	}
+	
 	//---------------------------------------------------
 	//-- Functions --------------------------------------
 	//---------------------------------------------------
@@ -6052,7 +6311,7 @@ class ProgressOnThepath_StringBuilder
 	
 	private function FormatHeaderIcon(data: PotP_PreviewEntry, header: string) : string
 	{
-		return StrReplace(header, "[ICON_PATH]", "<img src='img://" + data.icon_path + "' height='20' width='20' vspace='-5' />&nbsp;");
+		return StrReplace(header, "[ICON_PATH]", "<img src='img://" + data.GetIconPath() + "' height='20' width='20' vspace='-5' />&nbsp;");
 	}
 	
 	//---------------------------------------------------
@@ -6175,25 +6434,25 @@ class ProgressOnThepath_StringBuilder
 		// Apply a coloured 'Mod Added' tag to any entries that are not part of the official game.
 		if (entry_data.is_modadded) 
 		{
-			entry_line += entry_data.T_ModAdded;
+			entry_line += GetLocStringByKeyExt("ProgressOnThePath_PreviewTag_MA");
 		}		
 		
 		// Apply a coloured 'In Progress' tag to any active quests that are not yet completed.
 		if (isInProgress) 
 		{
-			entry_line += entry_data.T_InProgress;
+			entry_line += GetLocStringByKeyExt("ProgressOnThePath_PreviewTag_IP");
 		}
 		
 		// Apply a coloured 'Completed' tag to any completed entries.
 		if (isCompleted && showCompleted) 
 		{
-			entry_line += entry_data.T_Completed;
+			entry_line += GetLocStringByKeyExt("ProgressOnThePath_PreviewTag_CO");
 		}
 		
 		// Apply a coloured 'Ignored' tag to any ignored entries.
 		if (isIgnored && showIgnored) 
 		{
-			entry_line += entry_data.T_Ignored;
+			entry_line += GetLocStringByKeyExt("ProgressOnThePath_PreviewTag_IG");
 		}
 		
 		// Return the formatted string back to the builder.
@@ -6295,7 +6554,7 @@ class ProgressOnThepath_GwentCardBuilder
 	
 	private function FormatHeaderIcon(data: PotP_PreviewEntry, header: string) : string
 	{
-		return StrReplace(header, "[ICON_PATH]", "<img src='img://" + data.icon_path + "' height='20' width='20' vspace='-5' />&nbsp;");
+		return StrReplace(header, "[ICON_PATH]", "<img src='img://" + data.GetIconPath() + "' height='20' width='20' vspace='-5' />&nbsp;");
 	}
 	
 	//---------------------------------------------------
@@ -6445,7 +6704,7 @@ class ProgressOnThepath_GwentCardBuilder
 		// Apply a coloured 'Missable' tag to valid gwent cards.
 		if (entry_data.is_missable) 
 		{
-			entry_line += entry_data.T_Missable;
+			entry_line += GetLocStringByKeyExt("ProgressOnThePath_PreviewTag_MI");
 		}
 		
 		if ( (bool) PotP_GetPreviewValue('ProgressOnThePath_Preview_GExtra') ) 
@@ -6453,38 +6712,38 @@ class ProgressOnThepath_GwentCardBuilder
 			// Apply a coloured 'Bought From Vendor' tag to valid gwent cards.
 			if (entry_data.card_origin == PotP_G_Bought)
 			{
-				entry_line += entry_data.T_Bought;
+				entry_line += GetLocStringByKeyExt("ProgressOnThePath_PreviewTag_BO");
 			}	
 
 			// Apply a coloured 'Lootable' tag to valid gwent cards.
 			if (entry_data.card_origin == PotP_G_Looted)
 			{
-				entry_line += entry_data.T_Looted;
+				entry_line += GetLocStringByKeyExt("ProgressOnThePath_PreviewTag_LO");
 			}	
 
 			// Apply a coloured 'Quest Reward' tag to valid gwent cards.
 			if (entry_data.card_origin == PotP_G_Reward)
 			{
-				entry_line += entry_data.T_Reward;
+				entry_line += GetLocStringByKeyExt("ProgressOnThePath_PreviewTag_QR");
 			}	
 
 			// Apply a coloured 'Won in Dual' tag to valid gwent cards.
 			if (entry_data.card_origin == PotP_G_Dualed)
 			{
-				entry_line += entry_data.T_Dualed;
+				entry_line += GetLocStringByKeyExt("ProgressOnThePath_PreviewTag_WO");
 			}
 		}
 		
 		// Apply a coloured 'Completed' tag to any completed entries.
 		if (isCompleted && showCompleted) 
 		{
-			entry_line += entry_data.T_Completed;
+			entry_line += GetLocStringByKeyExt("ProgressOnThePath_PreviewTag_CO");
 		}
 		
 		// Apply a coloured 'Ignored' tag to any ignored entries.
 		if (isIgnored && showIgnored) 
 		{
-			entry_line += entry_data.T_Ignored;
+			entry_line += GetLocStringByKeyExt("ProgressOnThePath_PreviewTag_IG");
 		}
 		
 		// Return the formatted string back to the builder.
@@ -6527,20 +6786,32 @@ exec function pt_forest()
 //-- Exec Functions ---------------------------------
 //---------------------------------------------------
 
+exec function pt_reload() 
+{
+	var master: CProgressOnThePath;
+	
+	if (GetPotP(master, 'pt_reload'))
+	{
+		PotP_LoadStorageCollection(master, 'All', true);
+	}
+}
+
+//---------------------------------------------------
+//-- Exec Functions ---------------------------------
+//---------------------------------------------------
+//pt_LogPins('BanditCamp')
 exec function pt_LogPins(PinType: name) {
 
 	var MapPins: array<SEntityMapPinInfo> = theGame.GetCommonMapManager().GetEntityMapPins(theGame.GetWorld().GetDepotPath());
-	var Idx: int;
-
+	var Idx: int;	
+	
 	for (Idx = 0; Idx < MapPins.Size(); Idx += 1) {
 	  
 		if ( MapPins[Idx].entityType != PinType ) {
 			continue;
 		}
 		
-		LogChannel('Progress on the Path Map Pin', "baseName = " + MapPins[Idx].entityName);
-		LogChannel('Progress on the Path Map Pin', "LocaName = " + GetLocStringByKeyExt("Map_Location_"+NameToString(MapPins[Idx].entityName)));
-		LogChannel('Progress on the Path Map Pin', "");
+		LogChannel('Progress on the Path Map Pin', Idx + ": baseName = " + MapPins[Idx].entityName + " | LocaName = " + GetLocStringByKeyExt("Map_Location_"+NameToString(MapPins[Idx].entityName)));
 	}
 }
 
@@ -6587,6 +6858,42 @@ exec function pt_reset()
 		master.PotP_PersistentStorage.MasterList_IsIgnored_V.Clear();
 		master.PotP_PersistentStorage.MasterList_InProgres_V.Clear();
 		GetWitcherPlayer().DisplayHudMessage("Progress on the Path: Reset Completed");
+	}
+}
+
+//---------------------------------------------------
+//-- Exec Functions ---------------------------------
+//---------------------------------------------------
+
+exec function pt_testtest() 
+{
+	var master: CProgressOnThePath;
+	var storage: CProgressOnThePath_Storage;
+	
+	var I, Q, W: PotP_PreviewEntry;	
+	var Edx, x, y, z: int;
+	
+	if (GetPotP(master, 'pt_testtest'))
+	{
+		storage = master.PotP_PersistentStorage;
+		
+		x = storage.pItemsStorage.MasterList_Items.Size();
+		y = storage.pQuestStorage.MasterList_Quests.Size();
+		z = storage.pWorldStorage.MasterList_World.Size();
+		
+		Edx = Min(x, y);	
+		Edx = Min(Edx, z);
+		Edx = RandRange(Edx, 0);
+		
+		I = storage.pItemsStorage.MasterList_Items[Edx];
+		Q = storage.pQuestStorage.MasterList_Quests[Edx];
+		W = storage.pWorldStorage.MasterList_World[Edx];
+		
+		I.AddToBackgroundQueue();
+		Q.AddToBackgroundQueue(2);
+		W.AddToBackgroundQueue();
+			
+		master.PotP_Notifications.NotifyPlayerFromBackgroundProcess();
 	}
 }
 
@@ -7264,6 +7571,11 @@ enum PotP_Preview_World_Filter
 	PotP_I_Place	 = 4,
 	PotP_I_Signs	 = 5,
 	PotP_I_Sites	 = 6,
+	PotP_I_Guard	 = 7,
+	PotP_I_Distr	 = 8,
+	PotP_I_Knigh	 = 9,
+	PotP_I_Infes	 = 10,
+	PotP_I_Hanse	 = 11,
 }
 
 enum PotP_Preview_Quest_Filter
@@ -7325,20 +7637,6 @@ class PotP_PreviewEntry
 	var region			: PotP_Preview_Region;
 	var is_missable		: bool;
 	var is_modadded		: bool;
-	var icon_path		: string;
-	var popup_line		: string;
-	
-	//Preview Tags
-	var T_InProgress 	: string;
-	var T_Completed		: string;
-	var T_Ignored		: string;
-	var T_ModAdded		: string;
-						  
-	var T_Bought		: string;
-	var T_Looted		: string;
-	var T_Reward		: string;
-	var T_Dualed		: string;
-	var T_Missable		: string;
 	
 	default fileName = 'PotP Entity';
 	
@@ -7353,8 +7651,6 @@ class PotP_PreviewEntry
 		this.SetType();
 		
 		this.localname 		= GetLocStringByKeyExt("option_" + uuid);
-		this.icon_path		= GetQuestIconPath();
-		this.popup_line 	= GetQuestlocalisedNotificationLine(filter);
 
 		return this;
 	}
@@ -7373,8 +7669,6 @@ class PotP_PreviewEntry
 		this.position 		= pin_position;
 		
 		this.localname 		= GetLocStringByKeyExt("option_" + uuid);
-		this.icon_path 		= "icons/PotP/tracked_gold.png";
-		this.popup_line 	= GetQuestlocalisedNotificationLine(filter);
 		
 		if (initially_unlocked) { UnlockEvent(); }
 		
@@ -7392,8 +7686,6 @@ class PotP_PreviewEntry
 		this.SetType();	
 			
 		this.localname 		= GetLocStringByKeyExt("option_" + uuid);
-		this.icon_path		= GetWorldIconpath();
-		this.popup_line 	= GetWorldlocalisedNotificationLine(filter);
 		
 		return this;
 	}
@@ -7409,8 +7701,6 @@ class PotP_PreviewEntry
 		this.SetType();
 
 		this.localname 		= GetLocStringByKeyExt("option_" + uuid);
-		this.icon_path		= GetItemsIconpath();
-		this.popup_line 	= GetItemslocalisedNotificationLine(filter);
 		
 		if (this.IsItemCollected())
 		{
@@ -7433,8 +7723,6 @@ class PotP_PreviewEntry
 		this.SetCardType(card_type);
 		
 		this.localname 		= GetLocStringByKeyExt("option_" + uuid);
-		this.icon_path		= GetGwentIconpath();
-		this.popup_line 	= GetItemslocalisedNotificationLine(PotP_I_Gwent);
 		
 		//PotP_Logger(localname + " is a " + this.card_type + " card that can be " + this.card_origin, , 'PotP Preview Entry');
 		return this;
@@ -7786,15 +8074,18 @@ class PotP_PreviewEntry
 	//                               Gwent Functions                              //
 	////////////////////////////////////////////////////////////////////////////////
 	
-	function GetGwentIconpath() : string
+	function GetIconPath() : string
 	{
 		var icon_path: string = thePlayer.GetInventory().GetItemIconPathByName(this.item_name);
-		
-		if (icon_path == "")
+
+		switch(this.arrayType)
 		{
-			return "icons/inventory/gwint/ico_gwent_hero_neutral.png";
+			case PotP_A_Event: return GetQuestIconPath(); break;
+			case PotP_A_Quest: return GetQuestIconPath(); break;
+			case PotP_A_World: return GetWorldIconpath(); break;
+			case PotP_A_Gwent: if (icon_path == "") { return "icons/inventory/gwint/ico_gwent_hero_neutral.png"; } return icon_path; break;
+			case PotP_A_Items: if (icon_path == "") { return "icons/inventory/weapons/silver_unique_aerondight_64x128.png"; } return icon_path; break;
 		}
-		return icon_path;
 	}
 
 	//---------------------------------------------------
@@ -7930,16 +8221,6 @@ class PotP_PreviewEntry
 			this.is_dlc2 = false;
 			break;
 		}
-		
-		this.T_InProgress = GetLocStringByKeyExt("ProgressOnThePath_PreviewTag_IP");
-		this.T_Completed  = GetLocStringByKeyExt("ProgressOnThePath_PreviewTag_CO");
-		this.T_Ignored 	  = GetLocStringByKeyExt("ProgressOnThePath_PreviewTag_IG");
-		this.T_ModAdded   = GetLocStringByKeyExt("ProgressOnThePath_PreviewTag_MA");
-		this.T_Missable   = GetLocStringByKeyExt("ProgressOnThePath_PreviewTag_MI");
-		this.T_Bought     = GetLocStringByKeyExt("ProgressOnThePath_PreviewTag_BO");
-		this.T_Looted     = GetLocStringByKeyExt("ProgressOnThePath_PreviewTag_LO");
-		this.T_Reward     = GetLocStringByKeyExt("ProgressOnThePath_PreviewTag_QR");
-		this.T_Dualed     = GetLocStringByKeyExt("ProgressOnThePath_PreviewTag_WO");
 	}
 
 	//---------------------------------------------------
@@ -7956,19 +8237,6 @@ class PotP_PreviewEntry
 	////////////////////////////////////////////////////////////////////////////////
 	//                               Items Functions                              //
 	////////////////////////////////////////////////////////////////////////////////
-	
-	function GetItemsIconpath() : string
-	{
-		var icon_path: string = thePlayer.GetInventory().GetItemIconPathByName(this.item_name);
-		
-		if (icon_path == "")
-		{
-			return "icons/inventory/weapons/silver_unique_aerondight_64x128.png";
-		}
-		return icon_path;
-	}
-	
-	//---------------------------------------------------
 	
 	function IsItemCollected() : bool
 	{
@@ -8061,6 +8329,11 @@ class PotP_PreviewEntry
 			case PotP_I_Place: return "icons/PotP/tracked_placeofpower_dark.png";
 			case PotP_I_Signs: return "icons/PotP/tracked_roadsign_dark.png";
 			case PotP_I_Sites: return "icons/PotP/tracked_AbandonedSite_dark.png";
+			case PotP_I_Guard: return "icons/PotP/tracked_guardedtreasure_dark.png";
+			case PotP_I_Distr: return "icons/PotP/tracked_personindistress_dark.png";
+			case PotP_I_Knigh: return "icons/PotP/tracked_DistressedKnight_dark.png";
+			case PotP_I_Infes: return "icons/PotP/tracked_VineyardInfestation_dark.png";
+			case PotP_I_Hanse: return "icons/PotP/tracked_HanseBase_dark.png";
 		}
 	}
 	
@@ -8087,7 +8360,22 @@ class PotP_PreviewEntry
 
 		case PotP_I_Sites:
 			return GetLocStringByKeyExt("PotP_NotificationLine_Sites");
+
+		case PotP_I_Guard:
+			return GetLocStringByKeyExt("PotP_NotificationLine_Guard");
+
+		case PotP_I_Distr:
+			return GetLocStringByKeyExt("PotP_NotificationLine_Distress");
 			
+		case PotP_I_Knigh:
+			return GetLocStringByKeyExt("PotP_NotificationLine_Knigh");
+	
+		case PotP_I_Infes:
+			return GetLocStringByKeyExt("PotP_NotificationLine_Infes");
+	
+		case PotP_I_Hanse:
+			return GetLocStringByKeyExt("PotP_NotificationLine_Hanse");
+
 		default:
 			return "";
 		}
@@ -9254,14 +9542,14 @@ class CProgressOnThePath_Notifications
 	
 	public function AddToQuestUpdateArray(entry_data: PotP_PreviewEntry)
 	{
-		var InsertedString: string = entry_data.popup_line;
+		var InsertedString: string = entry_data.GetQuestlocalisedNotificationLine(entry_data.filter);
 		var InsertedIndexP: int = QuestUpdateArray_Name.FindFirst(InsertedString);
 
 		if (InsertedIndexP == -1)
 		{
 			QuestUpdateArray_Name.PushBack(InsertedString);
 			QuestUpdateArray_Ints.PushBack(1);
-			QuestUpdateArray_Icon.PushBack(entry_data.icon_path);
+			QuestUpdateArray_Icon.PushBack(entry_data.GetIconPath());
 			TrackerUpdateArray_Count += 1;
 			LogChannel('PotP Notification Script', "Inserted - " + InsertedString + " Into the quest array");
 		}
@@ -9276,14 +9564,14 @@ class CProgressOnThePath_Notifications
 	
 	public function AddToWorldMapUpdateArray(entry_data: PotP_PreviewEntry) 
 	{		
-		var InsertedString: string = entry_data.popup_line;
+		var InsertedString: string = entry_data.GetWorldlocalisedNotificationLine(entry_data.filter);
 		var InsertedIndexP: int = WorldMapUpdateArray_Name.FindFirst(InsertedString);
 
 		if (InsertedIndexP == -1) 
 		{
 			WorldMapUpdateArray_Name.PushBack(InsertedString);
 			WorldMapUpdateArray_Ints.PushBack(1);
-			WorldMapUpdateArray_Icon.PushBack(entry_data.icon_path);
+			WorldMapUpdateArray_Icon.PushBack(entry_data.GetIconPath());
 			TrackerUpdateArray_Count += 1;
 			LogChannel('PotP Notification Script', "Inserted - " + InsertedString + " Into the world map array");
 		}
@@ -9298,14 +9586,14 @@ class CProgressOnThePath_Notifications
 	
 	public function AddToItemUpdateArray(entry_data: PotP_PreviewEntry) 
 	{
-		var InsertedString: string = entry_data.popup_line;
+		var InsertedString: string = entry_data.GetItemslocalisedNotificationLine(entry_data.filter);
 		var InsertedIndexP: int = ItemUpdateArray_Name.FindFirst(InsertedString);
 		
 		if (InsertedIndexP == -1) 
 		{
 			ItemUpdateArray_Name.PushBack(InsertedString);
 			ItemUpdateArray_Ints.PushBack(1);
-			ItemUpdateArray_Icon.PushBack(entry_data.icon_path);
+			ItemUpdateArray_Icon.PushBack(entry_data.GetIconPath());
 			TrackerUpdateArray_Count += 1;
 		}
 		else 
@@ -9341,14 +9629,16 @@ class CProgressOnThePath_Notifications
 	{
 		var InsertedString: string = GetLocStringByKeyExt("PotP_NotificationLine_Updated") + entry_data.localname;
 		
-		if (entry_data.filter == PotP_I_Camps)
+		switch (entry_data.filter)
 		{
-			InsertedString = GetLocStringByKeyExt("PotP_NotificationLine_BanditC") + entry_data.localname;
-		}
-
-		if (entry_data.filter == PotP_I_Sites)
-		{
-			InsertedString = GetLocStringByKeyExt("PotP_NotificationLine_AbandonedSite") + entry_data.localname;
+		case PotP_I_Camps: InsertedString = GetLocStringByKeyExt("PotP_NotificationLine_BanditC") + entry_data.localname; break;
+		case PotP_I_Sites: InsertedString = GetLocStringByKeyExt("PotP_NotificationLine_AbandonedSite") + entry_data.localname; break;
+		case PotP_I_Guard: InsertedString = GetLocStringByKeyExt("PotP_NotificationLine_GuardedTreasure") + entry_data.localname; break;
+		case PotP_I_Distr: InsertedString = GetLocStringByKeyExt("PotP_NotificationLine_PersonInDistress") + entry_data.localname; break;
+		case PotP_I_Knigh: InsertedString = GetLocStringByKeyExt("PotP_NotificationLine_KnightInDistress") + entry_data.localname; break;
+		case PotP_I_Infes: InsertedString = GetLocStringByKeyExt("PotP_NotificationLine_InfestedVineyard") + entry_data.localname; break;
+		case PotP_I_Hanse: InsertedString = GetLocStringByKeyExt("PotP_NotificationLine_HanseBase") + entry_data.localname; break;
+		default : break;
 		}
 		
 		if (storage.pWorldStorageArray_Name.FindFirst(InsertedString) == -1 ) 
@@ -9360,7 +9650,7 @@ class CProgressOnThePath_Notifications
 			}
 			
 			storage.pWorldStorageArray_Name.PushBack(InsertedString);
-			storage.pWorldStorageArray_Icon.PushBack(entry_data.icon_path);
+			storage.pWorldStorageArray_Icon.PushBack(entry_data.GetIconPath());
 			storage.BackGroundProcessingArray_Count += 1;
 			storage.BackGroundProcessingArray_bWorld = true;
 		}
@@ -9396,7 +9686,7 @@ class CProgressOnThePath_Notifications
 			}
 			
 			storage.pQuestStorageArray_Name.PushBack(InsertedString);
-			storage.pQuestStorageArray_Icon.PushBack(entry_data.icon_path);
+			storage.pQuestStorageArray_Icon.PushBack(entry_data.GetIconPath());
 			storage.BackGroundProcessingArray_Count += 1;
 			storage.BackGroundProcessingArray_bQuest = true;
 		}
@@ -9543,9 +9833,9 @@ class CProgressOnThePath_Notifications
 
 		switch (status)
 		{
-			case 0: Notification += FormatItemIcon(entry_data.icon_path) + FormatLine_BackGroundProcessingArray("Restored: " + entry_data.localname); break;
-			case 1: Notification += FormatItemIcon(entry_data.icon_path) + FormatLine_BackGroundProcessingArray("Ignored: " + entry_data.localname);  break;
-			case 2: Notification += FormatItemIcon(entry_data.icon_path) + FormatLine_BackGroundProcessingArray("Completed: " + entry_data.localname); break;
+			case 0: Notification += FormatItemIcon(entry_data.GetIconPath()) + FormatLine_BackGroundProcessingArray("Restored: " + entry_data.localname); break;
+			case 1: Notification += FormatItemIcon(entry_data.GetIconPath()) + FormatLine_BackGroundProcessingArray("Ignored: " + entry_data.localname);  break;
+			case 2: Notification += FormatItemIcon(entry_data.GetIconPath()) + FormatLine_BackGroundProcessingArray("Completed: " + entry_data.localname); break;
 		}
 		
 		theGame.GetGuiManager().ShowNotification(Notification, GetNotificationTime(), true);

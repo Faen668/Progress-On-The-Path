@@ -2343,7 +2343,7 @@
 ;
 ;
 ;
-; 5.2.1  ---
+; 5.2.1  -------------------------------------------------------------------------------------------------------------------------------------
 ;
 ;
 ;
@@ -2388,14 +2388,176 @@
 ;
 2117171146||option_PotP_TrackingGroup_WorldMap_AbandonedSites_Toussaint_01|Southwest of Casteldaccia Abandoned Estate
 2117171147||option_PotP_TrackingGroup_WorldMap_AbandonedSites_Toussaint_02|Basane Farm
-2117171148||option_PotP_TrackingGroup_WorldMap_AbandonedSites_Toussaint_03|South of Hortense Vinyard
+2117171148||option_PotP_TrackingGroup_WorldMap_AbandonedSites_Toussaint_03|South of Hortense Vineyard
 2117171149||option_PotP_TrackingGroup_WorldMap_AbandonedSites_Toussaint_04|Southwest of Fort Astre Ruins
 2117171150||option_PotP_TrackingGroup_WorldMap_AbandonedSites_Toussaint_05|West of Chuchote Cave
 2117171151||option_PotP_TrackingGroup_WorldMap_AbandonedSites_Toussaint_06|Fox Hollow
 2117171152||option_PotP_TrackingGroup_WorldMap_AbandonedSites_Toussaint_07|The Silver Salamander Inn
-2117171153||option_PotP_TrackingGroup_WorldMap_AbandonedSites_Toussaint_08|East of Coronata Vinyard
+2117171153||option_PotP_TrackingGroup_WorldMap_AbandonedSites_Toussaint_08|East of Coronata Vineyard
 2117171154||option_PotP_TrackingGroup_WorldMap_AbandonedSites_Toussaint_09|Far West of Tourney Grounds
-2117171155||option_PotP_TrackingGroup_WorldMap_AbandonedSites_Toussaint_10|West of Castel Ravello Vinyard
+2117171155||option_PotP_TrackingGroup_WorldMap_AbandonedSites_Toussaint_10|West of Castel Ravello Vineyard
 2117171156||option_PotP_TrackingGroup_WorldMap_AbandonedSites_Toussaint_11|Northwest of Tesham Mutna Ruins
 ;
-;Next ID 2117171157
+;
+;
+; 5.2.2  -------------------------------------------------------------------------------------------------------------------------------------
+;
+;
+;
+2117171157||PotP_NotificationLine_Guard| Guarded Treasure Site(DYNAMC_REPLACE)
+2117171158||PotP_NotificationLine_GuardedTreasure|Updated Guarded Treasure: 
+2117171159||preset_value_QT_Option_WType_7|Guarded Treasure
+;
+2117171160||PotP_Preview_Guard_1|<br/>[ICON_PATH]<font color="#9D75BF">Guarded Treasure: White Orchard [COUNTS]<br/></font>
+2117171161||PotP_Preview_Guard_2|<br/>[ICON_PATH]<font color="#9D75BF">Guarded Treasure: Velen [COUNTS]<br/></font>
+2117171162||PotP_Preview_Guard_3|<br/>[ICON_PATH]<font color="#9D75BF">Guarded Treasure: Novigrad [COUNTS]<br/></font>
+2117171163||PotP_Preview_Guard_4|<br/>[ICON_PATH]<font color="#9D75BF">Guarded Treasure: Skellige [COUNTS]<br/></font>
+2117171164||PotP_Preview_Guard_5|<br/>[ICON_PATH]<font color="#9D75BF">Guarded Treasure: Kaer Morhen [COUNTS]<br/></font>
+2117171165||PotP_Preview_Guard_6|<br/>[ICON_PATH]<font color="#9D75BF">Guarded Treasure: Toussaint [COUNTS]<br/></font>
+;
+2117171166||option_PotP_TrackingGroup_WorldMap_GuardedTreasure_WhiteOrchard_01|South of Woesong Bridge
+2117171167||option_PotP_TrackingGroup_WorldMap_GuardedTreasure_WhiteOrchard_02|South of Ransacked Village
+2117171168||option_PotP_TrackingGroup_WorldMap_GuardedTreasure_WhiteOrchard_03|Cemetary
+2117171169||option_PotP_TrackingGroup_WorldMap_GuardedTreasure_WhiteOrchard_04|Southeast of Nilfgaardian Garrison
+2117171170||option_PotP_TrackingGroup_WorldMap_GuardedTreasure_WhiteOrchard_05|Northwest of Sawmill
+;
+2117171171||option_PotP_TrackingGroup_WorldMap_GuardedTreasure_Velen_01|Destroyed Bastion
+2117171172||option_PotP_TrackingGroup_WorldMap_GuardedTreasure_Velen_02|North of Destroyed Bastion
+2117171173||option_PotP_TrackingGroup_WorldMap_GuardedTreasure_Velen_03|Northwest of Crossroads
+2117171174||option_PotP_TrackingGroup_WorldMap_GuardedTreasure_Velen_04|West of Crossroads
+2117171175||option_PotP_TrackingGroup_WorldMap_GuardedTreasure_Velen_05|East of Ruined Tower
+2117171176||option_PotP_TrackingGroup_WorldMap_GuardedTreasure_Velen_06|East of Heatherton
+2117171177||option_PotP_TrackingGroup_WorldMap_GuardedTreasure_Velen_07|West of Blackbough
+2117171178||option_PotP_TrackingGroup_WorldMap_GuardedTreasure_Velen_08|East of Crow's Perch
+2117171179||option_PotP_TrackingGroup_WorldMap_GuardedTreasure_Velen_09|East of Harpy Feeding Ground
+2117171180||option_PotP_TrackingGroup_WorldMap_GuardedTreasure_Velen_10|South of Devil's Pit
+2117171181||option_PotP_TrackingGroup_WorldMap_GuardedTreasure_Velen_11|Southwest of Ferry Station
+2117171182||option_PotP_TrackingGroup_WorldMap_GuardedTreasure_Velen_12|Far East of Herbalist's Hut
+2117171183||option_PotP_TrackingGroup_WorldMap_GuardedTreasure_Velen_13|Northwest of Inn at the Crossroads
+2117171184||option_PotP_TrackingGroup_WorldMap_GuardedTreasure_Velen_14|Northwest of Coast of Wrecks
+2117171185||option_PotP_TrackingGroup_WorldMap_GuardedTreasure_Velen_15|West of Coast of Wrecks
+2117171186||option_PotP_TrackingGroup_WorldMap_GuardedTreasure_Velen_16|North of Forest Hut
+2117171187||option_PotP_TrackingGroup_WorldMap_GuardedTreasure_Velen_17|South of Midcopse
+2117171188||option_PotP_TrackingGroup_WorldMap_GuardedTreasure_Velen_18|West of Dragonslayer's Grotto
+2117171189||option_PotP_TrackingGroup_WorldMap_GuardedTreasure_Velen_19|North of House of Respite
+2117171190||option_PotP_TrackingGroup_WorldMap_GuardedTreasure_Velen_20|West of Olena's Grove
+2117171191||option_PotP_TrackingGroup_WorldMap_GuardedTreasure_Velen_21|Far South of Frischlow
+2117171192||option_PotP_TrackingGroup_WorldMap_GuardedTreasure_Velen_22|East of Byways
+2117171193||option_PotP_TrackingGroup_WorldMap_GuardedTreasure_Velen_23|South of Frischlow
+2117171194||option_PotP_TrackingGroup_WorldMap_GuardedTreasure_Velen_24|Far East of Heddel
+;
+2117171195||option_PotP_TrackingGroup_WorldMap_GuardedTreasure_Novigrad_01|East of Widows' Grotto
+2117171196||option_PotP_TrackingGroup_WorldMap_GuardedTreasure_Novigrad_02|Northwest of Hindhold
+2117171197||option_PotP_TrackingGroup_WorldMap_GuardedTreasure_Novigrad_03|Southwest of Lighthouse
+2117171198||option_PotP_TrackingGroup_WorldMap_GuardedTreasure_Novigrad_04|Northeast of Arette
+2117171199||option_PotP_TrackingGroup_WorldMap_GuardedTreasure_Novigrad_05|South of Yantra
+2117171200||option_PotP_TrackingGroup_WorldMap_GuardedTreasure_Novigrad_06|North of Cavern
+2117171201||option_PotP_TrackingGroup_WorldMap_GuardedTreasure_Novigrad_07|Hunter's Cottage
+2117171202||option_PotP_TrackingGroup_WorldMap_GuardedTreasure_Novigrad_08|Southeast of Bowdon
+2117171203||option_PotP_TrackingGroup_WorldMap_GuardedTreasure_Novigrad_09|Northeast Of Garin Estate
+;
+2117171204||option_PotP_TrackingGroup_WorldMap_GuardedTreasure_Skellige_01|Far Eastern Island
+2117171205||option_PotP_TrackingGroup_WorldMap_GuardedTreasure_Skellige_02|Southeast of Ancient Crypt
+2117171206||option_PotP_TrackingGroup_WorldMap_GuardedTreasure_Skellige_03|West of Crossroads
+2117171207||option_PotP_TrackingGroup_WorldMap_GuardedTreasure_Skellige_04|Southwest of Kaer Trolde Harbor
+2117171208||option_PotP_TrackingGroup_WorldMap_GuardedTreasure_Skellige_05|East of Gedyneith
+2117171209||option_PotP_TrackingGroup_WorldMap_GuardedTreasure_Skellige_06|North of Blandare
+2117171210||option_PotP_TrackingGroup_WorldMap_GuardedTreasure_Skellige_07|Northeast of Fornhala
+2117171211||option_PotP_TrackingGroup_WorldMap_GuardedTreasure_Skellige_08|Elverum Lighthouse
+2117171212||option_PotP_TrackingGroup_WorldMap_GuardedTreasure_Skellige_09|Northeast of Marlin Coast
+2117171213||option_PotP_TrackingGroup_WorldMap_GuardedTreasure_Skellige_10|West of Wild Shore
+2117171214||option_PotP_TrackingGroup_WorldMap_GuardedTreasure_Skellige_11|Northwest of Elverum Lighthouse
+2117171215||option_PotP_TrackingGroup_WorldMap_GuardedTreasure_Skellige_12|Northwest of Harviken
+2117171216||option_PotP_TrackingGroup_WorldMap_GuardedTreasure_Skellige_13|South of Freya's Garden
+2117171217||option_PotP_TrackingGroup_WorldMap_GuardedTreasure_Skellige_14|Island Northeast of Faroe
+2117171218||option_PotP_TrackingGroup_WorldMap_GuardedTreasure_Skellige_15|Far Western Island
+2117171219||option_PotP_TrackingGroup_WorldMap_GuardedTreasure_Skellige_16|Northern Island Cluster I
+2117171220||option_PotP_TrackingGroup_WorldMap_GuardedTreasure_Skellige_17|Northern Island Cluster II
+2117171221||option_PotP_TrackingGroup_WorldMap_GuardedTreasure_Skellige_18|Northern Island Cluster III
+2117171222||option_PotP_TrackingGroup_WorldMap_GuardedTreasure_Skellige_19|Northern Island Cluster IV
+2117171223||option_PotP_TrackingGroup_WorldMap_GuardedTreasure_Skellige_20|Northern Island Cluster V
+2117171224||option_PotP_TrackingGroup_WorldMap_GuardedTreasure_Skellige_21|Northern Island Cluster VI
+2117171225||option_PotP_TrackingGroup_WorldMap_GuardedTreasure_Skellige_22|Island North of Faroe
+;
+2117171226||option_PotP_TrackingGroup_WorldMap_GuardedTreasure_KaerMorhen_01|South of Ruined Watchtower
+2117171227||option_PotP_TrackingGroup_WorldMap_GuardedTreasure_KaerMorhen_02|East of Ruined Watchtower
+;
+2117171228||option_PotP_TrackingGroup_WorldMap_GuardedTreasure_Toussaint_01|Far East of Casteldaccia Abandoned Estate
+2117171229||option_PotP_TrackingGroup_WorldMap_GuardedTreasure_Toussaint_02|South of Mont Crane Castle
+2117171230||option_PotP_TrackingGroup_WorldMap_GuardedTreasure_Toussaint_03|Northwest of Fort Ussar Ruins
+2117171231||option_PotP_TrackingGroup_WorldMap_GuardedTreasure_Toussaint_04|Southeast of Mont Crane Castle
+2117171232||option_PotP_TrackingGroup_WorldMap_GuardedTreasure_Toussaint_05|Southeast of Termes Palace Ruins
+2117171233||option_PotP_TrackingGroup_WorldMap_GuardedTreasure_Toussaint_06|North of Trastamara Hunting Cottage
+2117171234||option_PotP_TrackingGroup_WorldMap_GuardedTreasure_Toussaint_07|Southeast of Dun Ytnne Crossroads
+2117171235||option_PotP_TrackingGroup_WorldMap_GuardedTreasure_Toussaint_08|Northeast of Hortense Vineyard
+2117171236||option_PotP_TrackingGroup_WorldMap_GuardedTreasure_Toussaint_09|North of Fort Astre Ruins
+2117171237||option_PotP_TrackingGroup_WorldMap_GuardedTreasure_Toussaint_10|Southwest of Fox Hollow
+2117171238||option_PotP_TrackingGroup_WorldMap_GuardedTreasure_Toussaint_11|South of Cockatrice Inn
+2117171239||option_PotP_TrackingGroup_WorldMap_GuardedTreasure_Toussaint_12|North of Flovive
+2117171240||option_PotP_TrackingGroup_WorldMap_GuardedTreasure_Toussaint_13|Southwest of Arthach Palace Ruins
+2117171241||option_PotP_TrackingGroup_WorldMap_GuardedTreasure_Toussaint_14|East of Arthach Palace Ruins
+2117171242||option_PotP_TrackingGroup_WorldMap_GuardedTreasure_Toussaint_15|East of Trading Post
+2117171243||option_PotP_TrackingGroup_WorldMap_GuardedTreasure_Toussaint_16|South of Trading Post
+2117171244||option_PotP_TrackingGroup_WorldMap_GuardedTreasure_Toussaint_17|Northeast of Sansretour Valleu
+2117171245||option_PotP_TrackingGroup_WorldMap_GuardedTreasure_Toussaint_18|West of Gelenser Farm
+;
+2117171246||PotP_NotificationLine_Distr| Person(DYNAMC_REPLACE) In Distress
+2117171247||PotP_NotificationLine_PersonInDistress|Updated Person In Distress: 
+2117171248||preset_value_QT_Option_WType_8|Person(s) In Distress
+;
+2117171249||PotP_Preview_Distr_1|<br/>[ICON_PATH]<font color="#9D75BF">Person(s) In Distress: Velen [COUNTS]<br/></font>
+2117171250||PotP_Preview_Distr_2|<br/>[ICON_PATH]<font color="#9D75BF">Person(s) In Distress: Skellige [COUNTS]<br/></font>
+2117171251||PotP_Preview_Distr_3|<br/>[ICON_PATH]<font color="#9D75BF">Person(s) In Distress: Toussaint [COUNTS]<br/></font>
+;
+2117171252||option_PotP_TrackingGroup_WorldMap_PersonsInDistress_Velen_01|West of Hangman's Alley
+2117171253||option_PotP_TrackingGroup_WorldMap_PersonsInDistress_Velen_02|North of Lindenvale
+2117171254||option_PotP_TrackingGroup_WorldMap_PersonsInDistress_Velen_03|North of Hanged Man's Tree
+2117171255||option_PotP_TrackingGroup_WorldMap_PersonsInDistress_Velen_04|East of Crossroads
+2117171256||option_PotP_TrackingGroup_WorldMap_PersonsInDistress_Velen_05|Bandit Camp
+2117171257||option_PotP_TrackingGroup_WorldMap_PersonsInDistress_Velen_06|Northwest of Vikk Watchtower
+;
+2117171258||option_PotP_TrackingGroup_WorldMap_PersonsInDistress_Skellige_01|South of Blandare
+2117171259||option_PotP_TrackingGroup_WorldMap_PersonsInDistress_Skellige_02|Northwest of Fayrlund
+;
+2117171260||option_PotP_TrackingGroup_WorldMap_PersonsInDistress_Toussaint_01|South of Fort Ussar Ruins
+2117171261||option_PotP_TrackingGroup_WorldMap_PersonsInDistress_Toussaint_02|Arthach Palace Ruins
+2117171262||option_PotP_TrackingGroup_WorldMap_PersonsInDistress_Toussaint_03|Northeast of Trading Post
+2117171263||option_PotP_TrackingGroup_WorldMap_PersonsInDistress_Toussaint_04|Southwest of Fox Hollow
+2117171264||option_PotP_TrackingGroup_WorldMap_PersonsInDistress_Toussaint_05|Northeast of Termes Palace Ruins
+;
+2117171265||PotP_NotificationLine_Knigh| Knight Errant(DYNAMC_REPLACE) In Distress
+2117171266||PotP_NotificationLine_Infes| Infested Vineyard(DYNAMC_REPLACE)
+2117171267||PotP_NotificationLine_Hanse| Hanse Base(DYNAMC_REPLACE)
+;
+2117171268||PotP_NotificationLine_KnightInDistress|Updated Distressed Knight:  
+2117171269||PotP_NotificationLine_InfestedVineyard|Updated Infested Vineyard: 
+2117171270||PotP_NotificationLine_HanseBase|Updated Hanse Base: 
+;
+2117171271||preset_value_QT_Option_WType_9|Knight Errant In Distress
+2117171272||preset_value_QT_Option_WType_10|Vineyard Infestation
+2117171273||preset_value_QT_Option_WType_11|Hanse Base
+;
+2117171274||PotP_Preview_Touss_1|<br/>[ICON_PATH]<font color="#9D75BF">Hanse Bases: Toussaint [COUNTS]<br/></font>
+2117171275||PotP_Preview_Touss_2|<br/>[ICON_PATH]<font color="#9D75BF">Knight Errant In Distress: Toussaint [COUNTS]<br/></font>
+2117171276||PotP_Preview_Touss_3|<br/>[ICON_PATH]<font color="#9D75BF">Vineyard Infestations: Toussaint [COUNTS]<br/></font>
+;
+2117171277||option_PotP_TrackingGroup_WorldMap_DistressedKnights_Toussaint_01|West of Mont Crane Castle
+2117171278||option_PotP_TrackingGroup_WorldMap_DistressedKnights_Toussaint_02|South od Seidhe Llygad Amphitheater
+2117171279||option_PotP_TrackingGroup_WorldMap_DistressedKnights_Toussaint_03|North of Fox Hollow
+;
+2117171280||option_PotP_TrackingGroup_WorldMap_InfestedVineyards_Toussaint_01|South of Dun Tynne Castle
+2117171281||option_PotP_TrackingGroup_WorldMap_InfestedVineyards_Toussaint_02|Dun Tynne Hillside 
+2117171282||option_PotP_TrackingGroup_WorldMap_InfestedVineyards_Toussaint_03|West of Sansretour Valley
+2117171283||option_PotP_TrackingGroup_WorldMap_InfestedVineyards_Toussaint_04|Coronata Vineyard
+2117171284||option_PotP_TrackingGroup_WorldMap_InfestedVineyards_Toussaint_05|Belgaard Vineyard
+;
+2117171285||option_PotP_TrackingGroup_WorldMap_HanseBases_Toussaint_01|Mont Crane Castle
+2117171286||option_PotP_TrackingGroup_WorldMap_HanseBases_Toussaint_02|Northwest Of Fox Hollow
+2117171287||option_PotP_TrackingGroup_WorldMap_HanseBases_Toussaint_03|Northwest of Arthach Palace Ruins
+;
+2117171288||option_dlc_progressonthepath_name|Progress on the Path (Do not turn off)
+2117171289||option_dlc_progressonthepath_description|Wither 3 Progress Tracker.
+;
+2117171290||PotP_Preview_Missable_13|<br/><font color="#9D75BF">Complete 'The Calm Before the Storm' before 'Ciri's Story: Out of the Shadows'<br/></font>
+;
+;Next ID 2117171291

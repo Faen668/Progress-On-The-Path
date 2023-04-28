@@ -71,6 +71,13 @@ class CProgressOnThePath_WorldPreview
 		build("PotP_Preview_Camps_3", master.PotP_PersistentStorage.pWorldStorage.BanditCamps_Novigrad);
 		build("PotP_Preview_Camps_4", master.PotP_PersistentStorage.pWorldStorage.BanditCamps_Skellige);
 		build("PotP_Preview_Camps_5", master.PotP_PersistentStorage.pWorldStorage.BanditCamps_Toussaint);
+
+		build("PotP_Preview_Guard_1", master.PotP_PersistentStorage.pWorldStorage.GuardedTreasure_WhiteOrchard);
+		build("PotP_Preview_Guard_2", master.PotP_PersistentStorage.pWorldStorage.GuardedTreasure_Velen);
+		build("PotP_Preview_Guard_3", master.PotP_PersistentStorage.pWorldStorage.GuardedTreasure_Novigrad);
+		build("PotP_Preview_Guard_4", master.PotP_PersistentStorage.pWorldStorage.GuardedTreasure_Skellige);
+		build("PotP_Preview_Guard_5", master.PotP_PersistentStorage.pWorldStorage.GuardedTreasure_KaerMorhen);
+		build("PotP_Preview_Guard_6", master.PotP_PersistentStorage.pWorldStorage.GuardedTreasure_Toussaint);
 		
 		build("PotP_Preview_DensM_1", master.PotP_PersistentStorage.pWorldStorage.MonsterDens_Velen);
 		build("PotP_Preview_DensM_2", master.PotP_PersistentStorage.pWorldStorage.MonsterDens_Novigrad);
@@ -83,6 +90,10 @@ class CProgressOnThePath_WorldPreview
 		build("PotP_Preview_NestM_4", master.PotP_PersistentStorage.pWorldStorage.MonsterNests_Skellige);
 		build("PotP_Preview_NestM_5", master.PotP_PersistentStorage.pWorldStorage.MonsterNests_Toussaint);
 		
+		build("PotP_Preview_Touss_1", master.PotP_PersistentStorage.pWorldStorage.HanseBases);
+		build("PotP_Preview_Touss_2", master.PotP_PersistentStorage.pWorldStorage.DistressedKnights_Toussaint);
+		build("PotP_Preview_Touss_3", master.PotP_PersistentStorage.pWorldStorage.InfestedVineyards_Toussaint);
+		
 		build("PotP_Preview_Place_1", master.PotP_PersistentStorage.pWorldStorage.PlacesOfPower_WhiteOrchard);
 		build("PotP_Preview_Place_2", master.PotP_PersistentStorage.pWorldStorage.PlacesOfPower_Velen);
 		build("PotP_Preview_Place_3", master.PotP_PersistentStorage.pWorldStorage.PlacesOfPower_Novigrad);
@@ -90,6 +101,10 @@ class CProgressOnThePath_WorldPreview
 		build("PotP_Preview_Place_5", master.PotP_PersistentStorage.pWorldStorage.PlacesOfPower_KaerMorhen);
 		build("PotP_Preview_Place_6", master.PotP_PersistentStorage.pWorldStorage.PlacesOfPower_Toussaint);
 		build("PotP_Preview_Place_7", master.PotP_PersistentStorage.pWorldStorage.PlacesOfPower_TheSpiral);
+
+		build("PotP_Preview_Distr_1", master.PotP_PersistentStorage.pWorldStorage.PersonsInDistress_Velen);
+		build("PotP_Preview_Distr_2", master.PotP_PersistentStorage.pWorldStorage.PersonsInDistress_Skellige);
+		build("PotP_Preview_Distr_3", master.PotP_PersistentStorage.pWorldStorage.PersonsInDistress_Toussaint);
 		
 		build("PotP_Preview_SignP_1", master.PotP_PersistentStorage.pWorldStorage.Signposts_WhiteOrchard);
 		build("PotP_Preview_SignP_2", master.PotP_PersistentStorage.pWorldStorage.Signposts_Velen);	

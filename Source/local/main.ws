@@ -201,10 +201,10 @@ state Idle in CProgressOnThePath
 state Initialising in CProgressOnThePath 
 {
 	private var curVersionStr: string;
-		default curVersionStr = "5.2.1";
+		default curVersionStr = "5.2.2";
 		
 	private var curVersionInt: int;
-		default curVersionInt = 521;
+		default curVersionInt = 522;
 	
 	private var hasUpdated: bool;
 		default hasUpdated = false;
@@ -283,8 +283,6 @@ state Initialising in CProgressOnThePath
 		parent.PotP_WorldGoblin.GotoState('Idle');
 		parent.PotP_EventListener.GotoState('Idle');
 		parent.PotP_MeditationListener.GotoState('Idle');
-		
-		//GetWitcherPlayer().DisplayHudMessage("Progress on the Path: Ready To Use");
 		parent.GotoState('Idle');
 	}
 	
@@ -294,7 +292,7 @@ state Initialising in CProgressOnThePath
 	{		
 		if (FactsQuerySum(initStr) != 1) 
 		{
-			//this.LoadDefaults();
+			this.LoadDefaults();
 			FactsSet(initStr, 1);
 			FactsSet(VersStr, curVersionInt);
 
@@ -316,7 +314,7 @@ state Initialising in CProgressOnThePath
 	{
 		if (FactsQuerySum(VersStr) < curVersionInt) 
 		{
-			if (FactsQuerySum(VersStr) < 521) { PotP_LoadStorageCollection(parent, 'World'); FactsSet(VersStr, 521); hasUpdated = true; }
+			if (FactsQuerySum(VersStr) < 522) { PotP_LoadStorageCollection(parent, 'World'); FactsSet(VersStr, 522); hasUpdated = true; }
 		}
 	}
 	

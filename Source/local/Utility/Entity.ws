@@ -89,6 +89,11 @@ enum PotP_Preview_World_Filter
 	PotP_I_Place	 = 4,
 	PotP_I_Signs	 = 5,
 	PotP_I_Sites	 = 6,
+	PotP_I_Guard	 = 7,
+	PotP_I_Distr	 = 8,
+	PotP_I_Knigh	 = 9,
+	PotP_I_Infes	 = 10,
+	PotP_I_Hanse	 = 11,
 }
 
 enum PotP_Preview_Quest_Filter
@@ -150,20 +155,6 @@ class PotP_PreviewEntry
 	var region			: PotP_Preview_Region;
 	var is_missable		: bool;
 	var is_modadded		: bool;
-	var icon_path		: string;
-	var popup_line		: string;
-	
-	//Preview Tags
-	var T_InProgress 	: string;
-	var T_Completed		: string;
-	var T_Ignored		: string;
-	var T_ModAdded		: string;
-						  
-	var T_Bought		: string;
-	var T_Looted		: string;
-	var T_Reward		: string;
-	var T_Dualed		: string;
-	var T_Missable		: string;
 	
 	default fileName = 'PotP Entity';
 	
@@ -178,8 +169,6 @@ class PotP_PreviewEntry
 		this.SetType();
 		
 		this.localname 		= GetLocStringByKeyExt("option_" + uuid);
-		this.icon_path		= GetQuestIconPath();
-		this.popup_line 	= GetQuestlocalisedNotificationLine(filter);
 
 		return this;
 	}
@@ -198,8 +187,6 @@ class PotP_PreviewEntry
 		this.position 		= pin_position;
 		
 		this.localname 		= GetLocStringByKeyExt("option_" + uuid);
-		this.icon_path 		= "icons/PotP/tracked_gold.png";
-		this.popup_line 	= GetQuestlocalisedNotificationLine(filter);
 		
 		if (initially_unlocked) { UnlockEvent(); }
 		
@@ -217,8 +204,6 @@ class PotP_PreviewEntry
 		this.SetType();	
 			
 		this.localname 		= GetLocStringByKeyExt("option_" + uuid);
-		this.icon_path		= GetWorldIconpath();
-		this.popup_line 	= GetWorldlocalisedNotificationLine(filter);
 		
 		return this;
 	}
@@ -234,8 +219,6 @@ class PotP_PreviewEntry
 		this.SetType();
 
 		this.localname 		= GetLocStringByKeyExt("option_" + uuid);
-		this.icon_path		= GetItemsIconpath();
-		this.popup_line 	= GetItemslocalisedNotificationLine(filter);
 		
 		if (this.IsItemCollected())
 		{
@@ -258,8 +241,6 @@ class PotP_PreviewEntry
 		this.SetCardType(card_type);
 		
 		this.localname 		= GetLocStringByKeyExt("option_" + uuid);
-		this.icon_path		= GetGwentIconpath();
-		this.popup_line 	= GetItemslocalisedNotificationLine(PotP_I_Gwent);
 		
 		//PotP_Logger(localname + " is a " + this.card_type + " card that can be " + this.card_origin, , 'PotP Preview Entry');
 		return this;
@@ -611,15 +592,18 @@ class PotP_PreviewEntry
 	//                               Gwent Functions                              //
 	////////////////////////////////////////////////////////////////////////////////
 	
-	function GetGwentIconpath() : string
+	function GetIconPath() : string
 	{
 		var icon_path: string = thePlayer.GetInventory().GetItemIconPathByName(this.item_name);
-		
-		if (icon_path == "")
+
+		switch(this.arrayType)
 		{
-			return "icons/inventory/gwint/ico_gwent_hero_neutral.png";
+			case PotP_A_Event: return GetQuestIconPath(); break;
+			case PotP_A_Quest: return GetQuestIconPath(); break;
+			case PotP_A_World: return GetWorldIconpath(); break;
+			case PotP_A_Gwent: if (icon_path == "") { return "icons/inventory/gwint/ico_gwent_hero_neutral.png"; } return icon_path; break;
+			case PotP_A_Items: if (icon_path == "") { return "icons/inventory/weapons/silver_unique_aerondight_64x128.png"; } return icon_path; break;
 		}
-		return icon_path;
 	}
 
 	//---------------------------------------------------
@@ -755,16 +739,6 @@ class PotP_PreviewEntry
 			this.is_dlc2 = false;
 			break;
 		}
-		
-		this.T_InProgress = GetLocStringByKeyExt("ProgressOnThePath_PreviewTag_IP");
-		this.T_Completed  = GetLocStringByKeyExt("ProgressOnThePath_PreviewTag_CO");
-		this.T_Ignored 	  = GetLocStringByKeyExt("ProgressOnThePath_PreviewTag_IG");
-		this.T_ModAdded   = GetLocStringByKeyExt("ProgressOnThePath_PreviewTag_MA");
-		this.T_Missable   = GetLocStringByKeyExt("ProgressOnThePath_PreviewTag_MI");
-		this.T_Bought     = GetLocStringByKeyExt("ProgressOnThePath_PreviewTag_BO");
-		this.T_Looted     = GetLocStringByKeyExt("ProgressOnThePath_PreviewTag_LO");
-		this.T_Reward     = GetLocStringByKeyExt("ProgressOnThePath_PreviewTag_QR");
-		this.T_Dualed     = GetLocStringByKeyExt("ProgressOnThePath_PreviewTag_WO");
 	}
 
 	//---------------------------------------------------
@@ -781,19 +755,6 @@ class PotP_PreviewEntry
 	////////////////////////////////////////////////////////////////////////////////
 	//                               Items Functions                              //
 	////////////////////////////////////////////////////////////////////////////////
-	
-	function GetItemsIconpath() : string
-	{
-		var icon_path: string = thePlayer.GetInventory().GetItemIconPathByName(this.item_name);
-		
-		if (icon_path == "")
-		{
-			return "icons/inventory/weapons/silver_unique_aerondight_64x128.png";
-		}
-		return icon_path;
-	}
-	
-	//---------------------------------------------------
 	
 	function IsItemCollected() : bool
 	{
@@ -886,6 +847,11 @@ class PotP_PreviewEntry
 			case PotP_I_Place: return "icons/PotP/tracked_placeofpower_dark.png";
 			case PotP_I_Signs: return "icons/PotP/tracked_roadsign_dark.png";
 			case PotP_I_Sites: return "icons/PotP/tracked_AbandonedSite_dark.png";
+			case PotP_I_Guard: return "icons/PotP/tracked_guardedtreasure_dark.png";
+			case PotP_I_Distr: return "icons/PotP/tracked_personindistress_dark.png";
+			case PotP_I_Knigh: return "icons/PotP/tracked_DistressedKnight_dark.png";
+			case PotP_I_Infes: return "icons/PotP/tracked_VineyardInfestation_dark.png";
+			case PotP_I_Hanse: return "icons/PotP/tracked_HanseBase_dark.png";
 		}
 	}
 	
@@ -912,7 +878,22 @@ class PotP_PreviewEntry
 
 		case PotP_I_Sites:
 			return GetLocStringByKeyExt("PotP_NotificationLine_Sites");
+
+		case PotP_I_Guard:
+			return GetLocStringByKeyExt("PotP_NotificationLine_Guard");
+
+		case PotP_I_Distr:
+			return GetLocStringByKeyExt("PotP_NotificationLine_Distress");
 			
+		case PotP_I_Knigh:
+			return GetLocStringByKeyExt("PotP_NotificationLine_Knigh");
+	
+		case PotP_I_Infes:
+			return GetLocStringByKeyExt("PotP_NotificationLine_Infes");
+	
+		case PotP_I_Hanse:
+			return GetLocStringByKeyExt("PotP_NotificationLine_Hanse");
+
 		default:
 			return "";
 		}

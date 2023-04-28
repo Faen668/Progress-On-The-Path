@@ -58,6 +58,7 @@ statemachine class CProgressOnThePath_QuestStorage
 	var MissableQuests_Q112			: array<PotP_PreviewEntry>;
 	var MissableQuests_Q403			: array<PotP_PreviewEntry>;
 	var MissableQuests_Q702			: array<PotP_PreviewEntry>;	
+	var MissableQuests_Ugly			: array<PotP_PreviewEntry>;
 	
 	var UUIDINT: int;
 	default UUIDINT = 1000;
@@ -177,6 +178,10 @@ statemachine class CProgressOnThePath_QuestStorage
 			this.MissableQuests_Q301.PushBack(pData);
 			break;
 
+		case "PotP_TrackingGroup_MainQuests_SkelligeAct1_07":
+			this.MissableQuests_Ugly.PushBack(pData);
+			break;
+			
 		default:
 			PotP_Logger("Unrecognised Missable Quest Detected - " + pData.localname);
 			break;
@@ -230,6 +235,8 @@ state Build in CProgressOnThePath_QuestStorage
 		parent.MissableQuests_Q112.Clear();
 		parent.MissableQuests_Q403.Clear();
 		parent.MissableQuests_Q702.Clear();
+		parent.MissableQuests_Q301.Clear();
+		parent.MissableQuests_Ugly.Clear();
 		
 		this.Build_Main();
 		this.Build_Side();
@@ -327,7 +334,7 @@ state Build in CProgressOnThePath_QuestStorage
 		parent.MainQuests_Act1_Skellige.PushBack(parent.CreateEntry().initQuest(group + "_04", PotP_E_Primary, PotP_R_SK, PotP_I_Mains, "Q205 Lofoten"));
 		parent.MainQuests_Act1_Skellige.PushBack(parent.CreateEntry().initQuest(group + "_05", PotP_E_Primary, PotP_R_SK, PotP_I_Mains, "Q205 The Garden"));
 		parent.MainQuests_Act1_Skellige.PushBack(parent.CreateEntry().initQuest(group + "_06", PotP_E_Primary, PotP_R_SK, PotP_I_Mains, "Q205 Ciri - safe heaven"));
-		parent.MainQuests_Act1_Skellige.PushBack(parent.CreateEntry().initQuest(group + "_07", PotP_E_Primary, PotP_R_SK, PotP_I_Mains, "[metaquest] Search for ugly"));
+		parent.MainQuests_Act1_Skellige.PushBack(parent.CreateEntry().initQuest(group + "_07", PotP_E_Missable, PotP_R_SK, PotP_I_Mains, "[metaquest] Search for ugly"));
 		
 		PotP_SortPreviewData(parent.MainQuests_Act1_Skellige, PotP_A_Quest, parent.master);	
 		

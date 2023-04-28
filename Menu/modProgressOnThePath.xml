@@ -136,13 +136,18 @@
 			<Var id="Separator" 								displayName="" 										displayType="SUBTLE_SEPARATOR"/>
 			<Var id="ProgressOnThePath_Preview_WType"			displayName="ProgressOnThePath_Preview_WType"		displayType="OPTIONS">
 				<OptionsArray>
-					<Option id="0" displayName="QT_Option_WType_0">	<Entry varId="ProgressOnThePath_Preview_WType" value="0"/></Option>
-					<Option id="1" displayName="QT_Option_WType_1">	<Entry varId="ProgressOnThePath_Preview_WType" value="1"/></Option>
-					<Option id="2" displayName="QT_Option_WType_2">	<Entry varId="ProgressOnThePath_Preview_WType" value="2"/></Option>
-					<Option id="3" displayName="QT_Option_WType_3">	<Entry varId="ProgressOnThePath_Preview_WType" value="3"/></Option>
-					<Option id="4" displayName="QT_Option_WType_4">	<Entry varId="ProgressOnThePath_Preview_WType" value="4"/></Option>
-					<Option id="5" displayName="QT_Option_WType_5">	<Entry varId="ProgressOnThePath_Preview_WType" value="5"/></Option>
-					<Option id="6" displayName="QT_Option_WType_6">	<Entry varId="ProgressOnThePath_Preview_WType" value="6"/></Option>
+					<Option id="0"  displayName="QT_Option_WType_0">	<Entry varId="ProgressOnThePath_Preview_WType" value="0"/></Option>
+					<Option id="1"  displayName="QT_Option_WType_1">	<Entry varId="ProgressOnThePath_Preview_WType" value="1"/></Option>
+					<Option id="2"  displayName="QT_Option_WType_2">	<Entry varId="ProgressOnThePath_Preview_WType" value="2"/></Option>
+					<Option id="3"  displayName="QT_Option_WType_3">	<Entry varId="ProgressOnThePath_Preview_WType" value="3"/></Option>
+					<Option id="4"  displayName="QT_Option_WType_4">	<Entry varId="ProgressOnThePath_Preview_WType" value="4"/></Option>
+					<Option id="5"  displayName="QT_Option_WType_5">	<Entry varId="ProgressOnThePath_Preview_WType" value="5"/></Option>
+					<Option id="6"  displayName="QT_Option_WType_6">	<Entry varId="ProgressOnThePath_Preview_WType" value="6"/></Option>
+					<Option id="7"  displayName="QT_Option_WType_7">	<Entry varId="ProgressOnThePath_Preview_WType" value="7"/></Option>
+					<Option id="8"  displayName="QT_Option_WType_8">	<Entry varId="ProgressOnThePath_Preview_WType" value="8"/></Option>
+					<Option id="9"  displayName="QT_Option_WType_9">	<Entry varId="ProgressOnThePath_Preview_WType" value="9"/></Option>
+					<Option id="10" displayName="QT_Option_WType_10">	<Entry varId="ProgressOnThePath_Preview_WType" value="10"/></Option>
+					<Option id="11" displayName="QT_Option_WType_11">	<Entry varId="ProgressOnThePath_Preview_WType" value="11"/></Option>
 				</OptionsArray>
 			</Var>	
 			

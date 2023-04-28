@@ -195,14 +195,14 @@ class CProgressOnThePath_Notifications
 	
 	public function AddToQuestUpdateArray(entry_data: PotP_PreviewEntry)
 	{
-		var InsertedString: string = entry_data.popup_line;
+		var InsertedString: string = entry_data.GetQuestlocalisedNotificationLine(entry_data.filter);
 		var InsertedIndexP: int = QuestUpdateArray_Name.FindFirst(InsertedString);
 
 		if (InsertedIndexP == -1)
 		{
 			QuestUpdateArray_Name.PushBack(InsertedString);
 			QuestUpdateArray_Ints.PushBack(1);
-			QuestUpdateArray_Icon.PushBack(entry_data.icon_path);
+			QuestUpdateArray_Icon.PushBack(entry_data.GetIconPath());
 			TrackerUpdateArray_Count += 1;
 			LogChannel('PotP Notification Script', "Inserted - " + InsertedString + " Into the quest array");
 		}
@@ -217,14 +217,14 @@ class CProgressOnThePath_Notifications
 	
 	public function AddToWorldMapUpdateArray(entry_data: PotP_PreviewEntry) 
 	{		
-		var InsertedString: string = entry_data.popup_line;
+		var InsertedString: string = entry_data.GetWorldlocalisedNotificationLine(entry_data.filter);
 		var InsertedIndexP: int = WorldMapUpdateArray_Name.FindFirst(InsertedString);
 
 		if (InsertedIndexP == -1) 
 		{
 			WorldMapUpdateArray_Name.PushBack(InsertedString);
 			WorldMapUpdateArray_Ints.PushBack(1);
-			WorldMapUpdateArray_Icon.PushBack(entry_data.icon_path);
+			WorldMapUpdateArray_Icon.PushBack(entry_data.GetIconPath());
 			TrackerUpdateArray_Count += 1;
 			LogChannel('PotP Notification Script', "Inserted - " + InsertedString + " Into the world map array");
 		}
@@ -239,14 +239,14 @@ class CProgressOnThePath_Notifications
 	
 	public function AddToItemUpdateArray(entry_data: PotP_PreviewEntry) 
 	{
-		var InsertedString: string = entry_data.popup_line;
+		var InsertedString: string = entry_data.GetItemslocalisedNotificationLine(entry_data.filter);
 		var InsertedIndexP: int = ItemUpdateArray_Name.FindFirst(InsertedString);
 		
 		if (InsertedIndexP == -1) 
 		{
 			ItemUpdateArray_Name.PushBack(InsertedString);
 			ItemUpdateArray_Ints.PushBack(1);
-			ItemUpdateArray_Icon.PushBack(entry_data.icon_path);
+			ItemUpdateArray_Icon.PushBack(entry_data.GetIconPath());
 			TrackerUpdateArray_Count += 1;
 		}
 		else 
@@ -282,14 +282,16 @@ class CProgressOnThePath_Notifications
 	{
 		var InsertedString: string = GetLocStringByKeyExt("PotP_NotificationLine_Updated") + entry_data.localname;
 		
-		if (entry_data.filter == PotP_I_Camps)
+		switch (entry_data.filter)
 		{
-			InsertedString = GetLocStringByKeyExt("PotP_NotificationLine_BanditC") + entry_data.localname;
-		}
-
-		if (entry_data.filter == PotP_I_Sites)
-		{
-			InsertedString = GetLocStringByKeyExt("PotP_NotificationLine_AbandonedSite") + entry_data.localname;
+		case PotP_I_Camps: InsertedString = GetLocStringByKeyExt("PotP_NotificationLine_BanditC") + entry_data.localname; break;
+		case PotP_I_Sites: InsertedString = GetLocStringByKeyExt("PotP_NotificationLine_AbandonedSite") + entry_data.localname; break;
+		case PotP_I_Guard: InsertedString = GetLocStringByKeyExt("PotP_NotificationLine_GuardedTreasure") + entry_data.localname; break;
+		case PotP_I_Distr: InsertedString = GetLocStringByKeyExt("PotP_NotificationLine_PersonInDistress") + entry_data.localname; break;
+		case PotP_I_Knigh: InsertedString = GetLocStringByKeyExt("PotP_NotificationLine_KnightInDistress") + entry_data.localname; break;
+		case PotP_I_Infes: InsertedString = GetLocStringByKeyExt("PotP_NotificationLine_InfestedVineyard") + entry_data.localname; break;
+		case PotP_I_Hanse: InsertedString = GetLocStringByKeyExt("PotP_NotificationLine_HanseBase") + entry_data.localname; break;
+		default : break;
 		}
 		
 		if (storage.pWorldStorageArray_Name.FindFirst(InsertedString) == -1 ) 
@@ -301,7 +303,7 @@ class CProgressOnThePath_Notifications
 			}
 			
 			storage.pWorldStorageArray_Name.PushBack(InsertedString);
-			storage.pWorldStorageArray_Icon.PushBack(entry_data.icon_path);
+			storage.pWorldStorageArray_Icon.PushBack(entry_data.GetIconPath());
 			storage.BackGroundProcessingArray_Count += 1;
 			storage.BackGroundProcessingArray_bWorld = true;
 		}
@@ -337,7 +339,7 @@ class CProgressOnThePath_Notifications
 			}
 			
 			storage.pQuestStorageArray_Name.PushBack(InsertedString);
-			storage.pQuestStorageArray_Icon.PushBack(entry_data.icon_path);
+			storage.pQuestStorageArray_Icon.PushBack(entry_data.GetIconPath());
 			storage.BackGroundProcessingArray_Count += 1;
 			storage.BackGroundProcessingArray_bQuest = true;
 		}
@@ -484,9 +486,9 @@ class CProgressOnThePath_Notifications
 
 		switch (status)
 		{
-			case 0: Notification += FormatItemIcon(entry_data.icon_path) + FormatLine_BackGroundProcessingArray("Restored: " + entry_data.localname); break;
-			case 1: Notification += FormatItemIcon(entry_data.icon_path) + FormatLine_BackGroundProcessingArray("Ignored: " + entry_data.localname);  break;
-			case 2: Notification += FormatItemIcon(entry_data.icon_path) + FormatLine_BackGroundProcessingArray("Completed: " + entry_data.localname); break;
+			case 0: Notification += FormatItemIcon(entry_data.GetIconPath()) + FormatLine_BackGroundProcessingArray("Restored: " + entry_data.localname); break;
+			case 1: Notification += FormatItemIcon(entry_data.GetIconPath()) + FormatLine_BackGroundProcessingArray("Ignored: " + entry_data.localname);  break;
+			case 2: Notification += FormatItemIcon(entry_data.GetIconPath()) + FormatLine_BackGroundProcessingArray("Completed: " + entry_data.localname); break;
 		}
 		
 		theGame.GetGuiManager().ShowNotification(Notification, GetNotificationTime(), true);

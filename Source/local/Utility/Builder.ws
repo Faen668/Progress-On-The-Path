@@ -91,7 +91,7 @@ class ProgressOnThepath_StringBuilder
 	
 	private function FormatHeaderIcon(data: PotP_PreviewEntry, header: string) : string
 	{
-		return StrReplace(header, "[ICON_PATH]", "<img src='img://" + data.icon_path + "' height='20' width='20' vspace='-5' />&nbsp;");
+		return StrReplace(header, "[ICON_PATH]", "<img src='img://" + data.GetIconPath() + "' height='20' width='20' vspace='-5' />&nbsp;");
 	}
 	
 	//---------------------------------------------------
@@ -214,25 +214,25 @@ class ProgressOnThepath_StringBuilder
 		// Apply a coloured 'Mod Added' tag to any entries that are not part of the official game.
 		if (entry_data.is_modadded) 
 		{
-			entry_line += entry_data.T_ModAdded;
+			entry_line += GetLocStringByKeyExt("ProgressOnThePath_PreviewTag_MA");
 		}		
 		
 		// Apply a coloured 'In Progress' tag to any active quests that are not yet completed.
 		if (isInProgress) 
 		{
-			entry_line += entry_data.T_InProgress;
+			entry_line += GetLocStringByKeyExt("ProgressOnThePath_PreviewTag_IP");
 		}
 		
 		// Apply a coloured 'Completed' tag to any completed entries.
 		if (isCompleted && showCompleted) 
 		{
-			entry_line += entry_data.T_Completed;
+			entry_line += GetLocStringByKeyExt("ProgressOnThePath_PreviewTag_CO");
 		}
 		
 		// Apply a coloured 'Ignored' tag to any ignored entries.
 		if (isIgnored && showIgnored) 
 		{
-			entry_line += entry_data.T_Ignored;
+			entry_line += GetLocStringByKeyExt("ProgressOnThePath_PreviewTag_IG");
 		}
 		
 		// Return the formatted string back to the builder.
@@ -334,7 +334,7 @@ class ProgressOnThepath_GwentCardBuilder
 	
 	private function FormatHeaderIcon(data: PotP_PreviewEntry, header: string) : string
 	{
-		return StrReplace(header, "[ICON_PATH]", "<img src='img://" + data.icon_path + "' height='20' width='20' vspace='-5' />&nbsp;");
+		return StrReplace(header, "[ICON_PATH]", "<img src='img://" + data.GetIconPath() + "' height='20' width='20' vspace='-5' />&nbsp;");
 	}
 	
 	//---------------------------------------------------
@@ -484,7 +484,7 @@ class ProgressOnThepath_GwentCardBuilder
 		// Apply a coloured 'Missable' tag to valid gwent cards.
 		if (entry_data.is_missable) 
 		{
-			entry_line += entry_data.T_Missable;
+			entry_line += GetLocStringByKeyExt("ProgressOnThePath_PreviewTag_MI");
 		}
 		
 		if ( (bool) PotP_GetPreviewValue('ProgressOnThePath_Preview_GExtra') ) 
@@ -492,38 +492,38 @@ class ProgressOnThepath_GwentCardBuilder
 			// Apply a coloured 'Bought From Vendor' tag to valid gwent cards.
 			if (entry_data.card_origin == PotP_G_Bought)
 			{
-				entry_line += entry_data.T_Bought;
+				entry_line += GetLocStringByKeyExt("ProgressOnThePath_PreviewTag_BO");
 			}	
 
 			// Apply a coloured 'Lootable' tag to valid gwent cards.
 			if (entry_data.card_origin == PotP_G_Looted)
 			{
-				entry_line += entry_data.T_Looted;
+				entry_line += GetLocStringByKeyExt("ProgressOnThePath_PreviewTag_LO");
 			}	
 
 			// Apply a coloured 'Quest Reward' tag to valid gwent cards.
 			if (entry_data.card_origin == PotP_G_Reward)
 			{
-				entry_line += entry_data.T_Reward;
+				entry_line += GetLocStringByKeyExt("ProgressOnThePath_PreviewTag_QR");
 			}	
 
 			// Apply a coloured 'Won in Dual' tag to valid gwent cards.
 			if (entry_data.card_origin == PotP_G_Dualed)
 			{
-				entry_line += entry_data.T_Dualed;
+				entry_line += GetLocStringByKeyExt("ProgressOnThePath_PreviewTag_WO");
 			}
 		}
 		
 		// Apply a coloured 'Completed' tag to any completed entries.
 		if (isCompleted && showCompleted) 
 		{
-			entry_line += entry_data.T_Completed;
+			entry_line += GetLocStringByKeyExt("ProgressOnThePath_PreviewTag_CO");
 		}
 		
 		// Apply a coloured 'Ignored' tag to any ignored entries.
 		if (isIgnored && showIgnored) 
 		{
-			entry_line += entry_data.T_Ignored;
+			entry_line += GetLocStringByKeyExt("ProgressOnThePath_PreviewTag_IG");
 		}
 		
 		// Return the formatted string back to the builder.
