@@ -62,7 +62,6 @@ statemachine class CProgressOnThePath_MapPins extends SU_MapPin {
 			.pointed_by_arrow	(this.GetPinPointed())
 			.highlighted		(this.GetHighlighted())
 		.add();
-		PotP_Logger("Progress On The Path: Added Map Pin: " + entry_data.uuid, , this.fileName);
 	}
 
 	//---------------------------------------------------
