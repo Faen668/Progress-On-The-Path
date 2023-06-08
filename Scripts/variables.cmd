@@ -7,3 +7,4 @@ REM do not update anything below this line
 set modPath=%cd%\..
 set modName=ProgressOnThePath
 set modKitPath=D:\Games\Modding\Modding - Witcher 3\Mod Kit\bin\x64
+set supath=S:\Github\tw3-shared-utils
