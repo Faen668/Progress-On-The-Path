@@ -1018,6 +1018,37 @@ enum pStatus
 	ignored = 1,
 }
 
+exec function ptc(identifier: string, optional value: pStatus) 
+{
+	var master: CProgressOnThePath;	
+	var EntList: array<PotP_PreviewEntry>;
+	var IdeList: array<string>;
+	var Idx: int;
+
+	if (!GetPotP(master, "Storage")) { return; }
+
+	EntList = master.PotP_PersistentStorage.pArrayStorage.TotalEntList;	
+	IdeList = master.PotP_PersistentStorage.pArrayStorage.TotalIdeList;
+	Idx = IdeList.FindFirst(identifier);
+	
+	if (Idx == -1) { return; }
+	
+	switch (value) 
+	{
+	case completed:	
+		EntList[Idx].SetCompleted(true);
+		break;
+		
+	case ignored:
+		EntList[Idx].SetIgnored(true);
+		break;
+		
+	default:
+		EntList[Idx].SetAvailable(true);
+		break;
+	}
+}
+
 exec function pt_changestatus(identifier: string, optional value: pStatus) 
 {
 	var master: CProgressOnThePath;	
