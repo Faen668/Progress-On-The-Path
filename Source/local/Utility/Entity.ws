@@ -56,6 +56,18 @@ enum PotP_Preview_Entry_Type
 	PotP_E_ModAdded_DLC2 = 8  // Mod Added Entry (BAW)
 }
 
+enum PotP_Preview_Items_Filter
+{
+	PotP_I_Relic  	 = 1,
+	PotP_I_Gears  	 = 2,
+	PotP_I_Troph  	 = 3,
+	PotP_I_Gwent     = 4,
+	PotP_I_Sezon	 = 5,
+	PotP_I_Shade	 = 6,
+	PotP_I_W3eer	 = 7,
+	PotP_I_Wiecej	 = 8,
+};
+
 enum PotP_Preview_Items_Underlying_Filter
 {
 	PotP_U_Armor  	 = 1,
@@ -68,18 +80,6 @@ enum PotP_Preview_Items_Underlying_Filter
 	PotP_U_Cross	 = 8,
 	PotP_U_Troph	 = 9,
 }
-
-enum PotP_Preview_Items_Filter
-{
-	PotP_I_Relic  	 = 1,
-	PotP_I_Gears  	 = 2,
-	PotP_I_Troph  	 = 3,
-	PotP_I_Gwent  	 = 4,
-	PotP_I_Sezon	 = 5,
-	PotP_I_Shade	 = 6,
-	PotP_I_W3eer	 = 7,
-	PotP_I_Wiecej	 = 8,
-};
 
 enum PotP_Preview_World_Filter
 {
@@ -106,7 +106,7 @@ enum PotP_Preview_Quest_Filter
 	PotP_I_Hunts	 = 6,
 }
 
-enum PotP_Preview_Gwent_Filter
+enum PotP_Preview_Gwent_Underlying_Filter
 {
 	PotP_I_Monst	 = 1,
 	PotP_I_Nilfg	 = 2,
@@ -229,12 +229,13 @@ class PotP_PreviewEntry
 	}
 
 	// init function called when creating the instance of this Gwent Card.
-	function initGwent(uuid: string, type: PotP_Preview_Entry_Type, filter: PotP_Preview_Gwent_Filter, item_name: name, optional card_type: PotP_Preview_CardType): PotP_PreviewEntry 
+	function initGwent(uuid: string, type: PotP_Preview_Entry_Type, filter: PotP_Preview_Items_Filter, sub_filter: PotP_Preview_Gwent_Underlying_Filter, item_name: name, optional card_type: PotP_Preview_CardType): PotP_PreviewEntry 
 	{	
 		this.type 		 	= type;
 		this.item_name 	 	= item_name;
 		this.uuid 		 	= uuid;
 		this.filter	     	= filter;
+		this.sub_filter    	= sub_filter;
 		this.SetType();
 		
 		this.SetCardOrigin();
@@ -809,12 +810,12 @@ class PotP_PreviewEntry
 
 		case PotP_I_Relic:
 			return GetLocStringByKeyExt("PotP_NotificationLine_Relic");
-			
-		case PotP_I_Gears:
-			return GetLocStringByKeyExt("PotP_NotificationLine_GearSet");
 
 		case PotP_I_Gwent:
 			return GetLocStringByKeyExt("PotP_NotificationLine_Gwent");
+			
+		case PotP_I_Gears:
+			return GetLocStringByKeyExt("PotP_NotificationLine_GearSet");
 			
 		case PotP_I_Shade:
 			return GetLocStringByKeyExt("PotP_NotificationLine_ShadesOfIron");

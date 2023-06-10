@@ -197,11 +197,24 @@ class ProgressOnThepath_StringBuilder
 		}		
 
 		// Return empty string as a type filter is enabled and this entry does not match that type.
-		if (this.typeFilter > 0 && entry_data.filter != this.typeFilter)
+		if (this.typeFilter > 0)
 		{
-			return "";
-		}	
-		
+			if (entry_data.arrayType == PotP_A_Items)
+			{
+				if (entry_data.sub_filter != this.typeFilter)
+				{
+					return "";
+				}		
+			}
+			else
+			{
+				if (entry_data.filter != this.typeFilter)
+				{
+					return "";
+				}				
+			}
+		}
+
 		// Apply line height modifications for a list style effect.
 		entry_line = "  - " + localName;
 		
@@ -474,7 +487,7 @@ class ProgressOnThepath_GwentCardBuilder
 		}		
 
 		// Return empty string as a type filter is enabled and this entry does not match that type.
-		if (this.typeFilter > 0 && entry_data.filter != this.typeFilter)
+		if (this.typeFilter > 0 && entry_data.sub_filter != this.typeFilter)
 		{
 			return "";
 		}	
