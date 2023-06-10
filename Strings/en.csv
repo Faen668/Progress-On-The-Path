@@ -158,13 +158,10 @@
 2116568133||preset_value_QT_Option_GArea_6|Kaer Morhen
 2116568134||preset_value_QT_Option_GArea_7|Vizima
 ;
-2116568135||option_ProgressOnThePath_EventMapPins_ShowMiniMap			|<font color="#F56C77">Mini Map Pins          :   Show On Minimap</font>
-2116568136||option_ProgressOnThePath_EventMapPins_ArrowPointers			|<font color="#F56C77">Mini Map Pins          :   Arrow Pointers</font>
-2116568137||option_ProgressOnThePath_EventMapPins_HighlightedPointers	|<font color="#F56C77">Mini Map Pins          :   Highlighted Arrows</font>
-2116568138||option_ProgressOnThePath_EventMapPins_ShowMapPins			|<font color="#F56C77">World Map Pins          :   Show Map Pins</font>
-2116568139||option_ProgressOnThePath_EventMapPins_MapPinDescription		|<font color="#F56C77">World Map Pins          :   Show Descriptions</font>
-2116568140||option_ProgressOnThePath_EventMapPins_MapPinRadius			|<font color="#F56C77">World Map Pins          :   Map Pin Radius</font>
-2116568141||option_ProgressOnThePath_EventMapPins_MapPinType			|<font color="#F56C77">World Map Pins          :   Map Pin Type</font>
+2116568138||option_ProgressOnThePath_EventMapPins_ShowMapPins			|<font color="#F56C77">Event Map Pins          :   Show Map Pins</font>
+2116568139||option_ProgressOnThePath_EventMapPins_MapPinDescription		|<font color="#F56C77">Event Map Pins          :   Show Descriptions</font>
+2116568140||option_ProgressOnThePath_EventMapPins_MapPinRadius			|<font color="#F56C77">Event Map Pins          :   Map Pin Radius</font>
+2116568141||option_ProgressOnThePath_EventMapPins_MapPinType			|<font color="#F56C77">Event Map Pins          :   Map Pin Type</font>
 ;
 2116568142||preset_value_QT_Option_EventIconType_0|Quest Giver
 2116568143||preset_value_QT_Option_EventIconType_1|Quest Giver (HOS)

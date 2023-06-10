@@ -23,13 +23,6 @@
 					<Option id="4" displayName="QT_Option_EventIconType_4">	<Entry varId="ProgressOnThePath_EventMapPins_MapPinType" value="4"/></Option>
 				</OptionsArray>
 			</Var>
-
-<!--///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////-->
-
-			<Var id="Separator" 											displayName="" 														displayType="SUBTLE_SEPARATOR"/>
-			<Var id="ProgressOnThePath_EventMapPins_ShowMiniMap"			displayName="ProgressOnThePath_EventMapPins_ShowMiniMap" 			displayType="TOGGLE"/>
-			<Var id="ProgressOnThePath_EventMapPins_ArrowPointers"			displayName="ProgressOnThePath_EventMapPins_ArrowPointers" 			displayType="TOGGLE"/>
-			<Var id="ProgressOnThePath_EventMapPins_HighlightedPointers"	displayName="ProgressOnThePath_EventMapPins_HighlightedPointers" 	displayType="TOGGLE"/>
 			
 		</VisibleVars>
 	</Group>

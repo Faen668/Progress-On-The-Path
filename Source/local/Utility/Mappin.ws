@@ -58,9 +58,9 @@ statemachine class CProgressOnThePath_MapPins extends SU_MapPin {
 			.position			(entry_data.position)
 			.region 			(entry_data.region_string)
 			.is_quest			(false)
-			.appears_on_minimap	(this.GetPinMini())
-			.pointed_by_arrow	(this.GetPinPointed())
-			.highlighted		(this.GetHighlighted())
+			.appears_on_minimap	(false)
+			.pointed_by_arrow	(false)
+			.highlighted		(false)
 		.add();
 	}
 
@@ -94,27 +94,6 @@ statemachine class CProgressOnThePath_MapPins extends SU_MapPin {
 	
 	public function GetPinShow() : bool {
 		return (bool) PotP_GetGeneralValue('ProgressOnThePath_EventMapPins_ShowMapPins');
-	}
-
-	//---------------------------------------------------
-	
-	public function GetPinMini() : bool {
-		return (bool) PotP_GetGeneralValue('ProgressOnThePath_EventMapPins_ShowMiniMap');
-	}
-
-	//---------------------------------------------------
-	
-	public function GetPinPointed() : bool {
-		return (bool) PotP_GetGeneralValue('ProgressOnThePath_EventMapPins_ShowMiniMap')
-			&& (bool) PotP_GetGeneralValue('ProgressOnThePath_EventMapPins_ArrowPointers');
-	}
-
-	//---------------------------------------------------
-	
-	public function GetHighlighted() : bool {
-		return (bool) PotP_GetGeneralValue('ProgressOnThePath_EventMapPins_ShowMiniMap')
-			&& (bool) PotP_GetGeneralValue('ProgressOnThePath_EventMapPins_ArrowPointers')
-			&& (bool) PotP_GetGeneralValue('ProgressOnThePath_EventMapPins_HighlightedPointers');
 	}
 	
 	//---------------------------------------------------
@@ -198,31 +177,24 @@ state Waiting in CProgressOnThePath_MapPins
 		this.Waiting_MonitorForChanges();
 	}
 	
-	latent function Waiting_MonitorForChanges() {
+	latent function Waiting_MonitorForChanges() 
+	{
 		
 		var _GetPinShow: bool 		= parent.GetPinShow();
 		var _GetPinDesc: string		= parent.GetPinDesc("_");
 		var _GetPinSize: int		= parent.GetPinSize();
 		var _GetPinType: string		= parent.GetPinType();
-		
-		var _GetPinMini: bool 		= parent.GetPinMini();
-		var _GetPinPointed: bool 	= parent.GetPinPointed();
-		var _GetHighlighted: bool	= parent.GetHighlighted();
-		while (true) {
-		
-			if (_GetPinShow == parent.GetPinShow()
-			&& _GetPinDesc == parent.GetPinDesc("_")
-			&& _GetPinSize == parent.GetPinSize()
-			&& _GetPinType == parent.GetPinType()
-			&& _GetPinMini == parent.GetPinMini()
-			&& _GetPinPointed == parent.GetPinPointed()
-			&& _GetHighlighted == parent.GetHighlighted()) 
+
+		while( true ) 
+		{
+			if ( _GetPinShow == parent.GetPinShow() && _GetPinDesc == parent.GetPinDesc("_") && _GetPinSize == parent.GetPinSize() && _GetPinType == parent.GetPinType() )
 			{
 				Sleep(5);
 			}
 			else
 			{
-				while (PotP_IsPlayerBusy()) {
+				while( PotP_IsPlayerBusy() ) 
+				{
 					SleepOneFrame();
 				}
 				parent.GotoState('Updating');

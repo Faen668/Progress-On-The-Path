@@ -201,10 +201,10 @@ state Idle in CProgressOnThePath
 state Initialising in CProgressOnThePath 
 {
 	private var curVersionStr: string;
-		default curVersionStr = "5.2.5";
+		default curVersionStr = "5.2.6";
 		
 	private var curVersionInt: int;
-		default curVersionInt = 525;
+		default curVersionInt = 526;
 	
 	private var hasUpdated: bool;
 		default hasUpdated = false;
@@ -314,11 +314,7 @@ state Initialising in CProgressOnThePath
 	{
 		if (FactsQuerySum(VersStr) < curVersionInt) 
 		{
-			if (FactsQuerySum(VersStr) < 522) { PotP_LoadStorageCollection(parent, 'World'); FactsSet(VersStr, 522); hasUpdated = true; }
-			
-			if (FactsQuerySum(VersStr) < 524) { PotP_LoadStorageCollection(parent, 'Event'); FactsSet(VersStr, 524); hasUpdated = true; }
-			
-			if (FactsQuerySum(VersStr) < 525) { PotP_LoadStorageCollection(parent, 'Quest'); FactsSet(VersStr, 525); hasUpdated = true; }
+			if (FactsQuerySum(VersStr) < 526) { PotP_LoadStorageCollection(parent, 'All'); FactsSet(VersStr, 526); hasUpdated = true; }
 		}
 	}
 	

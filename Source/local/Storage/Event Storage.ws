@@ -72,8 +72,8 @@ state Build in CProgressOnThePath_EventStorage
 
 	entry function Build()
 	{
-		var group	: string;
-		var Idx		: int;
+		var group    : string;
+		var Idx, Edx : int;
 
 		parent.MasterList_Events.Clear();
 
@@ -151,18 +151,22 @@ state Build in CProgressOnThePath_EventStorage
 		PotP_SortPreviewData(parent.RandomEvents_KaerMorhen, PotP_A_Event, parent.master);
 
 		//------------------------------------------------------
-		
+
 		for ( Idx = 0; Idx < parent.MasterList_Events.Size(); Idx += 1 ) 
 		{
-			if (parent.master.PotP_PersistentStorage.pArrayStorage.TotalVarList.FindFirst(parent.MasterList_Events[Idx].uuid) != -1) 
+			Edx = parent.master.PotP_PersistentStorage.pArrayStorage.TotalVarList.FindFirst(parent.MasterList_Events[Idx].uuid);
+			
+			if (Edx != -1)
 			{
-				PotP_Logger("Duplicate Entry Found - " + parent.MasterList_Events[Idx].localname, , parent.fileName);
+				parent.master.PotP_PersistentStorage.pArrayStorage.TotalEntList[Edx] = parent.MasterList_Events[Idx];
+				parent.master.PotP_PersistentStorage.pArrayStorage.TotalVarList[Edx] = parent.MasterList_Events[Idx].uuid;
+				parent.master.PotP_PersistentStorage.pArrayStorage.TotalIdeList[Edx] = parent.MasterList_Events[Idx].identifier;
 				continue;
 			}
-			
+
 			parent.master.PotP_PersistentStorage.pArrayStorage.TotalEntList.PushBack(parent.MasterList_Events[Idx]);
 			parent.master.PotP_PersistentStorage.pArrayStorage.TotalVarList.PushBack(parent.MasterList_Events[Idx].uuid);
-			parent.master.PotP_PersistentStorage.pArrayStorage.TotalIdeList.PushBack(parent.MasterList_Events[Idx].identifier);
+			parent.master.PotP_PersistentStorage.pArrayStorage.TotalIdeList.PushBack(parent.MasterList_Events[Idx].identifier);			
 		}
 		
 		parent.GotoState('Idle');

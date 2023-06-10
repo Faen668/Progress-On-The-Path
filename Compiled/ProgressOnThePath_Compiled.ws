@@ -201,10 +201,10 @@ state Idle in CProgressOnThePath
 state Initialising in CProgressOnThePath 
 {
 	private var curVersionStr: string;
-		default curVersionStr = "5.2.5";
+		default curVersionStr = "5.2.6";
 		
 	private var curVersionInt: int;
-		default curVersionInt = 525;
+		default curVersionInt = 526;
 	
 	private var hasUpdated: bool;
 		default hasUpdated = false;
@@ -314,11 +314,7 @@ state Initialising in CProgressOnThePath
 	{
 		if (FactsQuerySum(VersStr) < curVersionInt) 
 		{
-			if (FactsQuerySum(VersStr) < 522) { PotP_LoadStorageCollection(parent, 'World'); FactsSet(VersStr, 522); hasUpdated = true; }
-			
-			if (FactsQuerySum(VersStr) < 524) { PotP_LoadStorageCollection(parent, 'Event'); FactsSet(VersStr, 524); hasUpdated = true; }
-			
-			if (FactsQuerySum(VersStr) < 525) { PotP_LoadStorageCollection(parent, 'Quest'); FactsSet(VersStr, 525); hasUpdated = true; }
+			if (FactsQuerySum(VersStr) < 526) { PotP_LoadStorageCollection(parent, 'All'); FactsSet(VersStr, 526); hasUpdated = true; }
 		}
 	}
 	
@@ -1691,8 +1687,8 @@ state Build in CProgressOnThePath_EventStorage
 
 	entry function Build()
 	{
-		var group	: string;
-		var Idx		: int;
+		var group    : string;
+		var Idx, Edx : int;
 
 		parent.MasterList_Events.Clear();
 
@@ -1770,18 +1766,22 @@ state Build in CProgressOnThePath_EventStorage
 		PotP_SortPreviewData(parent.RandomEvents_KaerMorhen, PotP_A_Event, parent.master);
 
 		//------------------------------------------------------
-		
+
 		for ( Idx = 0; Idx < parent.MasterList_Events.Size(); Idx += 1 ) 
 		{
-			if (parent.master.PotP_PersistentStorage.pArrayStorage.TotalVarList.FindFirst(parent.MasterList_Events[Idx].uuid) != -1) 
+			Edx = parent.master.PotP_PersistentStorage.pArrayStorage.TotalVarList.FindFirst(parent.MasterList_Events[Idx].uuid);
+			
+			if (Edx != -1)
 			{
-				PotP_Logger("Duplicate Entry Found - " + parent.MasterList_Events[Idx].localname, , parent.fileName);
+				parent.master.PotP_PersistentStorage.pArrayStorage.TotalEntList[Edx] = parent.MasterList_Events[Idx];
+				parent.master.PotP_PersistentStorage.pArrayStorage.TotalVarList[Edx] = parent.MasterList_Events[Idx].uuid;
+				parent.master.PotP_PersistentStorage.pArrayStorage.TotalIdeList[Edx] = parent.MasterList_Events[Idx].identifier;
 				continue;
 			}
-			
+
 			parent.master.PotP_PersistentStorage.pArrayStorage.TotalEntList.PushBack(parent.MasterList_Events[Idx]);
 			parent.master.PotP_PersistentStorage.pArrayStorage.TotalVarList.PushBack(parent.MasterList_Events[Idx].uuid);
-			parent.master.PotP_PersistentStorage.pArrayStorage.TotalIdeList.PushBack(parent.MasterList_Events[Idx].identifier);
+			parent.master.PotP_PersistentStorage.pArrayStorage.TotalIdeList.PushBack(parent.MasterList_Events[Idx].identifier);			
 		}
 		
 		parent.GotoState('Idle');
@@ -1911,7 +1911,7 @@ state Build in CProgressOnThePath_ItemsStorage
 	
 	entry function Build()
 	{
-		var Idx: int;
+		var Idx, Edx : int;
 		
 		parent.MasterList_Items.Clear();
 		
@@ -1927,15 +1927,19 @@ state Build in CProgressOnThePath_ItemsStorage
 
 		for ( Idx = 0; Idx < parent.MasterList_Items.Size(); Idx += 1 ) 
 		{
-			if (parent.master.PotP_PersistentStorage.pArrayStorage.TotalVarList.FindFirst(parent.MasterList_Items[Idx].uuid) != -1) 
+			Edx = parent.master.PotP_PersistentStorage.pArrayStorage.TotalVarList.FindFirst(parent.MasterList_Items[Idx].uuid);
+			
+			if (Edx != -1)
 			{
-				PotP_Logger("Duplicate Entry Found - " + parent.MasterList_Items[Idx].localname, , parent.fileName);
+				parent.master.PotP_PersistentStorage.pArrayStorage.TotalEntList[Edx] = parent.MasterList_Items[Idx];
+				parent.master.PotP_PersistentStorage.pArrayStorage.TotalVarList[Edx] = parent.MasterList_Items[Idx].uuid;
+				parent.master.PotP_PersistentStorage.pArrayStorage.TotalIdeList[Edx] = parent.MasterList_Items[Idx].identifier;
 				continue;
 			}
-			
+
 			parent.master.PotP_PersistentStorage.pArrayStorage.TotalEntList.PushBack(parent.MasterList_Items[Idx]);
 			parent.master.PotP_PersistentStorage.pArrayStorage.TotalVarList.PushBack(parent.MasterList_Items[Idx].uuid);
-			parent.master.PotP_PersistentStorage.pArrayStorage.TotalIdeList.PushBack(parent.MasterList_Items[Idx].identifier);
+			parent.master.PotP_PersistentStorage.pArrayStorage.TotalIdeList.PushBack(parent.MasterList_Items[Idx].identifier);			
 		}
 		
 		parent.GotoState('Idle');
@@ -3459,7 +3463,7 @@ state Build in CProgressOnThePath_QuestStorage
 
 	entry function Build()
 	{
-		var Idx		: int;
+		var Idx, Edx : int;
 
 		parent.MasterList_Quests.Clear();
 		parent.MasterList_Quests_Lookup.Clear();
@@ -3487,15 +3491,20 @@ state Build in CProgressOnThePath_QuestStorage
 		
 		for ( Idx = 0; Idx < parent.MasterList_Quests.Size(); Idx += 1 ) 
 		{
-			if (parent.master.PotP_PersistentStorage.pArrayStorage.TotalVarList.FindFirst(parent.MasterList_Quests[Idx].uuid) != -1) 
+			Edx = parent.master.PotP_PersistentStorage.pArrayStorage.TotalVarList.FindFirst(parent.MasterList_Quests[Idx].uuid);
+			
+			if (Edx != -1)
 			{
-				PotP_Logger("Duplicate Entry Found - " + parent.MasterList_Quests[Idx].localname, , parent.fileName);
+				parent.master.PotP_PersistentStorage.pArrayStorage.TotalEntList[Edx] = parent.MasterList_Quests[Idx];
+				parent.master.PotP_PersistentStorage.pArrayStorage.TotalVarList[Edx] = parent.MasterList_Quests[Idx].uuid;
+				parent.master.PotP_PersistentStorage.pArrayStorage.TotalIdeList[Edx] = parent.MasterList_Quests[Idx].identifier;
 				continue;
 			}
-			
+
 			parent.master.PotP_PersistentStorage.pArrayStorage.TotalEntList.PushBack(parent.MasterList_Quests[Idx]);
 			parent.master.PotP_PersistentStorage.pArrayStorage.TotalVarList.PushBack(parent.MasterList_Quests[Idx].uuid);
-			parent.master.PotP_PersistentStorage.pArrayStorage.TotalIdeList.PushBack(parent.MasterList_Quests[Idx].identifier);
+			parent.master.PotP_PersistentStorage.pArrayStorage.TotalIdeList.PushBack(parent.MasterList_Quests[Idx].identifier);			
+
 		}
 		
 		parent.GotoState('Idle');
@@ -4574,7 +4583,7 @@ state Build in CProgressOnThePath_WorldStorage
 
 	entry function Build()
 	{
-		var Idx		: int;
+		var Idx, Edx : int;
 
 		parent.MasterList_World.Clear();
 		
@@ -4590,15 +4599,19 @@ state Build in CProgressOnThePath_WorldStorage
 
 		for ( Idx = 0; Idx < parent.MasterList_World.Size(); Idx += 1 ) 
 		{
-			if (parent.master.PotP_PersistentStorage.pArrayStorage.TotalVarList.FindFirst(parent.MasterList_World[Idx].uuid) != -1) 
+			Edx = parent.master.PotP_PersistentStorage.pArrayStorage.TotalVarList.FindFirst(parent.MasterList_World[Idx].uuid);
+			
+			if (Edx != -1)
 			{
-				PotP_Logger("Duplicate Entry Found - " + parent.MasterList_World[Idx].localname, , parent.fileName);
+				parent.master.PotP_PersistentStorage.pArrayStorage.TotalEntList[Edx] = parent.MasterList_World[Idx];
+				parent.master.PotP_PersistentStorage.pArrayStorage.TotalVarList[Edx] = parent.MasterList_World[Idx].uuid;
+				parent.master.PotP_PersistentStorage.pArrayStorage.TotalIdeList[Edx] = parent.MasterList_World[Idx].identifier;
 				continue;
 			}
-			
+
 			parent.master.PotP_PersistentStorage.pArrayStorage.TotalEntList.PushBack(parent.MasterList_World[Idx]);
 			parent.master.PotP_PersistentStorage.pArrayStorage.TotalVarList.PushBack(parent.MasterList_World[Idx].uuid);
-			parent.master.PotP_PersistentStorage.pArrayStorage.TotalIdeList.PushBack(parent.MasterList_World[Idx].identifier);
+			parent.master.PotP_PersistentStorage.pArrayStorage.TotalIdeList.PushBack(parent.MasterList_World[Idx].identifier);			
 		}
 		
 		parent.GotoState('Idle');
@@ -8506,64 +8519,12 @@ enum pStatus
 
 exec function ptc(identifier: string, optional value: pStatus) 
 {
-	var master: CProgressOnThePath;	
-	var EntList: array<PotP_PreviewEntry>;
-	var IdeList: array<string>;
-	var Idx: int;
-
-	if (!GetPotP(master, "Storage")) { return; }
-
-	EntList = master.PotP_PersistentStorage.pArrayStorage.TotalEntList;	
-	IdeList = master.PotP_PersistentStorage.pArrayStorage.TotalIdeList;
-	Idx = IdeList.FindFirst(identifier);
-	
-	if (Idx == -1) { return; }
-	
-	switch (value) 
-	{
-	case completed:	
-		EntList[Idx].SetCompleted(true);
-		break;
-		
-	case ignored:
-		EntList[Idx].SetIgnored(true);
-		break;
-		
-	default:
-		EntList[Idx].SetAvailable(true);
-		break;
-	}
+	PotP_ChangeQuestStatus( identifier, value );
 }
 
 exec function pt_changestatus(identifier: string, optional value: pStatus) 
 {
-	var master: CProgressOnThePath;	
-	var EntList: array<PotP_PreviewEntry>;
-	var IdeList: array<string>;
-	var Idx: int;
-
-	if (!GetPotP(master, "Storage")) { return; }
-
-	EntList = master.PotP_PersistentStorage.pArrayStorage.TotalEntList;	
-	IdeList = master.PotP_PersistentStorage.pArrayStorage.TotalIdeList;
-	Idx = IdeList.FindFirst(identifier);
-	
-	if (Idx == -1) { return; }
-	
-	switch (value) 
-	{
-	case completed:	
-		EntList[Idx].SetCompleted(true);
-		break;
-		
-	case ignored:
-		EntList[Idx].SetIgnored(true);
-		break;
-		
-	default:
-		EntList[Idx].SetAvailable(true);
-		break;
-	}
+	PotP_ChangeQuestStatus( identifier, value );
 }
 
 //---------------------------------------------------
@@ -8713,6 +8674,44 @@ function PotP_SortPreviewData(out pData: array<PotP_PreviewEntry>, type: PotP_Pr
 				}
 			}
 		}
+	}
+}
+
+//---------------------------------------------------
+//-- Functions --------------------------------------
+//---------------------------------------------------
+
+function PotP_ChangeQuestStatus(identifier: string, optional value: pStatus)
+{
+	var master: CProgressOnThePath;	
+	var EntList: array<PotP_PreviewEntry>;
+	var IdeList: array<string>;
+	var Idx: int;
+
+	if (!GetPotP(master, "PotP_ChangeQuesyStatus")) 
+		return;
+
+	EntList = master.PotP_PersistentStorage.pArrayStorage.TotalEntList;	
+	IdeList = master.PotP_PersistentStorage.pArrayStorage.TotalIdeList;
+	
+	Idx = IdeList.FindFirst(identifier);
+	
+	if (Idx == -1) 
+		return;
+	
+	switch (value) 
+	{
+	case completed:	
+		EntList[Idx].SetCompleted(true);
+		break;
+		
+	case ignored:
+		EntList[Idx].SetIgnored(true);
+		break;
+		
+	default:
+		EntList[Idx].SetAvailable(true);
+		break;
 	}
 }
 	
@@ -9167,9 +9166,9 @@ statemachine class CProgressOnThePath_MapPins extends SU_MapPin {
 			.position			(entry_data.position)
 			.region 			(entry_data.region_string)
 			.is_quest			(false)
-			.appears_on_minimap	(this.GetPinMini())
-			.pointed_by_arrow	(this.GetPinPointed())
-			.highlighted		(this.GetHighlighted())
+			.appears_on_minimap	(false)
+			.pointed_by_arrow	(false)
+			.highlighted		(false)
 		.add();
 	}
 
@@ -9203,27 +9202,6 @@ statemachine class CProgressOnThePath_MapPins extends SU_MapPin {
 	
 	public function GetPinShow() : bool {
 		return (bool) PotP_GetGeneralValue('ProgressOnThePath_EventMapPins_ShowMapPins');
-	}
-
-	//---------------------------------------------------
-	
-	public function GetPinMini() : bool {
-		return (bool) PotP_GetGeneralValue('ProgressOnThePath_EventMapPins_ShowMiniMap');
-	}
-
-	//---------------------------------------------------
-	
-	public function GetPinPointed() : bool {
-		return (bool) PotP_GetGeneralValue('ProgressOnThePath_EventMapPins_ShowMiniMap')
-			&& (bool) PotP_GetGeneralValue('ProgressOnThePath_EventMapPins_ArrowPointers');
-	}
-
-	//---------------------------------------------------
-	
-	public function GetHighlighted() : bool {
-		return (bool) PotP_GetGeneralValue('ProgressOnThePath_EventMapPins_ShowMiniMap')
-			&& (bool) PotP_GetGeneralValue('ProgressOnThePath_EventMapPins_ArrowPointers')
-			&& (bool) PotP_GetGeneralValue('ProgressOnThePath_EventMapPins_HighlightedPointers');
 	}
 	
 	//---------------------------------------------------
@@ -9307,31 +9285,24 @@ state Waiting in CProgressOnThePath_MapPins
 		this.Waiting_MonitorForChanges();
 	}
 	
-	latent function Waiting_MonitorForChanges() {
+	latent function Waiting_MonitorForChanges() 
+	{
 		
 		var _GetPinShow: bool 		= parent.GetPinShow();
 		var _GetPinDesc: string		= parent.GetPinDesc("_");
 		var _GetPinSize: int		= parent.GetPinSize();
 		var _GetPinType: string		= parent.GetPinType();
-		
-		var _GetPinMini: bool 		= parent.GetPinMini();
-		var _GetPinPointed: bool 	= parent.GetPinPointed();
-		var _GetHighlighted: bool	= parent.GetHighlighted();
-		while (true) {
-		
-			if (_GetPinShow == parent.GetPinShow()
-			&& _GetPinDesc == parent.GetPinDesc("_")
-			&& _GetPinSize == parent.GetPinSize()
-			&& _GetPinType == parent.GetPinType()
-			&& _GetPinMini == parent.GetPinMini()
-			&& _GetPinPointed == parent.GetPinPointed()
-			&& _GetHighlighted == parent.GetHighlighted()) 
+
+		while( true ) 
+		{
+			if ( _GetPinShow == parent.GetPinShow() && _GetPinDesc == parent.GetPinDesc("_") && _GetPinSize == parent.GetPinSize() && _GetPinType == parent.GetPinType() )
 			{
 				Sleep(5);
 			}
 			else
 			{
-				while (PotP_IsPlayerBusy()) {
+				while( PotP_IsPlayerBusy() ) 
+				{
 					SleepOneFrame();
 				}
 				parent.GotoState('Updating');

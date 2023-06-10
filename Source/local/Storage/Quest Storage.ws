@@ -218,7 +218,7 @@ state Build in CProgressOnThePath_QuestStorage
 
 	entry function Build()
 	{
-		var Idx		: int;
+		var Idx, Edx : int;
 
 		parent.MasterList_Quests.Clear();
 		parent.MasterList_Quests_Lookup.Clear();
@@ -246,15 +246,20 @@ state Build in CProgressOnThePath_QuestStorage
 		
 		for ( Idx = 0; Idx < parent.MasterList_Quests.Size(); Idx += 1 ) 
 		{
-			if (parent.master.PotP_PersistentStorage.pArrayStorage.TotalVarList.FindFirst(parent.MasterList_Quests[Idx].uuid) != -1) 
+			Edx = parent.master.PotP_PersistentStorage.pArrayStorage.TotalVarList.FindFirst(parent.MasterList_Quests[Idx].uuid);
+			
+			if (Edx != -1)
 			{
-				PotP_Logger("Duplicate Entry Found - " + parent.MasterList_Quests[Idx].localname, , parent.fileName);
+				parent.master.PotP_PersistentStorage.pArrayStorage.TotalEntList[Edx] = parent.MasterList_Quests[Idx];
+				parent.master.PotP_PersistentStorage.pArrayStorage.TotalVarList[Edx] = parent.MasterList_Quests[Idx].uuid;
+				parent.master.PotP_PersistentStorage.pArrayStorage.TotalIdeList[Edx] = parent.MasterList_Quests[Idx].identifier;
 				continue;
 			}
-			
+
 			parent.master.PotP_PersistentStorage.pArrayStorage.TotalEntList.PushBack(parent.MasterList_Quests[Idx]);
 			parent.master.PotP_PersistentStorage.pArrayStorage.TotalVarList.PushBack(parent.MasterList_Quests[Idx].uuid);
-			parent.master.PotP_PersistentStorage.pArrayStorage.TotalIdeList.PushBack(parent.MasterList_Quests[Idx].identifier);
+			parent.master.PotP_PersistentStorage.pArrayStorage.TotalIdeList.PushBack(parent.MasterList_Quests[Idx].identifier);			
+
 		}
 		
 		parent.GotoState('Idle');
