@@ -27,7 +27,7 @@ XCOPY "%modpath%\Build\ProgressOnThePath\packed\Mods\modProgressOnThePath\conten
 XCOPY "%modpath%\Build\ProgressOnThePath\packed\DLC\dlc_progressonthepath\content" "%modpath%\release\dlc\dlc%modname%\content\" /e /s /y
 
 ::Copy over the README.
-XCOPY "%modpath%\Instructions\" "%modpath%\release\mods\mod%modname%\" /e /s /y
+XCOPY "%modpath%\Instructions\" "%modpath%\release\" /e /s /y
 
 ::Copy over the Shared Util dependencies
 XCOPY "%supath%\mod_sharedutils_mappins\" "%modpath%\release\mods\mod_sharedutils_mappins\" /e /s /y
@@ -36,11 +36,7 @@ XCOPY "%supath%\mod_sharedutils_tiny_bootstrapper\" "%modpath%\release\mods\mod_
 XCOPY "%supath%\mod_sharedutils_storage\" "%modpath%\release\mods\mod_sharedutils_storage\" /e /s /y
 XCOPY "%supath%\mod_sharedutils_glossary\" "%modpath%\release\mods\mod_sharedutils_glossary\" /e /s /y
 
-::Create zip file for the release.
-powershell Compress-Archive -Path "%modpath%\release\bin", "%modpath%\release\mods", "%modpath%\release\dlc" -DestinationPath "%modpath%\release\Progress-on-the-Path.zip"
-
-::if "%1"=="-github" (
-::  echo "creating github release"
-::  
-::  node create-gh-release %2
-::)
+"C:\Program Files\7-Zip\7z.exe" a "%modpath%\release\Progress-on-the-Path.zip" "%modpath%\release\mods"
+"C:\Program Files\7-Zip\7z.exe" a "%modpath%\release\Progress-on-the-Path.zip" "%modpath%\release\dlc"
+"C:\Program Files\7-Zip\7z.exe" a "%modpath%\release\Progress-on-the-Path.zip" "%modpath%\release\bin"
+"C:\Program Files\7-Zip\7z.exe" a "%modpath%\release\Progress-on-the-Path.zip" "%modpath%\release\Installation Instructions.txt"
