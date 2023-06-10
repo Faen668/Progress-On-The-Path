@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<NotepadPlus>
-    <Session activeView="0">
-        <mainView activeIndex="0">
-            <File firstVisibleLine="0" xOffset="0" scrollWidth="2016" startPos="0" endPos="0" selMode="0" offset="0" wrapCount="1" lang="WitcherScript" encoding="-1" userReadOnly="no" filename="S:\Github\Progress-On-The-Path\Source\local\Utility\Console.ws" backupFilePath="" originalFileLastModifTimestamp="-2145665303" originalFileLastModifTimestampHigh="31029340" tabColourId="-1" mapFirstVisibleDisplayLine="-1" mapFirstVisibleDocLine="-1" mapLastVisibleDocLine="-1" mapNbLine="-1" mapHigherPos="-1" mapWidth="-1" mapHeight="-1" mapKByteInDoc="512" mapWrapIndentMode="-1" mapIsWrap="no" />
-        </mainView>
-        <subView activeIndex="0" />
-    </Session>
-</NotepadPlus>

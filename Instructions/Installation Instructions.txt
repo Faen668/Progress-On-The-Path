@@ -2,10 +2,6 @@
 //-------------------- Installation ----------------------
 //--------------------------------------------------------
 
-Completely remove any old version.
-
-Skip this step if you have installed the mod with the install script.
-
 Copy the 'mods', 'dlc' and 'bin' folder into your witcher 3 directory.
 
 If you get a prompt to overwrite files go ahead and do so.
