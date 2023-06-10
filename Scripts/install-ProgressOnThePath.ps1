@@ -251,7 +251,7 @@ write-host -ForegroundColor yellow "<!-- Progress on the Path End -->"
 write-host -ForegroundColor yellow ""
 
 write-host -BackgroundColor darkred "                             "
-write-host -ForegroundColor white -BackgroundColor darkred "   Installation Finished   "
+write-host -ForegroundColor white -BackgroundColor darkred "   Installation Finished     "
 write-host -BackgroundColor darkred "                             "
 echo ""
 
