@@ -92,7 +92,7 @@ class CProgressOnThePath_GwentPreview
 	private function build(Header: string, pData: array<PotP_PreviewEntry>) 
 	{	
 		this.consumebuilder((new ProgressOnThepath_GwentCardBuilder in thePlayer)
-			.init()
+			.init(master)
 			.setFilters(this.areaFilter, this.typeFilter)
 			.addHeader(Header)
 			.addDataSet(pData)

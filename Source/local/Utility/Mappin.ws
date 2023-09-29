@@ -15,6 +15,7 @@ statemachine class CProgressOnThePath_MapPins extends SU_MapPin {
 		default fileName = 'PotP Map Pin Manager';
 
 	public var master: CProgressOnThePath;
+	public var entity_helper: CProgressOnThePath_PreviewEntryHelper;
 	public var builder: SU_MapPinsBuilder;
 
 	//---------------------------------------------------
@@ -22,6 +23,7 @@ statemachine class CProgressOnThePath_MapPins extends SU_MapPin {
 	public function initialise(master: CProgressOnThePath)
 	{
 		this.master = master;
+		this.entity_helper = master.PotP_EntityHelper;
 	}
 
 	//---------------------------------------------------
@@ -42,7 +44,7 @@ statemachine class CProgressOnThePath_MapPins extends SU_MapPin {
 	
 	public function RefreshPin(entry_data: PotP_PreviewEntry)
 	{
-		if (!entry_data.IsEventUnlocked() || !entry_data.IsPlayable())
+		if (!entity_helper.IsEventUnlocked(entry_data) || !entity_helper.IsPlayable(entry_data))
 		{
 			return;
 		}
@@ -51,7 +53,7 @@ statemachine class CProgressOnThePath_MapPins extends SU_MapPin {
 		.pin()
 			.tag				(entry_data.uuid)
 			.label				(GetLocStringByKeyExt("ProgressOnThePath_Default_MapPin_Name"))
-			.description		(this.GetPinDesc(entry_data.GetEventDescription()))
+			.description		(this.GetPinDesc(entity_helper.GetEventDescription(entry_data)))
 			.type				(this.GetPinType())
 			.filtered_type		("QuestVermentino")
 			.radius				(this.GetPinSize())

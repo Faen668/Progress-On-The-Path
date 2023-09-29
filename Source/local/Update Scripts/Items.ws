@@ -8,12 +8,14 @@ statemachine class CProgressOnThePath_Relic_Updater {
 		default filename = 'PotP Items Script';
 	
 	public var master: CProgressOnThePath;
+	public var entity_helper: CProgressOnThePath_PreviewEntryHelper;
 	
 	//---------------------------------------------------
 
 	public function initialise(master: CProgressOnThePath) : CProgressOnThePath_Relic_Updater
 	{
 		this.master = master;
+		this.entity_helper = master.PotP_EntityHelper;
 		return this;
 	}
 
@@ -85,18 +87,18 @@ state Updating in CProgressOnThePath_Relic_Updater
 					continue;
 				}
 				
-				if (this.IsCardCollected(pData_E[Idx]) && pData_E[Idx].IsPlayable())
+				if (this.IsCardCollected(pData_E[Idx]) && parent.entity_helper.IsPlayable(pData_E[Idx]))
 				{
-					pData_E[Idx].SetCompleted();
-					pData_E[Idx].AddToNotificationQueue();
+					parent.entity_helper.SetCompleted(pData_E[Idx]);
+					parent.entity_helper.AddToNotificationQueue(pData_E[Idx]);
 				}
 				continue;
 			}
 			
-			if (this.IsItemCollected(pData_E[Idx]) && pData_E[Idx].IsPlayable())
+			if (this.IsItemCollected(pData_E[Idx]) && parent.entity_helper.IsPlayable(pData_E[Idx]))
 			{
-				pData_E[Idx].SetCompleted();
-				pData_E[Idx].AddToNotificationQueue();
+				parent.entity_helper.SetCompleted(pData_E[Idx]);
+				parent.entity_helper.AddToNotificationQueue(pData_E[Idx]);
 			}
 		}
 	}
@@ -113,7 +115,7 @@ state Updating in CProgressOnThePath_Relic_Updater
 		{
 			PInventory.GetItemQualityFromName(pData_E.variations[Idx], min, max);
 
-			if (min >= 4 && (pData_E.IsCollected() || PInventory.HasItem(pData_E.variations[Idx]) || SInventory.HasItem(pData_E.variations[Idx]) || GetWitcherPlayer().GetHorseManager().IsItemEquippedByName(pData_E.variations[Idx])))
+			if (min >= 4 && (parent.entity_helper.IsCollected(pData_E) || PInventory.HasItem(pData_E.variations[Idx]) || SInventory.HasItem(pData_E.variations[Idx]) || GetWitcherPlayer().GetHorseManager().IsItemEquippedByName(pData_E.variations[Idx])))
 			{ 
 				return true;
 			}

@@ -1,8 +1,6 @@
 <?xml version="1.0"?>
 <W3Mod xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <LastOpenedFiles>
-    <string>S:\Github\Progress-On-The-Path\Build\ProgressOnThePath\files\DLC\Cooked\dlcProgressOnThePath\gameplay\gui_new\swf\hud\hud_minimap2.redswf</string>
-  </LastOpenedFiles>
+  <LastOpenedFiles />
   <Name>ProgressOnThePath</Name>
   <Author>Faen</Author>
   <Version>0.62</Version>

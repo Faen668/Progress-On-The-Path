@@ -107,7 +107,7 @@ class CProgressOnThePath_ItemsPreview
 	private function build(Header: string, pData: array<PotP_PreviewEntry>) 
 	{	
 		this.consumebuilder((new ProgressOnThepath_StringBuilder in thePlayer)
-			.init()
+			.init(master)
 			.setFilters(0, this.typeFilter)
 			.addHeader(Header)
 			.addDataSet(pData)

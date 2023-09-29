@@ -74,7 +74,7 @@ class CProgressOnThePath_MissablePreview
 	private function build(Header: string, pData: array<PotP_PreviewEntry>) 
 	{	
 		this.consumebuilder((new ProgressOnThepath_StringBuilder in thePlayer)
-			.init()
+			.init(master)
 			.setFilters(0, 0)
 			.addHeader(Header)
 			.addDataSet(pData)

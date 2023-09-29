@@ -13,6 +13,7 @@ statemachine class CProgressOnThePath_QuestGoblin
 	public var manager: CWitcherJournalManager;
 	public var master: CProgressOnThePath;
 	public var storage: CProgressOnThePath_Storage;
+	public var entity_helper: CProgressOnThePath_PreviewEntryHelper;
 	public var last_addition_time: float;
 	
 	//---------------------------------------------------
@@ -20,6 +21,7 @@ statemachine class CProgressOnThePath_QuestGoblin
 	public function initialise(master: CProgressOnThePath)
 	{
 		this.master = master;
+		this.entity_helper = master.PotP_EntityHelper;
 		this.storage = master.PotP_PersistentStorage;
 		
 		this.quest_entity_array = storage.pQuestStorage.MasterList_Quests;
@@ -131,9 +133,9 @@ state QuestUpdated in CProgressOnThePath_QuestGoblin
 		var Idx: int = parent.quest_lookup_array.FindFirst(parent.storage.MasterList_QuestGoblin[0].baseName);
 		var status: int = parent.manager.GetEntryStatus(parent.storage.MasterList_QuestGoblin[0]);
 
-		if (Idx != -1 && parent.quest_entity_array[Idx].UpdateQuestEntry(status))
+		if (Idx != -1 && parent.entity_helper.UpdateQuestEntry(parent.quest_entity_array[Idx], status))
 		{			
-			parent.quest_entity_array[Idx].AddToBackgroundQueue(status);
+			parent.entity_helper.AddToBackgroundQueue(parent.quest_entity_array[Idx], status);
 		}
 			
 		SleepOneFrame();		

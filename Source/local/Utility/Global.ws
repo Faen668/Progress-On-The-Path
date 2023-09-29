@@ -43,6 +43,42 @@ function GetPotP_QuestGoblin(optional caller: string): CProgressOnThePath_QuestG
 //-- Functions --------------------------------------
 //---------------------------------------------------
 
+function GetPotP_Mappins(): CProgressOnThePath_MapPins 
+{
+	var master: CProgressOnThePath;
+	GetPotP(master);
+	
+	return master.PotP_PinManager;
+}
+
+//---------------------------------------------------
+//-- Functions --------------------------------------
+//---------------------------------------------------
+
+function GetPotP_Storage(): CProgressOnThePath_Storage 
+{
+	var master: CProgressOnThePath;
+	GetPotP(master);
+	
+	return master.PotP_PersistentStorage;
+}
+
+//---------------------------------------------------
+//-- Functions --------------------------------------
+//---------------------------------------------------
+
+function GetPotP_Notifications(): CProgressOnThePath_Notifications 
+{
+	var master: CProgressOnThePath;
+	GetPotP(master);
+	
+	return master.PotP_Notifications;
+}
+
+//---------------------------------------------------
+//-- Functions --------------------------------------
+//---------------------------------------------------
+
 function PotP_IsPlayerBusy(): bool 
 {
 	if (PotP_PlayerIsMeditating()) 
@@ -100,9 +136,6 @@ function PotP_SortPreviewData(out pData: array<PotP_PreviewEntry>, type: PotP_Pr
 			if (temp[Idx] == data[Edx].localname) 
 			{
 				data[Edx].arrayType  	= type;
-				data[Edx].storage 		= master.PotP_PersistentStorage;
-				data[Edx].notifications = master.PotP_Notifications;
-				data[Edx].mappins 		= master.PotP_PinManager;
 					
 				pData.PushBack( data[Edx] );
 				
@@ -173,15 +206,15 @@ function PotP_ChangeQuestStatus(identifier: string, optional value: pStatus)
 	switch (value) 
 	{
 	case completed:	
-		EntList[Idx].SetCompleted(true);
+		master.PotP_EntityHelper.SetCompleted(EntList[Idx], true);
 		break;
 		
 	case ignored:
-		EntList[Idx].SetIgnored(true);
+		master.PotP_EntityHelper.SetIgnored(EntList[Idx], true);
 		break;
 		
 	default:
-		EntList[Idx].SetAvailable(true);
+		master.PotP_EntityHelper.SetAvailable(EntList[Idx], true);
 		break;
 	}
 }

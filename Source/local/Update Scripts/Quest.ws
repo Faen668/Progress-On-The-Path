@@ -9,6 +9,7 @@ statemachine class CProgressOnThePath_Quest_Updater
 	
 	public var master: CProgressOnThePath;
 	public var storage: CProgressOnThePath_Storage;
+	public var entity_helper: CProgressOnThePath_PreviewEntryHelper;
 	
 	//---------------------------------------------------
 
@@ -16,6 +17,7 @@ statemachine class CProgressOnThePath_Quest_Updater
 	{
 		this.master = master;
 		this.storage = master.PotP_PersistentStorage;
+		this.entity_helper = master.PotP_EntityHelper;
 		return this;
 	}
 
@@ -95,9 +97,9 @@ state Updating in CProgressOnThePath_Quest_Updater
 				continue;
 			}
 			
-			if (quest_entity_array[Edx].UpdateQuestEntry(status) && (status == JS_Success || status == JS_Failed))
+			if (parent.entity_helper.UpdateQuestEntry(quest_entity_array[Edx], status) && (status == JS_Success || status == JS_Failed))
 			{
-				quest_entity_array[Edx].AddToNotificationQueue();
+				parent.entity_helper.AddToNotificationQueue(quest_entity_array[Edx]);
 			}				
 		}
 	}

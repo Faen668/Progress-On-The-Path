@@ -9,12 +9,14 @@ statemachine class CProgressOnThePath_EventListener
 		default filename = 'PotP Event Listener';
 	
 	public var master: CProgressOnThePath;
+	public var entity_helper: CProgressOnThePath_PreviewEntryHelper;
 	
 	//---------------------------------------------------
 
 	public function initialise(master: CProgressOnThePath)
 	{
 		this.master = master;
+		this.entity_helper = master.PotP_EntityHelper;
 	}
 }
 
@@ -87,7 +89,7 @@ state Checking in CProgressOnThePath_EventListener
 		{
 			if (FactsQuerySum(events_array[i].entryname) > 0) 
 			{
-				if (!events_array[i].IsPlayable()) 
+				if (!parent.entity_helper.IsPlayable(events_array[i])) 
 				{
 					continue;
 				}

@@ -13,6 +13,7 @@ statemachine class CProgressOnThePath_ItemsGoblin extends IInventoryScriptedList
 	public var player_inv: CInventoryComponent;
 	public var master: CProgressOnThePath;
 	public var storage: CProgressOnThePath_Storage;
+	public var entity_helper: CProgressOnThePath_PreviewEntryHelper;
 	public var notifications: CProgressOnThePath_Notifications;
 	public var last_addition_time: float;
 	
@@ -22,6 +23,7 @@ statemachine class CProgressOnThePath_ItemsGoblin extends IInventoryScriptedList
 	{
 		this.master = master;
 		this.storage = master.PotP_PersistentStorage;
+		this.entity_helper = master.PotP_EntityHelper;
 		this.notifications = master.PotP_Notifications;
 		
 		this.itm_list = storage.pItemsStorage.SupportedItemsList;
@@ -35,18 +37,25 @@ statemachine class CProgressOnThePath_ItemsGoblin extends IInventoryScriptedList
 	
 	event OnInventoryScriptedEvent( eventType : EInventoryEventType, itemId : SItemUniqueId, quantity : int, fromAssociatedInventory : bool ) 
 	{
+		PotP_Logger("Got Proc with " + player_inv.GetItemName(itemId));
+		
 		if (eventType != IET_ItemAdded) 
 		{
 			return true;
 		}
 		
 		if (this.IsInState('Disabled')) 
-		{ 
+		{
+			PotP_Logger("Got Disabled");
 			return true;
 		}
-			
+		
+		PotP_Logger("Got Enabled");
+		PotP_Logger("List size = " + itm_list.Size());
+		
 		if ( itm_list.Contains(player_inv.GetItemName(itemId)) )
 		{
+			PotP_Logger("Got Item");
 			this.storage.MasterList_ItemsGoblin.PushBack(itemId);
 			this.last_addition_time = theGame.GetEngineTimeAsSeconds();
 			
@@ -55,6 +64,7 @@ statemachine class CProgressOnThePath_ItemsGoblin extends IInventoryScriptedList
 				this.GotoState('ItemAdded'); 
 			}
 		}
+		PotP_Logger("Got No Item");
 	}
 }
 
@@ -152,11 +162,11 @@ state ItemAdded in CProgressOnThePath_ItemsGoblin
 		entry_data = parent.ent_list[Edx];
 		
 		parent.player_inv.GetItemQualityFromName(item_name, min, max);
-		if ( entry_data.IsPlayable() && (min >= 4 || parent.player_inv.ItemHasTag(parent.storage.MasterList_ItemsGoblin[0], 'GwintCard') ) ) 
+		if ( parent.entity_helper.IsPlayable(entry_data) && (min >= 4 || parent.player_inv.ItemHasTag(parent.storage.MasterList_ItemsGoblin[0], 'GwintCard') ) ) 
 		{
 			PotP_Logger("Processing " + entry_data.item_name, , parent.filename);
-			entry_data.AddToBackgroundQueue();
-			entry_data.SetCompleted();
+			parent.entity_helper.AddToBackgroundQueue(entry_data);
+			parent.entity_helper.SetCompleted(entry_data);
 		}
 		
 		SleepOneFrame();

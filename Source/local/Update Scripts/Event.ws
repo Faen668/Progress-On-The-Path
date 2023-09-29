@@ -9,12 +9,14 @@ statemachine class CProgressOnThePath_Event_Updater
 	
 	public var master: CProgressOnThePath;
 	public var entity: PotP_PreviewEntry;
+	public var entity_helper: CProgressOnThePath_PreviewEntryHelper;
 	
 	//---------------------------------------------------
 
 	public function initialise(master: CProgressOnThePath) : CProgressOnThePath_Event_Updater
 	{
 		this.master = master;
+		this.entity_helper = master.PotP_EntityHelper;
 		return this;
 	}
 
@@ -82,16 +84,15 @@ state UpdateAll in CProgressOnThePath_Event_Updater
 
 	latent function UpdateAll_Main() 
 	{
-		var master: CProgressOnThePath = parent.master;
-		var pData_E: array<PotP_PreviewEntry> = master.PotP_PersistentStorage.pEventStorage.MasterList_Events;
+		var pData_E: array<PotP_PreviewEntry> = parent.master.PotP_PersistentStorage.pEventStorage.MasterList_Events;
 		var Idx: int;
 		
 		for ( Idx = 0; Idx < pData_E.Size(); Idx += 1 )
 		{				
-			if (pData_E[Idx].IsPlayable() && FactsQuerySum(pData_E[Idx].entryname) > 0) 
+			if (parent.entity_helper.IsPlayable(pData_E[Idx]) && FactsQuerySum(pData_E[Idx].entryname) > 0) 
 			{
-				pData_E[Idx].SetCompleted();
-				pData_E[Idx].AddToNotificationQueue();
+				parent.entity_helper.SetCompleted(pData_E[Idx]);
+				parent.entity_helper.AddToNotificationQueue(pData_E[Idx]);
 			}
 		}
 	}
@@ -123,19 +124,17 @@ state UpdateOne in CProgressOnThePath_Event_Updater
 
 	latent function UpdateOne_Main() 
 	{
-		var master: CProgressOnThePath = parent.master;
-		
 		FactsSet(parent.entity.entryname, 1);
 		
-		parent.entity.SetCompleted();
-		parent.entity.AddToBackgroundQueue(2);
+		parent.entity_helper.SetCompleted(parent.entity);
+		parent.entity_helper.AddToBackgroundQueue(parent.entity, 2);
 
 		while (PotP_IsPlayerBusy())
 		{
 			SleepOneFrame();
 		}
 
-		master.PotP_Notifications.NotifyPlayerFromBackgroundProcess();
+		parent.master.PotP_Notifications.NotifyPlayerFromBackgroundProcess();
 	}
 }
 
@@ -165,7 +164,7 @@ quest function PotP_CompleteEvent(fact_name: name, optional fact_name_string: st
 	for (Idx = 0; Idx < pEvent_List.Size(); Idx += 1)
 	{
 		// If a match is found, send the entity to the event update class.	
-		if (pEvent_List[Idx].entryname == NameToString(fact_name) && pEvent_List[Idx].IsPlayable())
+		if (pEvent_List[Idx].entryname == NameToString(fact_name) && master.PotP_EntityHelper.IsPlayable(pEvent_List[Idx]))
 		{
 			master.PotP_UpdaterClass.PotP_Event.UpdateEvent(pEvent_List[Idx]);
 		}		
@@ -198,7 +197,7 @@ function PotP_CompleteEventByString(fact_name: string)
 	for (Idx = 0; Idx < pEvent_List.Size(); Idx += 1)
 	{
 		// If a match is found, send the entity to the event update class.	
-		if (pEvent_List[Idx].entryname == fact_name && pEvent_List[Idx].IsPlayable())
+		if (pEvent_List[Idx].entryname == fact_name && master.PotP_EntityHelper.IsPlayable(pEvent_List[Idx]))
 		{
 			master.PotP_UpdaterClass.PotP_Event.UpdateEvent(pEvent_List[Idx]);
 		}	
@@ -234,13 +233,13 @@ quest function PotP_UnlockEvent(UUID: string, Location: string, Fact: string)
 		if (pEvent_List[Idx].uuid == UUID)
 		{
 			// If the event is already unlocked, return.
-			if (pEvent_List[Idx].IsEventUnlocked())
+			if (master.PotP_EntityHelper.IsEventUnlocked(pEvent_List[Idx]))
 			{
 				return;
 			}
 			
 			//Unlock the event.
-			pEvent_List[Idx].UnlockEvent();
+			master.PotP_EntityHelper.UnlockEvent(pEvent_List[Idx]);
 			
 			//Reset Map Pins to show unlocked event on the world map.
 			master.PotP_PinManager.GotoState('Updating');

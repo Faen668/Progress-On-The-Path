@@ -8,12 +8,14 @@ statemachine class CProgressOnThePath_WorldGoblin
 		default filename = 'PotP World Goblin';
 	
 	public var master: CProgressOnThePath;
+	public var entity_helper: CProgressOnThePath_PreviewEntryHelper;
 	
 	//---------------------------------------------------
 
 	public function initialise(master: CProgressOnThePath)
 	{
 		this.master = master;
+		this.entity_helper = master.PotP_EntityHelper;
 	}
 }
 
@@ -84,8 +86,8 @@ state Checking in CProgressOnThePath_WorldGoblin
 		for ( Idx = 0; Idx < pData_E.Size(); Idx += 1 )
 		{
 			if (this.IsMapPinEligible(pData_E[Idx], MapManager)) {
-				pData_E[Idx].SetCompleted();
-				pData_E[Idx].AddToBackgroundQueue();
+				parent.entity_helper.SetCompleted(pData_E[Idx]);
+				parent.entity_helper.AddToBackgroundQueue(pData_E[Idx]);
 			}
 		}
 		
@@ -102,7 +104,7 @@ state Checking in CProgressOnThePath_WorldGoblin
 
 	private function IsMapPinEligible(entry_data: PotP_PreviewEntry, MapManager: CCommonMapManager) : bool {
 		
-		if (!entry_data.IsPlayable())
+		if (!parent.entity_helper.IsPlayable(entry_data))
 		{
 			return false;
 		}

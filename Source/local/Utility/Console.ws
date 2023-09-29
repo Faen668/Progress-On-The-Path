@@ -39,7 +39,7 @@ exec function pt_reload()
 	
 	if (GetPotP(master, 'pt_reload'))
 	{
-		PotP_LoadStorageCollection(master, 'All', true);
+		master.PotP_PersistentStorage.PotP_LoadStorageCollection('All', true);
 	}
 }
 
@@ -136,9 +136,9 @@ exec function pt_testtest()
 		Q = storage.pQuestStorage.MasterList_Quests[Edx];
 		W = storage.pWorldStorage.MasterList_World[Edx];
 		
-		I.AddToBackgroundQueue();
-		Q.AddToBackgroundQueue(2);
-		W.AddToBackgroundQueue();
+		master.PotP_EntityHelper.AddToBackgroundQueue(I);
+		master.PotP_EntityHelper.AddToBackgroundQueue(Q, 2);
+		master.PotP_EntityHelper.AddToBackgroundQueue(W);
 			
 		master.PotP_Notifications.NotifyPlayerFromBackgroundProcess();
 	}
@@ -184,19 +184,19 @@ exec function pt_complete()
 	if (GetPotP(master, 'pt_complete'))
 	{
 		for ( Idx = 0; Idx < master.PotP_PersistentStorage.pEventStorage.MasterList_Events.Size(); Idx += 1 ) {
-			master.PotP_PersistentStorage.pEventStorage.MasterList_Events[Idx].SetCompleted();
+			master.PotP_EntityHelper.SetCompleted(master.PotP_PersistentStorage.pEventStorage.MasterList_Events[Idx]);
 		}
 		
 		for ( Idx = 0; Idx < master.PotP_PersistentStorage.pQuestStorage.MasterList_Quests.Size(); Idx += 1 ) {
-			master.PotP_PersistentStorage.pQuestStorage.MasterList_Quests[Idx].SetCompleted();
+			master.PotP_EntityHelper.SetCompleted(master.PotP_PersistentStorage.pQuestStorage.MasterList_Quests[Idx]);
 		}
 
 		for ( Idx = 0; Idx < master.PotP_PersistentStorage.pWorldStorage.MasterList_World.Size(); Idx += 1 ) {
-			master.PotP_PersistentStorage.pWorldStorage.MasterList_World[Idx].SetCompleted();
+			master.PotP_EntityHelper.SetCompleted(master.PotP_PersistentStorage.pWorldStorage.MasterList_World[Idx]);
 		}
 
 		for ( Idx = 0; Idx < master.PotP_PersistentStorage.pItemsStorage.MasterList_Items.Size(); Idx += 1 ) {
-			master.PotP_PersistentStorage.pItemsStorage.MasterList_Items[Idx].SetCompleted();
+			master.PotP_EntityHelper.SetCompleted(master.PotP_PersistentStorage.pItemsStorage.MasterList_Items[Idx]);
 		}	
 	}
 }

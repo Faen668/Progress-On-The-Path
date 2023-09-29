@@ -34,10 +34,15 @@ class ProgressOnThepath_StringBuilder
 	private var typeFilter: int;
 		default typeFilter = 0;
 		
+	private var master: CProgressOnThePath;
+	private var entity_helper: CProgressOnThePath_PreviewEntryHelper;
+		
 	//---------------------------------------------------
 	
-	public function init() : ProgressOnThepath_StringBuilder 
-	{		
+	public function init(master: CProgressOnThePath) : ProgressOnThepath_StringBuilder 
+	{
+		this.master = master;
+		this.entity_helper = master.PotP_EntityHelper;
 		return this;
 	}
 
@@ -91,7 +96,7 @@ class ProgressOnThepath_StringBuilder
 	
 	private function FormatHeaderIcon(data: PotP_PreviewEntry, header: string) : string
 	{
-		return StrReplace(header, "[ICON_PATH]", "<img src='img://" + data.GetIconPath() + "' height='20' width='20' vspace='-5' />&nbsp;");
+		return StrReplace(header, "[ICON_PATH]", "<img src='img://" + entity_helper.GetIconPath(data) + "' height='20' width='20' vspace='-5' />&nbsp;");
 	}
 	
 	//---------------------------------------------------
@@ -161,7 +166,7 @@ class ProgressOnThepath_StringBuilder
 		total_count = this.data.Size();
 		
 		for ( Idx = 0; Idx < this.data.Size(); Idx += 1 ) {
-			completed_count += (int) !this.data[Idx].IsPlayable();
+			completed_count += (int) !entity_helper.IsPlayable(this.data[Idx]);
 		}
 		
 		// Return message and counts as a result.
@@ -178,10 +183,10 @@ class ProgressOnThepath_StringBuilder
 	
 	private function GetString(entry_data: PotP_PreviewEntry) : string 
 	{
-		var localName: 		string = entry_data.getID() + entry_data.localname;
-		var isCompleted: 	bool = entry_data.IsCompleted();
-		var isIgnored: 		bool = entry_data.IsIgnored();
-		var isInProgress: 	bool = entry_data.IsInProgress();
+		var localName: 		string = entity_helper.getID(entry_data) + entry_data.localname;
+		var isCompleted: 	bool = entity_helper.IsCompleted(entry_data);
+		var isIgnored: 		bool = entity_helper.IsIgnored(entry_data);
+		var isInProgress: 	bool = entity_helper.IsInProgress(entry_data);
 		var entry_line:		string;
 		
 		// Return empty string as this entry is either completed or ignored and the options to show are diabled.
@@ -282,10 +287,15 @@ class ProgressOnThepath_GwentCardBuilder
 	private var filterString: string;
 		default filterString = "";
 		
+	private var master: CProgressOnThePath;
+	private var entity_helper: CProgressOnThePath_PreviewEntryHelper;
+		
 	//---------------------------------------------------
 	
-	public function init() : ProgressOnThepath_GwentCardBuilder 
-	{		
+	public function init(master: CProgressOnThePath) : ProgressOnThepath_GwentCardBuilder 
+	{
+		this.master = master;
+		this.entity_helper = master.PotP_EntityHelper;
 		return this;
 	}
 
@@ -347,7 +357,7 @@ class ProgressOnThepath_GwentCardBuilder
 	
 	private function FormatHeaderIcon(data: PotP_PreviewEntry, header: string) : string
 	{
-		return StrReplace(header, "[ICON_PATH]", "<img src='img://" + data.GetIconPath() + "' height='20' width='20' vspace='-5' />&nbsp;");
+		return StrReplace(header, "[ICON_PATH]", "<img src='img://" + entity_helper.GetIconPath(data) + "' height='20' width='20' vspace='-5' />&nbsp;");
 	}
 	
 	//---------------------------------------------------
@@ -451,7 +461,7 @@ class ProgressOnThepath_GwentCardBuilder
 		total_count = this.data.Size();
 		
 		for ( Idx = 0; Idx < this.data.Size(); Idx += 1 ) {
-			completed_count += (int) !this.data[Idx].IsPlayable();
+			completed_count += (int) !entity_helper.IsPlayable(this.data[Idx]);
 		}
 		
 		// Return message and counts as a result.
@@ -468,10 +478,10 @@ class ProgressOnThepath_GwentCardBuilder
 	
 	private function GetString(entry_data: PotP_PreviewEntry) : string 
 	{
-		var localName: 		string = entry_data.getID() + entry_data.localname;
-		var isCompleted: 	bool = entry_data.IsCompleted();
-		var isIgnored: 		bool = entry_data.IsIgnored();
-		var isInProgress: 	bool = entry_data.IsInProgress();
+		var localName: 		string = entity_helper.getID(entry_data) + entry_data.localname;
+		var isCompleted: 	bool = entity_helper.IsCompleted(entry_data);
+		var isIgnored: 		bool = entity_helper.IsIgnored(entry_data);
+		var isInProgress: 	bool = entity_helper.IsInProgress(entry_data);
 		var entry_line:		string;
 		
 		// Return empty string as this entry is either completed or ignored and the options to show are diabled.
