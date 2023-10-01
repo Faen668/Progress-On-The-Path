@@ -30,28 +30,12 @@ class CProgressOnThePath extends SU_BaseBootstrappedMod {
 	public var PotP_EntityHelper:		CProgressOnThePath_PreviewEntryHelper;
 	
 	//Depreciated Classes to remove on next new game version
-	public var PotP_ArrayManager: 		CProgressOnThePath_ArrayHandler;
-
-	private var curVersionStr: string;
-		default curVersionStr = "5.2.8";
-		
-	private var curVersionInt: int;
-		default curVersionInt = 528;
-	
-	private var hasUpdated: bool;
-		default hasUpdated = false;
-	
-	private var initStr: string;
-		default initStr = "PotP_Initialised";
-		
-	private var VersStr: string;
-		default VersStr = "ProgressOnThePath_CurrentModVersion";
-		
-	public var LastUpdateTime: float;
-		default LastUpdateTime = 0;
-		
+	public var PotP_ArrayManager: 		CProgressOnThePath_ArrayHandler;		
 	default tag = 'CProgressOnThePath_BootStrapper';
 
+	public var LastUpdateTime: float;
+		default LastUpdateTime = 0;
+			
 	//---------------------------------------------------
 	
 	public function start() 
@@ -92,34 +76,43 @@ class CProgressOnThePath extends SU_BaseBootstrappedMod {
 	//---------------------------------------------------
 	
 	public function SetModVersion() 
-	{		
+	{
+		var newModVersion_Str: string = "5.2.8.1";
+		var newModVersion_Int: int = 5281;
+
+		var initStr: string = "PotP_Initialised";
+		var VersStr: string = "ProgressOnThePath_CurrentModVersion";
+
+		//pt_checkfact("ProgressOnThePath_CurrentModVersion")
+		
 		if (FactsQuerySum(initStr) != 1) 
 		{
 			this.LoadDefaults();
 			FactsSet(initStr, 1);
-			FactsSet(VersStr, curVersionInt);
+			FactsSet(VersStr, newModVersion_Int);
 
 			PotP_PopupManager.Showpopup(GetLocStringByKeyExt("panel_QT_Name"), GetLocStringByKeyExt("PotP_InstallMessage"), "PotP_InstallMessage", "Hint", true);
 			return;
 		}
 
-		this.UpdateMod();	
-		
-		if (hasUpdated) 
+		if (this.UpdateMod(VersStr, newModVersion_Int)) 
 		{
-			PotP_PopupManager.Showpopup(GetLocStringByKeyExt("panel_QT_Name"), GetLocStringByKeyExt("PotP_UpdatedMessage") + curVersionStr, "", "Hint", false);
+			PotP_PopupManager.Showpopup(GetLocStringByKeyExt("panel_QT_Name"), GetLocStringByKeyExt("PotP_UpdatedMessage") + newModVersion_Str, "", "Hint", false);
 		}
 	}
 	
 	//---------------------------------------------------
 	
-	public function UpdateMod() 
+	private function UpdateMod(VersStr: string, newModVersion_Int: int) : bool
 	{
-		if (FactsQuerySum(VersStr) < curVersionInt) 
+		if (FactsQuerySum(VersStr) < newModVersion_Int) 
 		{
-			if (FactsQuerySum(VersStr) < 527) { PotP_PersistentStorage.PotP_LoadStorageCollection('All'); FactsSet(VersStr, 527); hasUpdated = true; }
-			if (FactsQuerySum(VersStr) < 528) { FactsSet(VersStr, 528); hasUpdated = true; }
+			if (FactsQuerySum(VersStr) < 527) { PotP_PersistentStorage.PotP_LoadStorageCollection('All'); FactsSet(VersStr, 527);}
+			if (FactsQuerySum(VersStr) < 5281) { FactsSet(VersStr, 5281);}
+			return true;
 		}
+		
+		return false;
 	}
 	
 	//---------------------------------------------------
