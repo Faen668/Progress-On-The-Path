@@ -6,6 +6,7 @@
 ; This file is used to create translations using https://www.nexusmods.com/witcher3/mods/1055 all credits go to rmemr
 ;
 2116568000||panel_Mods|Mods
+2117171291||panel_FaenMods|Faen's Mods
 2116568001||panel_QT_Name|Progress on the Path
 2116568002||panel_glossary_potp_tutorial|Progress on the Path - Tutorials
 2116568003||panel_glossary_potp_previews|Progress on the Path - Previews
@@ -2330,7 +2331,7 @@
 2117171106||ProgressOnThePath_PreviewTag_QR|<font size="17" color="#C8566B"> (Quest Reward)</font>
 2117171107||ProgressOnThePath_PreviewTag_WO|<font size="17" color="#C8566B"> (Won)</font>
 ;
-2117171108||preset_Mods_QT_Name_QT_Page_Notifications|Notification Settings
+2117171108||preset_Mods_FaenMods_QT_Name_QT_Page_Notifications|Notification Settings
 2117171109||preset_value_QT_Preset_Ena|<font color="#2ba84a">Enabled</font>
 2117171110||preset_value_QT_Preset_Lig|<font color="#ECE1A2">Lite Mode</font>
 2117171111||preset_value_QT_Preset_Dis|<font color="#C8566B">Disabled</font>
@@ -2557,4 +2558,14 @@
 ;
 2117171290||PotP_Preview_Missable_13|<br/><font color="#9D75BF">Complete 'The Calm Before the Storm' before 'Ciri's Story: Out of the Shadows'<br/></font>
 ;
-;Next ID 2117171291
+;
+;
+; 5.2.8.2  -------------------------------------------------------------------------------------------------------------------------------------
+;
+;
+;
+2117171292||PotP_Preview_Missable_14|<br/><font color="#9D75BF">Only Playable if you did not do Keira's questline or allowed her to bargain with Radovid.<br/></font>
+2117171293||PotP_Preview_Missable_15|<br/><font color="#9D75BF">Only playable if you romance both Triss and Yen.<br/></font>
+2117171294||PotP_Preview_Missable_16|<br/><font color="#9D75BF">Only playable after 'The Cave of Dreams' if you got out of Lugo's prison with Simuns's help during 'Stranger in a Strange Land'<br/></font>
+;
+;Next ID 2117171295

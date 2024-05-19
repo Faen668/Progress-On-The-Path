@@ -345,7 +345,7 @@ state Build in CProgressOnThePath_WorldStorage
 		parent.BanditCamps_Novigrad.PushBack(parent.CreateEntry().initWorld(master.PotP_EntityHelper, group + "_05", PotP_R_NO, PotP_I_Camps, PotP_E_Primary, 'ep1_poi16_mp'));
 		parent.BanditCamps_Novigrad.PushBack(parent.CreateEntry().initWorld(master.PotP_EntityHelper, group + "_06", PotP_R_NO, PotP_I_Camps, PotP_E_Primary, 'ep1_poi23_mp'));
 		parent.BanditCamps_Novigrad.PushBack(parent.CreateEntry().initWorld(master.PotP_EntityHelper, group + "_07", PotP_R_NO, PotP_I_Camps, PotP_E_Primary, 'ep1_poi09_mp'));
-		parent.BanditCamps_Novigrad.PushBack(parent.CreateEntry().initWorld(master.PotP_EntityHelper, group + "_08", PotP_R_NO, PotP_I_Camps, PotP_E_Primary, 'ep1_poi_ofir_camp_mp'));
+		parent.BanditCamps_Novigrad.PushBack(parent.CreateEntry().initWorld(master.PotP_EntityHelper, group + "_08", PotP_R_NO, PotP_I_Camps, PotP_E_Missable, 'ep1_poi_ofir_camp_mp'));
 		parent.BanditCamps_Novigrad.PushBack(parent.CreateEntry().initWorld(master.PotP_EntityHelper, group + "_09", PotP_R_NO, PotP_I_Camps, PotP_E_Primary, 'ep1_poi11_mp'));
 		parent.BanditCamps_Novigrad.PushBack(parent.CreateEntry().initWorld(master.PotP_EntityHelper, group + "_10", PotP_R_NO, PotP_I_Camps, PotP_E_Primary, 'ep1_poi12_mp'));
 		parent.BanditCamps_Novigrad.PushBack(parent.CreateEntry().initWorld(master.PotP_EntityHelper, group + "_11", PotP_R_NO, PotP_I_Camps, PotP_E_Primary, 'ep1_poi13_mp'));

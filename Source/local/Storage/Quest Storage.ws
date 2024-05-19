@@ -57,6 +57,9 @@ statemachine class CProgressOnThePath_QuestStorage
 	var MissableQuests_Q403			: array<PotP_PreviewEntry>;
 	var MissableQuests_Q702			: array<PotP_PreviewEntry>;	
 	var MissableQuests_Ugly			: array<PotP_PreviewEntry>;
+	var MissableQuests_Keira		: array<PotP_PreviewEntry>;
+	var MissableQuests_SQ209		: array<PotP_PreviewEntry>;
+	var MissableQuests_Tango		: array<PotP_PreviewEntry>;
 	
 	var UUIDINT: int;
 	default UUIDINT = 1000;
@@ -178,7 +181,19 @@ statemachine class CProgressOnThePath_QuestStorage
 		case "PotP_TrackingGroup_MainQuests_SkelligeAct1_07":
 			this.MissableQuests_Ugly.PushBack(pData);
 			break;
-			
+		
+		case "PotP_TrackingGroup_SideQuests_Novigrad_05":
+			this.MissableQuests_Keira.PushBack(pData);
+			break;
+
+		case "PotP_TrackingGroup_SideQuests_Novigrad_27":
+			this.MissableQuests_Tango.PushBack(pData);
+			break;
+
+		case "PotP_TrackingGroup_SideQuests_Skellige_04":
+			this.MissableQuests_SQ209.PushBack(pData);
+			break;			
+
 		default:
 			PotP_Logger("Unrecognised Missable Quest Detected - " + pData.localname);
 			break;
@@ -236,6 +251,9 @@ state Build in CProgressOnThePath_QuestStorage
 		parent.MissableQuests_Q702.Clear();
 		parent.MissableQuests_Q301.Clear();
 		parent.MissableQuests_Ugly.Clear();
+		parent.MissableQuests_Keira.Clear();
+		parent.MissableQuests_Tango.Clear();
+		parent.MissableQuests_SQ209.Clear();
 		
 		this.Build_Main();
 		this.Build_Side();
@@ -533,7 +551,7 @@ state Build in CProgressOnThePath_QuestStorage
 		parent.SideQuests_Novigrad.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_02", PotP_E_Missable, 		PotP_R_NO, PotP_I_Sides, "SQ310 Dangerous Game"));
 		parent.SideQuests_Novigrad.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_03", PotP_E_Missable, 		PotP_R_NO, PotP_I_Sides, "SQ315 Talar"));
 		parent.SideQuests_Novigrad.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_04", PotP_E_Primary,  		PotP_R_NO, PotP_I_Sides, "mq3039_crows"));
-		parent.SideQuests_Novigrad.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_05", PotP_E_Primary,  		PotP_R_NO, PotP_I_Sides, "Q310 Retrieving Keira"));
+		parent.SideQuests_Novigrad.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_05", PotP_E_Missable,  		PotP_R_NO, PotP_I_Sides, "Q310 Retrieving Keira"));
 		parent.SideQuests_Novigrad.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_06", PotP_E_Missable, 		PotP_R_NO, PotP_I_Sides, "SQ301 Triss"));
 		parent.SideQuests_Novigrad.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_07", PotP_E_Primary_DLC1,	PotP_R_NO, PotP_I_Sides, "q602romance"));
 		parent.SideQuests_Novigrad.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_08", PotP_E_Primary, 		PotP_R_NO, PotP_I_Sides, "MQ3037 Sleeping Vampire"));
@@ -555,7 +573,7 @@ state Build in CProgressOnThePath_QuestStorage
 		parent.SideQuests_Novigrad.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_24", PotP_E_Primary, 		PotP_R_NO, PotP_I_Sides, "mq3002 Spies of Novigrad"));
 		parent.SideQuests_Novigrad.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_25", PotP_E_Primary, 		PotP_R_NO, PotP_I_Sides, "SQ306 Maverick"));
 		parent.SideQuests_Novigrad.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_26", PotP_E_Primary, 		PotP_R_NO, PotP_I_Sides, "Q302 King Beggar's Debt"));
-		parent.SideQuests_Novigrad.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_27", PotP_E_Primary, 		PotP_R_NO, PotP_I_Sides, "Q310 Romantic Disaster"));
+		parent.SideQuests_Novigrad.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_27", PotP_E_Missable, 		PotP_R_NO, PotP_I_Sides, "Q310 Romantic Disaster"));
 		parent.SideQuests_Novigrad.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_28", PotP_E_Primary, 		PotP_R_NO, PotP_I_Sides, "MQ3017 Little Red Raiding Hood"));
 		parent.SideQuests_Novigrad.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_29", PotP_E_Primary, 		PotP_R_NO, PotP_I_Sides, "mq3027_mymanifest"));
 		parent.SideQuests_Novigrad.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_30", PotP_E_Primary, 		PotP_R_NO, PotP_I_Sides, "mq3016_wandering_bards"));
@@ -601,7 +619,7 @@ state Build in CProgressOnThePath_QuestStorage
 		parent.SideQuests_Skellige.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_01", PotP_E_Primary, 	PotP_R_SK, PotP_I_Sides, "MQ2009 Immoral Proposition"));
 		parent.SideQuests_Skellige.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_02", PotP_E_Primary, 	PotP_R_SK, PotP_I_Sides, "mq2001 Jarl's Horn"));
 		parent.SideQuests_Skellige.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_03", PotP_E_Primary, 	PotP_R_SK, PotP_I_Sides, "mq2010 human trap"));
-		parent.SideQuests_Skellige.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_04", PotP_E_Primary, 	PotP_R_SK, PotP_I_Sides, "MQ2051 Unfinished Business"));
+		parent.SideQuests_Skellige.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_04", PotP_E_Missable, 	PotP_R_SK, PotP_I_Sides, "MQ2051 Unfinished Business"));
 		parent.SideQuests_Skellige.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_05", PotP_E_Primary, 	PotP_R_SK, PotP_I_Sides, "MQ2018 : Bandits"));
 		parent.SideQuests_Skellige.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_06", PotP_E_Primary, 	PotP_R_SK, PotP_I_Sides, "mq2022 Stupid Side of Courage"));
 		parent.SideQuests_Skellige.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_07", PotP_E_Missable, 	PotP_R_SK, PotP_I_Sides, "Q208 Heroesmead"));

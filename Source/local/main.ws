@@ -77,8 +77,8 @@ class CProgressOnThePath extends SU_BaseBootstrappedMod {
 	
 	public function SetModVersion() 
 	{
-		var newModVersion_Str: string = "5.2.8.1";
-		var newModVersion_Int: int = 5281;
+		var newModVersion_Str: string = "5.2.8.2";
+		var newModVersion_Int: int = 5282;
 
 		var initStr: string = "PotP_Initialised";
 		var VersStr: string = "ProgressOnThePath_CurrentModVersion";
@@ -109,9 +109,13 @@ class CProgressOnThePath extends SU_BaseBootstrappedMod {
 		{
 			if (FactsQuerySum(VersStr) < 527) { PotP_PersistentStorage.PotP_LoadStorageCollection('All'); FactsSet(VersStr, 527);}
 			if (FactsQuerySum(VersStr) < 5281) { FactsSet(VersStr, 5281);}
+			if (FactsQuerySum(VersStr) < 5282) { 
+				PotP_PersistentStorage.PotP_LoadStorageCollection('Quest'); 
+				PotP_PersistentStorage.PotP_LoadStorageCollection('World');
+				FactsSet(VersStr, 5282);
+			}
 			return true;
 		}
-		
 		return false;
 	}
 	

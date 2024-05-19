@@ -105,3 +105,5 @@ state Updating in CProgressOnThePath_Quest_Updater
 	}
 }
 
+
+

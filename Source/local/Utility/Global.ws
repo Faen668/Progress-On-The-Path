@@ -67,6 +67,18 @@ function GetPotP_Storage(): CProgressOnThePath_Storage
 //-- Functions --------------------------------------
 //---------------------------------------------------
 
+function GetPotP_EntityHelper(): CProgressOnThePath_PreviewEntryHelper 
+{
+	var master: CProgressOnThePath;
+	GetPotP(master);
+	
+	return master.PotP_EntityHelper;
+}
+
+//---------------------------------------------------
+//-- Functions --------------------------------------
+//---------------------------------------------------
+
 function GetPotP_Notifications(): CProgressOnThePath_Notifications 
 {
 	var master: CProgressOnThePath;
@@ -218,7 +230,69 @@ function PotP_ChangeQuestStatus(identifier: string, optional value: pStatus)
 		break;
 	}
 }
+
+//---------------------------------------------------
+//-- Functions --------------------------------------
+//---------------------------------------------------
+
+function PotP_GetCollectedString(tooltipDataProvider: W3TooltipComponent, itemName: name,  itemLabel: string, item : SItemUniqueId, tooltipInv : CInventoryComponent ) : string
+{
+	var entity: PotP_PreviewEntry;
+	var helper: CProgressOnThePath_PreviewEntryHelper;
 	
+	if (!tooltipDataProvider.PotP_EntityHelper) {
+		tooltipDataProvider.PotP_EntityHelper = GetPotP_EntityHelper();
+	}
+	
+	helper = tooltipDataProvider.PotP_EntityHelper;
+
+	if (tooltipInv.GetItemQuality(item) < 4 || !helper.GetEntityByItemName(itemName, entity)) {
+		return itemLabel;
+	}
+
+	if (helper.IsCompleted(entity)) 
+	{
+		return itemLabel + " (Collected)";
+	}
+	else
+	{
+		return itemLabel + " (Needed)";
+	}
+	return itemLabel;
+}
+	
+	//---------------------------------------------------
+//-- Functions --------------------------------------
+//---------------------------------------------------
+
+function PotP_GetCollectedStringForCrafting(craftingMenu: CR4CraftingMenu, itemName: name,  itemLabel: string) : string
+{
+	var entity: PotP_PreviewEntry;
+	var helper: CProgressOnThePath_PreviewEntryHelper;
+	var minQuality, maxQuality  : int;
+	
+	if (!craftingMenu.PotP_EntityHelper) {
+		craftingMenu.PotP_EntityHelper = GetPotP_EntityHelper();
+	}
+	
+	helper = craftingMenu.PotP_EntityHelper;
+	thePlayer.inv.GetItemQualityFromName( itemName, minQuality, maxQuality );
+	
+	if (minQuality < 4 || !helper.GetEntityByItemName(itemName, entity)) {
+		return itemLabel;
+	}
+
+	if (helper.IsCompleted(entity)) 
+	{
+		return itemLabel + " (Collected)";
+	}
+	else
+	{
+		return itemLabel + " (Needed)";
+	}
+	return itemLabel;
+}
+
 //---------------------------------------------------
 //-- Functions --------------------------------------
 //---------------------------------------------------

@@ -22,6 +22,29 @@ class CProgressOnThePath_PreviewEntryHelper
 	
 	//---------------------------------------------------
 	
+	function GetEntityByItemName(itemName: name, out entity: PotP_PreviewEntry) : bool
+	{
+		var Idx : int;
+		var lst: array<name>;
+		
+		if (!storage) {
+			return false;
+		}
+		
+		lst = storage.pItemsStorage.SupportedItemsList;
+		for ( Idx = 0 ; Idx < lst.Size() ; Idx += 1 )
+		{
+			if (itemName == lst[Idx]) {
+				entity = storage.pItemsStorage.SupportedItemsList_Entity[Idx];
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
+	//---------------------------------------------------
+	
 	function IsPlayable(entity: PotP_PreviewEntry) : bool
 	{
 		return !storage.MasterList_Completed_V.Contains(entity.uuid) && !storage.MasterList_IsIgnored_V.Contains(entity.uuid);
@@ -59,6 +82,10 @@ class CProgressOnThePath_PreviewEntryHelper
 	
 	function SetCompleted(entity: PotP_PreviewEntry, optional user_forced: bool) : void
 	{
+		if (!entity) {
+			return;
+		}
+
 		if (!IsCompleted(entity)) 
 		{
 			storage.MasterList_Completed_V.PushBack(entity.uuid);

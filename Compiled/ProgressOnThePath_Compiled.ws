@@ -77,8 +77,8 @@ class CProgressOnThePath extends SU_BaseBootstrappedMod {
 	
 	public function SetModVersion() 
 	{
-		var newModVersion_Str: string = "5.2.8.1";
-		var newModVersion_Int: int = 5281;
+		var newModVersion_Str: string = "5.2.8.2";
+		var newModVersion_Int: int = 5282;
 
 		var initStr: string = "PotP_Initialised";
 		var VersStr: string = "ProgressOnThePath_CurrentModVersion";
@@ -109,9 +109,13 @@ class CProgressOnThePath extends SU_BaseBootstrappedMod {
 		{
 			if (FactsQuerySum(VersStr) < 527) { PotP_PersistentStorage.PotP_LoadStorageCollection('All'); FactsSet(VersStr, 527);}
 			if (FactsQuerySum(VersStr) < 5281) { FactsSet(VersStr, 5281);}
+			if (FactsQuerySum(VersStr) < 5282) { 
+				PotP_PersistentStorage.PotP_LoadStorageCollection('Quest'); 
+				PotP_PersistentStorage.PotP_LoadStorageCollection('World');
+				FactsSet(VersStr, 5282);
+			}
 			return true;
 		}
-		
 		return false;
 	}
 	
@@ -1220,11 +1224,14 @@ class CProgressOnThePath_MissablePreview
 		build("PotP_Preview_Missable_13", master.PotP_PersistentStorage.pQuestStorage.MissableQuests_Ugly);
 		build("PotP_Preview_Missable_02", master.PotP_PersistentStorage.pQuestStorage.MissableQuests_Q401);
 		build("PotP_Preview_Missable_03", master.PotP_PersistentStorage.pQuestStorage.MissableQuests_SQ101);
+		build("PotP_Preview_Missable_14", master.PotP_PersistentStorage.pQuestStorage.MissableQuests_Keira);
 		build("PotP_Preview_Missable_12", master.PotP_PersistentStorage.pQuestStorage.MissableQuests_Q301);
 		build("PotP_Preview_Missable_04", master.PotP_PersistentStorage.pQuestStorage.MissableQuests_Q303);
 		build("PotP_Preview_Missable_05", master.PotP_PersistentStorage.pQuestStorage.MissableQuests_SQ106);
 		build("PotP_Preview_Missable_06", master.PotP_PersistentStorage.pQuestStorage.MissableQuests_Q501);
+		build("PotP_Preview_Missable_15", master.PotP_PersistentStorage.pQuestStorage.MissableQuests_Tango);
 		build("PotP_Preview_Missable_07", master.PotP_PersistentStorage.pQuestStorage.MissableQuests_Q206);
+		build("PotP_Preview_Missable_16", master.PotP_PersistentStorage.pQuestStorage.MissableQuests_SQ209);
 		build("PotP_Preview_Missable_08", master.PotP_PersistentStorage.pQuestStorage.MissableQuests_Q210);
 		build("PotP_Preview_Missable_09", master.PotP_PersistentStorage.pQuestStorage.MissableQuests_Q112);
 		build("PotP_Preview_Missable_10", master.PotP_PersistentStorage.pQuestStorage.MissableQuests_Q403);
@@ -3244,6 +3251,9 @@ statemachine class CProgressOnThePath_QuestStorage
 	var MissableQuests_Q403			: array<PotP_PreviewEntry>;
 	var MissableQuests_Q702			: array<PotP_PreviewEntry>;	
 	var MissableQuests_Ugly			: array<PotP_PreviewEntry>;
+	var MissableQuests_Keira		: array<PotP_PreviewEntry>;
+	var MissableQuests_SQ209		: array<PotP_PreviewEntry>;
+	var MissableQuests_Tango		: array<PotP_PreviewEntry>;
 	
 	var UUIDINT: int;
 	default UUIDINT = 1000;
@@ -3365,7 +3375,19 @@ statemachine class CProgressOnThePath_QuestStorage
 		case "PotP_TrackingGroup_MainQuests_SkelligeAct1_07":
 			this.MissableQuests_Ugly.PushBack(pData);
 			break;
-			
+		
+		case "PotP_TrackingGroup_SideQuests_Novigrad_05":
+			this.MissableQuests_Keira.PushBack(pData);
+			break;
+
+		case "PotP_TrackingGroup_SideQuests_Novigrad_27":
+			this.MissableQuests_Tango.PushBack(pData);
+			break;
+
+		case "PotP_TrackingGroup_SideQuests_Skellige_04":
+			this.MissableQuests_SQ209.PushBack(pData);
+			break;			
+
 		default:
 			PotP_Logger("Unrecognised Missable Quest Detected - " + pData.localname);
 			break;
@@ -3423,6 +3445,9 @@ state Build in CProgressOnThePath_QuestStorage
 		parent.MissableQuests_Q702.Clear();
 		parent.MissableQuests_Q301.Clear();
 		parent.MissableQuests_Ugly.Clear();
+		parent.MissableQuests_Keira.Clear();
+		parent.MissableQuests_Tango.Clear();
+		parent.MissableQuests_SQ209.Clear();
 		
 		this.Build_Main();
 		this.Build_Side();
@@ -3720,7 +3745,7 @@ state Build in CProgressOnThePath_QuestStorage
 		parent.SideQuests_Novigrad.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_02", PotP_E_Missable, 		PotP_R_NO, PotP_I_Sides, "SQ310 Dangerous Game"));
 		parent.SideQuests_Novigrad.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_03", PotP_E_Missable, 		PotP_R_NO, PotP_I_Sides, "SQ315 Talar"));
 		parent.SideQuests_Novigrad.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_04", PotP_E_Primary,  		PotP_R_NO, PotP_I_Sides, "mq3039_crows"));
-		parent.SideQuests_Novigrad.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_05", PotP_E_Primary,  		PotP_R_NO, PotP_I_Sides, "Q310 Retrieving Keira"));
+		parent.SideQuests_Novigrad.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_05", PotP_E_Missable,  		PotP_R_NO, PotP_I_Sides, "Q310 Retrieving Keira"));
 		parent.SideQuests_Novigrad.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_06", PotP_E_Missable, 		PotP_R_NO, PotP_I_Sides, "SQ301 Triss"));
 		parent.SideQuests_Novigrad.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_07", PotP_E_Primary_DLC1,	PotP_R_NO, PotP_I_Sides, "q602romance"));
 		parent.SideQuests_Novigrad.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_08", PotP_E_Primary, 		PotP_R_NO, PotP_I_Sides, "MQ3037 Sleeping Vampire"));
@@ -3742,7 +3767,7 @@ state Build in CProgressOnThePath_QuestStorage
 		parent.SideQuests_Novigrad.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_24", PotP_E_Primary, 		PotP_R_NO, PotP_I_Sides, "mq3002 Spies of Novigrad"));
 		parent.SideQuests_Novigrad.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_25", PotP_E_Primary, 		PotP_R_NO, PotP_I_Sides, "SQ306 Maverick"));
 		parent.SideQuests_Novigrad.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_26", PotP_E_Primary, 		PotP_R_NO, PotP_I_Sides, "Q302 King Beggar's Debt"));
-		parent.SideQuests_Novigrad.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_27", PotP_E_Primary, 		PotP_R_NO, PotP_I_Sides, "Q310 Romantic Disaster"));
+		parent.SideQuests_Novigrad.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_27", PotP_E_Missable, 		PotP_R_NO, PotP_I_Sides, "Q310 Romantic Disaster"));
 		parent.SideQuests_Novigrad.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_28", PotP_E_Primary, 		PotP_R_NO, PotP_I_Sides, "MQ3017 Little Red Raiding Hood"));
 		parent.SideQuests_Novigrad.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_29", PotP_E_Primary, 		PotP_R_NO, PotP_I_Sides, "mq3027_mymanifest"));
 		parent.SideQuests_Novigrad.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_30", PotP_E_Primary, 		PotP_R_NO, PotP_I_Sides, "mq3016_wandering_bards"));
@@ -3788,7 +3813,7 @@ state Build in CProgressOnThePath_QuestStorage
 		parent.SideQuests_Skellige.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_01", PotP_E_Primary, 	PotP_R_SK, PotP_I_Sides, "MQ2009 Immoral Proposition"));
 		parent.SideQuests_Skellige.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_02", PotP_E_Primary, 	PotP_R_SK, PotP_I_Sides, "mq2001 Jarl's Horn"));
 		parent.SideQuests_Skellige.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_03", PotP_E_Primary, 	PotP_R_SK, PotP_I_Sides, "mq2010 human trap"));
-		parent.SideQuests_Skellige.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_04", PotP_E_Primary, 	PotP_R_SK, PotP_I_Sides, "MQ2051 Unfinished Business"));
+		parent.SideQuests_Skellige.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_04", PotP_E_Missable, 	PotP_R_SK, PotP_I_Sides, "MQ2051 Unfinished Business"));
 		parent.SideQuests_Skellige.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_05", PotP_E_Primary, 	PotP_R_SK, PotP_I_Sides, "MQ2018 : Bandits"));
 		parent.SideQuests_Skellige.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_06", PotP_E_Primary, 	PotP_R_SK, PotP_I_Sides, "mq2022 Stupid Side of Courage"));
 		parent.SideQuests_Skellige.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_07", PotP_E_Missable, 	PotP_R_SK, PotP_I_Sides, "Q208 Heroesmead"));
@@ -4879,7 +4904,7 @@ state Build in CProgressOnThePath_WorldStorage
 		parent.BanditCamps_Novigrad.PushBack(parent.CreateEntry().initWorld(master.PotP_EntityHelper, group + "_05", PotP_R_NO, PotP_I_Camps, PotP_E_Primary, 'ep1_poi16_mp'));
 		parent.BanditCamps_Novigrad.PushBack(parent.CreateEntry().initWorld(master.PotP_EntityHelper, group + "_06", PotP_R_NO, PotP_I_Camps, PotP_E_Primary, 'ep1_poi23_mp'));
 		parent.BanditCamps_Novigrad.PushBack(parent.CreateEntry().initWorld(master.PotP_EntityHelper, group + "_07", PotP_R_NO, PotP_I_Camps, PotP_E_Primary, 'ep1_poi09_mp'));
-		parent.BanditCamps_Novigrad.PushBack(parent.CreateEntry().initWorld(master.PotP_EntityHelper, group + "_08", PotP_R_NO, PotP_I_Camps, PotP_E_Primary, 'ep1_poi_ofir_camp_mp'));
+		parent.BanditCamps_Novigrad.PushBack(parent.CreateEntry().initWorld(master.PotP_EntityHelper, group + "_08", PotP_R_NO, PotP_I_Camps, PotP_E_Missable, 'ep1_poi_ofir_camp_mp'));
 		parent.BanditCamps_Novigrad.PushBack(parent.CreateEntry().initWorld(master.PotP_EntityHelper, group + "_09", PotP_R_NO, PotP_I_Camps, PotP_E_Primary, 'ep1_poi11_mp'));
 		parent.BanditCamps_Novigrad.PushBack(parent.CreateEntry().initWorld(master.PotP_EntityHelper, group + "_10", PotP_R_NO, PotP_I_Camps, PotP_E_Primary, 'ep1_poi12_mp'));
 		parent.BanditCamps_Novigrad.PushBack(parent.CreateEntry().initWorld(master.PotP_EntityHelper, group + "_11", PotP_R_NO, PotP_I_Camps, PotP_E_Primary, 'ep1_poi13_mp'));
@@ -6196,6 +6221,8 @@ state Updating in CProgressOnThePath_Quest_Updater
 		}
 	}
 }
+
+
 
 //---------------------------------------------------
 //-- Class ------------------------------------------
@@ -7637,6 +7664,29 @@ class CProgressOnThePath_PreviewEntryHelper
 	
 	//---------------------------------------------------
 	
+	function GetEntityByItemName(itemName: name, out entity: PotP_PreviewEntry) : bool
+	{
+		var Idx : int;
+		var lst: array<name>;
+		
+		if (!storage) {
+			return false;
+		}
+		
+		lst = storage.pItemsStorage.SupportedItemsList;
+		for ( Idx = 0 ; Idx < lst.Size() ; Idx += 1 )
+		{
+			if (itemName == lst[Idx]) {
+				entity = storage.pItemsStorage.SupportedItemsList_Entity[Idx];
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
+	//---------------------------------------------------
+	
 	function IsPlayable(entity: PotP_PreviewEntry) : bool
 	{
 		return !storage.MasterList_Completed_V.Contains(entity.uuid) && !storage.MasterList_IsIgnored_V.Contains(entity.uuid);
@@ -7674,6 +7724,10 @@ class CProgressOnThePath_PreviewEntryHelper
 	
 	function SetCompleted(entity: PotP_PreviewEntry, optional user_forced: bool) : void
 	{
+		if (!entity) {
+			return;
+		}
+
 		if (!IsCompleted(entity)) 
 		{
 			storage.MasterList_Completed_V.PushBack(entity.uuid);
@@ -8720,6 +8774,18 @@ function GetPotP_Storage(): CProgressOnThePath_Storage
 //-- Functions --------------------------------------
 //---------------------------------------------------
 
+function GetPotP_EntityHelper(): CProgressOnThePath_PreviewEntryHelper 
+{
+	var master: CProgressOnThePath;
+	GetPotP(master);
+	
+	return master.PotP_EntityHelper;
+}
+
+//---------------------------------------------------
+//-- Functions --------------------------------------
+//---------------------------------------------------
+
 function GetPotP_Notifications(): CProgressOnThePath_Notifications 
 {
 	var master: CProgressOnThePath;
@@ -8871,7 +8937,69 @@ function PotP_ChangeQuestStatus(identifier: string, optional value: pStatus)
 		break;
 	}
 }
+
+//---------------------------------------------------
+//-- Functions --------------------------------------
+//---------------------------------------------------
+
+function PotP_GetCollectedString(tooltipDataProvider: W3TooltipComponent, itemName: name,  itemLabel: string, item : SItemUniqueId, tooltipInv : CInventoryComponent ) : string
+{
+	var entity: PotP_PreviewEntry;
+	var helper: CProgressOnThePath_PreviewEntryHelper;
 	
+	if (!tooltipDataProvider.PotP_EntityHelper) {
+		tooltipDataProvider.PotP_EntityHelper = GetPotP_EntityHelper();
+	}
+	
+	helper = tooltipDataProvider.PotP_EntityHelper;
+
+	if (tooltipInv.GetItemQuality(item) < 4 || !helper.GetEntityByItemName(itemName, entity)) {
+		return itemLabel;
+	}
+
+	if (helper.IsCompleted(entity)) 
+	{
+		return itemLabel + " (Collected)";
+	}
+	else
+	{
+		return itemLabel + " (Needed)";
+	}
+	return itemLabel;
+}
+	
+	//---------------------------------------------------
+//-- Functions --------------------------------------
+//---------------------------------------------------
+
+function PotP_GetCollectedStringForCrafting(craftingMenu: CR4CraftingMenu, itemName: name,  itemLabel: string) : string
+{
+	var entity: PotP_PreviewEntry;
+	var helper: CProgressOnThePath_PreviewEntryHelper;
+	var minQuality, maxQuality  : int;
+	
+	if (!craftingMenu.PotP_EntityHelper) {
+		craftingMenu.PotP_EntityHelper = GetPotP_EntityHelper();
+	}
+	
+	helper = craftingMenu.PotP_EntityHelper;
+	thePlayer.inv.GetItemQualityFromName( itemName, minQuality, maxQuality );
+	
+	if (minQuality < 4 || !helper.GetEntityByItemName(itemName, entity)) {
+		return itemLabel;
+	}
+
+	if (helper.IsCompleted(entity)) 
+	{
+		return itemLabel + " (Collected)";
+	}
+	else
+	{
+		return itemLabel + " (Needed)";
+	}
+	return itemLabel;
+}
+
 //---------------------------------------------------
 //-- Functions --------------------------------------
 //---------------------------------------------------

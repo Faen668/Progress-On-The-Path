@@ -68,7 +68,7 @@
 2116568066|ced18ad5||<font color="#7FD8BE">Global             :   Show Ignored Entries</font>
 2116568067|ced17e7a||<font color="#7FD8BE">Global             :   Show Entry UUID's</font>
 2116568069|0c226cce||<font color="#8EA4C8">World Map     :   Filter By Region</font>
-2116568070|78b2b359||All
+2116568070|78b2b359||All Regions
 2116568071|78b2b35a||White Orchard
 2116568072|78b2b35b||Velen
 2116568073|78b2b35c||Novigrad
@@ -82,7 +82,7 @@
 2116568081|5cae1fa0||Gwent Card Progress
 2116568082|5cae1fa1||Missable Quest Progress
 2116568083|0bcddfc8||<font color="#C8566B">Quests             :   Filter By Region</font>
-2116568084|3b4d4fd3||All
+2116568084|3b4d4fd3||All Regions
 2116568085|3b4d4fd4||White Orchard
 2116568086|3b4d4fd5||Velen
 2116568087|3b4d4fd6||Novigrad
@@ -91,7 +91,7 @@
 2116568090|3b4d4fd9||Kaer Morhen
 2116568091|3b4d4fda||Vizima
 2116568092|0b65e26d||<font color="#DE8971">Items              :   Filter By Type</font>
-2116568093|b4ef3d38||All
+2116568093|b4ef3d38||All Types
 2116568094|b4ef3d39||Armor
 2116568095|b4ef3d3a||Boots
 2116568096|b4ef3d3b||Trousers
@@ -102,14 +102,14 @@
 2116568101|b4ef3d40||Crossbows
 2116568102|b4ef3d41||Trophies
 2116568103|0c2b2b7b||<font color="#8EA4C8">World Map     :   Filter By Type</font>
-2116568104|99867ac6||All
+2116568104|99867ac6||All Types
 2116568105|99867ac7||Bandit Camps
 2116568106|99867ac8||Monster Dens
 2116568107|99867ac9||Monster Nests
 2116568108|99867aca||Places of Power
 2116568109|99867acb||Signposts
 2116568110|0bd69e75||<font color="#C8566B">Quests             :   Filter By Type</font>
-2116568111|5c211740||All
+2116568111|5c211740||All Types
 2116568112|5c211741||Random Events
 2116568113|5c211742||Main Quests
 2116568114|5c211743||Side Quests
@@ -117,7 +117,7 @@
 2116568116|5c211745||Scavenger Hunts
 2116568117|5c211746||Treasure Hunts
 2116568118|0b49b36b||<font color="#DE8971">Gwent              :   Filter By Faction</font>
-2116568119|4b22c6b6||All
+2116568119|4b22c6b6||All Factions
 2116568120|4b22c6b7||Monsters
 2116568121|4b22c6b8||Nilfgaard
 2116568122|4b22c6b9||Northern Realms
@@ -125,7 +125,7 @@
 2116568124|4b22c6bb||Skellige
 2116568125|4b22c6bc||Neutral Cards
 2116568126|0b40f4be||<font color="#DE8971">Gwent              :   Filter By Region</font>
-2116568127|2a4eff49||All
+2116568127|2a4eff49||All Regions
 2116568128|2a4eff4a||White Orchard
 2116568129|2a4eff4b||Velen
 2116568130|2a4eff4c||Novigrad
@@ -133,13 +133,10 @@
 2116568132|2a4eff4e||Toussaint
 2116568133|2a4eff4f||Kaer Morhen
 2116568134|2a4eff50||Vizima
-2116568135|60d44628||<font color="#F56C77">Mini Map Pins          :   Show On Minimap</font>
-2116568136|f7c956ff||<font color="#F56C77">Mini Map Pins          :   Arrow Pointers</font>
-2116568137|841c1d49||<font color="#F56C77">Mini Map Pins          :   Highlighted Arrows</font>
-2116568138|534cd15d||<font color="#F56C77">World Map Pins          :   Show Map Pins</font>
-2116568139|fee1e9c3||<font color="#F56C77">World Map Pins          :   Show Descriptions</font>
-2116568140|cf0d466b||<font color="#F56C77">World Map Pins          :   Map Pin Radius</font>
-2116568141|6ca40b53||<font color="#F56C77">World Map Pins          :   Map Pin Type</font>
+2116568138|534cd15d||<font color="#F56C77">Event Map Pins          :   Show Map Pins</font>
+2116568139|fee1e9c3||<font color="#F56C77">Event Map Pins          :   Show Descriptions</font>
+2116568140|cf0d466b||<font color="#F56C77">Event Map Pins          :   Map Pin Radius</font>
+2116568141|6ca40b53||<font color="#F56C77">Event Map Pins          :   Map Pin Type</font>
 2116568142|1e4f4362||Quest Giver
 2116568143|1e4f4363||Quest Giver (HOS)
 2116568144|1e4f4364||Quest Giver (B&W)
@@ -1918,112 +1915,112 @@
 2116569915|5f5453ab||Voidblade
 2116569916|5f5453ac||Vulcan
 2116569917|5f5453ad||Zerrikanian Knife
-2116569918|b8ab9ad1||<br/><font color="#9D75BF">Random Events: Velen [COUNTS]<br/></font>
-2116569919|b8ab9ad2||<br/><font color="#9D75BF">Random Events: Novigrad [COUNTS]<br/></font>
-2116569920|b8ab9ad3||<br/><font color="#9D75BF">Random Events: Skellige [COUNTS]<br/></font>
-2116569921|b8ab9ad4||<br/><font color="#9D75BF">Random Events: Kaer Morhen [COUNTS]<br/></font>
-2116569922|3c40028f||<br/><font color="#9D75BF">Main Quests: Prologue [COUNTS]<br/></font>
-2116569923|3c400290||<br/><font color="#9D75BF">Main Quests: Act 1 - Velen [COUNTS]<br/></font>
-2116569924|3c400291||<br/><font color="#9D75BF">Main Quests: Act 1 - Novigrad [COUNTS]<br/></font>
-2116569925|3c400292||<br/><font color="#9D75BF">Main Quests: Act 1 - Skellige [COUNTS]<br/></font>
-2116569926|3c400293||<br/><font color="#9D75BF">Main Quests: Act 2 [COUNTS]<br/></font>
-2116569927|3c400294||<br/><font color="#9D75BF">Main Quests: Act 3 [COUNTS]<br/></font>
-2116569928|3c400295||<br/><font color="#9D75BF">Main Quests: Hearts of Stone [COUNTS]<br/></font>
-2116569929|3c400296||<br/><font color="#9D75BF">Main Quests: Blood and Wine [COUNTS]<br/></font>
-2116569930|3c400297||<br/><font color="#9D75BF">Main Quests: Vizima [COUNTS]<br/></font>
-2116569931|87019e31||<br/><font color="#9D75BF">Side Quests: White Orchard [COUNTS]<br/></font>
-2116569932|87019e32||<br/><font color="#9D75BF">Side Quests: Velen [COUNTS]<br/></font>
-2116569933|87019e33||<br/><font color="#9D75BF">Side Quests: Novigrad [COUNTS]<br/></font>
-2116569934|87019e34||<br/><font color="#9D75BF">Side Quests: Skellige [COUNTS]<br/></font>
-2116569935|87019e35||<br/><font color="#9D75BF">Side Quests: Kaer Morhen [COUNTS]<br/></font>
-2116569936|87019e36||<br/><font color="#9D75BF">Side Quests: Toussaint [COUNTS]<br/></font>
-2116569937|87019e37||<br/><font color="#9D75BF">Side Quests: Non Regional [COUNTS]<br/></font>
-2116569938|436eba76||<br/><font color="#9D75BF">Monster Hunt Contracts: White Orchard [COUNTS]<br/></font>
-2116569939|436eba77||<br/><font color="#9D75BF">Monster Hunt Contracts: Velen [COUNTS]<br/></font>
-2116569940|436eba78||<br/><font color="#9D75BF">Monster Hunt Contracts: Novigrad [COUNTS]<br/></font>
-2116569941|436eba79||<br/><font color="#9D75BF">Monster Hunt Contracts: Skellige [COUNTS]<br/></font>
-2116569942|436eba7a||<br/><font color="#9D75BF">Monster Hunt Contracts: Toussaint [COUNTS]<br/></font>
-2116569943|7ca1fe43||<br/><font color="#9D75BF">Scavenger Hunts: Griffin Gear [COUNTS]<br/></font>
-2116569944|7ca1fe44||<br/><font color="#9D75BF">Scavenger Hunts: Feline Gear [COUNTS]<br/></font>
-2116569945|7ca1fe45||<br/><font color="#9D75BF">Scavenger Hunts: Ursine Gear [COUNTS]<br/></font>
-2116569946|7ca1fe46||<br/><font color="#9D75BF">Scavenger Hunts: Wolven Gear [COUNTS]<br/></font>
-2116569947|7ca1fe47||<br/><font color="#9D75BF">Scavenger Hunts: Miscellaneous [COUNTS]<br/></font>
-2116569948|cb4fbd0e||<br/><font color="#9D75BF">Treasure Hunts: White Orchard [COUNTS]<br/></font>
-2116569949|cb4fbd0f||<br/><font color="#9D75BF">Treasure Hunts: Velen [COUNTS]<br/></font>
-2116569950|cb4fbd10||<br/><font color="#9D75BF">Treasure Hunts: Novigrad [COUNTS]<br/></font>
-2116569951|cb4fbd11||<br/><font color="#9D75BF">Treasure Hunts: Skellige [COUNTS]<br/></font>
-2116569952|cb4fbd12||<br/><font color="#9D75BF">Treasure Hunts: Toussaint [COUNTS]<br/></font>
-2116569953|6743fc1e||<br/><font color="#9D75BF">Monster Dens: Velen [COUNTS]<br/></font>
-2116569954|6743fc1f||<br/><font color="#9D75BF">Monster Dens: Novigrad [COUNTS]<br/></font>
-2116569955|6743fc20||<br/><font color="#9D75BF">Monster Dens: Skellige [COUNTS]<br/></font>
-2116569956|6743fc21||<br/><font color="#9D75BF">Monster Dens: Toussaint [COUNTS]<br/></font>
-2116569957|7889368c||<br/><font color="#9D75BF">Monster Nests: White Orchard [COUNTS]<br/></font>
-2116569958|7889368d||<br/><font color="#9D75BF">Monster Nests: Velen [COUNTS]<br/></font>
-2116569959|7889368e||<br/><font color="#9D75BF">Monster Nests: Novigrad [COUNTS]<br/></font>
-2116569960|7889368f||<br/><font color="#9D75BF">Monster Nests: Skellige [COUNTS]<br/></font>
-2116569961|78893690||<br/><font color="#9D75BF">Monster Nests: Toussaint [COUNTS]<br/></font>
-2116569962|ed4219fe||<br/><font color="#9D75BF">Places of Power: White Orchard [COUNTS]<br/></font>
-2116569963|ed4219ff||<br/><font color="#9D75BF">Places of Power: Velen [COUNTS]<br/></font>
-2116569964|ed421a00||<br/><font color="#9D75BF">Places of Power: Novigrad [COUNTS]<br/></font>
-2116569965|ed421a01||<br/><font color="#9D75BF">Places of Power: Skellige [COUNTS]<br/></font>
-2116569966|ed421a02||<br/><font color="#9D75BF">Places of Power: Kaer Morhen [COUNTS]<br/></font>
-2116569967|ed421a03||<br/><font color="#9D75BF">Places of Power: Toussaint [COUNTS]<br/></font>
-2116569968|ed421a04||<br/><font color="#9D75BF">Places of Power: The Spiral [COUNTS]<br/></font>
-2116569969|872ff84a||<br/><font color="#9D75BF">Signposts: White Orchard [COUNTS]<br/></font>
-2116569970|872ff84b||<br/><font color="#9D75BF">Signposts: Velen [COUNTS]<br/></font>
-2116569971|872ff84c||<br/><font color="#9D75BF">Signposts: Novigrad [COUNTS]<br/></font>
-2116569972|872ff84d||<br/><font color="#9D75BF">Signposts: Skellige [COUNTS]<br/></font>
-2116569973|872ff84e||<br/><font color="#9D75BF">Signposts: Kaer Morhen [COUNTS]<br/></font>
-2116569974|872ff84f||<br/><font color="#9D75BF">Signposts: Toussaint [COUNTS]<br/></font>
-2116569975|2b7b0049||<br/><font color="#9D75BF">Bandit Camps: White Orchard [COUNTS]<br/></font>
-2116569976|2b7b004a||<br/><font color="#9D75BF">Bandit Camps: Velen [COUNTS]<br/></font>
-2116569977|2b7b004b||<br/><font color="#9D75BF">Bandit Camps: Novigrad [COUNTS]<br/></font>
-2116569978|2b7b004c||<br/><font color="#9D75BF">Bandit Camps: Skellige [COUNTS]<br/></font>
-2116569979|2b7b004d||<br/><font color="#9D75BF">Bandit Camps: Toussaint [COUNTS]<br/></font>
-2116569980|cbe357e0||<br/><font color="#9D75BF">Monster Trophies: [COUNTS]<br/></font>
-2116569981|4bba596a||<br/><font color="#9D75BF">Relics: Silver Swords [COUNTS]<br/></font>
-2116569982|4bba596b||<br/><font color="#9D75BF">Relics: Steel Swords [COUNTS]<br/></font>
-2116569983|4bba596c||<br/><font color="#9D75BF">Relics: Crossbows [COUNTS]<br/></font>
-2116569984|053f1e7b||<br/><font color="#9D75BF">Armor Set Pieces: Thousand Flowers Set [COUNTS]<br/></font>
-2116569985|053f1e7c||<br/><font color="#9D75BF">Armor Set Pieces: Forgotten Wolven Set [COUNTS]<br/></font>
-2116569986|053f1e7d||<br/><font color="#9D75BF">Armor Set Pieces: Hen Gaidth Set [COUNTS]<br/></font>
-2116569987|053f1e7e||<br/><font color="#9D75BF">Armor Set Pieces: New Moon Set [COUNTS]<br/></font>
-2116569988|053f1e7f||<br/><font color="#9D75BF">Armor Set Pieces: Nilfgaardian Set [COUNTS]<br/></font>
-2116569989|053f1e80||<br/><font color="#9D75BF">Armor Set Pieces: Ofieri Set [COUNTS]<br/></font>
-2116569990|053f1e81||<br/><font color="#9D75BF">Armor Set Pieces: Temerian Set [COUNTS]<br/></font>
-2116569991|053f1e82||<br/><font color="#9D75BF">Armor Set Pieces: Tesham Mutna Set [COUNTS]<br/></font>
-2116569992|053f1e83||<br/><font color="#9D75BF">Armor Set Pieces: Undvik Set [COUNTS]<br/></font>
-2116569993|053f1eab||<br/><font color="#9D75BF">Armor Set Pieces: White Tiger Set [COUNTS]<br/></font>
-2116569994|242ce9f2||<br/><font color="#9D75BF">Gwent Cards: Monsters [COUNTS]<br/></font>
-2116569995|242ce9f3||<br/><font color="#9D75BF">Gwent Cards: Neutral Cards [COUNTS]<br/></font>
-2116569996|242ce9f4||<br/><font color="#9D75BF">Gwent Cards: Nilfgaardian Empire [COUNTS]<br/></font>
-2116569997|242ce9f5||<br/><font color="#9D75BF">Gwent Cards: Northern Realms [COUNTS]<br/></font>
-2116569998|242ce9f6||<br/><font color="#9D75BF">Gwent Cards: Scoia'tael [COUNTS]<br/></font>
-2116569999|242ce9f7||<br/><font color="#9D75BF">Gwent Cards: Skellige [COUNTS]<br/></font>
-2117171000|c9e3b8f5||<br/><font color="#9D75BF">Coś Więcej Gear [COUNTS]<br/></font>
-2117171001|c9e3b8f6||<br/><font color="#9D75BF">Sezon Burz Gear [COUNTS]<br/></font>
-2117171002|c9e3b8f7||<br/><font color="#9D75BF">Gothic Gear [COUNTS]<br/></font>
-2117171003|c9e3b8f8||<br/><font color="#9D75BF">Meteorite Gear [COUNTS]<br/></font>
-2117171004|c9e3b8f9||<br/><font color="#9D75BF">Dimeritium Gear [COUNTS]<br/></font>
-2117171005|8521c16d||<br/><font color="#9D75BF">Shades of Iron: Berserker Set [COUNTS]<br/></font>
-2117171006|8521c16e||<br/><font color="#9D75BF">Shades of Iron: Bismarck Set [COUNTS]<br/></font>
-2117171007|8521c16f||<br/><font color="#9D75BF">Shades of Iron: Blood Hunter Set [COUNTS]<br/></font>
-2117171008|8521c170||<br/><font color="#9D75BF">Shades of Iron: Crow-feathered Hunter Set [COUNTS]<br/></font>
-2117171009|8521c171||<br/><font color="#9D75BF">Shades of Iron: Fallen Knight Set [COUNTS]<br/></font>
-2117171010|8521c172||<br/><font color="#9D75BF">Shades of Iron: Faraam Set [COUNTS]<br/></font>
-2117171011|8521c173||<br/><font color="#9D75BF">Shades of Iron: Headtaker Set [COUNTS]<br/></font>
-2117171012|8521c174||<br/><font color="#9D75BF">Shades of Iron: Hitokiri Set [COUNTS]<br/></font>
-2117171013|8521c175||<br/><font color="#9D75BF">Shades of Iron: Kara Set [COUNTS]<br/></font>
-2117171014|8521c18b||<br/><font color="#9D75BF">Shades of Iron: Lionhunter Set [COUNTS]<br/></font>
-2117171015|8521c18c||<br/><font color="#9D75BF">Shades of Iron: Master Assassin Set [COUNTS]<br/></font>
-2117171016|8521c18d||<br/><font color="#9D75BF">Shades of Iron: Old Hunter Set [COUNTS]<br/></font>
-2117171017|8521c18e||<br/><font color="#9D75BF">Shades of Iron: Revenant Set [COUNTS]<br/></font>
-2117171018|8521c18f||<br/><font color="#9D75BF">Shades of Iron: Stalker Set [COUNTS]<br/></font>
-2117171019|8521c190||<br/><font color="#9D75BF">Shades of Iron: Taifeng Set [COUNTS]<br/></font>
-2117171020|8521c191||<br/><font color="#9D75BF">Shades of Iron: Unseen Hunter Set [COUNTS]<br/></font>
-2117171021|8521c192||<br/><font color="#9D75BF">Shades of Iron: Sithis Set [COUNTS]<br/></font>
-2117171022|8521c193||<br/><font color="#9D75BF">Shades of Iron: Silver Swords [COUNTS]<br/></font>
-2117171023|8521c194||<br/><font color="#9D75BF">Shades of Iron: Steel Swords [COUNTS]<br/></font>
+2116569918|b8ab9ad1||<br/>[ICON_PATH]<font color="#9D75BF">Random Events: Velen [COUNTS]<br/></font>
+2116569919|b8ab9ad2||<br/>[ICON_PATH]<font color="#9D75BF">Random Events: Novigrad [COUNTS]<br/></font>
+2116569920|b8ab9ad3||<br/>[ICON_PATH]<font color="#9D75BF">Random Events: Skellige [COUNTS]<br/></font>
+2116569921|b8ab9ad4||<br/>[ICON_PATH]<font color="#9D75BF">Random Events: Kaer Morhen [COUNTS]<br/></font>
+2116569922|3c40028f||<br/>[ICON_PATH]<font color="#9D75BF">Main Quests: Prologue [COUNTS]<br/></font>
+2116569923|3c400290||<br/>[ICON_PATH]<font color="#9D75BF">Main Quests: Act 1 - Velen [COUNTS]<br/></font>
+2116569924|3c400291||<br/>[ICON_PATH]<font color="#9D75BF">Main Quests: Act 1 - Novigrad [COUNTS]<br/></font>
+2116569925|3c400292||<br/>[ICON_PATH]<font color="#9D75BF">Main Quests: Act 1 - Skellige [COUNTS]<br/></font>
+2116569926|3c400293||<br/>[ICON_PATH]<font color="#9D75BF">Main Quests: Act 2 [COUNTS]<br/></font>
+2116569927|3c400294||<br/>[ICON_PATH]<font color="#9D75BF">Main Quests: Act 3 [COUNTS]<br/></font>
+2116569928|3c400295||<br/>[ICON_PATH]<font color="#9D75BF">Main Quests: Hearts of Stone [COUNTS]<br/></font>
+2116569929|3c400296||<br/>[ICON_PATH]<font color="#9D75BF">Main Quests: Blood and Wine [COUNTS]<br/></font>
+2116569930|3c400297||<br/>[ICON_PATH]<font color="#9D75BF">Main Quests: Vizima [COUNTS]<br/></font>
+2116569931|87019e31||<br/>[ICON_PATH]<font color="#9D75BF">Side Quests: White Orchard [COUNTS]<br/></font>
+2116569932|87019e32||<br/>[ICON_PATH]<font color="#9D75BF">Side Quests: Velen [COUNTS]<br/></font>
+2116569933|87019e33||<br/>[ICON_PATH]<font color="#9D75BF">Side Quests: Novigrad [COUNTS]<br/></font>
+2116569934|87019e34||<br/>[ICON_PATH]<font color="#9D75BF">Side Quests: Skellige [COUNTS]<br/></font>
+2116569935|87019e35||<br/>[ICON_PATH]<font color="#9D75BF">Side Quests: Kaer Morhen [COUNTS]<br/></font>
+2116569936|87019e36||<br/>[ICON_PATH]<font color="#9D75BF">Side Quests: Toussaint [COUNTS]<br/></font>
+2116569937|87019e37||<br/>[ICON_PATH]<font color="#9D75BF">Side Quests: Non Regional [COUNTS]<br/></font>
+2116569938|436eba76||<br/>[ICON_PATH]<font color="#9D75BF">Monster Hunt Contracts: White Orchard [COUNTS]<br/></font>
+2116569939|436eba77||<br/>[ICON_PATH]<font color="#9D75BF">Monster Hunt Contracts: Velen [COUNTS]<br/></font>
+2116569940|436eba78||<br/>[ICON_PATH]<font color="#9D75BF">Monster Hunt Contracts: Novigrad [COUNTS]<br/></font>
+2116569941|436eba79||<br/>[ICON_PATH]<font color="#9D75BF">Monster Hunt Contracts: Skellige [COUNTS]<br/></font>
+2116569942|436eba7a||<br/>[ICON_PATH]<font color="#9D75BF">Monster Hunt Contracts: Toussaint [COUNTS]<br/></font>
+2116569943|7ca1fe43||<br/>[ICON_PATH]<font color="#9D75BF">Scavenger Hunts: Griffin Gear [COUNTS]<br/></font>
+2116569944|7ca1fe44||<br/>[ICON_PATH]<font color="#9D75BF">Scavenger Hunts: Feline Gear [COUNTS]<br/></font>
+2116569945|7ca1fe45||<br/>[ICON_PATH]<font color="#9D75BF">Scavenger Hunts: Ursine Gear [COUNTS]<br/></font>
+2116569946|7ca1fe46||<br/>[ICON_PATH]<font color="#9D75BF">Scavenger Hunts: Wolven Gear [COUNTS]<br/></font>
+2116569947|7ca1fe47||<br/>[ICON_PATH]<font color="#9D75BF">Scavenger Hunts: Miscellaneous [COUNTS]<br/></font>
+2116569948|cb4fbd0e||<br/>[ICON_PATH]<font color="#9D75BF">Treasure Hunts: White Orchard [COUNTS]<br/></font>
+2116569949|cb4fbd0f||<br/>[ICON_PATH]<font color="#9D75BF">Treasure Hunts: Velen [COUNTS]<br/></font>
+2116569950|cb4fbd10||<br/>[ICON_PATH]<font color="#9D75BF">Treasure Hunts: Novigrad [COUNTS]<br/></font>
+2116569951|cb4fbd11||<br/>[ICON_PATH]<font color="#9D75BF">Treasure Hunts: Skellige [COUNTS]<br/></font>
+2116569952|cb4fbd12||<br/>[ICON_PATH]<font color="#9D75BF">Treasure Hunts: Toussaint [COUNTS]<br/></font>
+2116569953|6743fc1e||<br/>[ICON_PATH]<font color="#9D75BF">Monster Dens: Velen [COUNTS]<br/></font>
+2116569954|6743fc1f||<br/>[ICON_PATH]<font color="#9D75BF">Monster Dens: Novigrad [COUNTS]<br/></font>
+2116569955|6743fc20||<br/>[ICON_PATH]<font color="#9D75BF">Monster Dens: Skellige [COUNTS]<br/></font>
+2116569956|6743fc21||<br/>[ICON_PATH]<font color="#9D75BF">Monster Dens: Toussaint [COUNTS]<br/></font>
+2116569957|7889368c||<br/>[ICON_PATH]<font color="#9D75BF">Monster Nests: White Orchard [COUNTS]<br/></font>
+2116569958|7889368d||<br/>[ICON_PATH]<font color="#9D75BF">Monster Nests: Velen [COUNTS]<br/></font>
+2116569959|7889368e||<br/>[ICON_PATH]<font color="#9D75BF">Monster Nests: Novigrad [COUNTS]<br/></font>
+2116569960|7889368f||<br/>[ICON_PATH]<font color="#9D75BF">Monster Nests: Skellige [COUNTS]<br/></font>
+2116569961|78893690||<br/>[ICON_PATH]<font color="#9D75BF">Monster Nests: Toussaint [COUNTS]<br/></font>
+2116569962|ed4219fe||<br/>[ICON_PATH]<font color="#9D75BF">Places of Power: White Orchard [COUNTS]<br/></font>
+2116569963|ed4219ff||<br/>[ICON_PATH]<font color="#9D75BF">Places of Power: Velen [COUNTS]<br/></font>
+2116569964|ed421a00||<br/>[ICON_PATH]<font color="#9D75BF">Places of Power: Novigrad [COUNTS]<br/></font>
+2116569965|ed421a01||<br/>[ICON_PATH]<font color="#9D75BF">Places of Power: Skellige [COUNTS]<br/></font>
+2116569966|ed421a02||<br/>[ICON_PATH]<font color="#9D75BF">Places of Power: Kaer Morhen [COUNTS]<br/></font>
+2116569967|ed421a03||<br/>[ICON_PATH]<font color="#9D75BF">Places of Power: Toussaint [COUNTS]<br/></font>
+2116569968|ed421a04||<br/>[ICON_PATH]<font color="#9D75BF">Places of Power: The Spiral [COUNTS]<br/></font>
+2116569969|872ff84a||<br/>[ICON_PATH]<font color="#9D75BF">Signposts: White Orchard [COUNTS]<br/></font>
+2116569970|872ff84b||<br/>[ICON_PATH]<font color="#9D75BF">Signposts: Velen [COUNTS]<br/></font>
+2116569971|872ff84c||<br/>[ICON_PATH]<font color="#9D75BF">Signposts: Novigrad [COUNTS]<br/></font>
+2116569972|872ff84d||<br/>[ICON_PATH]<font color="#9D75BF">Signposts: Skellige [COUNTS]<br/></font>
+2116569973|872ff84e||<br/>[ICON_PATH]<font color="#9D75BF">Signposts: Kaer Morhen [COUNTS]<br/></font>
+2116569974|872ff84f||<br/>[ICON_PATH]<font color="#9D75BF">Signposts: Toussaint [COUNTS]<br/></font>
+2116569975|2b7b0049||<br/>[ICON_PATH]<font color="#9D75BF">Bandit Camps: White Orchard [COUNTS]<br/></font>
+2116569976|2b7b004a||<br/>[ICON_PATH]<font color="#9D75BF">Bandit Camps: Velen [COUNTS]<br/></font>
+2116569977|2b7b004b||<br/>[ICON_PATH]<font color="#9D75BF">Bandit Camps: Novigrad [COUNTS]<br/></font>
+2116569978|2b7b004c||<br/>[ICON_PATH]<font color="#9D75BF">Bandit Camps: Skellige [COUNTS]<br/></font>
+2116569979|2b7b004d||<br/>[ICON_PATH]<font color="#9D75BF">Bandit Camps: Toussaint [COUNTS]<br/></font>
+2116569980|cbe357e0||<br/>[ICON_PATH]<font color="#9D75BF">Monster Trophies: [COUNTS]<br/></font>
+2116569981|4bba596a||<br/>[ICON_PATH]<font color="#9D75BF">Relics: Silver Swords [COUNTS]<br/></font>
+2116569982|4bba596b||<br/>[ICON_PATH]<font color="#9D75BF">Relics: Steel Swords [COUNTS]<br/></font>
+2116569983|4bba596c||<br/>[ICON_PATH]<font color="#9D75BF">Relics: Crossbows [COUNTS]<br/></font>
+2116569984|053f1e7b||<br/>[ICON_PATH]<font color="#9D75BF">Armor Set Pieces: Thousand Flowers Set [COUNTS]<br/></font>
+2116569985|053f1e7c||<br/>[ICON_PATH]<font color="#9D75BF">Armor Set Pieces: Forgotten Wolven Set [COUNTS]<br/></font>
+2116569986|053f1e7d||<br/>[ICON_PATH]<font color="#9D75BF">Armor Set Pieces: Hen Gaidth Set [COUNTS]<br/></font>
+2116569987|053f1e7e||<br/>[ICON_PATH]<font color="#9D75BF">Armor Set Pieces: New Moon Set [COUNTS]<br/></font>
+2116569988|053f1e7f||<br/>[ICON_PATH]<font color="#9D75BF">Armor Set Pieces: Nilfgaardian Set [COUNTS]<br/></font>
+2116569989|053f1e80||<br/>[ICON_PATH]<font color="#9D75BF">Armor Set Pieces: Ofieri Set [COUNTS]<br/></font>
+2116569990|053f1e81||<br/>[ICON_PATH]<font color="#9D75BF">Armor Set Pieces: Temerian Set [COUNTS]<br/></font>
+2116569991|053f1e82||<br/>[ICON_PATH]<font color="#9D75BF">Armor Set Pieces: Tesham Mutna Set [COUNTS]<br/></font>
+2116569992|053f1e83||<br/>[ICON_PATH]<font color="#9D75BF">Armor Set Pieces: Undvik Set [COUNTS]<br/></font>
+2116569993|053f1eab||<br/>[ICON_PATH]<font color="#9D75BF">Armor Set Pieces: White Tiger Set [COUNTS]<br/></font>
+2116569994|242ce9f2||<br/>[ICON_PATH]<font color="#9D75BF">Gwent Cards: Monsters [COUNTS]<br/></font>
+2116569995|242ce9f3||<br/>[ICON_PATH]<font color="#9D75BF">Gwent Cards: Neutral Cards [COUNTS]<br/></font>
+2116569996|242ce9f4||<br/>[ICON_PATH]<font color="#9D75BF">Gwent Cards: Nilfgaardian Empire [COUNTS]<br/></font>
+2116569997|242ce9f5||<br/>[ICON_PATH]<font color="#9D75BF">Gwent Cards: Northern Realms [COUNTS]<br/></font>
+2116569998|242ce9f6||<br/>[ICON_PATH]<font color="#9D75BF">Gwent Cards: Scoia'tael [COUNTS]<br/></font>
+2116569999|242ce9f7||<br/>[ICON_PATH]<font color="#9D75BF">Gwent Cards: Skellige [COUNTS]<br/></font>
+2117171000|c9e3b8f5||<br/>[ICON_PATH]<font color="#9D75BF">Coś Więcej Gear [COUNTS]<br/></font>
+2117171001|c9e3b8f6||<br/>[ICON_PATH]<font color="#9D75BF">Sezon Burz Gear [COUNTS]<br/></font>
+2117171002|c9e3b8f7||<br/>[ICON_PATH]<font color="#9D75BF">Gothic Gear [COUNTS]<br/></font>
+2117171003|c9e3b8f8||<br/>[ICON_PATH]<font color="#9D75BF">Meteorite Gear [COUNTS]<br/></font>
+2117171004|c9e3b8f9||<br/>[ICON_PATH]<font color="#9D75BF">Dimeritium Gear [COUNTS]<br/></font>
+2117171005|8521c16d||<br/>[ICON_PATH]<font color="#9D75BF">Shades of Iron: Berserker Set [COUNTS]<br/></font>
+2117171006|8521c16e||<br/>[ICON_PATH]<font color="#9D75BF">Shades of Iron: Bismarck Set [COUNTS]<br/></font>
+2117171007|8521c16f||<br/>[ICON_PATH]<font color="#9D75BF">Shades of Iron: Blood Hunter Set [COUNTS]<br/></font>
+2117171008|8521c170||<br/>[ICON_PATH]<font color="#9D75BF">Shades of Iron: Crow-feathered Hunter Set [COUNTS]<br/></font>
+2117171009|8521c171||<br/>[ICON_PATH]<font color="#9D75BF">Shades of Iron: Fallen Knight Set [COUNTS]<br/></font>
+2117171010|8521c172||<br/>[ICON_PATH]<font color="#9D75BF">Shades of Iron: Faraam Set [COUNTS]<br/></font>
+2117171011|8521c173||<br/>[ICON_PATH]<font color="#9D75BF">Shades of Iron: Headtaker Set [COUNTS]<br/></font>
+2117171012|8521c174||<br/>[ICON_PATH]<font color="#9D75BF">Shades of Iron: Hitokiri Set [COUNTS]<br/></font>
+2117171013|8521c175||<br/>[ICON_PATH]<font color="#9D75BF">Shades of Iron: Kara Set [COUNTS]<br/></font>
+2117171014|8521c18b||<br/>[ICON_PATH]<font color="#9D75BF">Shades of Iron: Lionhunter Set [COUNTS]<br/></font>
+2117171015|8521c18c||<br/>[ICON_PATH]<font color="#9D75BF">Shades of Iron: Master Assassin Set [COUNTS]<br/></font>
+2117171016|8521c18d||<br/>[ICON_PATH]<font color="#9D75BF">Shades of Iron: Old Hunter Set [COUNTS]<br/></font>
+2117171017|8521c18e||<br/>[ICON_PATH]<font color="#9D75BF">Shades of Iron: Revenant Set [COUNTS]<br/></font>
+2117171018|8521c18f||<br/>[ICON_PATH]<font color="#9D75BF">Shades of Iron: Stalker Set [COUNTS]<br/></font>
+2117171019|8521c190||<br/>[ICON_PATH]<font color="#9D75BF">Shades of Iron: Taifeng Set [COUNTS]<br/></font>
+2117171020|8521c191||<br/>[ICON_PATH]<font color="#9D75BF">Shades of Iron: Unseen Hunter Set [COUNTS]<br/></font>
+2117171021|8521c192||<br/>[ICON_PATH]<font color="#9D75BF">Shades of Iron: Sithis Set [COUNTS]<br/></font>
+2117171022|8521c193||<br/>[ICON_PATH]<font color="#9D75BF">Shades of Iron: Silver Swords [COUNTS]<br/></font>
+2117171023|8521c194||<br/>[ICON_PATH]<font color="#9D75BF">Shades of Iron: Steel Swords [COUNTS]<br/></font>
 2117171024|bedfa718||<font color="#D7D23A">~ At the Mercy of Strangers ~</font><br/>Investigate the cry for help
 2117171025|a07184f7||<font color="#D7D23A">~ At the Mercy of Strangers ~</font><br/>Talk to John Verdun
 2117171026|71a0a392||<font color="#D7D23A">~ Caravan Attack ~</font><br/>Sounds of a commotion came from over here
@@ -2072,7 +2069,7 @@
 2117171069|6ed57712||<br/><font color="#9D75BF">Complete Before The Witch Hunter's Outpost Section During 'Count Reuven's Treasure'<br/></font>
 2117171070|6ed57713||<br/><font color="#9D75BF">Complete Before Accepting 'Following the Thread'<br/></font>
 2117171071|6ed57714||<br/><font color="#9D75BF">Complete Before Accepting 'On Thin Ice'<br/></font>
-2117171072|6ed57715||<br/><font color="#9D75BF">Complete Before Accepting 'King's Gambit'<br/></font>
+2117171072|6ed57715||<br/><font color="#9D75BF">Complete Before killing the Ice Giant in 'The Lord of Undvik'<br/></font>
 2117171073|6ed57716||<br/><font color="#9D75BF">Complete Before Accepting 'Battle Preparations'<br/></font>
 2117171074|6ed57717||<br/><font color="#9D75BF">Complete Before talking To Ciri About The Lodge Meeting During 'Final Preparations'<br/></font>
 2117171075|6ed5772d||<br/><font color="#9D75BF">Complete Before Travelling To The Isle Of Mists<br/></font>
@@ -2113,3 +2110,179 @@
 2117171112|cb0076f0||Witcher's Steel Sword
 2117171113|48bcb7ac||Witcher's Silver Sword
 2117171114|54240837||<br/><br/><br/><br/><br/><br/>Access to Gwent Deck Required for this preview
+2117171115|58d29930|| Abandoned Site(DYNAMC_REPLACE)
+2117171116|7026123f||Updated Abandoned Site: 
+2117171117|99867acc||Abandoned Sites
+2117171118|87e31dc3||<br/>[ICON_PATH]<font color="#9D75BF">Abandoned Sites: White Orchard [COUNTS]<br/></font>
+2117171119|87e31dc4||<br/>[ICON_PATH]<font color="#9D75BF">Abandoned Sites: Velen [COUNTS]<br/></font>
+2117171120|87e31dc5||<br/>[ICON_PATH]<font color="#9D75BF">Abandoned Sites: Novigrad [COUNTS]<br/></font>
+2117171121|87e31dc6||<br/>[ICON_PATH]<font color="#9D75BF">Abandoned Sites: Skellige [COUNTS]<br/></font>
+2117171122|87e31dc7||<br/>[ICON_PATH]<font color="#9D75BF">Abandoned Sites: Toussaint [COUNTS]<br/></font>
+2117171123|bf66271b||Sawmill
+2117171124|bf66271c||East of the Abandoned Village
+2117171125|f339b73d||Southwest of Lurtch
+2117171126|f339b73e||Boatmakers' Hut
+2117171127|f339b73f||Southeast of Ferry Station
+2117171128|f339b740||South of Devil's Pit
+2117171129|f339b741||East of Stonecutters' Settlement
+2117171130|f339b742||Refugees' Camp
+2117171131|f339b743||West of Hangman's Alley
+2117171132|f339b744||North of Condoyle
+2117171133|f339b745||Olena's Grove
+2117171134|f339b75b||South of Byways
+2117171135|f339b75c||Far East of Est Tayiar
+2117171136|f339b75d||Heddel
+2117171137|6848109b||Northeast of the Isolated Hut
+2117171138|6848109c||South of Brunwich
+2117171139|6848109d||Southwest of Bowdon
+2117171140|6848109e||Crane Cape
+2117171141|d82a7d83||Northeast of Rannvaig
+2117171142|d82a7d84||South of Sund
+2117171143|d82a7d85||Lurthen
+2117171144|d82a7d86||Ruined Inn
+2117171145|d82a7d87||Isolated Hut
+2117171146|0ec8df5b||Southwest of Casteldaccia Abandoned Estate
+2117171147|0ec8df5c||Basane Farm
+2117171148|0ec8df5d||South of Hortense Vineyard
+2117171149|0ec8df5e||Southwest of Fort Astre Ruins
+2117171150|0ec8df5f||West of Chuchote Cave
+2117171151|0ec8df60||Fox Hollow
+2117171152|0ec8df61||The Silver Salamander Inn
+2117171153|0ec8df62||East of Coronata Vineyard
+2117171154|0ec8df63||Far West of Tourney Grounds
+2117171155|0ec8df79||West of Castel Ravello Vineyard
+2117171156|0ec8df7a||Northwest of Tesham Mutna Ruins
+2117171157|582eadc9|| Guarded Treasure Site(DYNAMC_REPLACE)
+2117171158|8934e6d7||Updated Guarded Treasure: 
+2117171159|99867acd||Guarded Treasure
+2117171160|208c701c||<br/>[ICON_PATH]<font color="#9D75BF">Guarded Treasure: White Orchard [COUNTS]<br/></font>
+2117171161|208c701d||<br/>[ICON_PATH]<font color="#9D75BF">Guarded Treasure: Velen [COUNTS]<br/></font>
+2117171162|208c701e||<br/>[ICON_PATH]<font color="#9D75BF">Guarded Treasure: Novigrad [COUNTS]<br/></font>
+2117171163|208c701f||<br/>[ICON_PATH]<font color="#9D75BF">Guarded Treasure: Skellige [COUNTS]<br/></font>
+2117171164|208c7020||<br/>[ICON_PATH]<font color="#9D75BF">Guarded Treasure: Kaer Morhen [COUNTS]<br/></font>
+2117171165|208c7021||<br/>[ICON_PATH]<font color="#9D75BF">Guarded Treasure: Toussaint [COUNTS]<br/></font>
+2117171166|24a6580e||South of Woesong Bridge
+2117171167|24a6580f||South of Ransacked Village
+2117171168|24a65810||Cemetary
+2117171169|24a65811||Southeast of Nilfgaardian Garrison
+2117171170|24a65812||Northwest of Sawmill
+2117171171|4f2661aa||Destroyed Bastion
+2117171172|4f2661ab||North of Destroyed Bastion
+2117171173|4f2661ac||Northwest of Crossroads
+2117171174|4f2661ad||West of Crossroads
+2117171175|4f2661ae||East of Ruined Tower
+2117171176|4f2661af||East of Heatherton
+2117171177|4f2661b0||West of Blackbough
+2117171178|4f2661b1||East of Crow's Perch
+2117171179|4f2661b2||East of Harpy Feeding Ground
+2117171180|4f2661c8||South of Devil's Pit
+2117171181|4f2661c9||Southwest of Ferry Station
+2117171182|4f2661ca||Far East of Herbalist's Hut
+2117171183|4f2661cb||Northwest of Inn at the Crossroads
+2117171184|4f2661cc||Northwest of Coast of Wrecks
+2117171185|4f2661cd||West of Coast of Wrecks
+2117171186|4f2661ce||North of Forest Hut
+2117171187|4f2661cf||South of Midcopse
+2117171188|4f2661d0||West of Dragonslayer's Grotto
+2117171189|4f2661d1||North of House of Respite
+2117171190|4f2661e7||West of Olena's Grove
+2117171191|4f2661e8||Far South of Frischlow
+2117171192|4f2661e9||East of Byways
+2117171193|4f2661ea||South of Frischlow
+2117171194|4f2661eb||Far East of Heddel
+2117171195|c254b30e||East of Widows' Grotto
+2117171196|c254b30f||Northwest of Hindhold
+2117171197|c254b310||Southwest of Lighthouse
+2117171198|c254b311||Northeast of Arette
+2117171199|c254b312||South of Yantra
+2117171200|c254b313||North of Cavern
+2117171201|c254b314||Hunter's Cottage
+2117171202|c254b315||Southeast of Bowdon
+2117171203|c254b316||Northeast Of Garin Estate
+2117171204|32371ff6||Far Eastern Island
+2117171205|32371ff7||Southeast of Ancient Crypt
+2117171206|32371ff8||West of Crossroads
+2117171207|32371ff9||Southwest of Kaer Trolde Harbor
+2117171208|32371ffa||East of Gedyneith
+2117171209|32371ffb||North of Blandare
+2117171210|32371ffc||Northeast of Fornhala
+2117171211|32371ffd||Elverum Lighthouse
+2117171212|32371ffe||Northeast of Marlin Coast
+2117171213|32372014||West of Wild Shore
+2117171214|32372015||Northwest of Elverum Lighthouse
+2117171215|32372016||Northwest of Harviken
+2117171216|32372017||South of Freya's Garden
+2117171217|32372018||Island Northeast of Faroe
+2117171218|32372019||Far Western Island
+2117171219|3237201a||Northern Island Cluster I
+2117171220|3237201b||Northern Island Cluster II
+2117171221|3237201c||Northern Island Cluster III
+2117171222|3237201d||Northern Island Cluster IV
+2117171223|32372033||Northern Island Cluster V
+2117171224|32372034||Northern Island Cluster VI
+2117171225|32372035||Island North of Faroe
+2117171226|c89ef80c||South of Ruined Watchtower
+2117171227|c89ef80d||East of Ruined Watchtower
+2117171228|f6508b48||Far East of Casteldaccia Abandoned Estate
+2117171229|f6508b49||South of Mont Crane Castle
+2117171230|f6508b4a||Northwest of Fort Ussar Ruins
+2117171231|f6508b4b||Southeast of Mont Crane Castle
+2117171232|f6508b4c||Southeast of Termes Palace Ruins
+2117171233|f6508b4d||North of Trastamara Hunting Cottage
+2117171234|f6508b4e||Southeast of Dun Ytnne Crossroads
+2117171235|f6508b4f||Northeast of Hortense Vineyard
+2117171236|f6508b50||North of Fort Astre Ruins
+2117171237|f6508b66||Southwest of Fox Hollow
+2117171238|f6508b67||South of Cockatrice Inn
+2117171239|f6508b68||North of Flovive
+2117171240|f6508b69||Southwest of Arthach Palace Ruins
+2117171241|f6508b6a||East of Arthach Palace Ruins
+2117171242|f6508b6b||East of Trading Post
+2117171243|f6508b6c||South of Trading Post
+2117171244|f6508b6d||Northeast of Sansretour Valleu
+2117171245|f6508b6e||West of Gelenser Farm
+2117171246|57ff36b0|| Person(DYNAMC_REPLACE) In Distress
+2117171247|fc9cc60f||Updated Person In Distress: 
+2117171248|99867ace||Person(s) In Distress
+2117171249|6e5e5b43||<br/>[ICON_PATH]<font color="#9D75BF">Person(s) In Distress: Velen [COUNTS]<br/></font>
+2117171250|6e5e5b44||<br/>[ICON_PATH]<font color="#9D75BF">Person(s) In Distress: Skellige [COUNTS]<br/></font>
+2117171251|6e5e5b45||<br/>[ICON_PATH]<font color="#9D75BF">Person(s) In Distress: Toussaint [COUNTS]<br/></font>
+2117171252|07431aa1||West of Hangman's Alley
+2117171253|07431aa2||North of Lindenvale
+2117171254|07431aa3||North of Hanged Man's Tree
+2117171255|07431aa4||East of Crossroads
+2117171256|07431aa5||Bandit Camp
+2117171257|07431aa6||Northwest of Vikk Watchtower
+2117171258|88afaf9f||South of Blandare
+2117171259|88afafa0||Northwest of Fayrlund
+2117171260|6ee9f0bf||South of Fort Ussar Ruins
+2117171261|6ee9f0c0||Arthach Palace Ruins
+2117171262|6ee9f0c1||Northeast of Trading Post
+2117171263|6ee9f0c2||Southwest of Fox Hollow
+2117171264|6ee9f0c3||Northeast of Termes Palace Ruins
+2117171265|5863f9eb|| Knight Errant(DYNAMC_REPLACE) In Distress
+2117171266|5847bf73|| Infested Vineyard(DYNAMC_REPLACE)
+2117171267|5833decb|| Hanse Base(DYNAMC_REPLACE)
+2117171268|e60a7347||Updated Distressed Knight:  
+2117171269|9d93f9a4||Updated Infested Vineyard: 
+2117171270|4a6f881c||Updated Hanse Base: 
+2117171271|99867acf||Knight Errant In Distress
+2117171272|9748de49||Vineyard Infestation
+2117171273|9748de4a||Hanse Base
+2117171274|c71ae171||<br/>[ICON_PATH]<font color="#9D75BF">Hanse Bases: Toussaint [COUNTS]<br/></font>
+2117171275|c71ae172||<br/>[ICON_PATH]<font color="#9D75BF">Knight Errant In Distress: Toussaint [COUNTS]<br/></font>
+2117171276|c71ae173||<br/>[ICON_PATH]<font color="#9D75BF">Vineyard Infestations: Toussaint [COUNTS]<br/></font>
+2117171277|a138c72d||West of Mont Crane Castle
+2117171278|a138c72e||South od Seidhe Llygad Amphitheater
+2117171279|a138c72f||North of Fox Hollow
+2117171280|bd5f7fd0||South of Dun Tynne Castle
+2117171281|bd5f7fd1||Dun Tynne Hillside 
+2117171282|bd5f7fd2||West of Sansretour Valley
+2117171283|bd5f7fd3||Coronata Vineyard
+2117171284|bd5f7fd4||Belgaard Vineyard
+2117171285|f556da78||Mont Crane Castle
+2117171286|f556da79||Northwest Of Fox Hollow
+2117171287|f556da7a||Northwest of Arthach Palace Ruins
+2117171288|6b8415ce||Progress on the Path (Do not turn off)
+2117171289|59ff4759||Wither 3 Progress Tracker.
+2117171290|6ed57730||<br/><font color="#9D75BF">Complete 'The Calm Before the Storm' before 'Ciri's Story: Out of the Shadows'<br/></font>
