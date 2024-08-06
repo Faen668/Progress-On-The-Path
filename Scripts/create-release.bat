@@ -32,8 +32,6 @@ XCOPY "%modpath%\Instructions\" "%modpath%\release\" /e /s /y
 ::Copy over the Shared Util dependencies
 XCOPY "%supath%\mod_sharedutils_mappins\" "%modpath%\release\mods\mod_sharedutils_mappins\" /e /s /y
 XCOPY "%supath%\mod_sharedutils_helpers\" "%modpath%\release\mods\mod_sharedutils_helpers\" /e /s /y
-XCOPY "%supath%\mod_sharedutils_tiny_bootstrapper\" "%modpath%\release\mods\mod_sharedutils_tiny_bootstrapper\" /e /s /y
-XCOPY "%supath%\mod_sharedutils_storage\" "%modpath%\release\mods\mod_sharedutils_storage\" /e /s /y
 XCOPY "%supath%\mod_sharedutils_glossary\" "%modpath%\release\mods\mod_sharedutils_glossary\" /e /s /y
 
 "C:\Program Files\7-Zip\7z.exe" a "%modpath%\release\Progress-on-the-Path.zip" "%modpath%\release\mods"

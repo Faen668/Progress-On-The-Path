@@ -106,7 +106,6 @@ state Process in CProgressOnThePath_Storage
 		PotP_Logger("Entered state [Process]", , 'PotP Storage');
 		
 		this.LoadStorage();
-		
 	}
 	
 	//---------------------------------------------------

@@ -1,12 +1,8 @@
-//Depreciated Classes to remove on next new game version
-class CProgressOnThePath_ArrayHandler {
-}
-
 //---------------------------------------------------
 //-- Main Mod Class ---------------------------------
 //---------------------------------------------------
 
-class CProgressOnThePath extends SU_BaseBootstrappedMod {
+statemachine class CProgressOnThePath {
 	
 	public var fileName: name;
 		default fileName = 'PotP Main';
@@ -27,11 +23,7 @@ class CProgressOnThePath extends SU_BaseBootstrappedMod {
 	public var PotP_WorldGoblin: 		CProgressOnThePath_WorldGoblin;
 	public var PotP_EventListener: 		CProgressOnThePath_EventListener;
 	public var PotP_MeditationListener: CProgressOnThePath_MeditationListener;
-	public var PotP_EntityHelper:		CProgressOnThePath_PreviewEntryHelper;
-	
-	//Depreciated Classes to remove on next new game version
-	public var PotP_ArrayManager: 		CProgressOnThePath_ArrayHandler;		
-	default tag = 'CProgressOnThePath_BootStrapper';
+	public var PotP_EntityHelper:		CProgressOnThePath_PreviewEntryHelper;	
 
 	public var LastUpdateTime: float;
 		default LastUpdateTime = 0;
@@ -41,6 +33,20 @@ class CProgressOnThePath extends SU_BaseBootstrappedMod {
 	public function start() 
 	{			
 		PotP_Logger("Bootstrapped successfully with Magic, prayers and wishful thinking...", , this.fileName);
+
+		if (!FactsDoesExist("q001_nightmare_ended")) 
+		{
+			PotP_Logger("Waiting For State Release...", , this.fileName);
+			GotoState('waiting');
+			return;
+		}
+
+		if (!PotP_PersistentStorage) 
+		{
+			PotP_PersistentStorage = new CProgressOnThePath_Storage in this;
+			PotP_Logger("New storage instance created.", , 'PotP Storage');
+		}
+		PotP_PersistentStorage.PotP_LoadStorageCollection();
 		
 		theInput.RegisterListener(this, 'UpdateProgressOnThePath', 'UpdateProgressOnThePath');
 		theInput.RegisterListener(this, 'DisplayProgressPreview', 'DisplayProgressPreview');
@@ -63,14 +69,6 @@ class CProgressOnThePath extends SU_BaseBootstrappedMod {
 		PotP_PinManager = new CProgressOnThePath_MapPins in this;
 		PotP_EventListener = new CProgressOnThePath_EventListener in this;
 		PotP_MeditationListener = new CProgressOnThePath_MeditationListener in this;
-		
-		//Init Storage
-		if (!PotP_PersistentStorage) 
-		{
-			PotP_PersistentStorage = new CProgressOnThePath_Storage in this;
-			PotP_Logger("New storage instance created.", , 'PotP Storage');
-		}
-		PotP_PersistentStorage.PotP_LoadStorageCollection();
 	}	
 	
 	//---------------------------------------------------
@@ -292,6 +290,48 @@ class CProgressOnThePath extends SU_BaseBootstrappedMod {
 }
 
 //---------------------------------------------------
+//-- States -----------------------------------------
+//---------------------------------------------------
+
+state waiting in CProgressOnThePath
+{
+	event OnEnterState(previous_state_name: name) 
+	{
+		super.OnEnterState(previous_state_name);
+		PotP_Logger("Entered state [waiting]", , parent.fileName);
+		wait_for_release();
+	}
+	
+	entry function wait_for_release()
+	{
+		while (!FactsDoesExist("q001_nightmare_ended")) 
+		{
+			PotP_Logger("Waiting For State Release...", , parent.fileName);
+			Sleep(5);
+		}
+		parent.GotoState('running');
+	}
+}
+
+//---------------------------------------------------
+//-- States -----------------------------------------
+//---------------------------------------------------
+
+state running in CProgressOnThePath
+{
+	event OnEnterState(previous_state_name: name) 
+	{
+		super.OnEnterState(previous_state_name);
+		PotP_Logger("Entered state [running]", , parent.fileName);
+		start_mod();
+	}
+	
+	entry function start_mod()
+	{
+		PotP_Logger("Starting PotP...", , parent.fileName);
+		parent.start();	
+	}
+}//---------------------------------------------------
 //-- Class ------------------------------------------
 //---------------------------------------------------
 
@@ -4290,7 +4330,6 @@ state Process in CProgressOnThePath_Storage
 		PotP_Logger("Entered state [Process]", , 'PotP Storage');
 		
 		this.LoadStorage();
-		
 	}
 	
 	//---------------------------------------------------
@@ -6339,23 +6378,74 @@ state Updating in CProgressOnThePath_World_Updater
 }
 
 //---------------------------------------------------
-//-- Bootstrapper Class -----------------------------
+//-- Bootstrapper Wrapper ---------------------------
 //---------------------------------------------------
 
-state CProgressOnThePath_BootStrapper in SU_TinyBootstrapperManager extends BaseMod 
+@addField( CR4Player )
+public saved var PotP: CProgressOnThePath;
+
+@wrapMethod( CR4Player ) function OnSpawned( spawnData : SEntitySpawnData )
 {
-	public function getTag(): name 
+	wrappedMethod( spawnData );
+	
+	if (!PotP)
 	{
-		return 'CProgressOnThePath_BootStrapper';
+		PotP_Logger("Creating new PotP Instance...", , 'PotP Bootstrapper');
+		PotP = (new CProgressOnThePath in this);
+	}
+	else
+	{
+		PotP_Logger("Loading existing PotP Instance...", , 'PotP Bootstrapper');
 	}
 	
-	public function getMod(): SU_BaseBootstrappedMod 
-	{
-		return new CProgressOnThePath in parent;
-	}
+	PotP.start();
 }
 
 //---------------------------------------------------
+//-- GUI Tooltip Wrapper ----------------------------
+//---------------------------------------------------
+
+@wrapMethod( W3TooltipComponent ) function GetBaseItemData( item : SItemUniqueId, itemInvComponent : CInventoryComponent, optional isShopItem : bool, optional compareWithItem : SItemUniqueId, optional compareItemInv : CInventoryComponent ) : CScriptedFlashObject
+{
+	var ttData: CScriptedFlashObject;
+	var itemName: name;
+	var itemLabel: string;
+	var itemCategory: name;
+	var itemRarity: string;
+	var itemQuality: int;
+	
+	itemName = itemInvComponent.GetItemName(item);		
+	itemLabel = GetLocStringByKeyExt(itemInvComponent.GetItemLocalizedNameByUniqueID(item));
+	itemCategory = itemInvComponent.GetItemCategory(item);
+	itemQuality = itemInvComponent.GetItemQuality(item);
+		
+	switch(itemQuality)
+	{
+		case 1:
+			itemRarity = "<font color='#a2a2a2'>";
+			break;
+		case 2:
+			itemRarity = "<font color='#2b7bff'>";
+			break;
+		case 3:
+			itemRarity = "<font color='#e1d401'>";
+			break;
+		case 4:
+			itemRarity = "<font color='#ca610c'>";
+			break;
+		case 5:
+			itemRarity = "<font color='#01b701'>";
+			break;
+	}
+	
+	ttData = wrappedMethod( item, itemInvComponent, isShopItem, compareWithItem, compareItemInv );
+	if ( isShopItem && (itemInvComponent.IsItemAnyArmor(item) || itemInvComponent.IsItemWeapon(item) || itemCategory == 'gwint' || itemCategory == 'trophy') ) 
+	{ 
+		ttData.SetMemberFlashString("ItemName", itemRarity + PotP_GetCollectedString(this, itemName, itemLabel, item, itemInvComponent) + "</font>");
+	}
+	
+	return ttData;
+}//---------------------------------------------------
 //-- Builder Result ---------------------------------
 //---------------------------------------------------
 
@@ -8005,22 +8095,18 @@ class CProgressOnThePath_PreviewEntryHelper
 		{
 		case PotP_R_VE:
 			return GetLocStringByKeyExt("preset_value_QT_Option_GArea_2");
-			break;
 			
 		case PotP_R_NO:
 			return GetLocStringByKeyExt("preset_value_QT_Option_GArea_3");
-			break;
 
 		case PotP_R_SK:
-			return GetLocStringByKeyExt("preset_value_QT_Option_GArea_4");
-			break;			
+			return GetLocStringByKeyExt("preset_value_QT_Option_GArea_4");	
 
 		case PotP_R_KM:
 			return GetLocStringByKeyExt("preset_value_QT_Option_GArea_6");
-			break;		
 		
 		default:
-			break;
+			return "";
 		}	
 	}
 	
@@ -8720,8 +8806,7 @@ function PotP_IsUsingNextGen() : bool
 
 function GetPotP(out master: CProgressOnThePath, optional caller: string): bool 
 {
-	PotP_Logger("GetPotP Called by [" + caller + "]");
-	master = (CProgressOnThePath)SUTB_getModByTag('CProgressOnThePath_BootStrapper');
+	master = thePlayer.PotP;
 	
 	if (master)
 	{
@@ -8947,13 +9032,9 @@ function PotP_GetCollectedString(tooltipDataProvider: W3TooltipComponent, itemNa
 	var entity: PotP_PreviewEntry;
 	var helper: CProgressOnThePath_PreviewEntryHelper;
 	
-	if (!tooltipDataProvider.PotP_EntityHelper) {
-		tooltipDataProvider.PotP_EntityHelper = GetPotP_EntityHelper();
-	}
-	
-	helper = tooltipDataProvider.PotP_EntityHelper;
+	helper = GetPotP_EntityHelper();
 
-	if (tooltipInv.GetItemQuality(item) < 4 || !helper.GetEntityByItemName(itemName, entity)) {
+	if (!helper || tooltipInv.GetItemQuality(item) < 4 || !helper.GetEntityByItemName(itemName, entity)) {
 		return itemLabel;
 	}
 
@@ -8978,11 +9059,8 @@ function PotP_GetCollectedStringForCrafting(craftingMenu: CR4CraftingMenu, itemN
 	var helper: CProgressOnThePath_PreviewEntryHelper;
 	var minQuality, maxQuality  : int;
 	
-	if (!craftingMenu.PotP_EntityHelper) {
-		craftingMenu.PotP_EntityHelper = GetPotP_EntityHelper();
-	}
+	helper = GetPotP_EntityHelper();
 	
-	helper = craftingMenu.PotP_EntityHelper;
 	thePlayer.inv.GetItemQualityFromName( itemName, minQuality, maxQuality );
 	
 	if (minQuality < 4 || !helper.GetEntityByItemName(itemName, entity)) {
@@ -9006,7 +9084,7 @@ function PotP_GetCollectedStringForCrafting(craftingMenu: CR4CraftingMenu, itemN
 
 function PotP_Logger(message: string, optional ShowInGUI: bool, optional filename: name) 
 {	
-	/*Comment The Line Out On Release Version */ if ( StrContains(message, "Entered state") ) { return; }
+	/*Comment The Line Out On Release Version */ //if ( StrContains(message, "Entered state") ) { return; }
 	
 	if (filename == '') 
 	{
@@ -9392,6 +9470,19 @@ class ProgressOnTheBath_TutorialBook7 extends SU_GlossaryEntry
 }
 
 //---------------------------------------------------
+//-- Hud Wrap ---------------------------------------
+//---------------------------------------------------
+
+@wrapMethod( CR4ScriptedHud ) function OnQuestUpdate( journalQuest : CJournalQuest, isQuestUpdate : bool )
+{
+	var goblin: CProgressOnThePath_QuestGoblin = GetPotP_QuestGoblin();
+	
+	if (goblin) {
+		goblin._OnQuestUpdate(journalQuest);
+	}
+	
+	wrappedMethod(journalQuest, isQuestUpdate);
+}//---------------------------------------------------
 //-- Main Mod Class ---------------------------------
 //---------------------------------------------------
 

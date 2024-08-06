@@ -1,12 +1,8 @@
-//Depreciated Classes to remove on next new game version
-class CProgressOnThePath_ArrayHandler {
-}
-
 //---------------------------------------------------
 //-- Main Mod Class ---------------------------------
 //---------------------------------------------------
 
-class CProgressOnThePath extends SU_BaseBootstrappedMod {
+statemachine class CProgressOnThePath {
 	
 	public var fileName: name;
 		default fileName = 'PotP Main';
@@ -27,11 +23,7 @@ class CProgressOnThePath extends SU_BaseBootstrappedMod {
 	public var PotP_WorldGoblin: 		CProgressOnThePath_WorldGoblin;
 	public var PotP_EventListener: 		CProgressOnThePath_EventListener;
 	public var PotP_MeditationListener: CProgressOnThePath_MeditationListener;
-	public var PotP_EntityHelper:		CProgressOnThePath_PreviewEntryHelper;
-	
-	//Depreciated Classes to remove on next new game version
-	public var PotP_ArrayManager: 		CProgressOnThePath_ArrayHandler;		
-	default tag = 'CProgressOnThePath_BootStrapper';
+	public var PotP_EntityHelper:		CProgressOnThePath_PreviewEntryHelper;	
 
 	public var LastUpdateTime: float;
 		default LastUpdateTime = 0;
@@ -41,6 +33,20 @@ class CProgressOnThePath extends SU_BaseBootstrappedMod {
 	public function start() 
 	{			
 		PotP_Logger("Bootstrapped successfully with Magic, prayers and wishful thinking...", , this.fileName);
+
+		if (!FactsDoesExist("q001_nightmare_ended")) 
+		{
+			PotP_Logger("Waiting For State Release...", , this.fileName);
+			GotoState('waiting');
+			return;
+		}
+
+		if (!PotP_PersistentStorage) 
+		{
+			PotP_PersistentStorage = new CProgressOnThePath_Storage in this;
+			PotP_Logger("New storage instance created.", , 'PotP Storage');
+		}
+		PotP_PersistentStorage.PotP_LoadStorageCollection();
 		
 		theInput.RegisterListener(this, 'UpdateProgressOnThePath', 'UpdateProgressOnThePath');
 		theInput.RegisterListener(this, 'DisplayProgressPreview', 'DisplayProgressPreview');
@@ -63,14 +69,6 @@ class CProgressOnThePath extends SU_BaseBootstrappedMod {
 		PotP_PinManager = new CProgressOnThePath_MapPins in this;
 		PotP_EventListener = new CProgressOnThePath_EventListener in this;
 		PotP_MeditationListener = new CProgressOnThePath_MeditationListener in this;
-		
-		//Init Storage
-		if (!PotP_PersistentStorage) 
-		{
-			PotP_PersistentStorage = new CProgressOnThePath_Storage in this;
-			PotP_Logger("New storage instance created.", , 'PotP Storage');
-		}
-		PotP_PersistentStorage.PotP_LoadStorageCollection();
 	}	
 	
 	//---------------------------------------------------
@@ -291,3 +289,46 @@ class CProgressOnThePath extends SU_BaseBootstrappedMod {
 	}
 }
 
+//---------------------------------------------------
+//-- States -----------------------------------------
+//---------------------------------------------------
+
+state waiting in CProgressOnThePath
+{
+	event OnEnterState(previous_state_name: name) 
+	{
+		super.OnEnterState(previous_state_name);
+		PotP_Logger("Entered state [waiting]", , parent.fileName);
+		wait_for_release();
+	}
+	
+	entry function wait_for_release()
+	{
+		while (!FactsDoesExist("q001_nightmare_ended")) 
+		{
+			PotP_Logger("Waiting For State Release...", , parent.fileName);
+			Sleep(5);
+		}
+		parent.GotoState('running');
+	}
+}
+
+//---------------------------------------------------
+//-- States -----------------------------------------
+//---------------------------------------------------
+
+state running in CProgressOnThePath
+{
+	event OnEnterState(previous_state_name: name) 
+	{
+		super.OnEnterState(previous_state_name);
+		PotP_Logger("Entered state [running]", , parent.fileName);
+		start_mod();
+	}
+	
+	entry function start_mod()
+	{
+		PotP_Logger("Starting PotP...", , parent.fileName);
+		parent.start();	
+	}
+}

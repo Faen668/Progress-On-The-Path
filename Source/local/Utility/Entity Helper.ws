@@ -363,22 +363,18 @@ class CProgressOnThePath_PreviewEntryHelper
 		{
 		case PotP_R_VE:
 			return GetLocStringByKeyExt("preset_value_QT_Option_GArea_2");
-			break;
 			
 		case PotP_R_NO:
 			return GetLocStringByKeyExt("preset_value_QT_Option_GArea_3");
-			break;
 
 		case PotP_R_SK:
-			return GetLocStringByKeyExt("preset_value_QT_Option_GArea_4");
-			break;			
+			return GetLocStringByKeyExt("preset_value_QT_Option_GArea_4");	
 
 		case PotP_R_KM:
 			return GetLocStringByKeyExt("preset_value_QT_Option_GArea_6");
-			break;		
 		
 		default:
-			break;
+			return "";
 		}	
 	}
 	

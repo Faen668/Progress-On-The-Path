@@ -13,8 +13,7 @@ function PotP_IsUsingNextGen() : bool
 
 function GetPotP(out master: CProgressOnThePath, optional caller: string): bool 
 {
-	PotP_Logger("GetPotP Called by [" + caller + "]");
-	master = (CProgressOnThePath)SUTB_getModByTag('CProgressOnThePath_BootStrapper');
+	master = thePlayer.PotP;
 	
 	if (master)
 	{
@@ -240,13 +239,9 @@ function PotP_GetCollectedString(tooltipDataProvider: W3TooltipComponent, itemNa
 	var entity: PotP_PreviewEntry;
 	var helper: CProgressOnThePath_PreviewEntryHelper;
 	
-	if (!tooltipDataProvider.PotP_EntityHelper) {
-		tooltipDataProvider.PotP_EntityHelper = GetPotP_EntityHelper();
-	}
-	
-	helper = tooltipDataProvider.PotP_EntityHelper;
+	helper = GetPotP_EntityHelper();
 
-	if (tooltipInv.GetItemQuality(item) < 4 || !helper.GetEntityByItemName(itemName, entity)) {
+	if (!helper || tooltipInv.GetItemQuality(item) < 4 || !helper.GetEntityByItemName(itemName, entity)) {
 		return itemLabel;
 	}
 
@@ -271,11 +266,8 @@ function PotP_GetCollectedStringForCrafting(craftingMenu: CR4CraftingMenu, itemN
 	var helper: CProgressOnThePath_PreviewEntryHelper;
 	var minQuality, maxQuality  : int;
 	
-	if (!craftingMenu.PotP_EntityHelper) {
-		craftingMenu.PotP_EntityHelper = GetPotP_EntityHelper();
-	}
+	helper = GetPotP_EntityHelper();
 	
-	helper = craftingMenu.PotP_EntityHelper;
 	thePlayer.inv.GetItemQualityFromName( itemName, minQuality, maxQuality );
 	
 	if (minQuality < 4 || !helper.GetEntityByItemName(itemName, entity)) {
@@ -299,7 +291,7 @@ function PotP_GetCollectedStringForCrafting(craftingMenu: CR4CraftingMenu, itemN
 
 function PotP_Logger(message: string, optional ShowInGUI: bool, optional filename: name) 
 {	
-	/*Comment The Line Out On Release Version */ if ( StrContains(message, "Entered state") ) { return; }
+	/*Comment The Line Out On Release Version */ //if ( StrContains(message, "Entered state") ) { return; }
 	
 	if (filename == '') 
 	{

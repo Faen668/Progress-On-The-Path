@@ -113,13 +113,13 @@
 
 			<Var id="ProgressOnThePath_Preview_GArea"			displayName="ProgressOnThePath_Preview_GArea"		displayType="OPTIONS">
 				<OptionsArray>
-					<Option id="0" displayName="QT_Option_GArea_0">	<Entry varId="ProgressOnThePath_Preview_WArea" value="0"/></Option>
-					<Option id="1" displayName="QT_Option_GArea_1">	<Entry varId="ProgressOnThePath_Preview_WArea" value="1"/></Option>
-					<Option id="2" displayName="QT_Option_GArea_2">	<Entry varId="ProgressOnThePath_Preview_WArea" value="2"/></Option>
-					<Option id="3" displayName="QT_Option_GArea_3">	<Entry varId="ProgressOnThePath_Preview_WArea" value="3"/></Option>
-					<Option id="4" displayName="QT_Option_GArea_4">	<Entry varId="ProgressOnThePath_Preview_WArea" value="4"/></Option>
-					<Option id="5" displayName="QT_Option_GArea_5">	<Entry varId="ProgressOnThePath_Preview_WArea" value="5"/></Option>
-					<Option id="6" displayName="QT_Option_GArea_6">	<Entry varId="ProgressOnThePath_Preview_WArea" value="6"/></Option>
+					<Option id="0" displayName="QT_Option_GArea_0">	<Entry varId="ProgressOnThePath_Preview_GArea" value="0"/></Option>
+					<Option id="1" displayName="QT_Option_GArea_1">	<Entry varId="ProgressOnThePath_Preview_GArea" value="1"/></Option>
+					<Option id="2" displayName="QT_Option_GArea_2">	<Entry varId="ProgressOnThePath_Preview_GArea" value="2"/></Option>
+					<Option id="3" displayName="QT_Option_GArea_3">	<Entry varId="ProgressOnThePath_Preview_GArea" value="3"/></Option>
+					<Option id="4" displayName="QT_Option_GArea_4">	<Entry varId="ProgressOnThePath_Preview_GArea" value="4"/></Option>
+					<Option id="5" displayName="QT_Option_GArea_5">	<Entry varId="ProgressOnThePath_Preview_GArea" value="5"/></Option>
+					<Option id="6" displayName="QT_Option_GArea_6">	<Entry varId="ProgressOnThePath_Preview_GArea" value="6"/></Option>
 				</OptionsArray>
 			</Var>
 			<Var id="ProgressOnThePath_Preview_GExtra" 			displayName="ProgressOnThePath_Preview_GExtra" 	displayType="TOGGLE"/>
