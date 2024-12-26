@@ -485,14 +485,8 @@ class CProgressOnThePath_Notifications
 	public function UpdateSingleEntry(entry_data: PotP_PreviewEntry, status: int)
 	{
 		var Notification : string = "<font size='" + GetNotificationFontSize() + "'>" + GetNotificationHeader() + "</font>";
-
-		switch (status)
-		{
-			case 0: Notification += FormatItemIcon(entity_helper.GetIconPath(entry_data)) + FormatLine_BackGroundProcessingArray("Restored: " + entry_data.localname); break;
-			case 1: Notification += FormatItemIcon(entity_helper.GetIconPath(entry_data)) + FormatLine_BackGroundProcessingArray("Ignored: " + entry_data.localname);  break;
-			case 2: Notification += FormatItemIcon(entity_helper.GetIconPath(entry_data)) + FormatLine_BackGroundProcessingArray("Completed: " + entry_data.localname); break;
-		}
 		
+		Notification += FormatItemIcon(entity_helper.GetIconPath(entry_data)) + FormatLine_BackGroundProcessingArray(GetLocStringByKeyExt("PotP_Notification_SingleUpdate_" + IntToString(status)) + entry_data.localname);
 		theGame.GetGuiManager().ShowNotification(Notification, GetNotificationTime(), true);
 	}
 	

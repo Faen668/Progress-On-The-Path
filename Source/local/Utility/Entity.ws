@@ -239,7 +239,7 @@ class PotP_PreviewEntry
 		
 		this.localname 		= GetLocStringByKeyExt("option_" + uuid);
 		
-		//PotP_Logger(localname + " is a " + this.card_type + " card that can be " + this.card_origin, , 'PotP Preview Entry');
+		PotP_Logger(localname + " is a " + this.card_type + " card that can be " + this.card_origin, , 'PotP Preview Entry');
 		return this;
 	}
 	
@@ -275,6 +275,7 @@ enum pStatus
 {
 	completed = 2,
 	ignored = 1,
+	missed = 3,
 }
 
 exec function ptc(identifier: string, optional value: pStatus) 

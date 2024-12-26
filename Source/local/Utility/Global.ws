@@ -203,7 +203,7 @@ function PotP_ChangeQuestStatus(identifier: string, optional value: pStatus)
 	var IdeList: array<string>;
 	var Idx: int;
 
-	if (!GetPotP(master, "PotP_ChangeQuesyStatus")) 
+	if (!GetPotP(master, "PotP_ChangeQuestStatus")) 
 		return;
 
 	EntList = master.PotP_PersistentStorage.pArrayStorage.TotalEntList;	
@@ -222,6 +222,10 @@ function PotP_ChangeQuestStatus(identifier: string, optional value: pStatus)
 		
 	case ignored:
 		master.PotP_EntityHelper.SetIgnored(EntList[Idx], true);
+		break;
+
+	case missed:
+		master.PotP_EntityHelper.SetMissed(EntList[Idx], true);
 		break;
 		
 	default:

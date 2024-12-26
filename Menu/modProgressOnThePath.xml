@@ -8,6 +8,7 @@
 			<Var id="ProgressOnThePath_MeditationUpdate"		displayName="ProgressOnThePath_MeditationUpdate" 	displayType="TOGGLE"/>
 			<Var id="ProgressOnThePath_EnableHotKey"		 	displayName="ProgressOnThePath_EnableHotKey" 		displayType="TOGGLE"/>
 			
+			
 <!--///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////-->
 
 			<Var id="Separator" 											displayName="" 													displayType="SUBTLE_SEPARATOR"/>
@@ -23,6 +24,9 @@
 					<Option id="4" displayName="QT_Option_EventIconType_4">	<Entry varId="ProgressOnThePath_EventMapPins_MapPinType" value="4"/></Option>
 				</OptionsArray>
 			</Var>
+			
+			<Var id="Separator" 								displayName="" 										displayType="SUBTLE_SEPARATOR"/>
+			<Var id="ProgressOnThePath_ResetForNGPlus"		 	displayName="ProgressOnThePath_ResetForNGPlus" 		displayType="TOGGLE"/>
 			
 		</VisibleVars>
 	</Group>
@@ -48,6 +52,7 @@
 			</Var>
 			<Var id="ProgressOnThePath_Preview_Comp" 			displayName="ProgressOnThePath_Preview_Comp" 		displayType="TOGGLE"/>
 			<Var id="ProgressOnThePath_Preview_Igno" 			displayName="ProgressOnThePath_Preview_Igno" 		displayType="TOGGLE"/>
+			<Var id="ProgressOnThePath_Preview_Miss" 			displayName="ProgressOnThePath_Preview_Miss" 		displayType="TOGGLE"/>
 			<Var id="ProgressOnThePath_Preview_Iden" 			displayName="ProgressOnThePath_Preview_Iden" 		displayType="TOGGLE"/>
 
 <!--///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////-->

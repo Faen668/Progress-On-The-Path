@@ -27,13 +27,41 @@ statemachine class CProgressOnThePath {
 
 	public var LastUpdateTime: float;
 		default LastUpdateTime = 0;
-			
+	
+	public var has_updated: bool;
+		default has_updated = false;
+	
+	public var current_version_string: string;
+		default current_version_string = "6.0.0.8";
+
+	public var current_version_int: int;
+		default current_version_int = 6008;
+		
 	//---------------------------------------------------
 	
+	public function EvaluateOptionsOnMenuClose()
+	{
+		if ( (bool) PotP_GetGeneralValue('ProgressOnThePath_ResetForNGPlus') ) {
+			theGame.GetInGameConfigWrapper().SetVarValue('ProgressOnThePath_GeneralSettings', 'ProgressOnThePath_ResetForNGPlus', "false");
+			reset_for_ng_plus();
+		}
+	}
+	
+	public function reset_for_ng_plus()
+	{
+		PotP_PersistentStorage.pEventStorage.ClearFacts();
+		PotP_PersistentStorage.pItemsStorage.ClearFacts();
+		PotP_PersistentStorage.PotP_LoadStorageCollection(PotP_Reset_NewGamePlus);
+		PotP_PopupManager.Showpopup(GetLocStringByKeyExt("panel_QT_Name"), GetLocStringByKeyExt("PotP_NewGamePlusMessage"), "", "Hint", false);
+	}
+	
 	public function start() 
-	{			
+	{
+		var initStr: string = "PotP_Initialised";
+		var VersStr: string = "ProgressOnThePath_CurrentModVersion";
+		
 		PotP_Logger("Bootstrapped successfully with Magic, prayers and wishful thinking...", , this.fileName);
-
+		
 		if (!FactsDoesExist("q001_nightmare_ended")) 
 		{
 			PotP_Logger("Waiting For State Release...", , this.fileName);
@@ -41,13 +69,6 @@ statemachine class CProgressOnThePath {
 			return;
 		}
 
-		if (!PotP_PersistentStorage) 
-		{
-			PotP_PersistentStorage = new CProgressOnThePath_Storage in this;
-			PotP_Logger("New storage instance created.", , 'PotP Storage');
-		}
-		PotP_PersistentStorage.PotP_LoadStorageCollection();
-		
 		theInput.RegisterListener(this, 'UpdateProgressOnThePath', 'UpdateProgressOnThePath');
 		theInput.RegisterListener(this, 'DisplayProgressPreview', 'DisplayProgressPreview');
 		
@@ -69,52 +90,109 @@ statemachine class CProgressOnThePath {
 		PotP_PinManager = new CProgressOnThePath_MapPins in this;
 		PotP_EventListener = new CProgressOnThePath_EventListener in this;
 		PotP_MeditationListener = new CProgressOnThePath_MeditationListener in this;
+		
+		if (!PotP_PersistentStorage) 
+		{
+			PotP_PersistentStorage = new CProgressOnThePath_Storage in this;
+			PotP_Logger("New storage instance created.", , 'PotP Storage');
+		}
+
+		//Mod is not initialised
+		if (FactsQuerySum(initStr) != 1) 
+		{
+			FactsSet(initStr, 1);
+			FactsSet(VersStr, current_version_int);
+			this.LoadDefaults();
+			
+			PotP_PersistentStorage.PotP_LoadStorageCollection(PotP_Reset_None);
+			PotP_PopupManager.Showpopup(GetLocStringByKeyExt("panel_QT_Name"), GetLocStringByKeyExt("PotP_InstallMessage"), "PotP_InstallMessage", "Hint", true);
+		}
+		else
+		{
+			if (FactsQuerySum(VersStr) < current_version_int) 
+			{
+				has_updated = true;
+				
+				if (FactsQuerySum(VersStr) < 527) 
+				{
+					FactsSet(VersStr, 527);
+					PotP_PersistentStorage.PotP_LoadStorageCollection(PotP_Reset_All); 
+				}
+				
+				if (FactsQuerySum(VersStr) < 5281) 
+				{ 
+					FactsSet(VersStr, 5281);
+				}
+				
+				if (FactsQuerySum(VersStr) < 5282) 
+				{ 
+					FactsSet(VersStr, 5282);
+					PotP_PersistentStorage.PotP_LoadStorageCollection(PotP_Reset_QuestAndWorld); 
+				}
+				
+				if (FactsQuerySum(VersStr) < 6006) 
+				{
+					FactsSet(VersStr, 6006);
+					PotP_PersistentStorage.PotP_LoadStorageCollection(PotP_Reset_QuestAndEvent);
+				}
+
+				if (FactsQuerySum(VersStr) < 6008) 
+				{
+					FactsSet(VersStr, 6008);
+					PotP_PersistentStorage.PotP_LoadStorageCollection(PotP_Reset_Quest);
+				}
+			}
+			else
+			{
+				PotP_PersistentStorage.PotP_LoadStorageCollection(PotP_Reset_None);
+			}
+		}
 	}	
 	
 	//---------------------------------------------------
 	
-	public function SetModVersion() 
+	public function finish_init()
 	{
-		var newModVersion_Str: string = "5.2.8.2";
-		var newModVersion_Int: int = 5282;
+		PotP_UpdaterClass		.initialise(this);
+		PotP_PinManager			.initialise(this);
+		PotP_QuestPreview		.initialise(this);
+		PotP_WorldPreview		.initialise(this);
+		PotP_ItemsPreview		.initialise(this);
+		PotP_GwentPreview		.initialise(this);
+		PotP_MissablePreview	.initialise(this);
+		PotP_Notifications		.initialise(this);
+		PotP_ItemsGoblin		.initialise(this);
+		PotP_QuestGoblin		.initialise(this);
+		PotP_WorldGoblin		.initialise(this);
+		PotP_EventListener		.initialise(this);
+		PotP_MeditationListener	.initialise(this);
+		PotP_PopupManager		.initialise(this);
 
-		var initStr: string = "PotP_Initialised";
-		var VersStr: string = "ProgressOnThePath_CurrentModVersion";
-
-		//pt_checkfact("ProgressOnThePath_CurrentModVersion")
+		(new ProgressOnTheBath_TutorialBook1 in this).addBook();
+		(new ProgressOnTheBath_TutorialBook2 in this).addBook();
+		(new ProgressOnTheBath_TutorialBook3 in this).addBook();
+		(new ProgressOnTheBath_TutorialBook4 in this).addBook();
+		(new ProgressOnTheBath_TutorialBook5 in this).addBook();
+		(new ProgressOnTheBath_TutorialBook6 in this).addBook();
+		(new ProgressOnTheBath_TutorialBook7 in this).addBook();
 		
-		if (FactsQuerySum(initStr) != 1) 
+		(new CProgressOnTheBath_QuestPreviewBook in this).addBook(this);
+		(new CProgressOnTheBath_WorldPreviewBook in this).addBook(this);
+		(new CProgressOnTheBath_ItemsPreviewBook in this).addBook(this);
+		(new CProgressOnTheBath_MissaPreviewBook in this).addBook(this);
+		(new CProgressOnTheBath_GwentPreviewBook in this).addBook(this);
+		
+		PotP_PinManager.GotoState('Idle');
+		PotP_ItemsGoblin.GotoState('Idle');
+		PotP_WorldGoblin.GotoState('Idle');
+		PotP_EventListener.GotoState('Idle');
+		PotP_MeditationListener.GotoState('Idle');
+		
+		if (has_updated)
 		{
-			this.LoadDefaults();
-			FactsSet(initStr, 1);
-			FactsSet(VersStr, newModVersion_Int);
-
-			PotP_PopupManager.Showpopup(GetLocStringByKeyExt("panel_QT_Name"), GetLocStringByKeyExt("PotP_InstallMessage"), "PotP_InstallMessage", "Hint", true);
-			return;
+			has_updated = false;
+			PotP_PopupManager.Showpopup(GetLocStringByKeyExt("panel_QT_Name"), GetLocStringByKeyExt("PotP_UpdatedMessage") + current_version_string, "", "Hint", false);
 		}
-
-		if (this.UpdateMod(VersStr, newModVersion_Int)) 
-		{
-			PotP_PopupManager.Showpopup(GetLocStringByKeyExt("panel_QT_Name"), GetLocStringByKeyExt("PotP_UpdatedMessage") + newModVersion_Str, "", "Hint", false);
-		}
-	}
-	
-	//---------------------------------------------------
-	
-	private function UpdateMod(VersStr: string, newModVersion_Int: int) : bool
-	{
-		if (FactsQuerySum(VersStr) < newModVersion_Int) 
-		{
-			if (FactsQuerySum(VersStr) < 527) { PotP_PersistentStorage.PotP_LoadStorageCollection('All'); FactsSet(VersStr, 527);}
-			if (FactsQuerySum(VersStr) < 5281) { FactsSet(VersStr, 5281);}
-			if (FactsQuerySum(VersStr) < 5282) { 
-				PotP_PersistentStorage.PotP_LoadStorageCollection('Quest'); 
-				PotP_PersistentStorage.PotP_LoadStorageCollection('World');
-				FactsSet(VersStr, 5282);
-			}
-			return true;
-		}
-		return false;
 	}
 	
 	//---------------------------------------------------

@@ -24,6 +24,7 @@ statemachine class CProgressOnThePath_QuestStorage
 	var SideQuests_KaerMorhen		: array<PotP_PreviewEntry>;
 	var SideQuests_Toussaint		: array<PotP_PreviewEntry>;
 	var SideQuests_NonRegional		: array<PotP_PreviewEntry>;
+	var SideQuests_Vizima			: array<PotP_PreviewEntry>;
 	
 	var ContQuests_WhiteOrchard		: array<PotP_PreviewEntry>;
 	var ContQuests_Velen			: array<PotP_PreviewEntry>;
@@ -60,6 +61,7 @@ statemachine class CProgressOnThePath_QuestStorage
 	var MissableQuests_Keira		: array<PotP_PreviewEntry>;
 	var MissableQuests_SQ209		: array<PotP_PreviewEntry>;
 	var MissableQuests_Tango		: array<PotP_PreviewEntry>;
+	var MissableQuests_WineWars		: array<PotP_PreviewEntry>;
 	
 	var UUIDINT: int;
 	default UUIDINT = 1000;
@@ -192,7 +194,11 @@ statemachine class CProgressOnThePath_QuestStorage
 
 		case "PotP_TrackingGroup_SideQuests_Skellige_04":
 			this.MissableQuests_SQ209.PushBack(pData);
-			break;			
+			break;	
+
+		case "PotP_TrackingGroup_SideQuests_Toussaint_37":
+			this.MissableQuests_WineWars.PushBack(pData);
+			break;
 
 		default:
 			PotP_Logger("Unrecognised Missable Quest Detected - " + pData.localname);
@@ -254,6 +260,7 @@ state Build in CProgressOnThePath_QuestStorage
 		parent.MissableQuests_Keira.Clear();
 		parent.MissableQuests_Tango.Clear();
 		parent.MissableQuests_SQ209.Clear();
+		parent.MissableQuests_WineWars.Clear();
 		
 		this.Build_Main();
 		this.Build_Side();
@@ -476,6 +483,11 @@ state Build in CProgressOnThePath_QuestStorage
 		parent.SideQuests_KaerMorhen.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_03", PotP_E_Primary,  PotP_R_KM, PotP_I_Sides, "mq4003_lake"));
 		parent.SideQuests_KaerMorhen.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_04", PotP_E_Primary,  PotP_R_KM, PotP_I_Sides, "mq4004_bastion"));
 		parent.SideQuests_KaerMorhen.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_05", PotP_E_Primary,  PotP_R_KM, PotP_I_Sides, "mq4006_armor"));
+
+		if (PotP_UsingW3QE_Conscience()) // Nexus ID: https://www.nexusmods.com/witcher3/mods/9360
+		{
+			parent.SideQuests_KaerMorhen.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_90", PotP_E_ModAdded, PotP_R_KM, PotP_I_Sides, "dlc10_treasurepang"));
+		}	
 		
 		PotP_SortPreviewData(parent.SideQuests_KaerMorhen, PotP_A_Quest, master);
 		
@@ -484,11 +496,80 @@ state Build in CProgressOnThePath_QuestStorage
 		group = "PotP_TrackingGroup_SideQuests_NonRegional";
 		
 		parent.SideQuests_NonRegional.Clear();
+
+		if (PotP_UsingAWitcherCanHideAnother()) // Nexus ID: https://www.nexusmods.com/witcher3/mods/9453
+		{
+			parent.SideQuests_NonRegional.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_100", PotP_E_ModAdded, PotP_R_NA, PotP_I_Sides, "A Witcher Can Hide Another"));
+		}	
+		
 		parent.SideQuests_NonRegional.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_01", PotP_E_Primary,  PotP_R_NA, PotP_I_Sides, "mq3031_aging_romance"));
+
+		if (PotP_UsingW3QE_BombCollector()) // Nexus ID: https://www.nexusmods.com/witcher3/mods/9360
+		{
+			parent.SideQuests_NonRegional.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_90", PotP_E_ModAdded, PotP_R_NA, PotP_I_Sides, "dlcbombcollector001"));
+		}	
+
+		if (PotP_UsingW3QE_BombCollector()) // Nexus ID: https://www.nexusmods.com/witcher3/mods/9360
+		{
+			parent.SideQuests_NonRegional.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_91", PotP_E_ModAdded, PotP_R_NA, PotP_I_Sides, "dlcbombcollector002"));
+		}	
+
+		if (PotP_UsingW3QE_BombCollector()) // Nexus ID: https://www.nexusmods.com/witcher3/mods/9360
+		{
+			parent.SideQuests_NonRegional.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_92", PotP_E_ModAdded, PotP_R_NA, PotP_I_Sides, "dlcbombcollector003"));
+		}	
+		
 		parent.SideQuests_NonRegional.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_02", PotP_E_Primary,  PotP_R_NA, PotP_I_Sides, "Card Game Meta: Gather All"));
+
+		if (PotP_UsingW3QE_DecoctionCollector()) // Nexus ID: https://www.nexusmods.com/witcher3/mods/9360
+		{
+			parent.SideQuests_NonRegional.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_99", PotP_E_ModAdded, PotP_R_NA, PotP_I_Sides, "dlcdecoctioncollector"));
+		}	
+		
 		parent.SideQuests_NonRegional.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_03", PotP_E_Missable, PotP_R_NA, PotP_I_Sides, "SQ106 Killbill"));
+
+		if (PotP_UsingW3QE_PotionCollector()) // Nexus ID: https://www.nexusmods.com/witcher3/mods/9360
+		{
+			parent.SideQuests_NonRegional.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_96", PotP_E_ModAdded, PotP_R_NA, PotP_I_Sides, "dlcpotioncollector001"));
+		}	
+
+		if (PotP_UsingW3QE_PotionCollector()) // Nexus ID: https://www.nexusmods.com/witcher3/mods/9360
+		{
+			parent.SideQuests_NonRegional.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_97", PotP_E_ModAdded, PotP_R_NA, PotP_I_Sides, "dlcpotioncollector002"));
+		}	
+
+		if (PotP_UsingW3QE_PotionCollector()) // Nexus ID: https://www.nexusmods.com/witcher3/mods/9360
+		{
+			parent.SideQuests_NonRegional.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_98", PotP_E_ModAdded, PotP_R_NA, PotP_I_Sides, "dlcpotioncollector003"));
+		}
+		
 		parent.SideQuests_NonRegional.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_04", PotP_E_Primary,  PotP_R_NA, PotP_I_Sides, "CG: Old Friends"));
 		parent.SideQuests_NonRegional.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_05", PotP_E_Primary,  PotP_R_NA, PotP_I_Sides, "SQ108 Master Blacksmith"));
+
+		if (PotP_UsingW3QE_OilTycoon()) // Nexus ID: https://www.nexusmods.com/witcher3/mods/9360
+		{
+			parent.SideQuests_NonRegional.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_93", PotP_E_ModAdded, PotP_R_NA, PotP_I_Sides, "dlcoiltycoon001"));
+		}	
+
+		if (PotP_UsingW3QE_OilTycoon()) // Nexus ID: https://www.nexusmods.com/witcher3/mods/9360
+		{
+			parent.SideQuests_NonRegional.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_94", PotP_E_ModAdded, PotP_R_NA, PotP_I_Sides, "dlcoiltycoon002"));
+		}	
+
+		if (PotP_UsingW3QE_OilTycoon()) // Nexus ID: https://www.nexusmods.com/witcher3/mods/9360
+		{
+			parent.SideQuests_NonRegional.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_95", PotP_E_ModAdded, PotP_R_NA, PotP_I_Sides, "dlcoiltycoon003"));
+		}
+
+		if (PotP_UsingAWitcherCanHideAnother()) // Nexus ID: https://www.nexusmods.com/witcher3/mods/9453
+		{
+			parent.SideQuests_NonRegional.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_101", PotP_E_ModAdded, PotP_R_NA, PotP_I_Sides, "Mysterious Disappearance"));
+		}	
+
+		if (PotP_UsingUnsinkable()) // Nexus ID: https://www.nexusmods.com/witcher3/mods/7355
+		{
+			parent.SideQuests_NonRegional.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_102", PotP_E_ModAdded, PotP_R_NA, PotP_I_Sides, "mod001_boat"));
+		}	
 		
 		PotP_SortPreviewData(parent.SideQuests_NonRegional, PotP_A_Quest, master);
 
@@ -522,6 +603,12 @@ state Build in CProgressOnThePath_QuestStorage
 		parent.SideQuests_Velen.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_23", PotP_E_Missable, PotP_R_VE, PotP_I_Sides, "Q104 Favour For Keira"));
 		parent.SideQuests_Velen.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_24", PotP_E_Primary,  PotP_R_VE, PotP_I_Sides, "hr101 : Horse Race: Baron's Men"));
 		parent.SideQuests_Velen.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_25", PotP_E_Missable, PotP_R_VE, PotP_I_Sides, "Q107 Swamps"));
+	
+		if (PotP_UsingWeatherMachine()) // Nexus ID: https://www.nexusmods.com/witcher3/mods/7028
+		{
+			parent.SideQuests_Velen.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_91", PotP_E_ModAdded, PotP_R_VE, PotP_I_Sides, "mod003_weathermachine"));
+		}	
+		
 		parent.SideQuests_Velen.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_26", PotP_E_Primary,  PotP_R_VE, PotP_I_Sides, "mq1058 Cat Stash"));
 		parent.SideQuests_Velen.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_27", PotP_E_Missable, PotP_R_VE, PotP_I_Sides, "SQ102 Dolores"));
 		parent.SideQuests_Velen.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_28", PotP_E_Primary,  PotP_R_VE, PotP_I_Sides, "mq1050_written_in_the_stars"));
@@ -557,6 +644,12 @@ state Build in CProgressOnThePath_QuestStorage
 		parent.SideQuests_Novigrad.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_08", PotP_E_Primary, 		PotP_R_NO, PotP_I_Sides, "MQ3037 Sleeping Vampire"));
 		parent.SideQuests_Novigrad.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_09", PotP_E_Missable, 		PotP_R_NO, PotP_I_Sides, "mq3005 Shady Deal"));
 		parent.SideQuests_Novigrad.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_10", PotP_E_Missable, 		PotP_R_NO, PotP_I_Sides, "SQ312 Ves"));
+		
+		if (PotP_UsingW3QE_UngratefulMage()) // Nexus ID: https://www.nexusmods.com/witcher3/mods/9360
+		{
+			parent.SideQuests_Novigrad.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_94", PotP_E_ModAdded, PotP_R_NO, PotP_I_Sides, "dlcmoritz"));
+		}	
+		
 		parent.SideQuests_Novigrad.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_11", PotP_E_Primary_DLC1, 	PotP_R_NO, PotP_I_Sides, "q603painting"));
 		parent.SideQuests_Novigrad.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_12", PotP_E_Missable, 		PotP_R_NO, PotP_I_Sides, "SQ303 Brothel"));
 		parent.SideQuests_Novigrad.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_13", PotP_E_Missable, 		PotP_R_NO, PotP_I_Sides, "Q308 Psycho"));
@@ -566,6 +659,17 @@ state Build in CProgressOnThePath_QuestStorage
 		parent.SideQuests_Novigrad.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_17", PotP_E_Missable, 		PotP_R_NO, PotP_I_Sides, "mq3036_rosa_romance"));
 		parent.SideQuests_Novigrad.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_18", PotP_E_Primary, 		PotP_R_NO, PotP_I_Sides, "NVG: Fist Fighting"));
 		parent.SideQuests_Novigrad.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_19", PotP_E_Primary, 		PotP_R_NO, PotP_I_Sides, "CG: Novigrad"));
+
+		if (PotP_UsingW3QE_Masque()) // Nexus ID: https://www.nexusmods.com/witcher3/mods/9360
+		{
+			parent.SideQuests_Novigrad.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_92", PotP_E_ModAdded, PotP_R_NO, PotP_I_Sides, "sq301_gwent"));
+		}	
+		
+		if (PotP_UsingW3QE_Hearts()) // Nexus ID: https://www.nexusmods.com/witcher3/mods/9360
+		{
+			parent.SideQuests_Novigrad.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_91", PotP_E_ModAdded, PotP_R_NO, PotP_I_Sides, "cg600_gwent"));
+		}
+
 		parent.SideQuests_Novigrad.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_20", PotP_E_Primary, 		PotP_R_NO, PotP_I_Sides, "CG: Innkeepers"));
 		parent.SideQuests_Novigrad.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_21", PotP_E_Primary, 		PotP_R_NO, PotP_I_Sides, "CG: Talar"));
 		parent.SideQuests_Novigrad.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_22", PotP_E_Missable, 		PotP_R_NO, PotP_I_Sides, "Q301 Visiting Dreamer"));
@@ -574,6 +678,12 @@ state Build in CProgressOnThePath_QuestStorage
 		parent.SideQuests_Novigrad.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_25", PotP_E_Primary, 		PotP_R_NO, PotP_I_Sides, "SQ306 Maverick"));
 		parent.SideQuests_Novigrad.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_26", PotP_E_Primary, 		PotP_R_NO, PotP_I_Sides, "Q302 King Beggar's Debt"));
 		parent.SideQuests_Novigrad.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_27", PotP_E_Missable, 		PotP_R_NO, PotP_I_Sides, "Q310 Romantic Disaster"));
+		
+		if (PotP_UsingW3QE_Friends()) // Nexus ID: https://www.nexusmods.com/witcher3/mods/9360
+		{
+			parent.SideQuests_Novigrad.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_93", PotP_E_ModAdded, PotP_R_NO, PotP_I_Sides, "sq301_party_mingling"));
+		}
+		
 		parent.SideQuests_Novigrad.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_28", PotP_E_Primary, 		PotP_R_NO, PotP_I_Sides, "MQ3017 Little Red Raiding Hood"));
 		parent.SideQuests_Novigrad.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_29", PotP_E_Primary, 		PotP_R_NO, PotP_I_Sides, "mq3027_mymanifest"));
 		parent.SideQuests_Novigrad.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_30", PotP_E_Primary, 		PotP_R_NO, PotP_I_Sides, "mq3016_wandering_bards"));
@@ -655,6 +765,12 @@ state Build in CProgressOnThePath_QuestStorage
 		parent.SideQuests_Skellige.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_37", PotP_E_Primary, 	PotP_R_SK, PotP_I_Sides, "mq2040_trial_of_power"));
 		parent.SideQuests_Skellige.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_38", PotP_E_Primary, 	PotP_R_SK, PotP_I_Sides, "MQ2037 Dishonored"));
 		parent.SideQuests_Skellige.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_39", PotP_E_Primary, 	PotP_R_SK, PotP_I_Sides, "MQ2013 Grossbart brothers"));
+
+		if (PotP_UsingW3QE_SoundOfSilence()) // Nexus ID: https://www.nexusmods.com/witcher3/mods/9360
+		{
+			parent.SideQuests_Skellige.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_90", PotP_E_ModAdded, PotP_R_SK, PotP_I_Sides, "dlchornwallhorn"));
+		}	
+		
 		parent.SideQuests_Skellige.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_40", PotP_E_Primary, 	PotP_R_SK, PotP_I_Sides, "SQ210 Impossible Tower"));
 		parent.SideQuests_Skellige.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_41", PotP_E_Primary, 	PotP_R_SK, PotP_I_Sides, "mq2011_liar_and_theif"));
 
@@ -688,6 +804,12 @@ state Build in CProgressOnThePath_QuestStorage
 		parent.SideQuests_Toussaint.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_21", PotP_E_Primary_DLC2, PotP_R_TO, PotP_I_Sides, "mq7020_songs_of_glory"));
 		parent.SideQuests_Toussaint.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_22", PotP_E_Primary_DLC2, PotP_R_TO, PotP_I_Sides, "mq7011 Where's My Money"));
 		parent.SideQuests_Toussaint.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_23", PotP_E_Primary_DLC2, PotP_R_TO, PotP_I_Sides, "ff701_master"));
+		
+		if (PotP_UsingW3QE_SecretGarden()) // Nexus ID: https://www.nexusmods.com/witcher3/mods/9360
+		{
+			parent.SideQuests_Toussaint.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_91", PotP_E_ModAdded, PotP_R_TO, PotP_I_Sides, "dlcpalacegardens"));
+		}			
+		
 		parent.SideQuests_Toussaint.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_24", PotP_E_Primary_DLC2, PotP_R_TO, PotP_I_Sides, "Q702 Faith of Marlene"));
 		parent.SideQuests_Toussaint.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_25", PotP_E_Primary_DLC2, PotP_R_TO, PotP_I_Sides, "Q705 Prison Stash"));
 		parent.SideQuests_Toussaint.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_26", PotP_E_Primary_DLC2, PotP_R_TO, PotP_I_Sides, "SQ701 tournament"));
@@ -701,17 +823,30 @@ state Build in CProgressOnThePath_QuestStorage
 		parent.SideQuests_Toussaint.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_34", PotP_E_Primary_DLC2, PotP_R_TO, PotP_I_Sides, "dun_b_03"));
 		parent.SideQuests_Toussaint.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_35", PotP_E_Primary_DLC2, PotP_R_TO, PotP_I_Sides, "vin_b_03"));
 		parent.SideQuests_Toussaint.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_36", PotP_E_Primary_DLC2, PotP_R_TO, PotP_I_Sides, "ww_initial"));
-		parent.SideQuests_Toussaint.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_37", PotP_E_Primary_DLC2, PotP_R_TO, PotP_I_Sides, "ww_consortium"));
+		parent.SideQuests_Toussaint.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_37", PotP_E_Missable_DLC2, PotP_R_TO, PotP_I_Sides, "ww_consortium"));
 		parent.SideQuests_Toussaint.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_38", PotP_E_Primary_DLC2, PotP_R_TO, PotP_I_Sides, "ww_coronata"));
 		parent.SideQuests_Toussaint.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_39", PotP_E_Primary_DLC2, PotP_R_TO, PotP_I_Sides, "ww_belgard_secret"));
-		parent.SideQuests_Toussaint.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_40", PotP_E_Primary_DLC2, PotP_R_TO, PotP_I_Sides, "ww_vermentino"));
-
+		parent.SideQuests_Toussaint.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_40", PotP_E_Primary_DLC2, PotP_R_TO, PotP_I_Sides, "ww_vermentino"));		
+		
 		if (PotP_UsingANightToRemember()) // Nexus ID: https://www.nexusmods.com/witcher3/mods/4670
 		{
 			parent.SideQuests_Toussaint.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_90", PotP_E_ModAdded_DLC2, PotP_R_TO, PotP_I_Sides, "ntr_nighttoremember"));
 		}
 		
 		PotP_SortPreviewData(parent.SideQuests_Toussaint, PotP_A_Quest, master);
+
+		//------------------------------------------------------
+		
+		group = "PotP_TrackingGroup_SideQuests_Vizima";
+		
+		parent.SideQuests_Vizima.Clear();
+
+		if (PotP_UsingCutThroatRazor()) // Nexus ID: https://www.nexusmods.com/witcher3/mods/7858
+		{
+			parent.SideQuests_Vizima.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_01", PotP_E_ModAdded, PotP_R_VI, PotP_I_Sides, "mod002_razor"));
+		}
+			
+		PotP_SortPreviewData(parent.SideQuests_Vizima, PotP_A_Quest, master);
 	}
 
 	//---------------------------------------------------
@@ -866,6 +1001,12 @@ state Build in CProgressOnThePath_QuestStorage
 		
 		parent.ScavQuests_Others.Clear();
 		parent.ScavQuests_Others.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_01", PotP_E_Primary, 		PotP_R_NA, PotP_I_Scavs, "Viper Set"));
+		
+		if (PotP_UsingW3QE_ViperSet()) // Nexus ID: https://www.nexusmods.com/witcher3/mods/9360
+		{
+			parent.ScavQuests_Others.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_90", PotP_E_ModAdded, PotP_R_NA, PotP_I_Scavs, "dlcvipercollection"));
+		}	
+		
 		parent.ScavQuests_Others.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_02", PotP_E_Primary_DLC2, 	PotP_R_NA, PotP_I_Scavs, "th700_red_wolf"));
 
 		if (PotP_IsUsingNextGen()) 

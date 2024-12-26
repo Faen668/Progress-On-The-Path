@@ -63,6 +63,13 @@ class CProgressOnThePath_PreviewEntryHelper
 	{
 		return storage.MasterList_IsIgnored_V.Contains(entity.uuid);
 	}
+
+	//---------------------------------------------------
+	
+	function IsMissed(entity: PotP_PreviewEntry) : bool
+	{
+		return storage.MasterList_IsMissed_V.Contains(entity.uuid);
+	}
 	
 	//---------------------------------------------------
 	
@@ -105,12 +112,13 @@ class CProgressOnThePath_PreviewEntryHelper
 		
 		this.RemoveInProgress(entity);
 		this.RemoveIgnored(entity);
+		this.RemoveMissed(entity);
 
 		if ( user_forced && (bool) PotP_GetNotificationValue('ProgressOnThePath_MiscNotification_Enter') )
 		{
 			notifications.UpdateSingleEntry(entity, 2);
 		}
-	}		
+	}
 
 	//---------------------------------------------------
 	
@@ -136,6 +144,7 @@ class CProgressOnThePath_PreviewEntryHelper
 			
 		this.RemoveCompleted(entity);
 		this.RemoveIgnored(entity);
+		this.RemoveMissed(entity);
 	}
 
 	//---------------------------------------------------
@@ -156,10 +165,37 @@ class CProgressOnThePath_PreviewEntryHelper
 			
 		this.RemoveInProgress(entity);
 		this.RemoveCompleted(entity);
+		this.RemoveMissed(entity);
 		
 		if ( user_forced && (bool) PotP_GetNotificationValue('ProgressOnThePath_MiscNotification_Enter') )
 		{
 			notifications.UpdateSingleEntry(entity, 1);
+		}
+	}
+
+	//---------------------------------------------------
+	
+	function SetMissed(entity: PotP_PreviewEntry, optional user_forced: bool) : void
+	{
+		if (!IsMissed(entity)) 
+		{
+			storage.MasterList_IsMissed_V.PushBack(entity.uuid);
+			PotP_Logger("Added - " + entity.localname + " to persistent GetPotP_Storage() list 'Missed'", , this.fileName);
+		}
+
+		if (entity.arrayType == PotP_A_Event)
+		{
+			SU_removeCustomPinByTag("PotP_" + entity.uuid);
+			PotP_Logger("Removed Map Pin: " + entity.localname, , this.fileName);
+		}
+			
+		this.RemoveInProgress(entity);
+		this.RemoveCompleted(entity);
+		this.RemoveIgnored(entity);
+		
+		if ( user_forced && (bool) PotP_GetNotificationValue('ProgressOnThePath_MiscNotification_Enter') )
+		{
+			notifications.UpdateSingleEntry(entity, 3);
 		}
 	}
 	
@@ -211,6 +247,19 @@ class CProgressOnThePath_PreviewEntryHelper
 		{ 
 			storage.MasterList_IsIgnored_V.EraseFast(Idx);
 			PotP_Logger("Removed - " + entity.localname + " from persistent GetPotP_Storage() list 'Ignored'", , this.fileName);
+		}
+	}
+
+	//---------------------------------------------------
+	
+	function RemoveMissed(entity: PotP_PreviewEntry) : void
+	{
+		var Idx: int = storage.MasterList_IsMissed_V.FindFirst(entity.uuid);
+		
+		if (Idx != -1)
+		{ 
+			storage.MasterList_IsMissed_V.EraseFast(Idx);
+			PotP_Logger("Removed - " + entity.localname + " from persistent GetPotP_Storage() list 'Missed'", , this.fileName);
 		}
 	}
 	

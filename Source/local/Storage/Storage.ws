@@ -2,12 +2,27 @@
 //-- Storage Class ----------------------------------
 //---------------------------------------------------
 
+enum PotP_Storage_load_Type
+{
+	PotP_Reset_None = 0,
+	PotP_Reset_All = 1,
+	PotP_Reset_Quest = 2,
+	PotP_Reset_Event = 3, 
+	PotP_Reset_World = 4,
+	PotP_Reset_Items = 5,
+	PotP_Reset_Array = 6,
+	PotP_Reset_QuestAndEvent = 7,
+	PotP_Reset_QuestAndWorld = 8,
+	PotP_Reset_NewGamePlus = 9,
+}
+
 statemachine class CProgressOnThePath_Storage
 {		
 	var MasterList_Completed_V: array<string>;
 	var MasterList_InProgres_V: array<string>;
 	var MasterList_IsIgnored_V: array<string>;
 	var MasterList_Collected_V: array<string>;
+	var MasterList_IsMissed_V : array<string>;
 
 	var MasterList_ItemsGoblin: array<SItemUniqueId>;
 	var MasterList_QuestGoblin: array<CJournalQuest>;	
@@ -35,7 +50,7 @@ statemachine class CProgressOnThePath_Storage
 	var BackGroundProcessingArray_bWorld: bool;
 	var BackGroundProcessingArray_bQuest: bool;
 	
-	var force_refresh: name;
+	var force_refresh: PotP_Storage_load_Type;
 	var debug: bool;
 	
 	function ResetBackGroundProcessingArray() : void
@@ -72,9 +87,9 @@ statemachine class CProgressOnThePath_Storage
 		pQuestStorageArray_Icon.Clear();
 	}
 
-	function PotP_LoadStorageCollection(optional force_refresh: name, optional debug: bool) 
+	function PotP_LoadStorageCollection(load_type: PotP_Storage_load_Type, optional debug: bool) 
 	{
-		this.force_refresh = force_refresh;
+		this.force_refresh = load_type;
 		this.debug = debug;
 		this.GotoState('Disabled');
 		this.GotoState('Process');
@@ -136,7 +151,7 @@ state Process in CProgressOnThePath_Storage
 			GotoState('Disabled');
 		}
 		
-		if (!master.PotP_PersistentStorage) 
+		if (!master.PotP_PersistentStorage || parent.force_refresh == PotP_Reset_NewGamePlus) 
 		{
 			master.PotP_PersistentStorage = new CProgressOnThePath_Storage in master;
 			PotP_Logger("New storage instance created.", , 'PotP Storage');
@@ -159,7 +174,7 @@ state Process in CProgressOnThePath_Storage
 		}
 		else 
 		{
-			if (parent.force_refresh == 'All' || parent.force_refresh == 'Array')
+			if (parent.force_refresh == PotP_Reset_All || parent.force_refresh == PotP_Reset_Array)
 			{
 				SleepOneFrame();
 				master.PotP_PersistentStorage.pArrayStorage.inititalise();
@@ -183,7 +198,11 @@ state Process in CProgressOnThePath_Storage
 		}
 		else 
 		{
-			if (parent.force_refresh == 'All' || parent.force_refresh == 'Quest' || PotP_ModAddedOrRemoved('Quest'))
+			if (parent.force_refresh == PotP_Reset_All 
+				|| parent.force_refresh == PotP_Reset_Quest 
+				|| parent.force_refresh == PotP_Reset_QuestAndEvent 
+				|| parent.force_refresh == PotP_Reset_QuestAndWorld
+			)
 			{
 				SleepOneFrame();
 				master.PotP_PersistentStorage.pQuestStorage.inititalise();
@@ -207,7 +226,7 @@ state Process in CProgressOnThePath_Storage
 		}
 		else 
 		{
-			if (parent.force_refresh == 'All' || parent.force_refresh == 'Event')
+			if (parent.force_refresh == PotP_Reset_All || parent.force_refresh == PotP_Reset_Event || parent.force_refresh == PotP_Reset_QuestAndEvent)
 			{
 				SleepOneFrame();
 				master.PotP_PersistentStorage.pEventStorage.inititalise();
@@ -231,7 +250,7 @@ state Process in CProgressOnThePath_Storage
 		}
 		else 
 		{
-			if (parent.force_refresh == 'All' || parent.force_refresh == 'World'|| PotP_ModAddedOrRemoved('World'))
+			if (parent.force_refresh == PotP_Reset_All || parent.force_refresh == PotP_Reset_World || parent.force_refresh == PotP_Reset_QuestAndWorld)
 			{
 				SleepOneFrame();
 				master.PotP_PersistentStorage.pWorldStorage.inititalise();
@@ -255,7 +274,7 @@ state Process in CProgressOnThePath_Storage
 		}
 		else 
 		{
-			if (parent.force_refresh == 'All' || parent.force_refresh == 'Items'|| PotP_ModAddedOrRemoved('Items'))
+			if (parent.force_refresh == PotP_Reset_All || parent.force_refresh == PotP_Reset_Items)
 			{
 				SleepOneFrame();
 				master.PotP_PersistentStorage.pItemsStorage.inititalise();
@@ -266,90 +285,9 @@ state Process in CProgressOnThePath_Storage
 				PotP_Logger("Existing items storage instance loaded with a size of: " + master.PotP_PersistentStorage.pItemsStorage.MasterList_Items.Size(), , 'PotP Storage');
 			}
 		}
-
-		//---------------------------------------------------
 		
-		PotP_ApplyDLCFacts();
-		
-		if (parent.debug) {
-			GetWitcherPlayer().DisplayHudMessage("Progress on the Path: Reload Completed...");
-		}
-
-		master.PotP_UpdaterClass		.initialise(master);
-		master.PotP_PinManager			.initialise(master);
-		master.PotP_QuestPreview		.initialise(master);
-		master.PotP_WorldPreview		.initialise(master);
-		master.PotP_ItemsPreview		.initialise(master);
-		master.PotP_GwentPreview		.initialise(master);
-		master.PotP_MissablePreview		.initialise(master);
-		master.PotP_Notifications		.initialise(master);
-		master.PotP_ItemsGoblin			.initialise(master);
-		master.PotP_QuestGoblin			.initialise(master);
-		master.PotP_WorldGoblin			.initialise(master);
-		master.PotP_EventListener		.initialise(master);
-		master.PotP_MeditationListener	.initialise(master);
-		master.PotP_PopupManager		.initialise(master);
-		master.SetModVersion();
-		
-		(new ProgressOnTheBath_TutorialBook1 in master).addBook();
-		(new ProgressOnTheBath_TutorialBook2 in master).addBook();
-		(new ProgressOnTheBath_TutorialBook3 in master).addBook();
-		(new ProgressOnTheBath_TutorialBook4 in master).addBook();
-		(new ProgressOnTheBath_TutorialBook5 in master).addBook();
-		(new ProgressOnTheBath_TutorialBook6 in master).addBook();
-		(new ProgressOnTheBath_TutorialBook7 in master).addBook();
-		
-		(new CProgressOnTheBath_QuestPreviewBook in master).addBook(master);
-		(new CProgressOnTheBath_WorldPreviewBook in master).addBook(master);
-		(new CProgressOnTheBath_ItemsPreviewBook in master).addBook(master);
-		(new CProgressOnTheBath_MissaPreviewBook in master).addBook(master);
-		(new CProgressOnTheBath_GwentPreviewBook in master).addBook(master);
-		
-		master.PotP_PinManager.GotoState('Idle');
-		master.PotP_ItemsGoblin.GotoState('Idle');
-		master.PotP_WorldGoblin.GotoState('Idle');
-		master.PotP_EventListener.GotoState('Idle');
-		master.PotP_MeditationListener.GotoState('Idle');
+		master.finish_init();
 		parent.GotoState('Disabled');
-	}
-	
-	//---------------------------------------------------
-	
-	latent function PotP_ApplyDLCFacts() : void
-	{
-		SleepOneFrame();
-		FactsSet("PotP_UsingDLCArmorQuests", 		(int) PotP_UsingDLCArmorQuests());
-		FactsSet("PotP_UsingThreeLittleSisters", 	(int) PotP_UsingThreeLittleSisters());
-		FactsSet("PotP_UsingCiriSoleMemento", 		(int) PotP_UsingCiriSoleMemento());
-		FactsSet("PotP_UsingANightToRemember", 		(int) PotP_UsingANightToRemember());
-		FactsSet("PotP_UsingDLCFastTravel", 		(int) PotP_UsingDLCFastTravel());
-		FactsSet("PotP_UsingShadesOfIron", 			(int) PotP_UsingShadesOfIron());
-		FactsSet("PotP_UsingGwentRedux", 			(int) PotP_UsingGwentRedux());
-		FactsSet("PotP_UsingW3EE",					(int) PotP_UsingW3EE());
-		FactsSet("PotP_UsingSezonBurz", 			(int) PotP_UsingSezonBurz());
-		FactsSet("PotP_UsingCosWiecej", 			(int) PotP_UsingCosWiecej());
-		
-		PotP_Logger("DLC Facts Applied...", , 'PotP Storage');
-	}
-	
-	//---------------------------------------------------
-	
-	private function PotP_ModAddedOrRemoved(section : name) : bool
-	{
-		if (section == 'Quest' && (PotP_UsingDLCArmorQuests() 		!= (bool) FactsQuerySum("PotP_UsingDLCArmorQuests")) ) 		{ return true; }
-		if (section == 'Quest' && (PotP_UsingThreeLittleSisters()	!= (bool) FactsQuerySum("PotP_UsingThreeLittleSisters")) ) 	{ return true; }
-		if (section == 'Quest' && (PotP_UsingCiriSoleMemento() 		!= (bool) FactsQuerySum("PotP_UsingCiriSoleMemento")) ) 	{ return true; }
-		if (section == 'Quest' && (PotP_UsingANightToRemember() 	!= (bool) FactsQuerySum("PotP_UsingANightToRemember")) ) 	{ return true; }
-		
-		if (section == 'World' && (PotP_UsingDLCFastTravel() 		!= (bool) FactsQuerySum("PotP_UsingDLCFastTravel")) ) 		{ return true; }
-		
-		if (section == 'Items' && (PotP_UsingShadesOfIron() 		!= (bool) FactsQuerySum("PotP_UsingShadesOfIron")) ) 		{ return true; }
-		if (section == 'Items' && (PotP_UsingGwentRedux() 			!= (bool) FactsQuerySum("PotP_UsingGwentRedux")) ) 			{ return true; }
-		if (section == 'Items' && (PotP_UsingW3EE() 				!= (bool) FactsQuerySum("PotP_UsingW3EE")) ) 				{ return true; }
-		if (section == 'Items' && (PotP_UsingSezonBurz() 			!= (bool) FactsQuerySum("PotP_UsingSezonBurz")) ) 			{ return true; }
-		if (section == 'Items' && (PotP_UsingCosWiecej() 			!= (bool) FactsQuerySum("PotP_UsingCosWiecej")) ) 			{ return true; }
-		
-		return false;
 	}
 }
 

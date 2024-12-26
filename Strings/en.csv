@@ -198,7 +198,7 @@
 2116568168||ProgressOnThePath_TutorialBook6_Name|Notifications
 2116568169||ProgressOnThePath_TutorialBook6_Desc|<font color="#CD7D03">Notifications:</font><br/>Progress on the Path comes with quite a sophisticated Notification system. You can configure the text colour, font size and a few other things in the mod menu or just disable notifications all together if you're not interested in what's being updated.
 2116568170||ProgressOnThePath_TutorialBook7_Name|Console Commands
-2116568171||ProgressOnThePath_TutorialBook7_Desc|<font color="#CD7D03">Console Commands:</font><br/>Progress on the Path comes with a very handy console command to aid you as you are playing, the command is:<br/><br/>pt_changestatus()<br/><br/>As the name suggests, this command will allow you to change the status of any entry in any of the preview messages by simply passing a couple of parameters with the command.<br/><br/>The first parameter is the 'Unique Identifier' of the entry. This can be seen by enabling the 'Show Entry UUID's' option in the Mod Menu.<br/><br/>The second parameter is the new 'Status' you want the entry to adopt, you write this is an enum so it should be typed as completed, ignored, or left blank to restore the entry to its default 'Not Completed' status.<br/><br/>As an example:<br/><font color="#18B3F1">pt_changestatus(XD1452, ignored)</font> would update the entry to 'Ignored'<br/><font color="#18B3F1">pt_changestatus(XD1452, completed)</font> would update the entry to 'Completed'<br/><font color="#18B3F1">pt_changestatus(XD1452)</font> would revert the entry to 'Not Started'.
+2116568171||ProgressOnThePath_TutorialBook7_Desc|<font color="#CD7D03">Console Commands:</font><br/>Progress on the Path comes with a very handy console command to aid you as you are playing, the command is:<br/><br/>pt_changestatus()<br/><br/>As the name suggests, this command will allow you to change the status of any entry in any of the preview messages by simply passing a couple of parameters with the command.<br/><br/>The first parameter is the 'Unique Identifier' of the entry. This can be seen by enabling the 'Show Entry UUID's' option in the Mod Menu.<br/><br/>The second parameter is the new 'Status' you want the entry to adopt, you write this is an enum so it should be typed as completed, ignored, missed or left blank to restore the entry to its default 'Not Completed' status.<br/><br/>As an example:<br/><font color="#18B3F1">pt_changestatus(XD1452, ignored)</font> would update the entry to 'Ignored'<br/><font color="#18B3F1">pt_changestatus(XD1452, completed)</font> would update the entry to 'Completed'<br/><font color="#18B3F1">pt_changestatus(XD1452, missed)</font> would update the entry to 'Missed'<br/><font color="#18B3F1">pt_changestatus(XD1452)</font> would revert the entry to 'Not Started'.
 ;
 ;-----------------------------------------------------------------------------------------------------------------------------------------------------------------
 ;-----------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -1159,7 +1159,7 @@
 2116569045||option_PotP_TrackingGroup_Trophies_26|Silver Basilisk
 2116569046||option_PotP_TrackingGroup_Trophies_27|Slyzard
 2116569047||option_PotP_TrackingGroup_Trophies_28|Succubus
-2116569048||option_PotP_TrackingGroup_Trophies_29|Trophy <font color="#D79D3A">(Knight for Hire)</font>
+2116569048||option_PotP_TrackingGroup_Trophies_29|Camerlengo's Seal <font color="#D79D3A">(Knight for Hire)</font>
 2116569049||option_PotP_TrackingGroup_Trophies_30|Umbra
 2116569050||option_PotP_TrackingGroup_Trophies_31|Water Hag
 2116569051||option_PotP_TrackingGroup_Trophies_32|Wight
@@ -2254,7 +2254,7 @@
 2117171040||PotP_Event_MansBestFriend_NG_Description			|<font color="#D7D23A">~ Man's Best Friend ~</font><br/>Save the children from the wild dog
 2117171041||PotP_Event_AWarmWelcome_NG_Description				|<font color="#D7D23A">~ A Warm Welcome ~</font><br/>Approach the refugees
 2117171042||PotP_Event_DrunkenRabble_NG_Description				|<font color="#D7D23A">~ Drunken Rabble ~</font><br/>Approach the drunk butchers
-2117171043||PotP_Event_KarmicJustice_NG_Description				|<font color="#D7D23A">~ Karmic Justice ~</font><br/>Confront the elves
+2117171043||PotP_Event_KarmicJustice_NG_Description				|<font color="#D7D23A">~ Karmic Justice ~</font><br/>Confront the elves (9:00PM - 4:00AM)
 2117171044||PotP_Event_NeverTrustChildren_NG_Description		|<font color="#D7D23A">~ Never Trust Children ~</font><br/>Talk to the crying child
 2117171045||PotP_Event_RacistsOfNovigradFC_NG_Description		|<font color="#D7D23A">~ Dye Pit Racists ~</font><br/>Confront the men harassing the elves
 2117171046||PotP_Event_RacistsOfNovigradHS_NG_Description		|<font color="#D7D23A">~ The Racists of Novigrad ~</font><br/>Confront the men harassing the elf
@@ -2568,4 +2568,60 @@
 2117171293||PotP_Preview_Missable_15|<br/><font color="#9D75BF">Only playable if you romance both Triss and Yen.<br/></font>
 2117171294||PotP_Preview_Missable_16|<br/><font color="#9D75BF">Only playable after 'The Cave of Dreams' if you got out of Lugo's prison with Simuns's help during 'Stranger in a Strange Land'<br/></font>
 ;
-;Next ID 2117171295
+;
+;
+; 6.0.0.6  -------------------------------------------------------------------------------------------------------------------------------------
+;
+;
+;
+2117171295||option_PotP_TrackingGroup_SideQuests_Vizima_01|To Shave or Not To Shave
+2117171296||PotP_Preview_SideQ_8|<br/>[ICON_PATH]<font color="#9D75BF">Side Quests: Vizima [COUNTS]<br/></font>
+2117171297||option_PotP_TrackingGroup_SideQuests_Novigrad_91|Gwent: Playing Hearts
+2117171298||option_PotP_TrackingGroup_SideQuests_Novigrad_92|Gwent: Masque d'Intrigue
+2117171299||option_PotP_TrackingGroup_SideQuests_Novigrad_93|Keep Your Friends Close
+2117171300||option_PotP_TrackingGroup_SideQuests_KaerMorhen_90|To Err Is Human
+2117171301||option_PotP_TrackingGroup_SideQuests_Novigrad_94|An Ungrateful Mage
+2117171302||option_PotP_TrackingGroup_SideQuests_Skellige_90|The Sound of Silence
+2117171303||option_PotP_TrackingGroup_SideQuests_Toussaint_91|Secret Garden
+2117171304||option_PotP_TrackingGroup_ScavengerHuntQuests_OtherSets_90|Scavenger Hunt: Viper School Gear Upgrade Diagrams - Part 1
+2117171305||option_PotP_TrackingGroup_SideQuests_NonRegional_90|Bomb Technician: Beginner
+2117171306||option_PotP_TrackingGroup_SideQuests_NonRegional_91|Bomb Technician: Enhanced
+2117171307||option_PotP_TrackingGroup_SideQuests_NonRegional_92|Bomb Technician: Superior
+2117171308||option_PotP_TrackingGroup_SideQuests_NonRegional_93|Oil Tycoon: Beginner
+2117171309||option_PotP_TrackingGroup_SideQuests_NonRegional_94|Oil Tycoon: Enhanced
+2117171310||option_PotP_TrackingGroup_SideQuests_NonRegional_95|Oil Tycoon: Superior
+2117171311||option_PotP_TrackingGroup_SideQuests_NonRegional_96|Full Potion Alchemist: Beginner
+2117171312||option_PotP_TrackingGroup_SideQuests_NonRegional_97|Full Potion Alchemist: Enhanced
+2117171313||option_PotP_TrackingGroup_SideQuests_NonRegional_98|Full Potion Alchemist: Superior
+2117171314||option_PotP_TrackingGroup_SideQuests_NonRegional_99|Decoction Specialist
+2117171315||option_PotP_TrackingGroup_SideQuests_NonRegional_100|A Witcher Can Hide Another
+2117171316||option_PotP_TrackingGroup_SideQuests_NonRegional_101|Mysterious Disappearance
+2117171317||option_PotP_TrackingGroup_SideQuests_NonRegional_102|Unsinkable
+2117171318||option_PotP_TrackingGroup_SideQuests_Velen_91|Strange Artifacts From Another Realm
+;
+;
+;
+; 6.0.0.7  -------------------------------------------------------------------------------------------------------------------------------------
+;
+;
+;
+2117171319||option_ProgressOnThePath_ResetForNGPlus|<font color="#DE8971">Reset Completed Storage For New Game+</font>
+2117171320||PotP_NewGamePlusMessage|Progress Has Been Reset For NG+ 
+;
+;
+;
+; 6.0.0.8  -------------------------------------------------------------------------------------------------------------------------------------
+;
+; Translators please check updated text on lines:
+; 2116569048 (changed name from 'Trophy' to 'Camerlengo's Seal'.
+; 2116568171 (Added the new 'Missed' Information.
+;
+2117171321||PotP_Preview_Missable_17|<br/><font color="#9D75BF">Only playable if you complete 'Wine Wars: The Deus in the Machina' before completing either 'Wine Wars: Coronata' or 'Wine Wars: Vermentino'<br/></font>
+2117171322||ProgressOnThePath_PreviewTag_NC|<font size="17" color="#8a0707"> (Missed)</font>
+2117171323||option_ProgressOnThePath_Preview_Miss|<font color="#7FD8BE">Global             :   Show Missed Entries</font>
+2117171324||PotP_Notification_SingleUpdate_0|Restored: 
+2117171325||PotP_Notification_SingleUpdate_1|Ignored: 
+2117171326||PotP_Notification_SingleUpdate_2|Completed: 
+2117171327||PotP_Notification_SingleUpdate_3|Missed: 
+;
+;Next ID 2117171328

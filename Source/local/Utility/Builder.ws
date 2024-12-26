@@ -27,6 +27,9 @@ class ProgressOnThepath_StringBuilder
 		
 	private var showIgnored: bool;
 		default showIgnored = false;
+
+	private var showMissed: bool;
+		default showMissed = false;
 		
 	private var areaFilter: int;
 		default areaFilter = 0;
@@ -111,6 +114,7 @@ class ProgressOnThepath_StringBuilder
 		// Determine if we should be showing completed / ignore entries based on user settings.
 		this.showCompleted = (bool) PotP_GetPreviewValue('ProgressOnThePath_Preview_Comp');
 		this.showIgnored   = (bool) PotP_GetPreviewValue('ProgressOnThePath_Preview_Igno');
+		this.showMissed    = (bool) PotP_GetPreviewValue('ProgressOnThePath_Preview_Miss');
 		
 		// Traverse and separate normal and missable entries from the data array.
 		for (Idx = 0; Idx < this.data.Size(); Idx += 1)
@@ -187,10 +191,11 @@ class ProgressOnThepath_StringBuilder
 		var isCompleted: 	bool = entity_helper.IsCompleted(entry_data);
 		var isIgnored: 		bool = entity_helper.IsIgnored(entry_data);
 		var isInProgress: 	bool = entity_helper.IsInProgress(entry_data);
+		var isMissed:		bool = entity_helper.IsMissed(entry_data);
 		var entry_line:		string;
 		
 		// Return empty string as this entry is either completed or ignored and the options to show are diabled.
-		if ((isCompleted && !showCompleted) || (isIgnored && !showIgnored))
+		if ((isCompleted && !showCompleted) || (isIgnored && !showIgnored) || (isMissed && !showMissed))
 		{
 			return "";
 		}
@@ -252,6 +257,12 @@ class ProgressOnThepath_StringBuilder
 		{
 			entry_line += GetLocStringByKeyExt("ProgressOnThePath_PreviewTag_IG");
 		}
+
+		// Apply a coloured 'Missed' tag to any missed entries.
+		if (isMissed && showMissed) 
+		{
+			entry_line = "<font color='#8a0707'>" + entry_line + GetLocStringByKeyExt("ProgressOnThePath_PreviewTag_NC") + "</font>";
+		}
 		
 		// Return the formatted string back to the builder.
 		return entry_line;
@@ -277,6 +288,9 @@ class ProgressOnThepath_GwentCardBuilder
 		
 	private var showIgnored: bool;
 		default showIgnored = false;
+
+	private var showMissed: bool;
+		default showMissed = false;
 		
 	private var areaFilter: int;
 		default areaFilter = 0;
@@ -481,11 +495,11 @@ class ProgressOnThepath_GwentCardBuilder
 		var localName: 		string = entity_helper.getID(entry_data) + entry_data.localname;
 		var isCompleted: 	bool = entity_helper.IsCompleted(entry_data);
 		var isIgnored: 		bool = entity_helper.IsIgnored(entry_data);
-		var isInProgress: 	bool = entity_helper.IsInProgress(entry_data);
+		var isMissed:		bool = entity_helper.IsMissed(entry_data);
 		var entry_line:		string;
 		
 		// Return empty string as this entry is either completed or ignored and the options to show are diabled.
-		if ((isCompleted && !showCompleted) || (isIgnored && !showIgnored))
+		if ((isCompleted && !showCompleted) || (isIgnored && !showIgnored) || (isMissed && !showMissed))
 		{
 			return "";
 		}
@@ -547,6 +561,12 @@ class ProgressOnThepath_GwentCardBuilder
 		if (isIgnored && showIgnored) 
 		{
 			entry_line += GetLocStringByKeyExt("ProgressOnThePath_PreviewTag_IG");
+		}
+
+		// Apply a coloured 'Missed' tag to any missed entries.
+		if (isMissed && showMissed) 
+		{
+			entry_line = "<font color='#8a0707'>" + entry_line + GetLocStringByKeyExt("ProgressOnThePath_PreviewTag_NC") + "</font>";
 		}
 		
 		// Return the formatted string back to the builder.

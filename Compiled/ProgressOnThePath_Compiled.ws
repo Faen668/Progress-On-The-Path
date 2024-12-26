@@ -27,13 +27,41 @@ statemachine class CProgressOnThePath {
 
 	public var LastUpdateTime: float;
 		default LastUpdateTime = 0;
-			
+	
+	public var has_updated: bool;
+		default has_updated = false;
+	
+	public var current_version_string: string;
+		default current_version_string = "6.0.0.6";
+
+	public var current_version_int: int;
+		default current_version_int = 6006;
+		
 	//---------------------------------------------------
 	
+	public function EvaluateOptionsOnMenuClose()
+	{
+		if ( (bool) PotP_GetGeneralValue('ProgressOnThePath_ResetForNGPlus') ) {
+			theGame.GetInGameConfigWrapper().SetVarValue('ProgressOnThePath_GeneralSettings', 'ProgressOnThePath_ResetForNGPlus', "false");
+			reset_for_ng_plus();
+		}
+	}
+	
+	public function reset_for_ng_plus()
+	{
+		PotP_PersistentStorage.pEventStorage.ClearFacts();
+		PotP_PersistentStorage.pItemsStorage.ClearFacts();
+		PotP_PersistentStorage.PotP_LoadStorageCollection(PotP_Reset_NewGamePlus);
+		PotP_PopupManager.Showpopup(GetLocStringByKeyExt("panel_QT_Name"), GetLocStringByKeyExt("PotP_NewGamePlusMessage"), "", "Hint", false);
+	}
+	
 	public function start() 
-	{			
+	{
+		var initStr: string = "PotP_Initialised";
+		var VersStr: string = "ProgressOnThePath_CurrentModVersion";
+		
 		PotP_Logger("Bootstrapped successfully with Magic, prayers and wishful thinking...", , this.fileName);
-
+		
 		if (!FactsDoesExist("q001_nightmare_ended")) 
 		{
 			PotP_Logger("Waiting For State Release...", , this.fileName);
@@ -41,13 +69,6 @@ statemachine class CProgressOnThePath {
 			return;
 		}
 
-		if (!PotP_PersistentStorage) 
-		{
-			PotP_PersistentStorage = new CProgressOnThePath_Storage in this;
-			PotP_Logger("New storage instance created.", , 'PotP Storage');
-		}
-		PotP_PersistentStorage.PotP_LoadStorageCollection();
-		
 		theInput.RegisterListener(this, 'UpdateProgressOnThePath', 'UpdateProgressOnThePath');
 		theInput.RegisterListener(this, 'DisplayProgressPreview', 'DisplayProgressPreview');
 		
@@ -69,52 +90,103 @@ statemachine class CProgressOnThePath {
 		PotP_PinManager = new CProgressOnThePath_MapPins in this;
 		PotP_EventListener = new CProgressOnThePath_EventListener in this;
 		PotP_MeditationListener = new CProgressOnThePath_MeditationListener in this;
+		
+		if (!PotP_PersistentStorage) 
+		{
+			PotP_PersistentStorage = new CProgressOnThePath_Storage in this;
+			PotP_Logger("New storage instance created.", , 'PotP Storage');
+		}
+
+		//Mod is not initialised
+		if (FactsQuerySum(initStr) != 1) 
+		{
+			FactsSet(initStr, 1);
+			FactsSet(VersStr, current_version_int);
+			this.LoadDefaults();
+			
+			PotP_PersistentStorage.PotP_LoadStorageCollection(PotP_Reset_None);
+			PotP_PopupManager.Showpopup(GetLocStringByKeyExt("panel_QT_Name"), GetLocStringByKeyExt("PotP_InstallMessage"), "PotP_InstallMessage", "Hint", true);
+		}
+		else
+		{
+			if (FactsQuerySum(VersStr) < current_version_int) 
+			{
+				has_updated = true;
+				
+				if (FactsQuerySum(VersStr) < 527) 
+				{
+					FactsSet(VersStr, 527);
+					PotP_PersistentStorage.PotP_LoadStorageCollection(PotP_Reset_All); 
+				}
+				
+				if (FactsQuerySum(VersStr) < 5281) 
+				{ 
+					FactsSet(VersStr, 5281);
+				}
+				
+				if (FactsQuerySum(VersStr) < 5282) 
+				{ 
+					FactsSet(VersStr, 5282);
+					PotP_PersistentStorage.PotP_LoadStorageCollection(PotP_Reset_QuestAndWorld); 
+				}
+				
+				if (FactsQuerySum(VersStr) < 6006) 
+				{
+					FactsSet(VersStr, 6006);
+					PotP_PersistentStorage.PotP_LoadStorageCollection(PotP_Reset_QuestAndEvent);
+				}
+			}
+			else
+			{
+				PotP_PersistentStorage.PotP_LoadStorageCollection(PotP_Reset_None);
+			}
+		}
 	}	
 	
 	//---------------------------------------------------
 	
-	public function SetModVersion() 
+	public function finish_init()
 	{
-		var newModVersion_Str: string = "5.2.8.2";
-		var newModVersion_Int: int = 5282;
+		PotP_UpdaterClass		.initialise(this);
+		PotP_PinManager			.initialise(this);
+		PotP_QuestPreview		.initialise(this);
+		PotP_WorldPreview		.initialise(this);
+		PotP_ItemsPreview		.initialise(this);
+		PotP_GwentPreview		.initialise(this);
+		PotP_MissablePreview	.initialise(this);
+		PotP_Notifications		.initialise(this);
+		PotP_ItemsGoblin		.initialise(this);
+		PotP_QuestGoblin		.initialise(this);
+		PotP_WorldGoblin		.initialise(this);
+		PotP_EventListener		.initialise(this);
+		PotP_MeditationListener	.initialise(this);
+		PotP_PopupManager		.initialise(this);
 
-		var initStr: string = "PotP_Initialised";
-		var VersStr: string = "ProgressOnThePath_CurrentModVersion";
-
-		//pt_checkfact("ProgressOnThePath_CurrentModVersion")
+		(new ProgressOnTheBath_TutorialBook1 in this).addBook();
+		(new ProgressOnTheBath_TutorialBook2 in this).addBook();
+		(new ProgressOnTheBath_TutorialBook3 in this).addBook();
+		(new ProgressOnTheBath_TutorialBook4 in this).addBook();
+		(new ProgressOnTheBath_TutorialBook5 in this).addBook();
+		(new ProgressOnTheBath_TutorialBook6 in this).addBook();
+		(new ProgressOnTheBath_TutorialBook7 in this).addBook();
 		
-		if (FactsQuerySum(initStr) != 1) 
+		(new CProgressOnTheBath_QuestPreviewBook in this).addBook(this);
+		(new CProgressOnTheBath_WorldPreviewBook in this).addBook(this);
+		(new CProgressOnTheBath_ItemsPreviewBook in this).addBook(this);
+		(new CProgressOnTheBath_MissaPreviewBook in this).addBook(this);
+		(new CProgressOnTheBath_GwentPreviewBook in this).addBook(this);
+		
+		PotP_PinManager.GotoState('Idle');
+		PotP_ItemsGoblin.GotoState('Idle');
+		PotP_WorldGoblin.GotoState('Idle');
+		PotP_EventListener.GotoState('Idle');
+		PotP_MeditationListener.GotoState('Idle');
+		
+		if (has_updated)
 		{
-			this.LoadDefaults();
-			FactsSet(initStr, 1);
-			FactsSet(VersStr, newModVersion_Int);
-
-			PotP_PopupManager.Showpopup(GetLocStringByKeyExt("panel_QT_Name"), GetLocStringByKeyExt("PotP_InstallMessage"), "PotP_InstallMessage", "Hint", true);
-			return;
+			has_updated = false;
+			PotP_PopupManager.Showpopup(GetLocStringByKeyExt("panel_QT_Name"), GetLocStringByKeyExt("PotP_UpdatedMessage") + current_version_string, "", "Hint", false);
 		}
-
-		if (this.UpdateMod(VersStr, newModVersion_Int)) 
-		{
-			PotP_PopupManager.Showpopup(GetLocStringByKeyExt("panel_QT_Name"), GetLocStringByKeyExt("PotP_UpdatedMessage") + newModVersion_Str, "", "Hint", false);
-		}
-	}
-	
-	//---------------------------------------------------
-	
-	private function UpdateMod(VersStr: string, newModVersion_Int: int) : bool
-	{
-		if (FactsQuerySum(VersStr) < newModVersion_Int) 
-		{
-			if (FactsQuerySum(VersStr) < 527) { PotP_PersistentStorage.PotP_LoadStorageCollection('All'); FactsSet(VersStr, 527);}
-			if (FactsQuerySum(VersStr) < 5281) { FactsSet(VersStr, 5281);}
-			if (FactsQuerySum(VersStr) < 5282) { 
-				PotP_PersistentStorage.PotP_LoadStorageCollection('Quest'); 
-				PotP_PersistentStorage.PotP_LoadStorageCollection('World');
-				FactsSet(VersStr, 5282);
-			}
-			return true;
-		}
-		return false;
 	}
 	
 	//---------------------------------------------------
@@ -1386,7 +1458,11 @@ class CProgressOnThePath_QuestPreview
 		build("PotP_Preview_SideQ_4", master.PotP_PersistentStorage.pQuestStorage.SideQuests_Skellige);
 		build("PotP_Preview_SideQ_5", master.PotP_PersistentStorage.pQuestStorage.SideQuests_KaerMorhen);
 		build("PotP_Preview_SideQ_6", master.PotP_PersistentStorage.pQuestStorage.SideQuests_Toussaint);
-		build("PotP_Preview_SideQ_7", master.PotP_PersistentStorage.pQuestStorage.SideQuests_NonRegional);	
+		build("PotP_Preview_SideQ_7", master.PotP_PersistentStorage.pQuestStorage.SideQuests_NonRegional);
+		
+		if (master.PotP_PersistentStorage.pQuestStorage.SideQuests_Vizima.Size() > 0) {
+			build("PotP_Preview_SideQ_8", master.PotP_PersistentStorage.pQuestStorage.SideQuests_Vizima);	
+		}
 		
 		build("PotP_Preview_ContQ_1", master.PotP_PersistentStorage.pQuestStorage.ContQuests_WhiteOrchard);
 		build("PotP_Preview_ContQ_2", master.PotP_PersistentStorage.pQuestStorage.ContQuests_Velen);
@@ -1634,6 +1710,31 @@ statemachine class CProgressOnThePath_EventStorage
 		UUIDINT += 1;
 		return "EX" + IntToString(UUIDINT);
 	}
+
+//---------------------------------------------------
+	
+	function ClearFacts() : void
+	{
+		var entity: PotP_PreviewEntry;
+		var Idx : int;
+		
+		for (Idx = 0; Idx < MasterList_Events.Size(); Idx += 1)
+		{
+			entity = MasterList_Events[Idx];
+			
+			if (FactsDoesExist(entity.entryname + "_unlocked"))
+			{
+				FactsRemove(entity.entryname + "_unlocked");
+				PotP_Logger("Cleared Fact: " + entity.entryname + "_unlocked", , 'PotP Storage');
+			}
+			
+			if (FactsDoesExist(entity.entryname))
+			{
+				FactsRemove(entity.entryname);
+				PotP_Logger("Cleared Fact: " + entity.entryname, , 'PotP Storage');
+			}
+		}	
+	}
 }
 
 //---------------------------------------------------
@@ -1704,7 +1805,7 @@ state Build in CProgressOnThePath_EventStorage
 		parent.RandomEvents_Novigrad.PushBack(parent.CreateEntry().initEvent(master.PotP_EntityHelper, group + "_03", PotP_E_Primary, PotP_R_NO, PotP_I_Event, true, 	"no_mans_land", "PotP_Event_DrunkenRabble_NG", 				Vector(543.444885, 1839.808228)		));
 		parent.RandomEvents_Novigrad.PushBack(parent.CreateEntry().initEvent(master.PotP_EntityHelper, group + "_04", PotP_E_Primary, PotP_R_NO, PotP_I_Event, false, "no_mans_land", "PotP_Event_FaceMeIfYouDare_2_NG", 			Vector(899.003479, 1732.530640)		));
 		parent.RandomEvents_Novigrad.PushBack(parent.CreateEntry().initEvent(master.PotP_EntityHelper, group + "_05", PotP_E_Primary, PotP_R_NO, PotP_I_Event, false, "no_mans_land", "PotP_Event_FaceMeIfYouDare_3_NG", 			Vector(505.266266, 1915.563843)		));
-		parent.RandomEvents_Novigrad.PushBack(parent.CreateEntry().initEvent(master.PotP_EntityHelper, group + "_06", PotP_E_Primary, PotP_R_NO, PotP_I_Event, false, "no_mans_land", "PotP_Event_KarmicJustice_NG", 				Vector(862.002502, 1831.773438)		));
+		parent.RandomEvents_Novigrad.PushBack(parent.CreateEntry().initEvent(master.PotP_EntityHelper, group + "_06", PotP_E_Primary, PotP_R_NO, PotP_I_Event, true, "no_mans_land", "PotP_Event_KarmicJustice_NG", 				Vector(862.002502, 1831.773438)		));
 		parent.RandomEvents_Novigrad.PushBack(parent.CreateEntry().initEvent(master.PotP_EntityHelper, group + "_07", PotP_E_Primary, PotP_R_NO, PotP_I_Event, true, 	"no_mans_land", "PotP_Event_NeverTrustChildren_NG", 		Vector(765.527771, 1932.638062)		));
 		parent.RandomEvents_Novigrad.PushBack(parent.CreateEntry().initEvent(master.PotP_EntityHelper, group + "_08", PotP_E_Primary, PotP_R_NO, PotP_I_Event, false, "no_mans_land", "PotP_Event_RacistsOfNovigradFC_NG", 			Vector(858.879944, 1819.517700)		));
 		parent.RandomEvents_Novigrad.PushBack(parent.CreateEntry().initEvent(master.PotP_EntityHelper, group + "_09", PotP_E_Primary, PotP_R_NO, PotP_I_Event, true, 	"no_mans_land", "PotP_Event_RacistsOfNovigradHS_NG", 		Vector(553.651428, 1677.662231)		));
@@ -1857,6 +1958,25 @@ statemachine class CProgressOnThePath_ItemsStorage
 		UUIDINT += 1;
 		return "IX" + IntToString(UUIDINT);
 	}
+
+//---------------------------------------------------
+	
+	function ClearFacts() : void
+	{
+		var entity: PotP_PreviewEntry;
+		var Idx : int;
+		
+		for (Idx = 0; Idx < MasterList_Items.Size(); Idx += 1)
+		{
+			entity = MasterList_Items[Idx];
+			
+			if (FactsDoesExist(entity.item_name + "_collected"))
+			{
+				FactsRemove(entity.item_name + "_collected");
+				PotP_Logger("Cleared Fact: " + entity.item_name + "_collected", , 'PotP Storage');
+			}
+		}	
+	}
 }
 
 //---------------------------------------------------
@@ -1899,10 +2019,14 @@ state Build in CProgressOnThePath_ItemsStorage
 		this.BuildVanilla();	
 		this.BuildModAdded();
 		
-		if (PotP_UsingGwentRedux()) {
+		if (PotP_UsingGwentRedux()) 
+		{
+			PotP_Logger("Building Gwent Redux Gwent Cards", , parent.fileName);
 			this.BuildGwentReduxCards();
 		}
-		else {
+		else 
+		{
+			PotP_Logger("Building Vanilla Gwent Cards", , parent.fileName);
 			this.BuildGwentCards();
 		}		
 
@@ -3258,6 +3382,7 @@ statemachine class CProgressOnThePath_QuestStorage
 	var SideQuests_KaerMorhen		: array<PotP_PreviewEntry>;
 	var SideQuests_Toussaint		: array<PotP_PreviewEntry>;
 	var SideQuests_NonRegional		: array<PotP_PreviewEntry>;
+	var SideQuests_Vizima			: array<PotP_PreviewEntry>;
 	
 	var ContQuests_WhiteOrchard		: array<PotP_PreviewEntry>;
 	var ContQuests_Velen			: array<PotP_PreviewEntry>;
@@ -3710,6 +3835,11 @@ state Build in CProgressOnThePath_QuestStorage
 		parent.SideQuests_KaerMorhen.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_03", PotP_E_Primary,  PotP_R_KM, PotP_I_Sides, "mq4003_lake"));
 		parent.SideQuests_KaerMorhen.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_04", PotP_E_Primary,  PotP_R_KM, PotP_I_Sides, "mq4004_bastion"));
 		parent.SideQuests_KaerMorhen.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_05", PotP_E_Primary,  PotP_R_KM, PotP_I_Sides, "mq4006_armor"));
+
+		if (PotP_UsingW3QE_Conscience()) // Nexus ID: https://www.nexusmods.com/witcher3/mods/9360
+		{
+			parent.SideQuests_KaerMorhen.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_90", PotP_E_ModAdded, PotP_R_KM, PotP_I_Sides, "dlc10_treasurepang"));
+		}	
 		
 		PotP_SortPreviewData(parent.SideQuests_KaerMorhen, PotP_A_Quest, master);
 		
@@ -3718,11 +3848,80 @@ state Build in CProgressOnThePath_QuestStorage
 		group = "PotP_TrackingGroup_SideQuests_NonRegional";
 		
 		parent.SideQuests_NonRegional.Clear();
+
+		if (PotP_UsingAWitcherCanHideAnother()) // Nexus ID: https://www.nexusmods.com/witcher3/mods/9453
+		{
+			parent.SideQuests_NonRegional.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_100", PotP_E_ModAdded, PotP_R_NA, PotP_I_Sides, "A Witcher Can Hide Another"));
+		}	
+		
 		parent.SideQuests_NonRegional.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_01", PotP_E_Primary,  PotP_R_NA, PotP_I_Sides, "mq3031_aging_romance"));
+
+		if (PotP_UsingW3QE_BombCollector()) // Nexus ID: https://www.nexusmods.com/witcher3/mods/9360
+		{
+			parent.SideQuests_NonRegional.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_90", PotP_E_ModAdded, PotP_R_NA, PotP_I_Sides, "dlcbombcollector001"));
+		}	
+
+		if (PotP_UsingW3QE_BombCollector()) // Nexus ID: https://www.nexusmods.com/witcher3/mods/9360
+		{
+			parent.SideQuests_NonRegional.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_91", PotP_E_ModAdded, PotP_R_NA, PotP_I_Sides, "dlcbombcollector002"));
+		}	
+
+		if (PotP_UsingW3QE_BombCollector()) // Nexus ID: https://www.nexusmods.com/witcher3/mods/9360
+		{
+			parent.SideQuests_NonRegional.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_92", PotP_E_ModAdded, PotP_R_NA, PotP_I_Sides, "dlcbombcollector003"));
+		}	
+		
 		parent.SideQuests_NonRegional.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_02", PotP_E_Primary,  PotP_R_NA, PotP_I_Sides, "Card Game Meta: Gather All"));
+
+		if (PotP_UsingW3QE_DecoctionCollector()) // Nexus ID: https://www.nexusmods.com/witcher3/mods/9360
+		{
+			parent.SideQuests_NonRegional.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_99", PotP_E_ModAdded, PotP_R_NA, PotP_I_Sides, "dlcdecoctioncollector"));
+		}	
+		
 		parent.SideQuests_NonRegional.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_03", PotP_E_Missable, PotP_R_NA, PotP_I_Sides, "SQ106 Killbill"));
+
+		if (PotP_UsingW3QE_PotionCollector()) // Nexus ID: https://www.nexusmods.com/witcher3/mods/9360
+		{
+			parent.SideQuests_NonRegional.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_96", PotP_E_ModAdded, PotP_R_NA, PotP_I_Sides, "dlcpotioncollector001"));
+		}	
+
+		if (PotP_UsingW3QE_PotionCollector()) // Nexus ID: https://www.nexusmods.com/witcher3/mods/9360
+		{
+			parent.SideQuests_NonRegional.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_97", PotP_E_ModAdded, PotP_R_NA, PotP_I_Sides, "dlcpotioncollector002"));
+		}	
+
+		if (PotP_UsingW3QE_PotionCollector()) // Nexus ID: https://www.nexusmods.com/witcher3/mods/9360
+		{
+			parent.SideQuests_NonRegional.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_98", PotP_E_ModAdded, PotP_R_NA, PotP_I_Sides, "dlcpotioncollector003"));
+		}
+		
 		parent.SideQuests_NonRegional.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_04", PotP_E_Primary,  PotP_R_NA, PotP_I_Sides, "CG: Old Friends"));
 		parent.SideQuests_NonRegional.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_05", PotP_E_Primary,  PotP_R_NA, PotP_I_Sides, "SQ108 Master Blacksmith"));
+
+		if (PotP_UsingW3QE_OilTycoon()) // Nexus ID: https://www.nexusmods.com/witcher3/mods/9360
+		{
+			parent.SideQuests_NonRegional.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_93", PotP_E_ModAdded, PotP_R_NA, PotP_I_Sides, "dlcoiltycoon001"));
+		}	
+
+		if (PotP_UsingW3QE_OilTycoon()) // Nexus ID: https://www.nexusmods.com/witcher3/mods/9360
+		{
+			parent.SideQuests_NonRegional.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_94", PotP_E_ModAdded, PotP_R_NA, PotP_I_Sides, "dlcoiltycoon002"));
+		}	
+
+		if (PotP_UsingW3QE_OilTycoon()) // Nexus ID: https://www.nexusmods.com/witcher3/mods/9360
+		{
+			parent.SideQuests_NonRegional.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_95", PotP_E_ModAdded, PotP_R_NA, PotP_I_Sides, "dlcoiltycoon003"));
+		}
+
+		if (PotP_UsingAWitcherCanHideAnother()) // Nexus ID: https://www.nexusmods.com/witcher3/mods/9453
+		{
+			parent.SideQuests_NonRegional.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_101", PotP_E_ModAdded, PotP_R_NA, PotP_I_Sides, "Mysterious Disappearance"));
+		}	
+
+		if (PotP_UsingUnsinkable()) // Nexus ID: https://www.nexusmods.com/witcher3/mods/7355
+		{
+			parent.SideQuests_NonRegional.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_102", PotP_E_ModAdded, PotP_R_NA, PotP_I_Sides, "mod001_boat"));
+		}	
 		
 		PotP_SortPreviewData(parent.SideQuests_NonRegional, PotP_A_Quest, master);
 
@@ -3756,6 +3955,12 @@ state Build in CProgressOnThePath_QuestStorage
 		parent.SideQuests_Velen.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_23", PotP_E_Missable, PotP_R_VE, PotP_I_Sides, "Q104 Favour For Keira"));
 		parent.SideQuests_Velen.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_24", PotP_E_Primary,  PotP_R_VE, PotP_I_Sides, "hr101 : Horse Race: Baron's Men"));
 		parent.SideQuests_Velen.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_25", PotP_E_Missable, PotP_R_VE, PotP_I_Sides, "Q107 Swamps"));
+	
+		if (PotP_UsingWeatherMachine()) // Nexus ID: https://www.nexusmods.com/witcher3/mods/7028
+		{
+			parent.SideQuests_Velen.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_91", PotP_E_ModAdded, PotP_R_VE, PotP_I_Sides, "mod003_weathermachine"));
+		}	
+		
 		parent.SideQuests_Velen.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_26", PotP_E_Primary,  PotP_R_VE, PotP_I_Sides, "mq1058 Cat Stash"));
 		parent.SideQuests_Velen.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_27", PotP_E_Missable, PotP_R_VE, PotP_I_Sides, "SQ102 Dolores"));
 		parent.SideQuests_Velen.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_28", PotP_E_Primary,  PotP_R_VE, PotP_I_Sides, "mq1050_written_in_the_stars"));
@@ -3791,6 +3996,12 @@ state Build in CProgressOnThePath_QuestStorage
 		parent.SideQuests_Novigrad.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_08", PotP_E_Primary, 		PotP_R_NO, PotP_I_Sides, "MQ3037 Sleeping Vampire"));
 		parent.SideQuests_Novigrad.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_09", PotP_E_Missable, 		PotP_R_NO, PotP_I_Sides, "mq3005 Shady Deal"));
 		parent.SideQuests_Novigrad.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_10", PotP_E_Missable, 		PotP_R_NO, PotP_I_Sides, "SQ312 Ves"));
+		
+		if (PotP_UsingW3QE_UngratefulMage()) // Nexus ID: https://www.nexusmods.com/witcher3/mods/9360
+		{
+			parent.SideQuests_Novigrad.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_94", PotP_E_ModAdded, PotP_R_NO, PotP_I_Sides, "dlcmoritz"));
+		}	
+		
 		parent.SideQuests_Novigrad.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_11", PotP_E_Primary_DLC1, 	PotP_R_NO, PotP_I_Sides, "q603painting"));
 		parent.SideQuests_Novigrad.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_12", PotP_E_Missable, 		PotP_R_NO, PotP_I_Sides, "SQ303 Brothel"));
 		parent.SideQuests_Novigrad.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_13", PotP_E_Missable, 		PotP_R_NO, PotP_I_Sides, "Q308 Psycho"));
@@ -3800,6 +4011,17 @@ state Build in CProgressOnThePath_QuestStorage
 		parent.SideQuests_Novigrad.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_17", PotP_E_Missable, 		PotP_R_NO, PotP_I_Sides, "mq3036_rosa_romance"));
 		parent.SideQuests_Novigrad.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_18", PotP_E_Primary, 		PotP_R_NO, PotP_I_Sides, "NVG: Fist Fighting"));
 		parent.SideQuests_Novigrad.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_19", PotP_E_Primary, 		PotP_R_NO, PotP_I_Sides, "CG: Novigrad"));
+
+		if (PotP_UsingW3QE_Masque()) // Nexus ID: https://www.nexusmods.com/witcher3/mods/9360
+		{
+			parent.SideQuests_Novigrad.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_92", PotP_E_ModAdded, PotP_R_NO, PotP_I_Sides, "sq301_gwent"));
+		}	
+		
+		if (PotP_UsingW3QE_Hearts()) // Nexus ID: https://www.nexusmods.com/witcher3/mods/9360
+		{
+			parent.SideQuests_Novigrad.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_91", PotP_E_ModAdded, PotP_R_NO, PotP_I_Sides, "cg600_gwent"));
+		}
+
 		parent.SideQuests_Novigrad.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_20", PotP_E_Primary, 		PotP_R_NO, PotP_I_Sides, "CG: Innkeepers"));
 		parent.SideQuests_Novigrad.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_21", PotP_E_Primary, 		PotP_R_NO, PotP_I_Sides, "CG: Talar"));
 		parent.SideQuests_Novigrad.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_22", PotP_E_Missable, 		PotP_R_NO, PotP_I_Sides, "Q301 Visiting Dreamer"));
@@ -3808,6 +4030,12 @@ state Build in CProgressOnThePath_QuestStorage
 		parent.SideQuests_Novigrad.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_25", PotP_E_Primary, 		PotP_R_NO, PotP_I_Sides, "SQ306 Maverick"));
 		parent.SideQuests_Novigrad.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_26", PotP_E_Primary, 		PotP_R_NO, PotP_I_Sides, "Q302 King Beggar's Debt"));
 		parent.SideQuests_Novigrad.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_27", PotP_E_Missable, 		PotP_R_NO, PotP_I_Sides, "Q310 Romantic Disaster"));
+		
+		if (PotP_UsingW3QE_Friends()) // Nexus ID: https://www.nexusmods.com/witcher3/mods/9360
+		{
+			parent.SideQuests_Novigrad.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_93", PotP_E_ModAdded, PotP_R_NO, PotP_I_Sides, "sq301_party_mingling"));
+		}
+		
 		parent.SideQuests_Novigrad.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_28", PotP_E_Primary, 		PotP_R_NO, PotP_I_Sides, "MQ3017 Little Red Raiding Hood"));
 		parent.SideQuests_Novigrad.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_29", PotP_E_Primary, 		PotP_R_NO, PotP_I_Sides, "mq3027_mymanifest"));
 		parent.SideQuests_Novigrad.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_30", PotP_E_Primary, 		PotP_R_NO, PotP_I_Sides, "mq3016_wandering_bards"));
@@ -3889,6 +4117,12 @@ state Build in CProgressOnThePath_QuestStorage
 		parent.SideQuests_Skellige.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_37", PotP_E_Primary, 	PotP_R_SK, PotP_I_Sides, "mq2040_trial_of_power"));
 		parent.SideQuests_Skellige.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_38", PotP_E_Primary, 	PotP_R_SK, PotP_I_Sides, "MQ2037 Dishonored"));
 		parent.SideQuests_Skellige.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_39", PotP_E_Primary, 	PotP_R_SK, PotP_I_Sides, "MQ2013 Grossbart brothers"));
+
+		if (PotP_UsingW3QE_SoundOfSilence()) // Nexus ID: https://www.nexusmods.com/witcher3/mods/9360
+		{
+			parent.SideQuests_Skellige.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_90", PotP_E_ModAdded, PotP_R_SK, PotP_I_Sides, "dlchornwallhorn"));
+		}	
+		
 		parent.SideQuests_Skellige.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_40", PotP_E_Primary, 	PotP_R_SK, PotP_I_Sides, "SQ210 Impossible Tower"));
 		parent.SideQuests_Skellige.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_41", PotP_E_Primary, 	PotP_R_SK, PotP_I_Sides, "mq2011_liar_and_theif"));
 
@@ -3922,6 +4156,12 @@ state Build in CProgressOnThePath_QuestStorage
 		parent.SideQuests_Toussaint.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_21", PotP_E_Primary_DLC2, PotP_R_TO, PotP_I_Sides, "mq7020_songs_of_glory"));
 		parent.SideQuests_Toussaint.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_22", PotP_E_Primary_DLC2, PotP_R_TO, PotP_I_Sides, "mq7011 Where's My Money"));
 		parent.SideQuests_Toussaint.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_23", PotP_E_Primary_DLC2, PotP_R_TO, PotP_I_Sides, "ff701_master"));
+		
+		if (PotP_UsingW3QE_SecretGarden()) // Nexus ID: https://www.nexusmods.com/witcher3/mods/9360
+		{
+			parent.SideQuests_Toussaint.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_91", PotP_E_ModAdded, PotP_R_TO, PotP_I_Sides, "dlcpalacegardens"));
+		}			
+		
 		parent.SideQuests_Toussaint.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_24", PotP_E_Primary_DLC2, PotP_R_TO, PotP_I_Sides, "Q702 Faith of Marlene"));
 		parent.SideQuests_Toussaint.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_25", PotP_E_Primary_DLC2, PotP_R_TO, PotP_I_Sides, "Q705 Prison Stash"));
 		parent.SideQuests_Toussaint.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_26", PotP_E_Primary_DLC2, PotP_R_TO, PotP_I_Sides, "SQ701 tournament"));
@@ -3938,14 +4178,27 @@ state Build in CProgressOnThePath_QuestStorage
 		parent.SideQuests_Toussaint.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_37", PotP_E_Primary_DLC2, PotP_R_TO, PotP_I_Sides, "ww_consortium"));
 		parent.SideQuests_Toussaint.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_38", PotP_E_Primary_DLC2, PotP_R_TO, PotP_I_Sides, "ww_coronata"));
 		parent.SideQuests_Toussaint.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_39", PotP_E_Primary_DLC2, PotP_R_TO, PotP_I_Sides, "ww_belgard_secret"));
-		parent.SideQuests_Toussaint.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_40", PotP_E_Primary_DLC2, PotP_R_TO, PotP_I_Sides, "ww_vermentino"));
-
+		parent.SideQuests_Toussaint.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_40", PotP_E_Primary_DLC2, PotP_R_TO, PotP_I_Sides, "ww_vermentino"));		
+		
 		if (PotP_UsingANightToRemember()) // Nexus ID: https://www.nexusmods.com/witcher3/mods/4670
 		{
 			parent.SideQuests_Toussaint.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_90", PotP_E_ModAdded_DLC2, PotP_R_TO, PotP_I_Sides, "ntr_nighttoremember"));
 		}
 		
 		PotP_SortPreviewData(parent.SideQuests_Toussaint, PotP_A_Quest, master);
+
+		//------------------------------------------------------
+		
+		group = "PotP_TrackingGroup_SideQuests_Vizima";
+		
+		parent.SideQuests_Vizima.Clear();
+
+		if (PotP_UsingCutThroatRazor()) // Nexus ID: https://www.nexusmods.com/witcher3/mods/7858
+		{
+			parent.SideQuests_Vizima.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_01", PotP_E_ModAdded, PotP_R_VI, PotP_I_Sides, "mod002_razor"));
+		}
+			
+		PotP_SortPreviewData(parent.SideQuests_Vizima, PotP_A_Quest, master);
 	}
 
 	//---------------------------------------------------
@@ -4100,6 +4353,12 @@ state Build in CProgressOnThePath_QuestStorage
 		
 		parent.ScavQuests_Others.Clear();
 		parent.ScavQuests_Others.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_01", PotP_E_Primary, 		PotP_R_NA, PotP_I_Scavs, "Viper Set"));
+		
+		if (PotP_UsingW3QE_ViperSet()) // Nexus ID: https://www.nexusmods.com/witcher3/mods/9360
+		{
+			parent.ScavQuests_Others.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_90", PotP_E_ModAdded, PotP_R_NA, PotP_I_Scavs, "dlcvipercollection"));
+		}	
+		
 		parent.ScavQuests_Others.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_02", PotP_E_Primary_DLC2, 	PotP_R_NA, PotP_I_Scavs, "th700_red_wolf"));
 
 		if (PotP_IsUsingNextGen()) 
@@ -4226,6 +4485,20 @@ state Build in CProgressOnThePath_QuestStorage
 //-- Storage Class ----------------------------------
 //---------------------------------------------------
 
+enum PotP_Storage_load_Type
+{
+	PotP_Reset_None = 0,
+	PotP_Reset_All = 1,
+	PotP_Reset_Quest = 2,
+	PotP_Reset_Event = 3, 
+	PotP_Reset_World = 4,
+	PotP_Reset_Items = 5,
+	PotP_Reset_Array = 6,
+	PotP_Reset_QuestAndEvent = 7,
+	PotP_Reset_QuestAndWorld = 8,
+	PotP_Reset_NewGamePlus = 9,
+}
+
 statemachine class CProgressOnThePath_Storage
 {		
 	var MasterList_Completed_V: array<string>;
@@ -4259,7 +4532,7 @@ statemachine class CProgressOnThePath_Storage
 	var BackGroundProcessingArray_bWorld: bool;
 	var BackGroundProcessingArray_bQuest: bool;
 	
-	var force_refresh: name;
+	var force_refresh: PotP_Storage_load_Type;
 	var debug: bool;
 	
 	function ResetBackGroundProcessingArray() : void
@@ -4296,9 +4569,9 @@ statemachine class CProgressOnThePath_Storage
 		pQuestStorageArray_Icon.Clear();
 	}
 
-	function PotP_LoadStorageCollection(optional force_refresh: name, optional debug: bool) 
+	function PotP_LoadStorageCollection(load_type: PotP_Storage_load_Type, optional debug: bool) 
 	{
-		this.force_refresh = force_refresh;
+		this.force_refresh = load_type;
 		this.debug = debug;
 		this.GotoState('Disabled');
 		this.GotoState('Process');
@@ -4360,7 +4633,7 @@ state Process in CProgressOnThePath_Storage
 			GotoState('Disabled');
 		}
 		
-		if (!master.PotP_PersistentStorage) 
+		if (!master.PotP_PersistentStorage || parent.force_refresh == PotP_Reset_NewGamePlus) 
 		{
 			master.PotP_PersistentStorage = new CProgressOnThePath_Storage in master;
 			PotP_Logger("New storage instance created.", , 'PotP Storage');
@@ -4383,7 +4656,7 @@ state Process in CProgressOnThePath_Storage
 		}
 		else 
 		{
-			if (parent.force_refresh == 'All' || parent.force_refresh == 'Array')
+			if (parent.force_refresh == PotP_Reset_All || parent.force_refresh == PotP_Reset_Array)
 			{
 				SleepOneFrame();
 				master.PotP_PersistentStorage.pArrayStorage.inititalise();
@@ -4407,7 +4680,11 @@ state Process in CProgressOnThePath_Storage
 		}
 		else 
 		{
-			if (parent.force_refresh == 'All' || parent.force_refresh == 'Quest' || PotP_ModAddedOrRemoved('Quest'))
+			if (parent.force_refresh == PotP_Reset_All 
+				|| parent.force_refresh == PotP_Reset_Quest 
+				|| parent.force_refresh == PotP_Reset_QuestAndEvent 
+				|| parent.force_refresh == PotP_Reset_QuestAndWorld
+			)
 			{
 				SleepOneFrame();
 				master.PotP_PersistentStorage.pQuestStorage.inititalise();
@@ -4431,7 +4708,7 @@ state Process in CProgressOnThePath_Storage
 		}
 		else 
 		{
-			if (parent.force_refresh == 'All' || parent.force_refresh == 'Event')
+			if (parent.force_refresh == PotP_Reset_All || parent.force_refresh == PotP_Reset_Event || parent.force_refresh == PotP_Reset_QuestAndEvent)
 			{
 				SleepOneFrame();
 				master.PotP_PersistentStorage.pEventStorage.inititalise();
@@ -4455,7 +4732,7 @@ state Process in CProgressOnThePath_Storage
 		}
 		else 
 		{
-			if (parent.force_refresh == 'All' || parent.force_refresh == 'World'|| PotP_ModAddedOrRemoved('World'))
+			if (parent.force_refresh == PotP_Reset_All || parent.force_refresh == PotP_Reset_World || parent.force_refresh == PotP_Reset_QuestAndWorld)
 			{
 				SleepOneFrame();
 				master.PotP_PersistentStorage.pWorldStorage.inititalise();
@@ -4479,7 +4756,7 @@ state Process in CProgressOnThePath_Storage
 		}
 		else 
 		{
-			if (parent.force_refresh == 'All' || parent.force_refresh == 'Items'|| PotP_ModAddedOrRemoved('Items'))
+			if (parent.force_refresh == PotP_Reset_All || parent.force_refresh == PotP_Reset_Items)
 			{
 				SleepOneFrame();
 				master.PotP_PersistentStorage.pItemsStorage.inititalise();
@@ -4490,90 +4767,9 @@ state Process in CProgressOnThePath_Storage
 				PotP_Logger("Existing items storage instance loaded with a size of: " + master.PotP_PersistentStorage.pItemsStorage.MasterList_Items.Size(), , 'PotP Storage');
 			}
 		}
-
-		//---------------------------------------------------
 		
-		PotP_ApplyDLCFacts();
-		
-		if (parent.debug) {
-			GetWitcherPlayer().DisplayHudMessage("Progress on the Path: Reload Completed...");
-		}
-
-		master.PotP_UpdaterClass		.initialise(master);
-		master.PotP_PinManager			.initialise(master);
-		master.PotP_QuestPreview		.initialise(master);
-		master.PotP_WorldPreview		.initialise(master);
-		master.PotP_ItemsPreview		.initialise(master);
-		master.PotP_GwentPreview		.initialise(master);
-		master.PotP_MissablePreview		.initialise(master);
-		master.PotP_Notifications		.initialise(master);
-		master.PotP_ItemsGoblin			.initialise(master);
-		master.PotP_QuestGoblin			.initialise(master);
-		master.PotP_WorldGoblin			.initialise(master);
-		master.PotP_EventListener		.initialise(master);
-		master.PotP_MeditationListener	.initialise(master);
-		master.PotP_PopupManager		.initialise(master);
-		master.SetModVersion();
-		
-		(new ProgressOnTheBath_TutorialBook1 in master).addBook();
-		(new ProgressOnTheBath_TutorialBook2 in master).addBook();
-		(new ProgressOnTheBath_TutorialBook3 in master).addBook();
-		(new ProgressOnTheBath_TutorialBook4 in master).addBook();
-		(new ProgressOnTheBath_TutorialBook5 in master).addBook();
-		(new ProgressOnTheBath_TutorialBook6 in master).addBook();
-		(new ProgressOnTheBath_TutorialBook7 in master).addBook();
-		
-		(new CProgressOnTheBath_QuestPreviewBook in master).addBook(master);
-		(new CProgressOnTheBath_WorldPreviewBook in master).addBook(master);
-		(new CProgressOnTheBath_ItemsPreviewBook in master).addBook(master);
-		(new CProgressOnTheBath_MissaPreviewBook in master).addBook(master);
-		(new CProgressOnTheBath_GwentPreviewBook in master).addBook(master);
-		
-		master.PotP_PinManager.GotoState('Idle');
-		master.PotP_ItemsGoblin.GotoState('Idle');
-		master.PotP_WorldGoblin.GotoState('Idle');
-		master.PotP_EventListener.GotoState('Idle');
-		master.PotP_MeditationListener.GotoState('Idle');
+		master.finish_init();
 		parent.GotoState('Disabled');
-	}
-	
-	//---------------------------------------------------
-	
-	latent function PotP_ApplyDLCFacts() : void
-	{
-		SleepOneFrame();
-		FactsSet("PotP_UsingDLCArmorQuests", 		(int) PotP_UsingDLCArmorQuests());
-		FactsSet("PotP_UsingThreeLittleSisters", 	(int) PotP_UsingThreeLittleSisters());
-		FactsSet("PotP_UsingCiriSoleMemento", 		(int) PotP_UsingCiriSoleMemento());
-		FactsSet("PotP_UsingANightToRemember", 		(int) PotP_UsingANightToRemember());
-		FactsSet("PotP_UsingDLCFastTravel", 		(int) PotP_UsingDLCFastTravel());
-		FactsSet("PotP_UsingShadesOfIron", 			(int) PotP_UsingShadesOfIron());
-		FactsSet("PotP_UsingGwentRedux", 			(int) PotP_UsingGwentRedux());
-		FactsSet("PotP_UsingW3EE",					(int) PotP_UsingW3EE());
-		FactsSet("PotP_UsingSezonBurz", 			(int) PotP_UsingSezonBurz());
-		FactsSet("PotP_UsingCosWiecej", 			(int) PotP_UsingCosWiecej());
-		
-		PotP_Logger("DLC Facts Applied...", , 'PotP Storage');
-	}
-	
-	//---------------------------------------------------
-	
-	private function PotP_ModAddedOrRemoved(section : name) : bool
-	{
-		if (section == 'Quest' && (PotP_UsingDLCArmorQuests() 		!= (bool) FactsQuerySum("PotP_UsingDLCArmorQuests")) ) 		{ return true; }
-		if (section == 'Quest' && (PotP_UsingThreeLittleSisters()	!= (bool) FactsQuerySum("PotP_UsingThreeLittleSisters")) ) 	{ return true; }
-		if (section == 'Quest' && (PotP_UsingCiriSoleMemento() 		!= (bool) FactsQuerySum("PotP_UsingCiriSoleMemento")) ) 	{ return true; }
-		if (section == 'Quest' && (PotP_UsingANightToRemember() 	!= (bool) FactsQuerySum("PotP_UsingANightToRemember")) ) 	{ return true; }
-		
-		if (section == 'World' && (PotP_UsingDLCFastTravel() 		!= (bool) FactsQuerySum("PotP_UsingDLCFastTravel")) ) 		{ return true; }
-		
-		if (section == 'Items' && (PotP_UsingShadesOfIron() 		!= (bool) FactsQuerySum("PotP_UsingShadesOfIron")) ) 		{ return true; }
-		if (section == 'Items' && (PotP_UsingGwentRedux() 			!= (bool) FactsQuerySum("PotP_UsingGwentRedux")) ) 			{ return true; }
-		if (section == 'Items' && (PotP_UsingW3EE() 				!= (bool) FactsQuerySum("PotP_UsingW3EE")) ) 				{ return true; }
-		if (section == 'Items' && (PotP_UsingSezonBurz() 			!= (bool) FactsQuerySum("PotP_UsingSezonBurz")) ) 			{ return true; }
-		if (section == 'Items' && (PotP_UsingCosWiecej() 			!= (bool) FactsQuerySum("PotP_UsingCosWiecej")) ) 			{ return true; }
-		
-		return false;
 	}
 }
 
@@ -6402,6 +6598,16 @@ public saved var PotP: CProgressOnThePath;
 }
 
 //---------------------------------------------------
+//---------------------------------------------------
+//---------------------------------------------------
+
+@wrapMethod( CR4CommonIngameMenu ) function OnClosingMenu()
+{
+	wrappedMethod();
+	thePlayer.PotP.EvaluateOptionsOnMenuClose();
+}
+
+//---------------------------------------------------
 //-- GUI Tooltip Wrapper ----------------------------
 //---------------------------------------------------
 
@@ -7042,7 +7248,21 @@ exec function pt_reload()
 	
 	if (GetPotP(master, 'pt_reload'))
 	{
-		master.PotP_PersistentStorage.PotP_LoadStorageCollection('All', true);
+		master.PotP_PersistentStorage.PotP_LoadStorageCollection(PotP_Reset_All, true);
+	}
+}
+
+//---------------------------------------------------
+//-- Exec Functions ---------------------------------
+//---------------------------------------------------
+
+exec function pt_ng() 
+{
+	var master: CProgressOnThePath;
+	
+	if (GetPotP(master, 'pt_ng'))
+	{
+		master.reset_for_ng_plus();
 	}
 }
 
@@ -7158,6 +7378,19 @@ exec function pt_checkfact(s: string) {
 	
 	if (exist) { GetWitcherPlayer().DisplayHudMessage("PotP Fact: [" + s + "] exists with a value of - [" + value + "]"); }
 	else { GetWitcherPlayer().DisplayHudMessage("PotP Fact: [" + s + "] does not exist"); }
+}
+
+//---------------------------------------------------
+//-- Exec Functions ---------------------------------
+//---------------------------------------------------
+
+exec function pt_version() {
+	
+	var exist: bool = FactsDoesExist("ProgressOnThePath_CurrentModVersion");
+	var value: int = FactsQuerySum("ProgressOnThePath_CurrentModVersion");
+	
+	if (exist) { GetWitcherPlayer().DisplayHudMessage("PotP Version = " + value); }
+	else { GetWitcherPlayer().DisplayHudMessage("PotP: Versioning Error"); }
 }
 
 //---------------------------------------------------
@@ -7842,7 +8075,7 @@ class CProgressOnThePath_PreviewEntryHelper
 		{
 			notifications.UpdateSingleEntry(entity, 2);
 		}
-	}		
+	}
 
 	//---------------------------------------------------
 	
@@ -8743,7 +8976,7 @@ class PotP_PreviewEntry
 		
 		this.localname 		= GetLocStringByKeyExt("option_" + uuid);
 		
-		//PotP_Logger(localname + " is a " + this.card_type + " card that can be " + this.card_origin, , 'PotP Preview Entry');
+		PotP_Logger(localname + " is a " + this.card_type + " card that can be " + this.card_origin, , 'PotP Preview Entry');
 		return this;
 	}
 	
@@ -10320,6 +10553,70 @@ class CProgressOnThePath_Notifications
 }
 
 //---------------------------------------------------
+//-- Functions -------------------------------------- W3QE
+//---------------------------------------------------
+
+function PotP_UsingW3QE_Hearts() : bool 
+{
+	return theGame.GetDLCManager().IsDLCAvailable('dlc_cardshos');
+}
+
+function PotP_UsingW3QE_Masque() : bool 
+{
+	return theGame.GetDLCManager().IsDLCAvailable('dlc_cardsparty');
+}
+
+function PotP_UsingW3QE_Friends() : bool 
+{
+	return theGame.GetDLCManager().IsDLCAvailable('dlc_partymingling');
+}
+
+function PotP_UsingW3QE_Conscience() : bool 
+{
+	return theGame.GetDLCManager().IsDLCAvailable('dlc_treasurepang');
+}
+
+function PotP_UsingW3QE_UngratefulMage() : bool 
+{
+	return theGame.GetDLCManager().IsDLCAvailable('dlc_moritz');
+}
+
+function PotP_UsingW3QE_SoundOfSilence() : bool 
+{
+	return theGame.GetDLCManager().IsDLCAvailable('dlc_hornwallhorn');
+}
+
+function PotP_UsingW3QE_SecretGarden() : bool 
+{
+	return theGame.GetDLCManager().IsDLCAvailable('dlc_palacegardens');
+}
+
+function PotP_UsingW3QE_ViperSet() : bool 
+{
+	return theGame.GetDLCManager().IsDLCAvailable('dlc_vipercollection');
+}
+
+function PotP_UsingW3QE_BombCollector() : bool 
+{
+	return theGame.GetDLCManager().IsDLCAvailable('dlc_bombcollector');
+}
+
+function PotP_UsingW3QE_OilTycoon() : bool 
+{
+	return theGame.GetDLCManager().IsDLCAvailable('dlc_oiltycoon');
+}
+
+function PotP_UsingW3QE_PotionCollector() : bool 
+{
+	return theGame.GetDLCManager().IsDLCAvailable('dlc_potioncollector');
+}
+
+function PotP_UsingW3QE_DecoctionCollector() : bool 
+{
+	return theGame.GetDLCManager().IsDLCAvailable('dlc_decoctioncollector');
+}
+
+//---------------------------------------------------
 //-- Functions --------------------------------------
 //---------------------------------------------------
 
@@ -10332,9 +10629,45 @@ function PotP_UsingShadesOfIron() : bool
 //-- Functions --------------------------------------
 //---------------------------------------------------
 
+function PotP_UsingCutThroatRazor() : bool 
+{
+	return theGame.GetDLCManager().IsDLCAvailable('dlc_razormax');
+}
+
+//---------------------------------------------------
+//-- Functions --------------------------------------
+//---------------------------------------------------
+
+function PotP_UsingUnsinkable() : bool 
+{
+	return theGame.GetDLCManager().IsDLCAvailable('dlc_unsinkable');
+}
+
+//---------------------------------------------------
+//-- Functions --------------------------------------
+//---------------------------------------------------
+
+function PotP_UsingWeatherMachine() : bool 
+{
+	return theGame.GetDLCManager().IsDLCAvailable('dlc_weathermachine');
+}
+
+//---------------------------------------------------
+//-- Functions --------------------------------------
+//---------------------------------------------------
+
+function PotP_UsingAWitcherCanHideAnother() : bool 
+{
+	return theGame.GetDLCManager().IsDLCAvailable('dlcngcl');
+}
+
+//---------------------------------------------------
+//-- Functions --------------------------------------
+//---------------------------------------------------
+
 function PotP_UsingGwentRedux() : bool 
 {
-	return StrLen(GetLocStringById(2114287601)) > 0;
+	return StrLen(GetLocStringById(2114287522)) > 0;
 }
 
 //---------------------------------------------------
@@ -10438,6 +10771,7 @@ struct PotP_PlayerNotification
 	var message_body	: string;
 	
 	var is_unique		: bool;
+	var delay			: int;
 }
 
 statemachine class CProgressOnThePath_TutorialPopup
@@ -10462,11 +10796,17 @@ statemachine class CProgressOnThePath_TutorialPopup
 	
 	//---------------------------------------------------
 		
-	public function Showpopup(title: string, body: string, uuid: string, type: string, is_unique: bool) 
+	public function Showpopup(title: string, body: string, uuid: string, type: string, is_unique: bool, optional delay: int) 
 	{		
 		if (type == "PopUp")
 		{
-			this.DisplayUserMessage(PotP_PlayerNotification(uuid, title, body, is_unique));
+			this.DisplayUserMessage(PotP_PlayerNotification(uuid, title, body, is_unique, delay));
+			return;
+		}
+
+		if (type == "Update")
+		{
+			GetWitcherPlayer().DisplayHudMessage(body);
 			return;
 		}
 		
@@ -10475,7 +10815,7 @@ statemachine class CProgressOnThePath_TutorialPopup
 			uuid = "PotP_GenericMessageID";
 		}
 		
-		master.PotP_PersistentStorage.MasterList_Pl_Messages.PushBack(PotP_PlayerNotification(uuid, title, body, is_unique));
+		master.PotP_PersistentStorage.MasterList_Pl_Messages.PushBack(PotP_PlayerNotification(uuid, title, body, is_unique, delay));
 		if (!this.IsInState('ShowMessage')) 
 		{ 
 			this.GotoState('ShowMessage'); 
@@ -10546,6 +10886,11 @@ state ShowMessage in CProgressOnThePath_TutorialPopup
 		}
 		
 		message = parent.master.PotP_PersistentStorage.MasterList_Pl_Messages[0];
+		
+		if (message.delay > 0) 
+		{
+			Sleep(message.delay);
+		}
 		
 		this.DisplayUserMessage(message);
 
