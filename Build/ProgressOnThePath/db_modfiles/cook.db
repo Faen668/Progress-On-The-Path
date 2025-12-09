@@ -204,6 +204,13 @@
             "id": "8D2339F3-540D37BD-09F58695-8B6DFEB6"
         },
         {
+            "path": "gameplay\\gui_new\\icons\\potp\\tracked_playerstash_dark.png",
+            "level": 0,
+            "seed": 1,
+            "consumed": 1,
+            "id": "E9E97741-D5A7CA44-B92B6413-BF6607BF"
+        },
+        {
             "path": "gameplay\\gui_new\\icons\\potp\\tracked_red.png",
             "level": 0,
             "seed": 1,

@@ -66,9 +66,28 @@ function PotP_UsingW3QE_DecoctionCollector() : bool
 //-- Functions --------------------------------------
 //---------------------------------------------------
 
+function PotP_UsingEssentialWeaponRework() : bool 
+{
+	return StrLen(GetLocStringById(2115104003)) > 0;
+}
+
+//---------------------------------------------------
+//-- Functions --------------------------------------
+//---------------------------------------------------
+
 function PotP_UsingShadesOfIron() : bool 
 {
 	return StrLen(GetLocStringById(2115051416)) > 0;
+}
+
+//---------------------------------------------------
+//-- Functions --------------------------------------
+//---------------------------------------------------
+
+
+function PotP_UsingExtraStashes() : bool 
+{
+	return theGame.GetDLCManager().IsDLCAvailable('dlc_extrastashes');
 }
 
 //---------------------------------------------------
@@ -195,6 +214,15 @@ function PotP_UsingThreeLittleSisters() : bool
 function PotP_UsingCiriSoleMemento() : bool 
 {
 	return theGame.GetDLCManager().IsDLCAvailable('dlc_solememento');
+}
+
+//---------------------------------------------------
+//-- Functions --------------------------------------
+//---------------------------------------------------
+
+function PotP_UsingBIA() : bool 
+{
+	return theGame.GetDLCManager().IsDLCAvailable('dlcbia');
 }
 
 //---------------------------------------------------

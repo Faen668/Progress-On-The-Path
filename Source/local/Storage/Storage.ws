@@ -14,6 +14,8 @@ enum PotP_Storage_load_Type
 	PotP_Reset_QuestAndEvent = 7,
 	PotP_Reset_QuestAndWorld = 8,
 	PotP_Reset_NewGamePlus = 9,
+	PotP_Reset_QuestAndItems = 10,
+	PotP_Reset_WorldAndItems = 11,
 }
 
 statemachine class CProgressOnThePath_Storage
@@ -199,9 +201,10 @@ state Process in CProgressOnThePath_Storage
 		else 
 		{
 			if (parent.force_refresh == PotP_Reset_All 
-				|| parent.force_refresh == PotP_Reset_Quest 
-				|| parent.force_refresh == PotP_Reset_QuestAndEvent 
+				|| parent.force_refresh == PotP_Reset_Quest
+				|| parent.force_refresh == PotP_Reset_QuestAndEvent
 				|| parent.force_refresh == PotP_Reset_QuestAndWorld
+				|| parent.force_refresh == PotP_Reset_QuestAndItems
 			)
 			{
 				SleepOneFrame();
@@ -250,7 +253,10 @@ state Process in CProgressOnThePath_Storage
 		}
 		else 
 		{
-			if (parent.force_refresh == PotP_Reset_All || parent.force_refresh == PotP_Reset_World || parent.force_refresh == PotP_Reset_QuestAndWorld)
+			if (parent.force_refresh == PotP_Reset_All 
+			|| parent.force_refresh == PotP_Reset_World 
+			|| parent.force_refresh == PotP_Reset_QuestAndWorld 
+			|| parent.force_refresh == PotP_Reset_WorldAndItems)
 			{
 				SleepOneFrame();
 				master.PotP_PersistentStorage.pWorldStorage.inititalise();
@@ -274,7 +280,10 @@ state Process in CProgressOnThePath_Storage
 		}
 		else 
 		{
-			if (parent.force_refresh == PotP_Reset_All || parent.force_refresh == PotP_Reset_Items)
+			if (parent.force_refresh == PotP_Reset_All 
+			|| parent.force_refresh == PotP_Reset_Items
+			|| parent.force_refresh == PotP_Reset_QuestAndItems
+			|| parent.force_refresh == PotP_Reset_WorldAndItems)
 			{
 				SleepOneFrame();
 				master.PotP_PersistentStorage.pItemsStorage.inititalise();

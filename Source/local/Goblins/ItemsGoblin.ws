@@ -65,6 +65,7 @@ statemachine class CProgressOnThePath_ItemsGoblin extends IInventoryScriptedList
 			}
 		}
 		PotP_Logger("Got No Item");
+		return true;
 	}
 }
 

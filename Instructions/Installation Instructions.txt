@@ -66,24 +66,31 @@ ProgressOnThePath_MiscNotification_Enter=true
 [Exploration]
 IK_NumPad5=(Action=UpdateProgressOnThePath)
 IK_NumPad6=(Action=DisplayProgressPreview)
+IK_NumPad7=(Action=SwitchProgressPreview)
 [Horse]
 IK_NumPad5=(Action=UpdateProgressOnThePath)
 IK_NumPad6=(Action=DisplayProgressPreview)
+IK_NumPad7=(Action=SwitchProgressPreview)
 [Swimming]
 IK_NumPad5=(Action=UpdateProgressOnThePath)
 IK_NumPad6=(Action=DisplayProgressPreview)
+IK_NumPad7=(Action=SwitchProgressPreview)
 [Boat]
 IK_NumPad5=(Action=UpdateProgressOnThePath)
 IK_NumPad6=(Action=DisplayProgressPreview)
+IK_NumPad7=(Action=SwitchProgressPreview)
 [BoatPassenger]
 IK_NumPad5=(Action=UpdateProgressOnThePath)
 IK_NumPad6=(Action=DisplayProgressPreview)
+IK_NumPad7=(Action=SwitchProgressPreview)
 [Combat]
 IK_NumPad5=(Action=UpdateProgressOnThePath)
 IK_NumPad6=(Action=DisplayProgressPreview)
+IK_NumPad7=(Action=SwitchProgressPreview)
 [Diving]
 IK_NumPad5=(Action=UpdateProgressOnThePath)
 IK_NumPad6=(Action=DisplayProgressPreview)
+IK_NumPad7=(Action=SwitchProgressPreview)
 
 - Into This File:
 
@@ -94,6 +101,7 @@ IK_NumPad6=(Action=DisplayProgressPreview)
 <!-- Progress on the Path Begin --> 
 <Var builder="Input" id="UpdateProgressOnThePath" 		displayName="UpdateProgressOnThePath" 		displayType="INPUTPC" actions="UpdateProgressOnThePath"/>
 <Var builder="Input" id="DisplayProgressPreview" 		displayName="DisplayProgressPreview" 		displayType="INPUTPC" actions="DisplayProgressPreview"/>
+<Var builder="Input" id="SwitchProgressPreview" 		displayName="SwitchProgressPreview" 		displayType="INPUTPC" actions="SwitchProgressPreview"/>
 <!-- Progress on the Path End -->
 
 - Into This File:

@@ -27,15 +27,18 @@ statemachine class CProgressOnThePath {
 
 	public var LastUpdateTime: float;
 		default LastUpdateTime = 0;
-	
+
+	public var LastSwitchTime: float;
+		default LastSwitchTime = 0;
+		
 	public var has_updated: bool;
 		default has_updated = false;
 	
 	public var current_version_string: string;
-		default current_version_string = "6.0.0.8";
+		default current_version_string = "6.0.1.4";
 
 	public var current_version_int: int;
-		default current_version_int = 6008;
+		default current_version_int = 6014;
 		
 	//---------------------------------------------------
 	
@@ -71,6 +74,7 @@ statemachine class CProgressOnThePath {
 
 		theInput.RegisterListener(this, 'UpdateProgressOnThePath', 'UpdateProgressOnThePath');
 		theInput.RegisterListener(this, 'DisplayProgressPreview', 'DisplayProgressPreview');
+		theInput.RegisterListener(this, 'SwitchProgressPreview', 'SwitchProgressPreview');
 		
 		PotP_UpdaterClass = new	CProgressOnThePath_UpdaterClass in this;
 		PotP_PopupManager = new CProgressOnThePath_TutorialPopup in this;
@@ -141,6 +145,18 @@ statemachine class CProgressOnThePath {
 					FactsSet(VersStr, 6008);
 					PotP_PersistentStorage.PotP_LoadStorageCollection(PotP_Reset_Quest);
 				}
+				
+				if (FactsQuerySum(VersStr) < 6013) 
+				{
+					FactsSet(VersStr, 6013);
+					PotP_PersistentStorage.PotP_LoadStorageCollection(PotP_Reset_QuestAndItems);
+				}
+				
+				if (FactsQuerySum(VersStr) < 6014) 
+				{
+					FactsSet(VersStr, 6014);
+					PotP_PersistentStorage.PotP_LoadStorageCollection(PotP_Reset_WorldAndItems);
+				}
 			}
 			else
 			{
@@ -167,7 +183,8 @@ statemachine class CProgressOnThePath {
 		PotP_EventListener		.initialise(this);
 		PotP_MeditationListener	.initialise(this);
 		PotP_PopupManager		.initialise(this);
-
+		PotP_EntityHelper		.initialise(this);
+		
 		(new ProgressOnTheBath_TutorialBook1 in this).addBook();
 		(new ProgressOnTheBath_TutorialBook2 in this).addBook();
 		(new ProgressOnTheBath_TutorialBook3 in this).addBook();
@@ -243,6 +260,28 @@ statemachine class CProgressOnThePath {
 		
 		VarManager.SetVarValue('ProgressOnThePath_NotificationSettings', 'ProgressOnThePath_MiscNotification_Event', 		"true");
 		VarManager.SetVarValue('ProgressOnThePath_NotificationSettings', 'ProgressOnThePath_MiscNotification_Enter', 		"true");
+	}
+	
+	//---------------------------------------------------
+
+	public function SwitchProgressPreview(action : SInputAction) 
+	{ 
+		var VarManager	: CInGameConfigWrapper;
+		var currentOpt 	: int;
+
+		if ((theGame.GetEngineTimeAsSeconds() - LastSwitchTime) > 0.5) 
+		{
+			LastSwitchTime = theGame.GetEngineTimeAsSeconds();
+			
+			VarManager = theGame.GetInGameConfigWrapper();
+			currentOpt = StringToInt(VarManager.GetVarValue('ProgressOnThePath_PreviewSettings', 'ProgressOnThePath_Preview')) + 1;
+
+			if (currentOpt > 4)
+				currentOpt = 0;
+			
+			VarManager.SetVarValue('ProgressOnThePath_PreviewSettings', 'ProgressOnThePath_Preview', IntToString(currentOpt));
+			PotP_Notifications.DisplaySwitchStatus(currentOpt);
+		}
 	}
 	
 	//---------------------------------------------------

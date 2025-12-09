@@ -112,8 +112,20 @@ class CProgressOnThePath_WorldPreview
 		build("PotP_Preview_SignP_4", master.PotP_PersistentStorage.pWorldStorage.Signposts_Skellige);
 		build("PotP_Preview_SignP_5", master.PotP_PersistentStorage.pWorldStorage.Signposts_KaerMorhen);
 		build("PotP_Preview_SignP_6", master.PotP_PersistentStorage.pWorldStorage.Signposts_Toussaint);
+		
+		build("PotP_Preview_Stash_1", master.PotP_PersistentStorage.pWorldStorage.PlayerStashes_WhiteOrchard);
+		build("PotP_Preview_Stash_2", master.PotP_PersistentStorage.pWorldStorage.PlayerStashes_Velen);
+		build("PotP_Preview_Stash_3", master.PotP_PersistentStorage.pWorldStorage.PlayerStashes_Novigrad);
+		build("PotP_Preview_Stash_4", master.PotP_PersistentStorage.pWorldStorage.PlayerStashes_Skellige);
+		build("PotP_Preview_Stash_5", master.PotP_PersistentStorage.pWorldStorage.PlayerStashes_KaerMorhen);
+		build("PotP_Preview_Stash_6", master.PotP_PersistentStorage.pWorldStorage.PlayerStashes_Toussaint);
+		
+		if (PotP_UsingExtraStashes())
+		{
+			build("PotP_Preview_Stash_7", master.PotP_PersistentStorage.pWorldStorage.PlayerStashes_Vizima);
+		}
 		return this.message;
-	}
+	}	
 	
 	//---------------------------------------------------
 	

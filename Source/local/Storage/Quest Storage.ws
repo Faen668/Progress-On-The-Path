@@ -62,6 +62,7 @@ statemachine class CProgressOnThePath_QuestStorage
 	var MissableQuests_SQ209		: array<PotP_PreviewEntry>;
 	var MissableQuests_Tango		: array<PotP_PreviewEntry>;
 	var MissableQuests_WineWars		: array<PotP_PreviewEntry>;
+	var MissableQuests_mq1058		: array<PotP_PreviewEntry>;
 	
 	var UUIDINT: int;
 	default UUIDINT = 1000;
@@ -198,6 +199,10 @@ statemachine class CProgressOnThePath_QuestStorage
 
 		case "PotP_TrackingGroup_SideQuests_Toussaint_37":
 			this.MissableQuests_WineWars.PushBack(pData);
+			break;
+			
+		case "PotP_TrackingGroup_SideQuests_Velen_26":
+			this.MissableQuests_mq1058.PushBack(pData);
 			break;
 
 		default:
@@ -609,7 +614,7 @@ state Build in CProgressOnThePath_QuestStorage
 			parent.SideQuests_Velen.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_91", PotP_E_ModAdded, PotP_R_VE, PotP_I_Sides, "mod003_weathermachine"));
 		}	
 		
-		parent.SideQuests_Velen.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_26", PotP_E_Primary,  PotP_R_VE, PotP_I_Sides, "mq1058 Cat Stash"));
+		parent.SideQuests_Velen.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_26", PotP_E_Missable, PotP_R_VE, PotP_I_Sides, "mq1058 Cat Stash"));
 		parent.SideQuests_Velen.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_27", PotP_E_Missable, PotP_R_VE, PotP_I_Sides, "SQ102 Dolores"));
 		parent.SideQuests_Velen.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_28", PotP_E_Primary,  PotP_R_VE, PotP_I_Sides, "mq1050_written_in_the_stars"));
 		parent.SideQuests_Velen.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_30", PotP_E_Primary,  PotP_R_VE, PotP_I_Sides, "MQ3024 you shall not pass"));

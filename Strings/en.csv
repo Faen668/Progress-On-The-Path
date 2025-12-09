@@ -2612,6 +2612,8 @@
 ;
 ; 6.0.0.8  -------------------------------------------------------------------------------------------------------------------------------------
 ;
+;
+;
 ; Translators please check updated text on lines:
 ; 2116569048 (changed name from 'Trophy' to 'Camerlengo's Seal'.
 ; 2116568171 (Added the new 'Missed' Information.
@@ -2624,4 +2626,91 @@
 2117171326||PotP_Notification_SingleUpdate_2|Completed: 
 2117171327||PotP_Notification_SingleUpdate_3|Missed: 
 ;
-;Next ID 2117171328
+;
+;
+; 6.0.1.3  -------------------------------------------------------------------------------------------------------------------------------------
+;
+;
+;
+2117171328||option_PotP_TrackingGroup_Relics_SilverSwords_43|Teigr (Witcher Gear)
+2117171329||option_PotP_TrackingGroup_Relics_SilverSwords_W3EE_21|Teigr (Witcher Gear)
+2117171330||PotP_Preview_Missable_18|<br/><font color="#9D75BF">Only Playable if you spare Gaetan during 'Where the Cat and Wold play...'<br/></font>
+2117171331||option_PotP_TrackingGroup_Relics_SteelSwords_60|Ancient elven sword
+2117171332||option_PotP_TrackingGroup_Relics_SteelSwords_61|Forged in Fire
+2117171333||option_PotP_TrackingGroup_Relics_SteelSwords_62|Geralt of Rivia's sword
+2117171334||option_PotP_TrackingGroup_Relics_SteelSwords_63|Ravix of Fourhorn's sword
+2117171335||option_PotP_TrackingGroup_Relics_SteelSwords_64|The Reckoner
+2117171336||option_PotP_TrackingGroup_Relics_SteelSwords_65|Imlerith's Mace
+2117171337||option_PotP_TrackingGroup_Relics_SteelSwords_66|Eredin's Sword
+2117171338||option_PotP_TrackingGroup_Relics_SteelSwords_67|Toussaint knight's war hammer
+2117171339||option_PotP_TrackingGroup_Relics_SteelSwords_68|The Caretaker's spade
+2117171340||option_PotP_TrackingGroup_Relics_SteelSwords_69|Dwarven axe
+2117171341||option_PotP_TrackingGroup_Relics_SteelSwords_70|Wild Hunt warrior axe
+2117171342||PotP_SwitchMessage_0|Now Tracking: Quest Progress
+2117171343||PotP_SwitchMessage_1|Now Tracking: World Map Progress
+2117171344||PotP_SwitchMessage_2|Now Tracking: Collectable Items Progress
+2117171345||PotP_SwitchMessage_3|Now Tracking: Gwent Card Progress
+2117171346||PotP_SwitchMessage_4|Now Tracking: Missable Quest Progress
+2117171347||SwitchProgressPreview|PotP: Switch Progress Preview
+;
+;
+;
+; 6.0.1.4  -------------------------------------------------------------------------------------------------------------------------------------
+;
+;
+;
+;
+2117171348||option_PotP_TrackingGroup_WorldMap_Signposts_Velen_98|Cestersover
+2117171349||option_PotP_TrackingGroup_WorldMap_Signposts_Velen_99|Fireburst Harbor
+2117171350||option_PotP_TrackingGroup_WorldMap_Signposts_Velen_100|Swamp Bint Harbor
+2117171351||option_PotP_TrackingGroup_Relics_SteelSwords_71|Pitchfork
+2117171352||option_PotP_TrackingGroup_Relics_SteelSwords_72|Wild Hunt warrior's sword - Mastercrafted
+2117171353||PotP_NotificationLine_Stash| Player Stash(DYNAMC_REPLACE)
+2117171354||PotP_Preview_Stash_1|<br/>[ICON_PATH]<font color="#9D75BF">Player Stashes: White Orchard [COUNTS]<br/></font>
+2117171355||PotP_Preview_Stash_2|<br/>[ICON_PATH]<font color="#9D75BF">Player Stashes: Velen [COUNTS]<br/></font>
+2117171356||PotP_Preview_Stash_3|<br/>[ICON_PATH]<font color="#9D75BF">Player Stashes: Novigrad [COUNTS]<br/></font>
+2117171357||PotP_Preview_Stash_4|<br/>[ICON_PATH]<font color="#9D75BF">Player Stashes: Skellige [COUNTS]<br/></font>
+2117171358||PotP_Preview_Stash_5|<br/>[ICON_PATH]<font color="#9D75BF">Player Stashes: Kaer Morhen [COUNTS]<br/></font>
+2117171359||PotP_Preview_Stash_6|<br/>[ICON_PATH]<font color="#9D75BF">Player Stashes: Toussaint [COUNTS]<br/></font>
+2117171360||PotP_Preview_Stash_7|<br/>[ICON_PATH]<font color="#9D75BF">Player Stashes: Vizima [COUNTS]<br/></font>
+;
+2117171361||option_PotP_TrackingGroup_WorldMap_PlayerStashes_WhiteOrchard_01|White Orchard Inn
+2117171362||option_PotP_TrackingGroup_WorldMap_PlayerStashes_WhiteOrchard_02|Nilfgaardian Garrison
+;
+2117171363||option_PotP_TrackingGroup_WorldMap_PlayerStashes_Velen_01|Crow's Perch
+2117171364||option_PotP_TrackingGroup_WorldMap_PlayerStashes_Velen_02|Devil's Pit
+2117171365||option_PotP_TrackingGroup_WorldMap_PlayerStashes_Velen_03|Inn at the Crossroads
+2117171366||option_PotP_TrackingGroup_WorldMap_PlayerStashes_Velen_04|Keira Metz's House
+2117171367||option_PotP_TrackingGroup_WorldMap_PlayerStashes_Velen_05|Nilfgaardian Army 'Group Center' Camp
+2117171368||option_PotP_TrackingGroup_WorldMap_PlayerStashes_Velen_06|Reardon Manor
+;
+2117171369||option_PotP_TrackingGroup_WorldMap_PlayerStashes_Novigrad_01|Hattori's Workshop
+2117171370||option_PotP_TrackingGroup_WorldMap_PlayerStashes_Novigrad_02|Isolated Hut
+2117171371||option_PotP_TrackingGroup_WorldMap_PlayerStashes_Novigrad_03|Oxenfurt Armorer
+2117171372||option_PotP_TrackingGroup_WorldMap_PlayerStashes_Novigrad_04|Rosemary and Thyme
+2117171373||option_PotP_TrackingGroup_WorldMap_PlayerStashes_Novigrad_05|Runewright's Workshop
+2117171374||option_PotP_TrackingGroup_WorldMap_PlayerStashes_Novigrad_06|Temerian Partisan Hideout
+;
+2117171375||option_PotP_TrackingGroup_WorldMap_PlayerStashes_Vizima_01|Yennefer's Study
+;
+2117171376||option_PotP_TrackingGroup_WorldMap_PlayerStashes_Skellige_01|Gremist's Lab (Ard Skellig)
+2117171377||option_PotP_TrackingGroup_WorldMap_PlayerStashes_Skellige_02|Harviken (Faroe)
+2117171378||option_PotP_TrackingGroup_WorldMap_PlayerStashes_Skellige_03|Kaer Muire (Ard Skellig)
+2117171379||option_PotP_TrackingGroup_WorldMap_PlayerStashes_Skellige_04|Larvik (Hindarsfjall)
+2117171380||option_PotP_TrackingGroup_WorldMap_PlayerStashes_Skellige_05|Marlin Coast (Undvik)
+2117171381||option_PotP_TrackingGroup_WorldMap_PlayerStashes_Skellige_06|New Port Inn (Ard Skellig)
+2117171382||option_PotP_TrackingGroup_WorldMap_PlayerStashes_Skellige_07|Svorlag Village (Spikeroog)
+2117171383||option_PotP_TrackingGroup_WorldMap_PlayerStashes_Skellige_08|Urialla Harbor (An Skellig)
+;
+2117171384||option_PotP_TrackingGroup_WorldMap_PlayerStashes_KaerMorhen_01|kaer Morhen Main Hall
+2117171385||option_PotP_TrackingGroup_WorldMap_PlayerStashes_KaerMorhen_02|Ruined Watchtower
+;
+2117171386||option_PotP_TrackingGroup_WorldMap_PlayerStashes_Toussaint_01|Ardaiso Quarry
+2117171387||option_PotP_TrackingGroup_WorldMap_PlayerStashes_Toussaint_02|Castel Ravello
+2117171388||option_PotP_TrackingGroup_WorldMap_PlayerStashes_Toussaint_03|Corvo Bianco
+2117171389||option_PotP_TrackingGroup_WorldMap_PlayerStashes_Toussaint_04|Francollarts
+2117171390||option_PotP_TrackingGroup_WorldMap_PlayerStashes_Toussaint_05|Lazare Lafargue's Workshop
+;
+2117171391||preset_value_QT_Option_WType_12|Player Stashes
+2117171392||preset_value_QT_Option_WArea_7|Vizima
+;Next ID 2116568993

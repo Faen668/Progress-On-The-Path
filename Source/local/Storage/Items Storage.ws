@@ -246,6 +246,7 @@ state Build in CProgressOnThePath_ItemsStorage
 			parent.Relic_SilverSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_12", PotP_E_Primary, PotP_I_Relic, PotP_U_Silve, 'Reachofthedamned_crafted')			.compilevariations(''));
 			parent.Relic_SilverSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_13", PotP_E_Primary, PotP_I_Relic, PotP_U_Silve, 'Roseofaelirenn')						.compilevariations(''));
 			parent.Relic_SilverSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_14", PotP_E_Primary, PotP_I_Relic, PotP_U_Silve, 'EP1 Crafted Witcher Silver Sword')	.compilevariations(''));
+			parent.Relic_SilverSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_21", PotP_E_Primary, PotP_I_Relic, PotP_U_Silve, 'mq1058_cat_school_sword')				.compilevariations(''));
 			parent.Relic_SilverSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_15", PotP_E_Primary, PotP_I_Relic, PotP_U_Silve, 'Adversary Silver Sword')				.compilevariations(''));
 			parent.Relic_SilverSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_16", PotP_E_Primary, PotP_I_Relic, PotP_U_Silve, 'Virgin_crafted')						.compilevariations(''));
 			parent.Relic_SilverSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_17", PotP_E_Primary, PotP_I_Relic, PotP_U_Silve, 'Tlareg_crafted')						.compilevariations(''));
@@ -268,66 +269,87 @@ state Build in CProgressOnThePath_ItemsStorage
 		{		
 			group = "PotP_TrackingGroup_Relics_SteelSwords";
 			parent.Relic_SteelSwords.Clear();
-			parent.Relic_SteelSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_01", PotP_E_Primary, PotP_I_Relic, PotP_U_Steel, 'Angivare')							.compilevariations(''));
-			parent.Relic_SteelSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_02", PotP_E_Primary, PotP_I_Relic, PotP_U_Steel, 'Arbitrator')						.compilevariations('Arbitrator_crafted'));
-			parent.Relic_SteelSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_03", PotP_E_Primary, PotP_I_Relic, PotP_U_Steel, 'Ardaenye')							.compilevariations(''));
-			parent.Relic_SteelSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_04", PotP_E_Primary, PotP_I_Relic, PotP_U_Steel, 'Ashrune')							.compilevariations(''));
-			parent.Relic_SteelSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_05", PotP_E_Primary, PotP_I_Relic, PotP_U_Steel, 'Barbersurgeon')					.compilevariations(''));
-			parent.Relic_SteelSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_06", PotP_E_Primary, PotP_I_Relic, PotP_U_Steel, 'Beannshie')						.compilevariations('Beannshie_crafted'));
-			parent.Relic_SteelSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_07", PotP_E_Primary, PotP_I_Relic, PotP_U_Steel, 'Serpent Steel Sword 3')			.compilevariations(''));
-			parent.Relic_SteelSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_08", PotP_E_Primary, PotP_I_Relic, PotP_U_Steel, 'Blackunicorn')						.compilevariations('Blackunicorn_crafted'));
-			parent.Relic_SteelSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_09", PotP_E_Primary, PotP_I_Relic, PotP_U_Steel, 'sq304 Novigraadan sword 4')		.compilevariations(''));
-			parent.Relic_SteelSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_10", PotP_E_Primary, PotP_I_Relic, PotP_U_Steel, 'Gwent steel sword 1')				.compilevariations(''));
-			parent.Relic_SteelSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_11", PotP_E_Primary, PotP_I_Relic, PotP_U_Steel, 'Bloedeaedd')						.compilevariations(''));
-			parent.Relic_SteelSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_12", PotP_E_Primary, PotP_I_Relic, PotP_U_Steel, 'Caerme')							.compilevariations(''));
-			parent.Relic_SteelSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_13", PotP_E_Primary, PotP_I_Relic, PotP_U_Steel, 'Karabela')							.compilevariations(''));
-			parent.Relic_SteelSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_14", PotP_E_Primary, PotP_I_Relic, PotP_U_Steel, 'Caroline')							.compilevariations(''));
-			parent.Relic_SteelSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_15", PotP_E_Primary, PotP_I_Relic, PotP_U_Steel, 'Cleaver')							.compilevariations(''));
-			parent.Relic_SteelSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_16", PotP_E_Primary, PotP_I_Relic, PotP_U_Steel, 'Dyaebl')							.compilevariations(''));
-			parent.Relic_SteelSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_17", PotP_E_Primary, PotP_I_Relic, PotP_U_Steel, 'Dancer')							.compilevariations(''));
-			parent.Relic_SteelSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_18", PotP_E_Primary, PotP_I_Relic, PotP_U_Steel, 'Daystar')							.compilevariations(''));
-			parent.Relic_SteelSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_19", PotP_E_Primary, PotP_I_Relic, PotP_U_Steel, 'Deireadh')							.compilevariations(''));
-			parent.Relic_SteelSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_20", PotP_E_Primary, PotP_I_Relic, PotP_U_Steel, 'Devine')							.compilevariations(''));
-			parent.Relic_SteelSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_21", PotP_E_Primary, PotP_I_Relic, PotP_U_Steel, 'Serpent Steel Sword 2')			.compilevariations(''));
-			parent.Relic_SteelSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_22", PotP_E_Primary, PotP_I_Relic, PotP_U_Steel, 'Serpent Steel Sword 1')			.compilevariations(''));
-			parent.Relic_SteelSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_23", PotP_E_Primary, PotP_I_Relic, PotP_U_Steel, 'Forgottenvransword')				.compilevariations(''));
-			parent.Relic_SteelSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_24", PotP_E_Primary, PotP_I_Relic, PotP_U_Steel, 'Gloryofthenorth')					.compilevariations(''));
-			parent.Relic_SteelSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_25", PotP_E_Primary, PotP_I_Relic, PotP_U_Steel, 'Gwestog')							.compilevariations(''));
-			parent.Relic_SteelSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_26", PotP_E_Primary, PotP_I_Relic, PotP_U_Steel, 'Gwyhyr')							.compilevariations(''));
-			parent.Relic_SteelSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_27", PotP_E_Primary, PotP_I_Relic, PotP_U_Steel, 'Harvall')							.compilevariations(''));
-			parent.Relic_SteelSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_28", PotP_E_Primary, PotP_I_Relic, PotP_U_Steel, 'Headtaker')						.compilevariations(''));
-			parent.Relic_SteelSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_29", PotP_E_Primary, PotP_I_Relic, PotP_U_Steel, 'q704 vampire steel sword')			.compilevariations(''));
-			parent.Relic_SteelSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_30", PotP_E_Primary, PotP_I_Relic, PotP_U_Steel, 'Hjalmar_Short_Steel_Sword')		.compilevariations(''));
-			parent.Relic_SteelSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_31", PotP_E_Primary, PotP_I_Relic, PotP_U_Steel, 'Vynbleidd')						.compilevariations(''));
-			parent.Relic_SteelSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_32", PotP_E_Primary, PotP_I_Relic, PotP_U_Steel, 'Inis')								.compilevariations(''));
-			parent.Relic_SteelSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_33", PotP_E_Primary, PotP_I_Relic, PotP_U_Steel, 'Olgierd Sabre')					.compilevariations(''));
-			parent.Relic_SteelSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_34", PotP_E_Primary, PotP_I_Relic, PotP_U_Steel, 'Longclaw')							.compilevariations('Longclaw_crafted'));
-			parent.Relic_SteelSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_35", PotP_E_Primary, PotP_I_Relic, PotP_U_Steel, 'Lune')								.compilevariations(''));
-			parent.Relic_SteelSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_36", PotP_E_Primary, PotP_I_Relic, PotP_U_Steel, 'Mourner')							.compilevariations(''));
-			parent.Relic_SteelSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_37", PotP_E_Primary, PotP_I_Relic, PotP_U_Steel, 'Ofir Sabre 1')						.compilevariations(''));
-			parent.Relic_SteelSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_38", PotP_E_Primary, PotP_I_Relic, PotP_U_Steel, 'Crafted Ofir Steel Sword')			.compilevariations(''));
-			parent.Relic_SteelSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_39", PotP_E_Primary, PotP_I_Relic, PotP_U_Steel, 'Crafted Burning Rose Sword')		.compilevariations(''));
-			parent.Relic_SteelSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_40", PotP_E_Primary, PotP_I_Relic, PotP_U_Steel, 'Iron Poker')						.compilevariations(''));
-			parent.Relic_SteelSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_41", PotP_E_Primary, PotP_I_Relic, PotP_U_Steel, 'Princessxenthiasword')				.compilevariations(''));
-			parent.Relic_SteelSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_42", PotP_E_Primary, PotP_I_Relic, PotP_U_Steel, 'Squire steel sword 3')				.compilevariations(''));
-			parent.Relic_SteelSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_43", PotP_E_Primary, PotP_I_Relic, PotP_U_Steel, 'Robustswordofdolblathanna')		.compilevariations(''));
-			parent.Relic_SteelSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_44", PotP_E_Primary, PotP_I_Relic, PotP_U_Steel, 'q702 vampire steel sword')			.compilevariations(''));
-			parent.Relic_SteelSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_45", PotP_E_Primary, PotP_I_Relic, PotP_U_Steel, 'Cheesecutter')						.compilevariations(''));
-			parent.Relic_SteelSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_46", PotP_E_Primary, PotP_I_Relic, PotP_U_Steel, 'Gnomish sword 2')					.compilevariations('Gnomish sword 2_crafted'));
-			parent.Relic_SteelSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_47", PotP_E_Primary, PotP_I_Relic, PotP_U_Steel, 'Torlara')							.compilevariations(''));
-			parent.Relic_SteelSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_48", PotP_E_Primary, PotP_I_Relic, PotP_U_Steel, 'Guard lvl2 steel sword 3')			.compilevariations(''));
-			parent.Relic_SteelSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_49", PotP_E_Primary, PotP_I_Relic, PotP_U_Steel, 'Guard lvl1 steel sword 3')			.compilevariations('Guard lvl1 steel sword 3 Autogen'));
-			parent.Relic_SteelSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_50", PotP_E_Primary, PotP_I_Relic, PotP_U_Steel, 'Knights steel sword 3')			.compilevariations(''));
-			parent.Relic_SteelSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_51", PotP_E_Primary, PotP_I_Relic, PotP_U_Steel, 'Toussaint steel sword 3')			.compilevariations(''));
-			parent.Relic_SteelSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_52", PotP_E_Primary, PotP_I_Relic, PotP_U_Steel, 'Ultimatum')						.compilevariations(''));
-			parent.Relic_SteelSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_53", PotP_E_Primary, PotP_I_Relic, PotP_U_Steel, 'Hanza steel sword 3')				.compilevariations(''));
-			parent.Relic_SteelSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_54", PotP_E_Primary, PotP_I_Relic, PotP_U_Steel, 'Unique steel sword')				.compilevariations(''));
-			parent.Relic_SteelSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_55", PotP_E_Primary, PotP_I_Relic, PotP_U_Steel, 'Abarad')							.compilevariations(''));
-			parent.Relic_SteelSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_56", PotP_E_Primary, PotP_I_Relic, PotP_U_Steel, 'q402 Skellige sword 3')			.compilevariations(''));
-			parent.Relic_SteelSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_57", PotP_E_Primary, PotP_I_Relic, PotP_U_Steel, 'Wolf')								.compilevariations(''));
-			parent.Relic_SteelSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_58", PotP_E_Primary, PotP_I_Relic, PotP_U_Steel, 'Steel Vixen')						.compilevariations(''));
-			parent.Relic_SteelSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_59", PotP_E_Primary, PotP_I_Relic, PotP_U_Steel, 'Top Notch Steel')					.compilevariations(''));
-
+			parent.Relic_SteelSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_01", PotP_E_Primary, PotP_I_Relic, PotP_U_Steel, 'Angivare')								.compilevariations(''));
+			parent.Relic_SteelSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_02", PotP_E_Primary, PotP_I_Relic, PotP_U_Steel, 'Arbitrator')								.compilevariations('Arbitrator_crafted'));
+			parent.Relic_SteelSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_03", PotP_E_Primary, PotP_I_Relic, PotP_U_Steel, 'Ardaenye')								.compilevariations(''));
+			parent.Relic_SteelSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_04", PotP_E_Primary, PotP_I_Relic, PotP_U_Steel, 'Ashrune')								.compilevariations(''));
+			parent.Relic_SteelSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_05", PotP_E_Primary, PotP_I_Relic, PotP_U_Steel, 'Barbersurgeon')							.compilevariations(''));
+			parent.Relic_SteelSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_06", PotP_E_Primary, PotP_I_Relic, PotP_U_Steel, 'Beannshie')								.compilevariations('Beannshie_crafted'));
+			parent.Relic_SteelSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_07", PotP_E_Primary, PotP_I_Relic, PotP_U_Steel, 'Serpent Steel Sword 3')					.compilevariations(''));
+			parent.Relic_SteelSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_08", PotP_E_Primary, PotP_I_Relic, PotP_U_Steel, 'Blackunicorn')							.compilevariations('Blackunicorn_crafted'));
+			parent.Relic_SteelSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_09", PotP_E_Primary, PotP_I_Relic, PotP_U_Steel, 'sq304 Novigraadan sword 4')				.compilevariationsCondtional('Novigraadan sword 4_crafted', PotP_UsingEssentialWeaponRework()));
+			parent.Relic_SteelSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_10", PotP_E_Primary, PotP_I_Relic, PotP_U_Steel, 'Gwent steel sword 1')					.compilevariations(''));
+			parent.Relic_SteelSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_11", PotP_E_Primary, PotP_I_Relic, PotP_U_Steel, 'Bloedeaedd')								.compilevariations(''));
+			parent.Relic_SteelSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_12", PotP_E_Primary, PotP_I_Relic, PotP_U_Steel, 'Caerme')									.compilevariations(''));
+			parent.Relic_SteelSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_13", PotP_E_Primary, PotP_I_Relic, PotP_U_Steel, 'Karabela')								.compilevariations(''));
+			parent.Relic_SteelSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_14", PotP_E_Primary, PotP_I_Relic, PotP_U_Steel, 'Caroline')								.compilevariations(''));
+			parent.Relic_SteelSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_15", PotP_E_Primary, PotP_I_Relic, PotP_U_Steel, 'Cleaver')								.compilevariations(''));
+			parent.Relic_SteelSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_16", PotP_E_Primary, PotP_I_Relic, PotP_U_Steel, 'Dyaebl')									.compilevariations(''));
+			parent.Relic_SteelSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_17", PotP_E_Primary, PotP_I_Relic, PotP_U_Steel, 'Dancer')									.compilevariations(''));
+			parent.Relic_SteelSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_18", PotP_E_Primary, PotP_I_Relic, PotP_U_Steel, 'Daystar')								.compilevariations(''));
+			parent.Relic_SteelSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_19", PotP_E_Primary, PotP_I_Relic, PotP_U_Steel, 'Deireadh')								.compilevariations(''));
+			parent.Relic_SteelSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_20", PotP_E_Primary, PotP_I_Relic, PotP_U_Steel, 'Devine')									.compilevariations(''));
+			parent.Relic_SteelSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_21", PotP_E_Primary, PotP_I_Relic, PotP_U_Steel, 'Serpent Steel Sword 2')					.compilevariations(''));
+			parent.Relic_SteelSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_22", PotP_E_Primary, PotP_I_Relic, PotP_U_Steel, 'Serpent Steel Sword 1')					.compilevariations(''));
+			parent.Relic_SteelSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_23", PotP_E_Primary, PotP_I_Relic, PotP_U_Steel, 'Forgottenvransword')						.compilevariations(''));
+			parent.Relic_SteelSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_24", PotP_E_Primary, PotP_I_Relic, PotP_U_Steel, 'Gloryofthenorth')						.compilevariations(''));
+			parent.Relic_SteelSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_25", PotP_E_Primary, PotP_I_Relic, PotP_U_Steel, 'Gwestog')								.compilevariations(''));
+			parent.Relic_SteelSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_26", PotP_E_Primary, PotP_I_Relic, PotP_U_Steel, 'Gwyhyr')									.compilevariations(''));
+			parent.Relic_SteelSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_27", PotP_E_Primary, PotP_I_Relic, PotP_U_Steel, 'Harvall')								.compilevariations(''));
+			parent.Relic_SteelSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_28", PotP_E_Primary, PotP_I_Relic, PotP_U_Steel, 'Headtaker')								.compilevariations(''));
+			parent.Relic_SteelSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_29", PotP_E_Primary, PotP_I_Relic, PotP_U_Steel, 'q704 vampire steel sword')				.compilevariations(''));
+			parent.Relic_SteelSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_30", PotP_E_Primary, PotP_I_Relic, PotP_U_Steel, 'Hjalmar_Short_Steel_Sword')				.compilevariations(''));
+			parent.Relic_SteelSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_31", PotP_E_Primary, PotP_I_Relic, PotP_U_Steel, 'Vynbleidd')								.compilevariations(''));
+			parent.Relic_SteelSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_32", PotP_E_Primary, PotP_I_Relic, PotP_U_Steel, 'Inis')									.compilevariations(''));
+			parent.Relic_SteelSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_33", PotP_E_Primary, PotP_I_Relic, PotP_U_Steel, 'Olgierd Sabre')							.compilevariations(''));
+			parent.Relic_SteelSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_34", PotP_E_Primary, PotP_I_Relic, PotP_U_Steel, 'Longclaw')								.compilevariations('Longclaw_crafted'));
+			parent.Relic_SteelSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_35", PotP_E_Primary, PotP_I_Relic, PotP_U_Steel, 'Lune')									.compilevariations(''));
+			parent.Relic_SteelSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_36", PotP_E_Primary, PotP_I_Relic, PotP_U_Steel, 'Mourner')								.compilevariations(''));
+			parent.Relic_SteelSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_37", PotP_E_Primary, PotP_I_Relic, PotP_U_Steel, 'Ofir Sabre 1')							.compilevariations(''));
+			parent.Relic_SteelSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_38", PotP_E_Primary, PotP_I_Relic, PotP_U_Steel, 'Crafted Ofir Steel Sword')				.compilevariations(''));
+			parent.Relic_SteelSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_39", PotP_E_Primary, PotP_I_Relic, PotP_U_Steel, 'Crafted Burning Rose Sword')				.compilevariations(''));
+			parent.Relic_SteelSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_40", PotP_E_Primary, PotP_I_Relic, PotP_U_Steel, 'Iron Poker')								.compilevariations(''));
+			parent.Relic_SteelSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_41", PotP_E_Primary, PotP_I_Relic, PotP_U_Steel, 'Princessxenthiasword')					.compilevariations(''));
+			parent.Relic_SteelSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_42", PotP_E_Primary, PotP_I_Relic, PotP_U_Steel, 'Squire steel sword 3')					.compilevariations(''));
+			parent.Relic_SteelSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_43", PotP_E_Primary, PotP_I_Relic, PotP_U_Steel, 'Robustswordofdolblathanna')				.compilevariations(''));
+			parent.Relic_SteelSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_44", PotP_E_Primary, PotP_I_Relic, PotP_U_Steel, 'q702 vampire steel sword')				.compilevariations(''));
+			parent.Relic_SteelSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_45", PotP_E_Primary, PotP_I_Relic, PotP_U_Steel, 'Cheesecutter')							.compilevariations(''));
+			parent.Relic_SteelSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_46", PotP_E_Primary, PotP_I_Relic, PotP_U_Steel, 'Gnomish sword 2')						.compilevariations('Gnomish sword 2_crafted'));
+			parent.Relic_SteelSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_47", PotP_E_Primary, PotP_I_Relic, PotP_U_Steel, 'Torlara')								.compilevariations(''));
+			parent.Relic_SteelSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_48", PotP_E_Primary, PotP_I_Relic, PotP_U_Steel, 'Guard lvl2 steel sword 3')				.compilevariations(''));
+			parent.Relic_SteelSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_49", PotP_E_Primary, PotP_I_Relic, PotP_U_Steel, 'Guard lvl1 steel sword 3')				.compilevariations('Guard lvl1 steel sword 3 Autogen'));
+			parent.Relic_SteelSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_50", PotP_E_Primary, PotP_I_Relic, PotP_U_Steel, 'Knights steel sword 3')					.compilevariations(''));
+			parent.Relic_SteelSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_51", PotP_E_Primary, PotP_I_Relic, PotP_U_Steel, 'Toussaint steel sword 3')				.compilevariations(''));
+			parent.Relic_SteelSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_52", PotP_E_Primary, PotP_I_Relic, PotP_U_Steel, 'Ultimatum')								.compilevariations(''));
+			parent.Relic_SteelSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_53", PotP_E_Primary, PotP_I_Relic, PotP_U_Steel, 'Hanza steel sword 3')					.compilevariations(''));
+			parent.Relic_SteelSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_54", PotP_E_Primary, PotP_I_Relic, PotP_U_Steel, 'Unique steel sword')						.compilevariations(''));
+			parent.Relic_SteelSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_55", PotP_E_Primary, PotP_I_Relic, PotP_U_Steel, 'Abarad')									.compilevariations(''));
+			parent.Relic_SteelSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_56", PotP_E_Primary, PotP_I_Relic, PotP_U_Steel, 'q402 Skellige sword 3')					.compilevariations(''));
+			parent.Relic_SteelSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_57", PotP_E_Primary, PotP_I_Relic, PotP_U_Steel, 'Wolf')									.compilevariations(''));
+			parent.Relic_SteelSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_58", PotP_E_Primary, PotP_I_Relic, PotP_U_Steel, 'Steel Vixen')							.compilevariations(''));
+			parent.Relic_SteelSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_59", PotP_E_Primary, PotP_I_Relic, PotP_U_Steel, 'Top Notch Steel')						.compilevariations(''));
+			parent.Relic_SteelSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_67", PotP_E_Primary, PotP_I_Relic, PotP_U_Steel, 'Knight Mace 3')							.compilevariations(''));
+			parent.Relic_SteelSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_68", PotP_E_Primary, PotP_I_Relic, PotP_U_Steel, 'PC Caretaker Shovel')					.compilevariations(''));
+			parent.Relic_SteelSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_69", PotP_E_Primary, PotP_I_Relic, PotP_U_Steel, 'W_Axe05')								.compilevariations(''));
+			parent.Relic_SteelSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_70", PotP_E_Primary, PotP_I_Relic, PotP_U_Steel, 'W_Axe06')								.compilevariations(''));
+			
+			if (PotP_UsingEssentialWeaponRework()) //Nexus ID: https://www.nexusmods.com/witcher3/mods/5104
+			{
+				parent.Relic_SteelSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_60", PotP_E_ModAdded, PotP_I_Relic, PotP_U_Steel, 'mq7007 Elven Sword')				.compilevariations(''));
+				parent.Relic_SteelSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_61", PotP_E_ModAdded, PotP_I_Relic, PotP_U_Steel, 'mq7001 Toussaint steel sword')		.compilevariations(''));
+				parent.Relic_SteelSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_62", PotP_E_ModAdded, PotP_I_Relic, PotP_U_Steel, 'sq701 Geralt of Rivia sword')		.compilevariations(''));
+				parent.Relic_SteelSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_63", PotP_E_ModAdded, PotP_I_Relic, PotP_U_Steel, 'sq701 Ravix of Fourhorn sword')		.compilevariations(''));
+				parent.Relic_SteelSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_64", PotP_E_ModAdded, PotP_I_Relic, PotP_U_Steel, 'mq7011 Cianfanelli steel sword')	.compilevariations(''));
+				parent.Relic_SteelSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_65", PotP_E_ModAdded, PotP_I_Relic, PotP_U_Steel, 'Geralt Imlerith Mace')				.compilevariations(''));
+				parent.Relic_SteelSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_66", PotP_E_ModAdded, PotP_I_Relic, PotP_U_Steel, 'Eredin Sword')						.compilevariations(''));
+			}
+			
+			if (PotP_UsingBIA()) //Nexus ID: https://www.nexusmods.com/witcher3/mods/11260
+			{
+				parent.Relic_SteelSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_71", PotP_E_ModAdded, PotP_I_Relic, PotP_U_Steel, 'W_Pitchfork')						.compilevariations(''));
+				parent.Relic_SteelSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_72", PotP_E_ModAdded, PotP_I_Relic, PotP_U_Steel, 'Wild Hunt sword 4')					.compilevariations(''));
+			}
+			
 			PotP_SortPreviewData(parent.Relic_SteelSwords, PotP_A_Items, master);
 			
 			//------------------------------------------------------
@@ -367,6 +389,7 @@ state Build in CProgressOnThePath_ItemsStorage
 			parent.Relic_SilverSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_31", PotP_E_Primary, PotP_I_Relic, PotP_U_Silve, 'Roseofaelirenn')						.compilevariations(''));
 			parent.Relic_SilverSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_32", PotP_E_Primary, PotP_I_Relic, PotP_U_Silve, 'EP1 Crafted Witcher Silver Sword')	.compilevariations(''));
 			parent.Relic_SilverSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_33", PotP_E_Primary, PotP_I_Relic, PotP_U_Silve, 'Serpent Silver Sword 2')				.compilevariations(''));
+			parent.Relic_SilverSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_43", PotP_E_Primary, PotP_I_Relic, PotP_U_Silve, 'mq1058_cat_school_sword')				.compilevariations(''));
 			parent.Relic_SilverSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_34", PotP_E_Primary, PotP_I_Relic, PotP_U_Silve, 'Virgin')								.compilevariations(''));
 			parent.Relic_SilverSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_35", PotP_E_Primary, PotP_I_Relic, PotP_U_Silve, 'Tlareg')								.compilevariations(''));
 			parent.Relic_SilverSwords.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_36", PotP_E_Primary, PotP_I_Relic, PotP_U_Silve, 'Torzirael')							.compilevariations(''));

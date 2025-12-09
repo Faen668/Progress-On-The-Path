@@ -94,6 +94,7 @@ enum PotP_Preview_World_Filter
 	PotP_I_Knigh	 = 9,
 	PotP_I_Infes	 = 10,
 	PotP_I_Hanse	 = 11,
+	PotP_I_Stash	 = 12,
 }
 
 enum PotP_Preview_Quest_Filter
@@ -257,7 +258,31 @@ class PotP_PreviewEntry
 		
 		return this;
 	}
+
+	//---------------------------------------------------
 	
+	function compilevariationsCondtional(
+		optional var1: name, 
+		optional installed1 : bool, 
+		optional var2: name,
+		optional installed2 : bool, 
+		optional var3: name,
+		optional installed3 : bool, 
+		optional var4: name,
+		optional installed4 : bool
+	) : PotP_PreviewEntry
+	{
+		this.variations.Clear();
+		this.variations.PushBack(this.item_name);
+		
+		if (var1 != '' && installed1) { this.addvariation(var1); }
+		if (var2 != '' && installed2) { this.addvariation(var2); }
+		if (var3 != '' && installed3) { this.addvariation(var3); }
+		if (var4 != '' && installed4) { this.addvariation(var4); }
+		
+		return this;
+	}	
+
 	//---------------------------------------------------
 	
 	function addvariation(variation_name: name) : void

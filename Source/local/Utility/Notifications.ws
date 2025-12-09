@@ -112,6 +112,13 @@ class CProgressOnThePath_Notifications
 
 	//---------------------------------------------------
 	
+	private function GetSwitchNotificationHeader() : string 
+	{
+		return GetNotificationColour() + GetLocStringByKeyExt("PotP_NotificationHeader") + "</font>";
+	}	
+	
+	//---------------------------------------------------
+	
 	private function GetTotalPercentage() : string 
 	{
 		var cur: float = this.GetCurrentCount();
@@ -293,6 +300,7 @@ class CProgressOnThePath_Notifications
 		case PotP_I_Knigh: InsertedString = GetLocStringByKeyExt("PotP_NotificationLine_KnightInDistress") + entry_data.localname; break;
 		case PotP_I_Infes: InsertedString = GetLocStringByKeyExt("PotP_NotificationLine_InfestedVineyard") + entry_data.localname; break;
 		case PotP_I_Hanse: InsertedString = GetLocStringByKeyExt("PotP_NotificationLine_HanseBase") + entry_data.localname; break;
+		case PotP_I_Stash: InsertedString = GetLocStringByKeyExt("PotP_NotificationLine_PlayerStash") + entry_data.localname; break;
 		default : break;
 		}
 		
@@ -481,6 +489,18 @@ class CProgressOnThePath_Notifications
 	}
 	
 	//---------------------------------------------------
+		
+	private function FormatPreviewSwitchNotification(currentOpt : int) : string
+	{
+		var Notification : string = "";
+		var fSize: int = 0;
+
+		Notification += "<font size='" + GetNotificationFontSize() + "'>" + GetSwitchNotificationHeader() + "<br/>" + "</font>";
+		Notification += "<font size='" + GetNotificationFontSize() + "'>" + GetNotificationColour() + GetLocStringByKeyExt("PotP_SwitchMessage_" + IntToString(currentOpt)) + "</font>"; 
+		return Notification;	
+	}
+	
+	//---------------------------------------------------
 	
 	public function UpdateSingleEntry(entry_data: PotP_PreviewEntry, status: int)
 	{
@@ -557,6 +577,13 @@ class CProgressOnThePath_Notifications
 			theGame.GetGuiManager().ShowNotification(FormatNotification(), GetNotificationTime(), true);
 		}
 		this.ResetTrackerUpdateArray();
+	}
+
+	//---------------------------------------------------
+	
+	public function DisplaySwitchStatus(currentOpt : int)
+	{
+		theGame.GetGuiManager().ShowNotification(FormatPreviewSwitchNotification(currentOpt));
 	}
 
 	//---------------------------------------------------	

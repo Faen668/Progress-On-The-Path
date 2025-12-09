@@ -104,9 +104,19 @@ state Checking in CProgressOnThePath_WorldGoblin
 
 	private function IsMapPinEligible(entry_data: PotP_PreviewEntry, MapManager: CCommonMapManager) : bool {
 		
+		var log : bool = entry_data.pin_name == 'prolog_player_stash';
+		
 		if (!parent.entity_helper.IsPlayable(entry_data))
 		{
 			return false;
+		}
+		
+		if (log)
+		{
+			PotP_Logger("Checking Stash " + entry_data.pin_name, , parent.filename);
+			PotP_Logger("IsEntityMapPinDisabled = " + MapManager.IsEntityMapPinDisabled(entry_data.pin_name), , parent.filename);
+			PotP_Logger("IsEntityMapPinKnown = " + MapManager.IsEntityMapPinKnown(entry_data.pin_name), , parent.filename);
+			PotP_Logger("IsEntityMapPinDiscovered = " + MapManager.IsEntityMapPinDiscovered(entry_data.pin_name), , parent.filename);
 		}
 
 		if (entry_data.pin_name == 'ep1_poi09_mp') {
@@ -117,11 +127,12 @@ state Checking in CProgressOnThePath_WorldGoblin
 			return MapManager.IsEntityMapPinDisabled(entry_data.pin_name) || MapManager.IsEntityMapPinDisabled('ep1_poi23_mp_bugfix');
 		}
 		
-		if (entry_data.filter == PotP_I_Signs) {
+		if (entry_data.filter == PotP_I_Signs || entry_data.filter == PotP_I_Stash) {
 			return MapManager.IsEntityMapPinDiscovered(entry_data.pin_name);
 		}
 		
 		return MapManager.IsEntityMapPinDisabled(entry_data.pin_name);
+
 	}
 }
 

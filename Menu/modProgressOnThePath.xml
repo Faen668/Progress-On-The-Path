@@ -146,6 +146,7 @@
 					<Option id="9"  displayName="QT_Option_WType_9">	<Entry varId="ProgressOnThePath_Preview_WType" value="9"/></Option>
 					<Option id="10" displayName="QT_Option_WType_10">	<Entry varId="ProgressOnThePath_Preview_WType" value="10"/></Option>
 					<Option id="11" displayName="QT_Option_WType_11">	<Entry varId="ProgressOnThePath_Preview_WType" value="11"/></Option>
+					<Option id="11" displayName="QT_Option_WType_12">	<Entry varId="ProgressOnThePath_Preview_WType" value="12"/></Option>
 				</OptionsArray>
 			</Var>	
 			
@@ -158,6 +159,7 @@
 					<Option id="4" displayName="QT_Option_WArea_4">	<Entry varId="ProgressOnThePath_Preview_WArea" value="4"/></Option>
 					<Option id="5" displayName="QT_Option_WArea_5">	<Entry varId="ProgressOnThePath_Preview_WArea" value="5"/></Option>
 					<Option id="6" displayName="QT_Option_WArea_6">	<Entry varId="ProgressOnThePath_Preview_WArea" value="6"/></Option>
+					<Option id="6" displayName="QT_Option_WArea_7">	<Entry varId="ProgressOnThePath_Preview_WArea" value="7"/></Option>
 				</OptionsArray>
 			</Var>
 		</VisibleVars>

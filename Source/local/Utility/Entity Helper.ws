@@ -664,6 +664,7 @@ class CProgressOnThePath_PreviewEntryHelper
 			case PotP_I_Knigh: return "icons/PotP/tracked_DistressedKnight_dark.png";
 			case PotP_I_Infes: return "icons/PotP/tracked_VineyardInfestation_dark.png";
 			case PotP_I_Hanse: return "icons/PotP/tracked_HanseBase_dark.png";
+			case PotP_I_Stash: return "icons/PotP/tracked_playerstash_dark.png";
 		}
 	}
 	
@@ -706,6 +707,9 @@ class CProgressOnThePath_PreviewEntryHelper
 		case PotP_I_Hanse:
 			return GetLocStringByKeyExt("PotP_NotificationLine_Hanse");
 
+		case PotP_I_Stash:
+			return GetLocStringByKeyExt("PotP_NotificationLine_Stash");
+			
 		default:
 			return "";
 		}

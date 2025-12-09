@@ -60,7 +60,7 @@ exec function pt_ng()
 //---------------------------------------------------
 //-- Exec Functions ---------------------------------
 //---------------------------------------------------
-//pt_LogPins('BanditCamp')
+//pt_LogPins('PlayerStashDiscoverable')
 exec function pt_LogPins(PinType: name) {
 
 	var MapPins: array<SEntityMapPinInfo> = theGame.GetCommonMapManager().GetEntityMapPins(theGame.GetWorld().GetDepotPath());
@@ -73,6 +73,22 @@ exec function pt_LogPins(PinType: name) {
 		}
 		
 		LogChannel('Progress on the Path Map Pin', Idx + ": baseName = " + MapPins[Idx].entityName + " | LocaName = " + GetLocStringByKeyExt("Map_Location_"+NameToString(MapPins[Idx].entityName)));
+	}
+}
+
+//pt_LogInstancePins('PlayerStashDiscoverable')
+exec function pt_LogInstancePins(PinType: name) {
+
+	var MapPins: array<SCommonMapPinInstance> = theGame.GetCommonMapManager().GetMapPinInstances(theGame.GetWorld().GetDepotPath());
+	var Idx: int;	
+	
+	for (Idx = 0; Idx < MapPins.Size(); Idx += 1) {
+	  
+		if ( MapPins[Idx].type != PinType ) {
+			continue;
+		}
+		
+		LogChannel('Progress on the Path Map Pin Instance', Idx + ": id = " + MapPins[Idx].id + " | tag = " + MapPins[Idx].tag);
 	}
 }
 
@@ -251,15 +267,47 @@ exec function pt_AddSteelSwords(LogEntries: bool, quality: int, optional Quantit
 			dup_arr.PushBack(ent_arr[Idx]);
 			
 			if (LogEntries) {
-				LogChannel('PotP Console Items', "["+ Idx +"] BaseName = " + ent_arr[Idx]);
-				LogChannel('PotP Console Items', "["+ Idx +"] LocaName = " + GetLocStringByKeyExt(theGame.GetDefinitionsManager().GetItemLocalisationKeyName(ent_arr[Idx])));
-				LogChannel('PotP Console Items', "["+ Idx +"] iQuality = " + min);
-				LogChannel('PotP Console Items', " ");	
+				LogChannel('PotP Steel Sword Items', "["+ Idx +"] BaseName = " + ent_arr[Idx]);
+				LogChannel('PotP Steel Sword Items', "["+ Idx +"] LocaName = " + GetLocStringByKeyExt(theGame.GetDefinitionsManager().GetItemLocalisationKeyName(ent_arr[Idx])));
+				LogChannel('PotP Steel Sword Items', "["+ Idx +"] iQuality = " + min);
+				LogChannel('PotP Steel Sword Items', " ");	
 			}
 
 			if (RemoveAfter) {
 				PInventory.RemoveItemByName(ent_arr[Idx], Quantity);
 			}
+		}
+	}
+}
+
+//---------------------------------------------------
+//-- Functions --------------------------------------
+//---------------------------------------------------
+
+exec function pt_LogSteelSwords(quality: int) 
+{
+	var PInventory: CInventoryComponent = thePlayer.GetInventory();
+	var ent_arr: array< name > = theGame.GetDefinitionsManager().GetItemsWithTag('PlayerSteelWeapon');
+	var dup_arr: array< name >;
+	var Idx, min, max: int;
+	var storage : CProgressOnThePath_Storage = GetPotP_Storage();
+
+	for (Idx = 0; Idx < ent_arr.Size(); Idx += 1) 
+	{
+		PInventory.GetItemQualityFromName(ent_arr[Idx], min, max);
+		if (min == quality || quality == 999) 
+		{
+			if (dup_arr.FindFirst(ent_arr[Idx]) != -1) 
+			{
+				continue;
+			}
+				
+			dup_arr.PushBack(ent_arr[Idx]);
+			LogChannel('PotP Steel Sword Items', "["+ Idx +"] BaseName = " + ent_arr[Idx]);
+			LogChannel('PotP Steel Sword Items', "["+ Idx +"] LocaName = " + GetLocStringByKeyExt(theGame.GetDefinitionsManager().GetItemLocalisationKeyName(ent_arr[Idx])));
+			LogChannel('PotP Steel Sword Items', "["+ Idx +"] iQuality = " + min);
+			LogChannel('PotP Steel Sword Items', "["+ Idx +"] iTracked = " + storage.pItemsStorage.SupportedItemsList.Contains(ent_arr[Idx]));
+			LogChannel('PotP Steel Sword Items', " ");	
 		}
 	}
 }
@@ -287,15 +335,47 @@ exec function pt_AddSilverSwords(LogEntries: bool, quality: int, optional Quanti
 			dup_arr.PushBack(ent_arr[Idx]);
 
 			if (LogEntries) {
-				LogChannel('PotP Console Items', "["+ Idx +"] BaseName = " + ent_arr[Idx]);
-				LogChannel('PotP Console Items', "["+ Idx +"] LocaName = " + GetLocStringByKeyExt(theGame.GetDefinitionsManager().GetItemLocalisationKeyName(ent_arr[Idx])));
-				LogChannel('PotP Console Items', "["+ Idx +"] iQuality = " + min);
-				LogChannel('PotP Console Items', " ");	
+				LogChannel('PotP Silver Sword Items', "["+ Idx +"] BaseName = " + ent_arr[Idx]);
+				LogChannel('PotP Silver Sword Items', "["+ Idx +"] LocaName = " + GetLocStringByKeyExt(theGame.GetDefinitionsManager().GetItemLocalisationKeyName(ent_arr[Idx])));
+				LogChannel('PotP Silver Sword Items', "["+ Idx +"] iQuality = " + min);
+				LogChannel('PotP Silver Sword Items', " ");	
 			}
 
 			if (RemoveAfter) {
 				PInventory.RemoveItemByName(ent_arr[Idx], Quantity);
 			}
+		}
+	}
+}
+
+//---------------------------------------------------
+//-- Functions --------------------------------------
+//---------------------------------------------------
+
+exec function pt_LogSilverSwords(quality: int)
+{
+	var PInventory: CInventoryComponent = thePlayer.GetInventory();
+	var ent_arr: array< name > = theGame.GetDefinitionsManager().GetItemsWithTag('PlayerSilverWeapon');
+	var dup_arr: array< name >;
+	var Idx, min, max: int;
+	var storage : CProgressOnThePath_Storage = GetPotP_Storage();
+
+	for (Idx = 0; Idx < ent_arr.Size(); Idx += 1) 
+	{
+		PInventory.GetItemQualityFromName(ent_arr[Idx], min, max);
+		if (min == quality || quality == 999) 
+		{
+			if (dup_arr.FindFirst(ent_arr[Idx]) != -1) 
+			{
+				continue;
+			}
+				
+			dup_arr.PushBack(ent_arr[Idx]);
+			LogChannel('PotP Silver Sword Items', "["+ Idx +"] BaseName = " + ent_arr[Idx]);
+			LogChannel('PotP Silver Sword Items', "["+ Idx +"] LocaName = " + GetLocStringByKeyExt(theGame.GetDefinitionsManager().GetItemLocalisationKeyName(ent_arr[Idx])));
+			LogChannel('PotP Silver Sword Items', "["+ Idx +"] iQuality = " + min);
+			LogChannel('PotP Silver Sword Items', "["+ Idx +"] iTracked = " + storage.pItemsStorage.SupportedItemsList.Contains(ent_arr[Idx]));
+			LogChannel('PotP Silver Sword Items', " ");	
 		}
 	}
 }
@@ -323,15 +403,47 @@ exec function pt_AddCrossbows(LogEntries: bool, quality: int, optional Quantity:
 			dup_arr.PushBack(ent_arr[Idx]);
 
 			if (LogEntries) {
-				LogChannel('PotP Console Items', "["+ Idx +"] BaseName = " + ent_arr[Idx]);
-				LogChannel('PotP Console Items', "["+ Idx +"] LocaName = " + GetLocStringByKeyExt(theGame.GetDefinitionsManager().GetItemLocalisationKeyName(ent_arr[Idx])));
-				LogChannel('PotP Console Items', "["+ Idx +"] iQuality = " + min);
-				LogChannel('PotP Console Items', " ");	
+				LogChannel('PotP Crossbow Items', "["+ Idx +"] BaseName = " + ent_arr[Idx]);
+				LogChannel('PotP Crossbow Items', "["+ Idx +"] LocaName = " + GetLocStringByKeyExt(theGame.GetDefinitionsManager().GetItemLocalisationKeyName(ent_arr[Idx])));
+				LogChannel('PotP Crossbow Items', "["+ Idx +"] iQuality = " + min);
+				LogChannel('PotP Crossbow Items', " ");	
 			}
 
 			if (RemoveAfter) {
 				PInventory.RemoveItemByName(ent_arr[Idx], Quantity);
 			}
+		}
+	}
+}
+
+//---------------------------------------------------
+//-- Functions --------------------------------------
+//---------------------------------------------------
+
+exec function pt_LogCrossbows(quality: int)
+{
+	var PInventory: CInventoryComponent = thePlayer.GetInventory();
+	var ent_arr: array< name > = theGame.GetDefinitionsManager().GetItemsWithTag('crossbow');
+	var dup_arr: array< name >;
+	var Idx, min, max: int;
+	var storage : CProgressOnThePath_Storage = GetPotP_Storage();
+
+	for (Idx = 0; Idx < ent_arr.Size(); Idx += 1) 
+	{
+		PInventory.GetItemQualityFromName(ent_arr[Idx], min, max);
+		if (min == quality || quality == 999) 
+		{
+			if (dup_arr.FindFirst(ent_arr[Idx]) != -1) 
+			{
+				continue;
+			}
+				
+			dup_arr.PushBack(ent_arr[Idx]);
+			LogChannel('PotP Crossbow Sword Items', "["+ Idx +"] BaseName = " + ent_arr[Idx]);
+			LogChannel('PotP Crossbow Sword Items', "["+ Idx +"] LocaName = " + GetLocStringByKeyExt(theGame.GetDefinitionsManager().GetItemLocalisationKeyName(ent_arr[Idx])));
+			LogChannel('PotP Crossbow Sword Items', "["+ Idx +"] iQuality = " + min);
+			LogChannel('PotP Crossbow Sword Items', "["+ Idx +"] iTracked = " + storage.pItemsStorage.SupportedItemsList.Contains(ent_arr[Idx]));
+			LogChannel('PotP Crossbow Sword Items', " ");	
 		}
 	}
 }

@@ -58,6 +58,14 @@ statemachine class CProgressOnThePath_WorldStorage
 	var Signposts_Skellige			: array<PotP_PreviewEntry>;
 	var Signposts_KaerMorhen		: array<PotP_PreviewEntry>;
 	var Signposts_Toussaint			: array<PotP_PreviewEntry>;
+
+	var PlayerStashes_WhiteOrchard		: array<PotP_PreviewEntry>;
+	var PlayerStashes_Velen				: array<PotP_PreviewEntry>;
+	var PlayerStashes_Novigrad			: array<PotP_PreviewEntry>;
+	var PlayerStashes_Skellige			: array<PotP_PreviewEntry>;
+	var PlayerStashes_KaerMorhen		: array<PotP_PreviewEntry>;
+	var PlayerStashes_Toussaint			: array<PotP_PreviewEntry>;
+	var PlayerStashes_Vizima			: array<PotP_PreviewEntry>;
 	
 	var UUIDINT: int;
 	default UUIDINT = 1000;
@@ -132,6 +140,7 @@ state Build in CProgressOnThePath_WorldStorage
 		this.Build_Distr();
 		this.Build_Sign();
 		this.Build_Toussaint();
+		this.Build_PlayerStashes();
 
 		for ( Idx = 0; Idx < parent.MasterList_World.Size(); Idx += 1 ) 
 		{
@@ -153,6 +162,127 @@ state Build in CProgressOnThePath_WorldStorage
 		parent.GotoState('Idle');
 	}
 
+	
+	//---------------------------------------------------
+	//-- Functions --------------------------------------
+	//---------------------------------------------------
+	
+	latent function Build_PlayerStashes()
+	{
+		var group: string = "PotP_TrackingGroup_WorldMap_PlayerStashes_WhiteOrchard";
+		var master: CProgressOnThePath;
+		GetPotP(master);
+		
+		parent.PlayerStashes_WhiteOrchard.Clear();
+		parent.PlayerStashes_WhiteOrchard.PushBack(parent.CreateEntry().initWorld(master.PotP_EntityHelper, group + "_01", PotP_R_WO, PotP_I_Stash, PotP_E_Primary, 'prolog_player_stash'));
+		
+		if (PotP_UsingExtraStashes())
+		{
+			parent.PlayerStashes_WhiteOrchard.PushBack(parent.CreateEntry().initWorld(master.PotP_EntityHelper, group + "_02", PotP_R_WO, PotP_I_Stash, PotP_E_ModAdded, 'wo_nilfgaardian_garrison')); 		
+		}
+
+		PotP_SortPreviewData(parent.PlayerStashes_WhiteOrchard, PotP_A_World, master);
+
+		//------------------------------------------------------
+	
+		group = "PotP_TrackingGroup_WorldMap_PlayerStashes_Velen";
+
+		parent.PlayerStashes_Velen.Clear();
+		parent.PlayerStashes_Velen.PushBack(parent.CreateEntry().initWorld(master.PotP_EntityHelper, group + "_01", PotP_R_VE, PotP_I_Stash, PotP_E_Primary, 'player_stash_velen'));  
+		
+		if (PotP_UsingExtraStashes())
+		{
+			parent.PlayerStashes_Velen.PushBack(parent.CreateEntry().initWorld(master.PotP_EntityHelper, group + "_02", PotP_R_VE, PotP_I_Stash, PotP_E_ModAdded, 've_plague_pit'));
+			parent.PlayerStashes_Velen.PushBack(parent.CreateEntry().initWorld(master.PotP_EntityHelper, group + "_03", PotP_R_VE, PotP_I_Stash, PotP_E_ModAdded, 've_inn_at_the_crossroads')); 
+			parent.PlayerStashes_Velen.PushBack(parent.CreateEntry().initWorld(master.PotP_EntityHelper, group + "_04", PotP_R_VE, PotP_I_Stash, PotP_E_ModAdded, 've_keira_metz_house')); 
+			parent.PlayerStashes_Velen.PushBack(parent.CreateEntry().initWorld(master.PotP_EntityHelper, group + "_05", PotP_R_VE, PotP_I_Stash, PotP_E_ModAdded, 've_nilfgaardian_camp')); 
+			parent.PlayerStashes_Velen.PushBack(parent.CreateEntry().initWorld(master.PotP_EntityHelper, group + "_06", PotP_R_VE, PotP_I_Stash, PotP_E_ModAdded, 've_reardon_manor')); 				
+		}
+
+		PotP_SortPreviewData(parent.PlayerStashes_Velen, PotP_A_World, master);
+
+		//------------------------------------------------------
+		
+		group = "PotP_TrackingGroup_WorldMap_PlayerStashes_Vizima";
+		
+		parent.PlayerStashes_Vizima.Clear();
+		if (PotP_UsingExtraStashes())
+		{
+			parent.PlayerStashes_Vizima.PushBack(parent.CreateEntry().initWorld(master.PotP_EntityHelper, group + "_01", PotP_R_VI, PotP_I_Stash, PotP_E_ModAdded, 'wc_yennefers_study'));
+		}
+
+		PotP_SortPreviewData(parent.PlayerStashes_Vizima, PotP_A_World, master);
+		
+		//------------------------------------------------------
+	
+		group = "PotP_TrackingGroup_WorldMap_PlayerStashes_Novigrad";
+
+		parent.PlayerStashes_Novigrad.Clear();
+		parent.PlayerStashes_Novigrad.PushBack(parent.CreateEntry().initWorld(master.PotP_EntityHelper, group + "_04", PotP_R_NO, PotP_I_Stash, PotP_E_Primary, 'player_stash_novigrad'));  
+		
+		if (PotP_UsingExtraStashes())
+		{
+			parent.PlayerStashes_Novigrad.PushBack(parent.CreateEntry().initWorld(master.PotP_EntityHelper, group + "_01", PotP_R_NO, PotP_I_Stash, PotP_E_ModAdded, 'no_hattori_workshop'));
+			parent.PlayerStashes_Novigrad.PushBack(parent.CreateEntry().initWorld(master.PotP_EntityHelper, group + "_02", PotP_R_NO, PotP_I_Stash, PotP_E_ModAdded, 'no_midgetforgers')); 
+			parent.PlayerStashes_Novigrad.PushBack(parent.CreateEntry().initWorld(master.PotP_EntityHelper, group + "_03", PotP_R_NO, PotP_I_Stash, PotP_E_ModAdded, 'ox_oxenfurt_armorer')); 
+			parent.PlayerStashes_Novigrad.PushBack(parent.CreateEntry().initWorld(master.PotP_EntityHelper, group + "_05", PotP_R_NO, PotP_I_Stash, PotP_E_ModAdded, 'no_runewright')); 
+			parent.PlayerStashes_Novigrad.PushBack(parent.CreateEntry().initWorld(master.PotP_EntityHelper, group + "_06", PotP_R_NO, PotP_I_Stash, PotP_E_ModAdded, 'no_temerian_hideout')); 	
+		}
+
+		PotP_SortPreviewData(parent.PlayerStashes_Novigrad, PotP_A_World, master);
+	
+		//------------------------------------------------------
+		
+		group = "PotP_TrackingGroup_WorldMap_PlayerStashes_Skellige";
+		
+		parent.PlayerStashes_Skellige.Clear();
+		parent.PlayerStashes_Skellige.PushBack(parent.CreateEntry().initWorld(master.PotP_EntityHelper, group + "_06", PotP_R_SK, PotP_I_Stash, PotP_E_Primary, 'skellige_player_stash'));  
+		
+		if (PotP_UsingExtraStashes())
+		{
+			parent.PlayerStashes_Skellige.PushBack(parent.CreateEntry().initWorld(master.PotP_EntityHelper, group + "_01", PotP_R_SK, PotP_I_Stash, PotP_E_ModAdded, 'sk_gremistalab'));
+			parent.PlayerStashes_Skellige.PushBack(parent.CreateEntry().initWorld(master.PotP_EntityHelper, group + "_02", PotP_R_SK, PotP_I_Stash, PotP_E_ModAdded, 'sk_faroe')); 
+			parent.PlayerStashes_Skellige.PushBack(parent.CreateEntry().initWorld(master.PotP_EntityHelper, group + "_03", PotP_R_SK, PotP_I_Stash, PotP_E_ModAdded, 'sk_kaer_muire')); 
+			parent.PlayerStashes_Skellige.PushBack(parent.CreateEntry().initWorld(master.PotP_EntityHelper, group + "_04", PotP_R_SK, PotP_I_Stash, PotP_E_ModAdded, 'sk_hindarsfjall')); 
+			parent.PlayerStashes_Skellige.PushBack(parent.CreateEntry().initWorld(master.PotP_EntityHelper, group + "_05", PotP_R_SK, PotP_I_Stash, PotP_E_ModAdded, 'sk_undvik')); 
+			parent.PlayerStashes_Skellige.PushBack(parent.CreateEntry().initWorld(master.PotP_EntityHelper, group + "_07", PotP_R_SK, PotP_I_Stash, PotP_E_ModAdded, 'sk_spikeroog'));
+			parent.PlayerStashes_Skellige.PushBack(parent.CreateEntry().initWorld(master.PotP_EntityHelper, group + "_08", PotP_R_SK, PotP_I_Stash, PotP_E_ModAdded, 'sk_anskellig'));			
+		}
+		
+		PotP_SortPreviewData(parent.PlayerStashes_Skellige, PotP_A_World, master);
+	
+		//------------------------------------------------------
+
+		group = "PotP_TrackingGroup_WorldMap_PlayerStashes_Toussaint";
+		
+		parent.PlayerStashes_Toussaint.Clear();
+		parent.PlayerStashes_Toussaint.PushBack(parent.CreateEntry().initWorld(master.PotP_EntityHelper, group + "_03", PotP_R_TO, PotP_I_Stash, PotP_E_Primary, 'mq7024_player_stash'));  
+		
+		if (PotP_UsingExtraStashes())
+		{
+			parent.PlayerStashes_Toussaint.PushBack(parent.CreateEntry().initWorld(master.PotP_EntityHelper, group + "_01", PotP_R_TO, PotP_I_Stash, PotP_E_ModAdded, 'to_ardaiso_quarry'));
+			parent.PlayerStashes_Toussaint.PushBack(parent.CreateEntry().initWorld(master.PotP_EntityHelper, group + "_02", PotP_R_TO, PotP_I_Stash, PotP_E_ModAdded, 'to_castel_ravello')); 
+			parent.PlayerStashes_Toussaint.PushBack(parent.CreateEntry().initWorld(master.PotP_EntityHelper, group + "_04", PotP_R_TO, PotP_I_Stash, PotP_E_ModAdded, 'to_francollarts')); 
+			parent.PlayerStashes_Toussaint.PushBack(parent.CreateEntry().initWorld(master.PotP_EntityHelper, group + "_05", PotP_R_TO, PotP_I_Stash, PotP_E_ModAdded, 'to_lafargue_workshop')); 	
+		}
+		
+		PotP_SortPreviewData(parent.PlayerStashes_Toussaint, PotP_A_World, master);
+		
+		//------------------------------------------------------
+	
+		group = "PotP_TrackingGroup_WorldMap_PlayerStashes_KaerMorhen";
+		
+		parent.PlayerStashes_KaerMorhen.Clear();
+		parent.PlayerStashes_KaerMorhen.PushBack(parent.CreateEntry().initWorld(master.PotP_EntityHelper, group + "_01", PotP_R_KM, PotP_I_Stash, PotP_E_Primary, 'km_player_stash'));  
+		
+		if (PotP_UsingExtraStashes())
+		{
+			parent.PlayerStashes_KaerMorhen.PushBack(parent.CreateEntry().initWorld(master.PotP_EntityHelper, group + "_02", PotP_R_KM, PotP_I_Stash, PotP_E_ModAdded, 'km_ruined_watchtower'));			
+		}
+
+		PotP_SortPreviewData(parent.PlayerStashes_KaerMorhen, PotP_A_World, master);
+	}
+	
 	//---------------------------------------------------
 	//-- Functions --------------------------------------
 	//---------------------------------------------------
@@ -1143,6 +1273,9 @@ state Build in CProgressOnThePath_WorldStorage
 			parent.Signposts_Velen.PushBack(parent.CreateEntry().initWorld(master.PotP_EntityHelper, group + "_95", PotP_R_VE, PotP_I_Signs, PotP_E_ModAdded, 'pellar_hut'));
 			parent.Signposts_Velen.PushBack(parent.CreateEntry().initWorld(master.PotP_EntityHelper, group + "_96", PotP_R_VE, PotP_I_Signs, PotP_E_ModAdded, 'witch_hut'));
 			parent.Signposts_Velen.PushBack(parent.CreateEntry().initWorld(master.PotP_EntityHelper, group + "_97", PotP_R_VE, PotP_I_Signs, PotP_E_ModAdded, 'nilfgaardian_camp'));
+			parent.Signposts_Velen.PushBack(parent.CreateEntry().initWorld(master.PotP_EntityHelper, group + "_98", PotP_R_VE, PotP_I_Signs, PotP_E_ModAdded, 'cestersover'));
+			parent.Signposts_Velen.PushBack(parent.CreateEntry().initWorld(master.PotP_EntityHelper, group + "_99", PotP_R_VE, PotP_I_Signs, PotP_E_ModAdded, 'fireburst_harbor'));
+			parent.Signposts_Velen.PushBack(parent.CreateEntry().initWorld(master.PotP_EntityHelper, group + "_100", PotP_R_VE, PotP_I_Signs, PotP_E_ModAdded, 'swamp_bint_harbor'));
 		}
 		
 		PotP_SortPreviewData(parent.Signposts_Velen, PotP_A_World, master);	

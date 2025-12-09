@@ -67,6 +67,7 @@ class CProgressOnThePath_MissablePreview
 		build("PotP_Preview_Missable_09", master.PotP_PersistentStorage.pQuestStorage.MissableQuests_Q112);
 		build("PotP_Preview_Missable_10", master.PotP_PersistentStorage.pQuestStorage.MissableQuests_Q403);
 		build("PotP_Preview_Missable_11", master.PotP_PersistentStorage.pQuestStorage.MissableQuests_Q702);
+		build("PotP_Preview_Missable_18", master.PotP_PersistentStorage.pQuestStorage.MissableQuests_mq1058);
 		build("PotP_Preview_Missable_17", master.PotP_PersistentStorage.pQuestStorage.MissableQuests_WineWars);
 		
 		PotP_Logger("Missable Preview Took " + (theGame.GetLocalTimeAsMilliseconds() - start) + " Milliseconds To Generate");
