@@ -2713,4 +2713,33 @@
 ;
 2117171391||preset_value_QT_Option_WType_12|Player Stashes
 2117171392||preset_value_QT_Option_WArea_7|Vizima
-;Next ID 2116568993
+;
+;
+;
+; 6.0.1.6  -------------------------------------------------------------------------------------------------------------------------------------
+;
+;
+;
+;
+2117171393||option_PotP_TrackingGroup_Relics_Crossbows_CR_01|Elite Crossbow
+2117171394||option_PotP_TrackingGroup_Relics_Crossbows_CR_02|Death from Above
+2117171395||option_PotP_TrackingGroup_Relics_Crossbows_CR_03|Golden Crossbow
+2117171396||option_PotP_TrackingGroup_Relics_Crossbows_CR_90|Elven Crossbow
+2117171397||option_PotP_TrackingGroup_Relics_Crossbows_CR_91|Nilfgaardian Crossbow
+2117171398||option_PotP_TrackingGroup_Relics_Crossbows_CR_92|Skellige Crossbow
+2117171399||option_PotP_TrackingGroup_Relics_Crossbows_CR_93|Ravix of Fourhorn's Crossbow
+2117171400||option_PotP_TrackingGroup_Relics_Crossbows_CR_94|Geralt of Rivia's Crossbow
+;
+;
+;
+; 6.0.1.7  -------------------------------------------------------------------------------------------------------------------------------------
+;
+;
+;
+;
+2117171401||option_ProgressOnThePath_ShowUpdateNotifications|<font color="#7FD8BE">Global Settings       :   Show Mod Updated Notification</font>
+2117171402||PotP_Tooltip_Collected| (Collected)
+2117171403||PotP_Tooltip_Needed| (Needed)
+2117171404||option_ProgressOnThePath_ShowCollectabilityTooltips|<font color="#479c9d">Show Collectability Status Tooltips</font>
+;
+;Next ID 2117171405

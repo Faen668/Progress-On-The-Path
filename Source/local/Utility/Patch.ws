@@ -229,6 +229,15 @@ function PotP_UsingBIA() : bool
 //-- Functions --------------------------------------
 //---------------------------------------------------
 
+function PotP_UsingCrossbowRework() : bool 
+{
+	return StrLen(GetLocStringById(2117953000)) > 0;
+}
+
+//---------------------------------------------------
+//-- Functions --------------------------------------
+//---------------------------------------------------
+
 function PotP_UsingANightToRemember() : bool 
 {
 	return theGame.GetDLCManager().IsDLCAvailable('dlc_ntr');

@@ -5,8 +5,10 @@
 
 <!--///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////-->
 			
-			<Var id="ProgressOnThePath_MeditationUpdate"		displayName="ProgressOnThePath_MeditationUpdate" 	displayType="TOGGLE"/>
-			<Var id="ProgressOnThePath_EnableHotKey"		 	displayName="ProgressOnThePath_EnableHotKey" 		displayType="TOGGLE"/>
+			<Var id="ProgressOnThePath_MeditationUpdate"					displayName="ProgressOnThePath_MeditationUpdate" 				displayType="TOGGLE"/>
+			<Var id="ProgressOnThePath_EnableHotKey"		 				displayName="ProgressOnThePath_EnableHotKey" 					displayType="TOGGLE"/>
+			<Var id="ProgressOnThePath_ShowCollectabilityTooltips"		 	displayName="ProgressOnThePath_ShowCollectabilityTooltips" 		displayType="TOGGLE"/>
+			
 			
 			
 <!--///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////-->
@@ -146,7 +148,7 @@
 					<Option id="9"  displayName="QT_Option_WType_9">	<Entry varId="ProgressOnThePath_Preview_WType" value="9"/></Option>
 					<Option id="10" displayName="QT_Option_WType_10">	<Entry varId="ProgressOnThePath_Preview_WType" value="10"/></Option>
 					<Option id="11" displayName="QT_Option_WType_11">	<Entry varId="ProgressOnThePath_Preview_WType" value="11"/></Option>
-					<Option id="11" displayName="QT_Option_WType_12">	<Entry varId="ProgressOnThePath_Preview_WType" value="12"/></Option>
+					<Option id="12" displayName="QT_Option_WType_12">	<Entry varId="ProgressOnThePath_Preview_WType" value="12"/></Option>
 				</OptionsArray>
 			</Var>	
 			
@@ -159,7 +161,7 @@
 					<Option id="4" displayName="QT_Option_WArea_4">	<Entry varId="ProgressOnThePath_Preview_WArea" value="4"/></Option>
 					<Option id="5" displayName="QT_Option_WArea_5">	<Entry varId="ProgressOnThePath_Preview_WArea" value="5"/></Option>
 					<Option id="6" displayName="QT_Option_WArea_6">	<Entry varId="ProgressOnThePath_Preview_WArea" value="6"/></Option>
-					<Option id="6" displayName="QT_Option_WArea_7">	<Entry varId="ProgressOnThePath_Preview_WArea" value="7"/></Option>
+					<Option id="7" displayName="QT_Option_WArea_7">	<Entry varId="ProgressOnThePath_Preview_WArea" value="7"/></Option>
 				</OptionsArray>
 			</Var>
 		</VisibleVars>
@@ -189,6 +191,7 @@
 				<Entry varId="ProgressOnThePath_BackNotification_Event"		value="false"/>
 				<Entry varId="ProgressOnThePath_MiscNotification_Event"		value="false"/>
 				<Entry varId="ProgressOnThePath_MiscNotification_Enter"		value="false"/>
+				<Entry varId="ProgressOnThePath_ShowUpdateNotifications"	value="false"/>
 			</Preset>
 			<Preset id="1" displayName="QT_Preset_Lig">
 				<Entry varId="ProgressOnThePath_GlobalNotification_Size"	value="18"/>
@@ -207,6 +210,7 @@
 				<Entry varId="ProgressOnThePath_BackNotification_Event"		value="false"/>
 				<Entry varId="ProgressOnThePath_MiscNotification_Event"		value="true"/>
 				<Entry varId="ProgressOnThePath_MiscNotification_Enter"		value="true"/>
+				<Entry varId="ProgressOnThePath_ShowUpdateNotifications"	value="true"/>
 			</Preset>
 			<Preset id="2" displayName="QT_Preset_Ena">
 				<Entry varId="ProgressOnThePath_GlobalNotification_Size"	value="18"/>
@@ -225,10 +229,12 @@
 				<Entry varId="ProgressOnThePath_BackNotification_Event"		value="true"/>
 				<Entry varId="ProgressOnThePath_MiscNotification_Event"		value="true"/>
 				<Entry varId="ProgressOnThePath_MiscNotification_Enter"		value="true"/>
+				<Entry varId="ProgressOnThePath_ShowUpdateNotifications"	value="true"/>
 			</Preset>
 		</PresetsArray>
 		<VisibleVars>
 			
+			<Var id="ProgressOnThePath_ShowUpdateNotifications"		displayName="ProgressOnThePath_ShowUpdateNotifications" 	displayType="TOGGLE"/>
 			<Var id="ProgressOnThePath_GlobalNotification_Size" 	displayName="ProgressOnThePath_GlobalNotification_Size" 	displayType="SLIDER;14;34;20"/>	
 			<Var id="ProgressOnThePath_GlobalNotification_Font"		displayName="ProgressOnThePath_GlobalNotification_Font"		displayType="OPTIONS">
 				<OptionsArray>

@@ -370,8 +370,16 @@ state Build in CProgressOnThePath_QuestStorage
 		parent.MainQuests_Act1_Skellige.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_04", PotP_E_Primary, PotP_R_SK, PotP_I_Mains, "Q205 Lofoten"));
 		parent.MainQuests_Act1_Skellige.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_05", PotP_E_Primary, PotP_R_SK, PotP_I_Mains, "Q205 The Garden"));
 		parent.MainQuests_Act1_Skellige.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_06", PotP_E_Primary, PotP_R_SK, PotP_I_Mains, "Q205 Ciri - safe heaven"));
-		parent.MainQuests_Act1_Skellige.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_07", PotP_E_Missable, PotP_R_SK, PotP_I_Mains, "[metaquest] Search for ugly"));
 		
+		if (PotP_UsingBIA())
+		{
+			parent.MainQuests_Act1_Skellige.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_07", PotP_E_Missable, PotP_R_SK, PotP_I_Mains, "Q205 A Mysterious Passenger"));
+		}
+		else
+		{
+			parent.MainQuests_Act1_Skellige.PushBack(parent.CreateEntry().initQuest(master.PotP_EntityHelper, group + "_07", PotP_E_Missable, PotP_R_SK, PotP_I_Mains, "[metaquest] Search for ugly"));
+		}
+
 		PotP_SortPreviewData(parent.MainQuests_Act1_Skellige, PotP_A_Quest, master);	
 		
 		//------------------------------------------------------

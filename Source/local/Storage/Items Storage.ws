@@ -406,9 +406,24 @@ state Build in CProgressOnThePath_ItemsStorage
 		
 			group = "PotP_TrackingGroup_Relics_Crossbows";
 			parent.Relic_Crossbows.Clear();
-			parent.Relic_Crossbows.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_01", PotP_E_Primary, PotP_I_Relic, PotP_U_Cross, 'Crossbow 7')			.compilevariations(''));
-			parent.Relic_Crossbows.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_02", PotP_E_Primary, PotP_I_Relic, PotP_U_Cross, 'Crossbow q206')		.compilevariations(''));
-			parent.Relic_Crossbows.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_03", PotP_E_Primary, PotP_I_Relic, PotP_U_Cross, 'Ofir Crossbow R')	.compilevariations(''));
+
+			if (PotP_UsingCrossbowRework())
+			{
+				parent.Relic_Crossbows.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, "PotP_TrackingGroup_Relics_Crossbows_CR_01", PotP_E_Primary, PotP_I_Relic, PotP_U_Cross, 'Crossbow 7')			.compilevariations(''));
+				parent.Relic_Crossbows.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, "PotP_TrackingGroup_Relics_Crossbows_CR_02", PotP_E_Primary, PotP_I_Relic, PotP_U_Cross, 'Crossbow q206')		.compilevariations(''));
+				parent.Relic_Crossbows.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, "PotP_TrackingGroup_Relics_Crossbows_CR_03", PotP_E_Primary, PotP_I_Relic, PotP_U_Cross, 'Ofir Crossbow R')		.compilevariations(''));
+				parent.Relic_Crossbows.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, "PotP_TrackingGroup_Relics_Crossbows_CR_90", PotP_E_Primary, PotP_I_Relic, PotP_U_Cross, 'DLC13 Elven Crossbow')		.compilevariations(''));
+				parent.Relic_Crossbows.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, "PotP_TrackingGroup_Relics_Crossbows_CR_91", PotP_E_Primary, PotP_I_Relic, PotP_U_Cross, 'DLC13 Nilfgaardian Crossbow')		.compilevariations(''));
+				parent.Relic_Crossbows.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, "PotP_TrackingGroup_Relics_Crossbows_CR_92", PotP_E_Primary, PotP_I_Relic, PotP_U_Cross, 'DLC13 Skellige Crossbow')		.compilevariations(''));
+				parent.Relic_Crossbows.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, "PotP_TrackingGroup_Relics_Crossbows_CR_93", PotP_E_Primary, PotP_I_Relic, PotP_U_Cross, 'Ravix of Fourhorn Crossbow')		.compilevariations(''));
+				parent.Relic_Crossbows.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, "PotP_TrackingGroup_Relics_Crossbows_CR_94", PotP_E_Primary, PotP_I_Relic, PotP_U_Cross, 'Geralt of Rivia Crossbow')		.compilevariations(''));
+			}
+			else
+			{
+				parent.Relic_Crossbows.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_01", PotP_E_Primary, PotP_I_Relic, PotP_U_Cross, 'Crossbow 7')			.compilevariations(''));
+				parent.Relic_Crossbows.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_02", PotP_E_Primary, PotP_I_Relic, PotP_U_Cross, 'Crossbow q206')		.compilevariations(''));
+				parent.Relic_Crossbows.PushBack(parent.CreateEntry().initItems(master.PotP_EntityHelper, group + "_03", PotP_E_Primary, PotP_I_Relic, PotP_U_Cross, 'Ofir Crossbow R')		.compilevariations(''));		
+			}
 		
 			PotP_SortPreviewData(parent.Relic_Crossbows, PotP_A_Items, master);
 		}

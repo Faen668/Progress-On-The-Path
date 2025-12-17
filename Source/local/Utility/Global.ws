@@ -242,6 +242,11 @@ function PotP_GetCollectedString(tooltipDataProvider: W3TooltipComponent, itemNa
 {
 	var entity: PotP_PreviewEntry;
 	var helper: CProgressOnThePath_PreviewEntryHelper;
+	var showToolTips: bool = (bool) PotP_GetGeneralValue('ProgressOnThePath_ShowCollectabilityTooltips');
+	
+	if (!showToolTips) {
+		return itemLabel;
+	}
 	
 	helper = GetPotP_EntityHelper();
 
@@ -251,11 +256,11 @@ function PotP_GetCollectedString(tooltipDataProvider: W3TooltipComponent, itemNa
 
 	if (helper.IsCompleted(entity)) 
 	{
-		return itemLabel + " (Collected)";
+		return itemLabel + GetLocStringByKeyExt("PotP_Tooltip_Collected");
 	}
 	else
 	{
-		return itemLabel + " (Needed)";
+		return itemLabel + GetLocStringByKeyExt("PotP_Tooltip_Needed");
 	}
 	return itemLabel;
 }
@@ -269,9 +274,14 @@ function PotP_GetCollectedStringForCrafting(craftingMenu: CR4CraftingMenu, itemN
 	var entity: PotP_PreviewEntry;
 	var helper: CProgressOnThePath_PreviewEntryHelper;
 	var minQuality, maxQuality  : int;
+	var showToolTips: bool = (bool) PotP_GetGeneralValue('ProgressOnThePath_ShowCollectabilityTooltips');
+	
+	if (!showToolTips) {
+		return itemLabel;
+	}
 	
 	helper = GetPotP_EntityHelper();
-	
+
 	thePlayer.inv.GetItemQualityFromName( itemName, minQuality, maxQuality );
 	
 	if (minQuality < 4 || !helper.GetEntityByItemName(itemName, entity)) {
@@ -280,12 +290,13 @@ function PotP_GetCollectedStringForCrafting(craftingMenu: CR4CraftingMenu, itemN
 
 	if (helper.IsCompleted(entity)) 
 	{
-		return itemLabel + " (Collected)";
+		return itemLabel + GetLocStringByKeyExt("PotP_Tooltip_Collected");
 	}
 	else
 	{
-		return itemLabel + " (Needed)";
+		return itemLabel + GetLocStringByKeyExt("PotP_Tooltip_Needed");
 	}
+	
 	return itemLabel;
 }
 

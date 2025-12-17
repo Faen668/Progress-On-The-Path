@@ -29,6 +29,7 @@ ProgressOnThePath_Preview_WType=0
 [ProgressOnThePath_GeneralSettings]
 ProgressOnThePath_MeditationUpdate=true
 ProgressOnThePath_EnableHotKey=true
+ProgressOnThePath_ShowCollectabilityTooltips=true
 ProgressOnThePath_EventMapPins_ShowMapPins=true
 ProgressOnThePath_EventMapPins_MapPinDescription=true
 ProgressOnThePath_EventMapPins_MapPinRadius=30
@@ -51,6 +52,7 @@ ProgressOnThePath_BackNotification_Gwent=true
 ProgressOnThePath_BackNotification_Event=true
 ProgressOnThePath_MiscNotification_Event=true
 ProgressOnThePath_MiscNotification_Enter=true
+ProgressOnThePath_ShowUpdateNotifications=true
 
 - Into These 2 Files:
 

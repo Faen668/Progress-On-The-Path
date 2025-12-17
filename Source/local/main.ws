@@ -35,10 +35,10 @@ statemachine class CProgressOnThePath {
 		default has_updated = false;
 	
 	public var current_version_string: string;
-		default current_version_string = "6.0.1.4";
+		default current_version_string = "6.0.1.7";
 
 	public var current_version_int: int;
-		default current_version_int = 6014;
+		default current_version_int = 6017;
 		
 	//---------------------------------------------------
 	
@@ -157,6 +157,24 @@ statemachine class CProgressOnThePath {
 					FactsSet(VersStr, 6014);
 					PotP_PersistentStorage.PotP_LoadStorageCollection(PotP_Reset_WorldAndItems);
 				}
+				
+				if (FactsQuerySum(VersStr) < 6015) 
+				{
+					FactsSet(VersStr, 6015);
+					PotP_PersistentStorage.PotP_LoadStorageCollection(PotP_Reset_Quest);
+				}
+				
+				if (FactsQuerySum(VersStr) < 6016) 
+				{
+					FactsSet(VersStr, 6016);
+					PotP_PersistentStorage.PotP_LoadStorageCollection(PotP_Reset_Items);
+				}
+				
+				if (FactsQuerySum(VersStr) < 6017) 
+				{
+					FactsSet(VersStr, 6017);
+					PotP_PersistentStorage.PotP_LoadStorageCollection(PotP_Reset_None);
+				}
 			}
 			else
 			{
@@ -205,10 +223,10 @@ statemachine class CProgressOnThePath {
 		PotP_EventListener.GotoState('Idle');
 		PotP_MeditationListener.GotoState('Idle');
 		
-		if (has_updated)
+		if (has_updated && theGame.GetInGameConfigWrapper().GetVarValue('ProgressOnThePath_NotificationSettings', 'ProgressOnThePath_ShowUpdateNotifications') == "true")
 		{
 			has_updated = false;
-			PotP_PopupManager.Showpopup(GetLocStringByKeyExt("panel_QT_Name"), GetLocStringByKeyExt("PotP_UpdatedMessage") + current_version_string, "", "Hint", false);
+			this.GotoState('updated');
 		}
 	}
 	
@@ -447,5 +465,27 @@ state running in CProgressOnThePath
 	{
 		PotP_Logger("Starting PotP...", , parent.fileName);
 		parent.start();	
+	}
+}
+
+
+//---------------------------------------------------
+//-- States -----------------------------------------
+//---------------------------------------------------
+
+state updated in CProgressOnThePath
+{
+	event OnEnterState(previous_state_name: name) 
+	{
+		super.OnEnterState(previous_state_name);
+		PotP_Logger("Entered state [running]", , parent.fileName);
+		show_update_notification();
+	}
+	
+	entry function show_update_notification()
+	{
+		Sleep(5);
+		parent.PotP_PopupManager.Showpopup(GetLocStringByKeyExt("panel_QT_Name"), GetLocStringByKeyExt("PotP_UpdatedMessage") + parent.current_version_string, "", "Hint", false);
+		parent.GotoState('');
 	}
 }
