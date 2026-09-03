@@ -211,7 +211,6 @@ function PotP_CompleteEventByString(fact_name: string)
 quest function PotP_UnlockEvent(UUID: string, Location: string, Fact: string)
 {
 	var filename		: name = 'PotP_UnlockEvent';
-	var PopupMessage	: string = GetLocStringByKeyExt("PotP_NewEventMessage1");
 	var pEvent_List		: array<PotP_PreviewEntry>;
 	var master			: CProgressOnThePath;
 	var Idx				: int = 0;
@@ -246,15 +245,69 @@ quest function PotP_UnlockEvent(UUID: string, Location: string, Fact: string)
 			
 			if ( (bool) PotP_GetNotificationValue('ProgressOnThePath_MiscNotification_Event') )
 			{
-				//Replace the popup message tags with the event name and location.
-				PopupMessage = StrReplace(PopupMessage, "[EVENTNAME]", pEvent_List[Idx].localname);
-				PopupMessage = StrReplace(PopupMessage, "[EVENTLOCATION]", GetLocStringByKeyExt(Location));
-				
-				//Add the message to the notification queue for display.
-				
-				master.PotP_PopupManager.Showpopup(GetLocStringByKeyExt("panel_QT_Name"), PopupMessage, pEvent_List[Idx].entryname, "Hint", false);
+				(new CProgressOnThePath_EventMessenger in thePlayer).initialise(pEvent_List[Idx].localname, Location, pEvent_List[Idx].entryname);
 			}
 		}
 	}
 }
 
+exec function ptquesttest()
+{
+	PotP_UnlockEvent("PotP_TrackingGroup_RandomEvents_Novigrad_05", "ProgressOnThePath_Location_Novigrad", "PotP_Event_FaceMeIfYouDare_3_NG");
+}
+
+statemachine class CProgressOnThePath_EventMessenger
+{
+	var fileName: name;
+		default fileName = 'PotP Event Messenger';
+	
+	public var localName : string;
+	public var location  : string;
+	public var entryName : string;
+	
+	public function initialise(localName : string, location : string, entryName: string)
+	{
+		this.localName = localName;
+		this.location = location;
+		this.entryName = entryName;
+		
+		this.GotoState('Running');
+	}
+}
+
+state Running in CProgressOnThePath_EventMessenger 
+{
+	event OnEnterState(previous_state_name: name) 
+	{
+		super.OnEnterState(previous_state_name);
+		PotP_Logger("Entered state [Running]", , parent.fileName);
+		
+		this.ShowMessage_Entry();
+	}
+	
+	//---------------------------------------------------
+
+	entry function ShowMessage_Entry() 
+	{
+		var master: CProgressOnThePath;
+		var PopupMessage : string;
+		
+		if (!GetPotP(master, parent.fileName))
+		{
+			return;
+		}
+		
+		while (PotP_IsPlayerBusy())
+		{
+			PotP_Logger("Waiting For State Release...", , parent.fileName);
+			Sleep(5);
+		}
+		
+		Sleep(5);
+		
+		PopupMessage = GetLocStringByKeyExt("PotP_NewEventMessage1");
+		PopupMessage = StrReplace(PopupMessage, "[EVENTNAME]", parent.localName);
+		PopupMessage = StrReplace(PopupMessage, "[EVENTLOCATION]", GetLocStringByKeyExt(parent.location));
+		master.PotP_PopupManager.Showpopup(GetLocStringByKeyExt("panel_QT_Name"), PopupMessage, parent.entryName, "Hint", false);
+	}
+}

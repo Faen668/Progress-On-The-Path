@@ -39,6 +39,9 @@ statemachine class CProgressOnThePath {
 
 	public var current_version_int: int;
 		default current_version_int = 6017;
+	
+	private var welcome_message_shown : bool;
+		default welcome_message_shown = false;
 		
 	//---------------------------------------------------
 	
@@ -109,7 +112,6 @@ statemachine class CProgressOnThePath {
 			this.LoadDefaults();
 			
 			PotP_PersistentStorage.PotP_LoadStorageCollection(PotP_Reset_None);
-			PotP_PopupManager.Showpopup(GetLocStringByKeyExt("panel_QT_Name"), GetLocStringByKeyExt("PotP_InstallMessage"), "PotP_InstallMessage", "Hint", true);
 		}
 		else
 		{
@@ -227,6 +229,12 @@ statemachine class CProgressOnThePath {
 		{
 			has_updated = false;
 			this.GotoState('updated');
+		}
+		
+		if (!welcome_message_shown)
+		{
+			PotP_PopupManager.Showpopup(GetLocStringByKeyExt("panel_QT_Name"), GetLocStringByKeyExt("PotP_InstallMessage"), "PotP_InstallMessage", "Hint", true);
+			welcome_message_shown = true;
 		}
 	}
 	
@@ -439,7 +447,7 @@ state waiting in CProgressOnThePath
 	
 	entry function wait_for_release()
 	{
-		while (!FactsDoesExist("q001_nightmare_ended")) 
+		while (!FactsDoesExist("q001_nightmare_ended") || PotP_IsPlayerBusy()) 
 		{
 			PotP_Logger("Waiting For State Release...", , parent.fileName);
 			Sleep(5);
