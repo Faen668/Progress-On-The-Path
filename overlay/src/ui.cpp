@@ -486,6 +486,9 @@ namespace
 		{ T_tab_settings_caps, T_tab_settings, 5 },
 	};
 	const TextId kKinds[3] = { T_part_0, T_part_1, T_part_2 };
+	void BookSign(int book, ImVec2 c, float r, ImU32 col, float t, bool shadow = true);   // the book's sign, as a shaded picture
+	struct BookArt;
+	const BookArt* BookPicture(int book);   // null where there's no picture of it, or not yet
 
 	// Window state
 	struct Row { int section; int entry; float y, h; int part = -1; };   // part: this header starts a part of the Missable tab   // entry -1: the section's header
@@ -1323,7 +1326,7 @@ namespace
 			const ImVec2 a(x + 2, 5), b(x + tabW - 2, barH - 12);
 			if (!on && Hover(a, b))
 				dl->AddRectFilled(a, b, Rgb(226, 196, 134, 24));
-			Sign(kBooks[i].sign, ImVec2(x + tabW * 0.5f, 52), 28.f, on ? Rgb(40, 28, 12) : Rgb(168, 158, 138), on ? 3.f : 2.4f);
+			BookSign(i, ImVec2(x + tabW * 0.5f, 50), BookPicture(i) ? 34.f : 28.f, on ? Rgb(52, 38, 18) : Rgb(214, 196, 158), on ? 3.f : 2.4f, !on);
 			const bool fits = Measure(kTitle, 20, Tx(kBooks[i].caps)).x <= tabW - 8;
 			const Face face = fits ? kTitle : kSans;
 			const int size = fits ? 20 : Measure(kSans, 22, Tx(kBooks[i].caps)).x <= tabW - 8 ? 22 : 18;
@@ -1788,13 +1791,13 @@ namespace
 			}
 			// A hidden one keeps its picture back too
 			if (AchievementMasked(*a))
-				Sign(6, c, size * 0.3f, Rgb(128, 66, 74), std::max(1.5f, size * 0.03f));
+				BookSign(kTabAchievements, c, size * 0.3f, Rgb(128, 66, 74), std::max(1.5f, size * 0.03f), false);
 			else
 				AchievementPicture(a->picture, at, size, !a->unlocked, a->unlocked ? kRings[std::clamp(a->ring, 0, 3)] : Rgb(128, 66, 74));
 		}
 		else if (!a || !texture || AchievementMasked(*a))
 		{
-			Sign(6, ImVec2(at.x + size * 0.5f, at.y + size * 0.5f), size * 0.3f, kGoldDim, std::max(1.5f, size * 0.03f));
+			BookSign(kTabAchievements, ImVec2(at.x + size * 0.5f, at.y + size * 0.5f), size * 0.3f, kGoldDim, std::max(1.5f, size * 0.03f), false);
 		}
 		else
 		{
@@ -2299,6 +2302,229 @@ namespace
 		}
 		const LoadedIcon& kept = icons[path] = icon;
 		return kept.texture ? &kept : nullptr;
+	}
+
+	// ------------------------------------------------------------------------------------------
+	// The books' signs as pictures: the game's own menu icons where it has one (their shapes, in book_icons.inc),
+	// and drawn here in the same manner where it hasn't. Each is a shape, given light and shade as if pressed into metal,
+	// so it can be drawn in any colour, with a shadow, from the tab bar's size up to the faint one behind a page.
+	// ------------------------------------------------------------------------------------------
+
+	struct BookArt { unsigned long long texture = 0; float w = 1.f, h = 1.f; };
+
+	// A shape drawn here, as the game's are: solid, with its details cut out. x and y from -1 to 1, y down.
+	float DrawnShape(int book, float x, float y)
+	{
+		const auto box = [](float px, float py, float hw, float hh) { return std::fabs(px) <= hw && std::fabs(py) <= hh; };
+		if (book == kBookMissable)
+		{
+			// An hourglass: its caps, the posts at its sides, the glass's outline and the sand run into its lower half
+			if (box(x, y + 0.86f, 0.62f, 0.08f) || box(x, y - 0.86f, 0.62f, 0.08f))
+				return 1.f;
+			if (box(x + 0.5f, y, 0.045f, 0.8f) || box(x - 0.5f, y, 0.045f, 0.8f))
+				return 1.f;
+			const float ay = std::fabs(y);
+			if (ay > 0.78f)
+				return 0.f;
+			const float half = 0.06f + 0.3f * std::pow(ay / 0.78f, 0.85f);   // the glass's half width at this height
+			const float ax = std::fabs(x);
+			if (ax <= half && ax >= half - 0.07f)
+				return 1.f;   // its wall
+			if (ax < half - 0.07f && y > 0.32f)
+				return 1.f;   // the sand that's fallen
+			if (ax < half - 0.07f && y < -0.5f && y > -0.72f)
+				return 1.f;   // what's left above
+			if (ax < 0.022f && y > -0.05f && y < 0.32f)
+				return 1.f;   // the trickle between
+			return 0.f;
+		}
+		// A cog: a toothed wheel with a hub, and a ring cut between them
+		const float r = std::sqrt(x * x + y * y), angle = std::atan2(y, x);
+		constexpr int kTeeth = 8;
+		const float step = 6.2831853f / kTeeth;
+		const float within = std::fabs(std::remainder(angle + step * 0.5f, step));   // 0 at a tooth's middle
+		const bool tooth = r < 0.96f && within * r < 0.17f;
+		if (!(r < 0.72f || tooth))
+			return 0.f;
+		if (r < 0.26f)
+			return 0.f;   // its axle
+		if (r > 0.44f && r < 0.53f)
+			return 0.f;   // the cut between hub and rim
+		return 1.f;
+	}
+
+	// The light on a shape, from its alpha: lit from the top left as a raised, rounded surface, darker at its far edges
+	GameTexture ShadedShape(const std::vector<float>& alpha, uint32_t size)
+	{
+		// Soften it a little first, so its rim slopes and catches the light
+		std::vector<float> soft(alpha.size());
+		const int blur = std::max(2, static_cast<int>(size / 48));
+		for (uint32_t y = 0; y < size; ++y)
+			for (uint32_t x = 0; x < size; ++x)
+			{
+				float sum = 0.f;
+				int n = 0;
+				for (int dy = -blur; dy <= blur; ++dy)
+					for (int dx = -blur; dx <= blur; ++dx)
+					{
+						const int sx = static_cast<int>(x) + dx, sy = static_cast<int>(y) + dy;
+						if (sx >= 0 && sy >= 0 && sx < static_cast<int>(size) && sy < static_cast<int>(size))
+							sum += alpha[static_cast<size_t>(sy) * size + sx];
+						++n;
+					}
+				soft[static_cast<size_t>(y) * size + x] = sum / n;
+			}
+		GameTexture out;
+		out.dxgiFormat = 28;   // RGBA8
+		out.width = out.height = size;
+		out.rowBytes = size * 4;
+		out.rows = size;
+		out.pixels.resize(static_cast<size_t>(size) * size * 4);
+		const float lx = -0.55f, ly = -0.7f, lz = 0.45f;   // toward the light: left, up, out of the screen
+		for (uint32_t y = 0; y < size; ++y)
+			for (uint32_t x = 0; x < size; ++x)
+			{
+				const auto at = [&](int px, int py) { px = std::clamp(px, 0, static_cast<int>(size) - 1); py = std::clamp(py, 0, static_cast<int>(size) - 1); return soft[static_cast<size_t>(py) * size + px]; };
+				const float gx = at(x + 1, y) - at(x - 1, y), gy = at(x, y + 1) - at(x, y - 1);
+				float nx = -gx * 3.f, ny = -gy * 3.f, nz = 1.f;
+				const float len = std::sqrt(nx * nx + ny * ny + nz * nz);
+				nx /= len; ny /= len; nz /= len;
+				const float light = nx * lx + ny * ly + nz * lz;
+				const float down = static_cast<float>(y) / size;   // a little darker toward its foot
+				const float shade = std::clamp(0.55f + 0.62f * light - 0.12f * down, 0.f, 1.f);
+				uint8_t* p = out.pixels.data() + (static_cast<size_t>(y) * size + x) * 4;
+				p[0] = p[1] = p[2] = static_cast<uint8_t>(shade * 255.f + 0.5f);
+				p[3] = static_cast<uint8_t>(std::clamp(alpha[static_cast<size_t>(y) * size + x], 0.f, 1.f) * 255.f + 0.5f);
+			}
+		// Its smaller levels, so it's smooth however small it's drawn
+		const GameTexture* from = &out;
+		std::vector<GameTexture> mips;
+		for (uint32_t s = size / 2; s >= 8; s /= 2)
+		{
+			GameTexture m;
+			m.dxgiFormat = 28;
+			m.width = m.height = s;
+			m.rowBytes = s * 4;
+			m.rows = s;
+			m.pixels.resize(static_cast<size_t>(s) * s * 4);
+			for (uint32_t y = 0; y < s; ++y)
+				for (uint32_t x = 0; x < s; ++x)
+					for (int c = 0; c < 4; ++c)
+					{
+						const auto px = [&](uint32_t fx, uint32_t fy) { return from->pixels[(static_cast<size_t>(fy) * from->width + fx) * 4 + c]; };
+						m.pixels[(static_cast<size_t>(y) * s + x) * 4 + c] = static_cast<uint8_t>((px(x * 2, y * 2) + px(x * 2 + 1, y * 2) + px(x * 2, y * 2 + 1) + px(x * 2 + 1, y * 2 + 1) + 2) / 4);
+					}
+			mips.push_back(std::move(m));
+			from = &mips.back();
+		}
+		out.lowerMips = std::move(mips);
+		return out;
+	}
+
+	const BookArt* BookPicture(int book)
+	{
+		static BookArt art[kTabCount];
+		static bool tried[kTabCount] = {};
+		if (book < 0 || book >= kTabCount)
+			return nullptr;
+		if (tried[book])
+			return art[book].texture ? &art[book] : nullptr;
+		// The game's own, shipped as their shapes (book_icons.inc)
+		struct Shipped { int book; uint32_t w, h; const uint8_t* alpha; };
+#define BOOK_ICON(b, width, height, ...) { b, width, height, [] { static const uint8_t data[] = __VA_ARGS__; return data; }() },
+		static const Shipped kShipped[] = {
+#include "book_icons.inc"
+		};
+#undef BOOK_ICON
+		constexpr uint32_t kSize = 256;
+		std::vector<float> shape(static_cast<size_t>(kSize) * kSize, 0.f);
+		bool have = false;
+		float aspect = 1.f;
+		for (const Shipped& g : kShipped)
+		{
+			if (g.book != book)
+				continue;
+			const uint32_t w = g.w, h = g.h;
+			const uint8_t* alpha = g.alpha;
+			// Fitted into the square with a margin for the light's slope. A shape this small enlarged plainly comes out in
+			// steps, so it's resampled smoothly (Catmull-Rom) and then its edge drawn in again: the contour it had, crisp
+			const float fit = (kSize - 24) / static_cast<float>(std::max(w, h));
+			const float ox = (kSize - w * fit) * 0.5f, oy = (kSize - h * fit) * 0.5f;
+			aspect = static_cast<float>(w) / h;
+			const auto a = [&](int px, int py)
+			{
+				if (px < 0 || py < 0 || px >= static_cast<int>(w) || py >= static_cast<int>(h))
+					return 0.f;
+				return alpha[static_cast<size_t>(py) * w + px] / 255.f;
+			};
+			const auto cubic = [](float t, float p0, float p1, float p2, float p3)
+			{
+				return p1 + 0.5f * t * (p2 - p0 + t * (2 * p0 - 5 * p1 + 4 * p2 - p3 + t * (3 * (p1 - p2) + p3 - p0)));
+			};
+			const float edge = std::clamp(0.9f / fit * 1.6f, 0.06f, 0.3f);   // about a pixel of the result either side of the contour
+			for (uint32_t y = 0; y < kSize; ++y)
+				for (uint32_t x = 0; x < kSize; ++x)
+				{
+					const float sx = (x + 0.5f - ox) / fit - 0.5f, sy = (y + 0.5f - oy) / fit - 0.5f;
+					if (sx < -1.5f || sy < -1.5f || sx > w + 0.5f || sy > h + 0.5f)
+						continue;
+					const int ix = static_cast<int>(std::floor(sx)), iy = static_cast<int>(std::floor(sy));
+					const float fx = sx - ix, fy = sy - iy;
+					float rows[4];
+					for (int k = -1; k <= 2; ++k)
+						rows[k + 1] = cubic(fx, a(ix - 1, iy + k), a(ix, iy + k), a(ix + 1, iy + k), a(ix + 2, iy + k));
+					const float value = cubic(fy, rows[0], rows[1], rows[2], rows[3]);
+					const float t = std::clamp((value - (0.5f - edge)) / (2.f * edge), 0.f, 1.f);
+					shape[static_cast<size_t>(y) * kSize + x] = t * t * (3.f - 2.f * t);
+				}
+			have = true;
+			break;
+		}
+		if (!have && (book == kBookMissable || book == kTabSettings))
+		{
+			// Drawn here, four samples a pixel for smooth edges
+			for (uint32_t y = 0; y < kSize; ++y)
+				for (uint32_t x = 0; x < kSize; ++x)
+				{
+					float sum = 0.f;
+					for (int s = 0; s < 4; ++s)
+					{
+						const float px = (x + 0.25f + 0.5f * (s & 1)) / kSize * 2.f - 1.f, py = (y + 0.25f + 0.5f * (s >> 1)) / kSize * 2.f - 1.f;
+						sum += DrawnShape(book, px * 1.1f, py * 1.1f);
+					}
+					shape[static_cast<size_t>(y) * kSize + x] = sum * 0.25f;
+				}
+			have = true;
+		}
+		tried[book] = true;
+		if (!have)
+			return nullptr;
+		const GameTexture shaded = ShadedShape(shape, kSize);
+		if (!UploadIconTexture(shaded, art[book].texture))
+			return nullptr;
+		art[book].w = aspect >= 1.f ? 1.f : aspect;
+		art[book].h = aspect >= 1.f ? 1.f / aspect : 1.f;
+		return &art[book];
+	}
+
+	// A book's sign: its picture, with a shadow under it, else the line drawing it had before
+	void BookSign(int book, ImVec2 c, float r, ImU32 col, float t, bool shadow)
+	{
+		const BookArt* art = BookPicture(book);
+		if (!art)
+		{
+			Sign(kBooks[book].sign, c, r, col, t);
+			return;
+		}
+		const float half = r * 1.18f;   // the picture's square has a margin round the shape
+		const ImVec2 a(c.x - half, c.y - half), b(c.x + half, c.y + half);
+		const int alpha = static_cast<int>((col >> IM_COL32_A_SHIFT) & 0xFF);
+		if (shadow)
+		{
+			const float off = std::max(1.5f, r * 0.06f);
+			dl->AddImage(static_cast<ImTextureID>(art->texture), ImVec2(a.x + off, a.y + off * 1.4f), ImVec2(b.x + off, b.y + off * 1.4f), ImVec2(0, 0), ImVec2(1, 1), IM_COL32(0, 0, 0, alpha * 3 / 4));
+		}
+		dl->AddImage(static_cast<ImTextureID>(art->texture), a, b, ImVec2(0, 0), ImVec2(1, 1), col);
 	}
 
 	// A picture a mod's pack brought with it, by its full path
@@ -3097,7 +3323,7 @@ namespace
 		if (icon)
 			DrawFitted(icon->texture, icon->w, icon->h, at, to);
 		else
-			Sign(7, ImVec2(at.x + size * 0.5f, at.y + size * 0.5f), size * 0.32f, kGoldDim, std::max(1.5f, size * 0.03f));
+			BookSign(kBookBestiary, ImVec2(at.x + size * 0.5f, at.y + size * 0.5f), size * 0.32f, kGoldDim, std::max(1.5f, size * 0.03f), false);
 		dl->AddRect(at, to, e.gameDone ? kGold : Rgb(70, 58, 38), 0.f, 0, 1.5f);
 	}
 
@@ -3113,7 +3339,7 @@ namespace
 		dl->AddRect(ImVec2(ca.x + 4, ca.y + 4), ImVec2(cb.x - 4, cb.y - 4), Alpha(kGoldHi, 0.3f), 0.f, 0, 1.f);
 		FadeLineH(ca.x, cb.x, ca.y, Rgb(255, 240, 200), 1.5f);
 		SoftGlow(ImVec2(ca.x + 58, ca.y + 59), 62, Alpha(kGoldHi, 0.2f));
-		Sign(7, ImVec2(ca.x + 58, ca.y + 59), 34, kGoldHi, 3.f);
+		BookSign(kBookBestiary, ImVec2(ca.x + 58, ca.y + 59), 34, Rgb(250, 232, 190), 3.f);
 		const std::string title = Upper(masked ? Tx(T_undiscovered_creature) : e.title);
 		const float titleRoom = cb.x - ca.x - 130;
 		const int titleSize = Measure(kTitle, 32, title.c_str()).x <= titleRoom ? 32 : 24;
@@ -3150,7 +3376,7 @@ namespace
 		}
 		else
 		{
-			Sign(7, ImVec2((pa.x + pb.x) * 0.5f, (pa.y + pb.y) * 0.5f), std::min(pb.x - pa.x, pb.y - pa.y) * 0.3f, Rgb(226, 196, 134, masked ? 40 : 18), 6.f);
+			BookSign(kBookBestiary, ImVec2((pa.x + pb.x) * 0.5f, (pa.y + pb.y) * 0.5f), std::min(pb.x - pa.x, pb.y - pa.y) * 0.3f, Rgb(226, 196, 134, masked ? 50 : 30), 6.f, false);
 			if (!masked && !e.image.empty() && !GameIconIndexReady())
 				TextCentre(kSerif, 28, (pa.x + pb.x) * 0.5f, (pa.y + pb.y) * 0.5f - 18.f, kDim, Tx(T_loading));
 		}
@@ -3320,7 +3546,7 @@ namespace
 
 		// The book's sign, large and faint behind the page
 		if (!showCard && !showModel)
-			Sign(kBooks[g_book].sign, ImVec2((mx0 + mx1) * 0.5f, bottom - 230), 170, Rgb(226, 196, 134, 15), 7.f);
+			BookSign(g_book, ImVec2((mx0 + mx1) * 0.5f, bottom - 230), 170, Rgb(226, 196, 134, 30), 7.f, false);
 
 		const std::string title = Upper(e->title.empty() ? e->uuid : e->title);
 		const float titleRoom = mx1 - mx0 - 130;
@@ -3338,7 +3564,7 @@ namespace
 		dl->AddRect(ImVec2(ca.x + 4, ca.y + 4), ImVec2(cb.x - 4, cb.y - 4), Alpha(kGoldHi, 0.3f), 0.f, 0, 1.f);
 		FadeLineH(ca.x, cb.x, ca.y, Rgb(255, 240, 200), 1.5f);
 		SoftGlow(ImVec2(ca.x + 58, ca.y + 59), 62, Alpha(kGoldHi, 0.2f));
-		Sign(kBooks[g_book].sign, ImVec2(ca.x + 58, ca.y + 59), 34, kGoldHi, 3.f);
+		BookSign(g_book, ImVec2(ca.x + 58, ca.y + 59), 34, Rgb(250, 232, 190), 3.f);
 		Text(kTitle, titleSize, ca.x + 112, ca.y + 14, Rgb(250, 242, 220), title.c_str(), titleRoom);
 		Text(kSerif, 28, ca.x + 112, ca.y + std::max(62.f, 20.f + titleH), Rgb(226, 214, 186), sub.c_str(), titleRoom);
 
@@ -3486,7 +3712,7 @@ namespace
 	{
 		const Columns col = GetColumns();
 		const float mx0 = col.m0, mx1 = col.m1, bottom = kBottom;
-		Sign(kBooks[g_book].sign, ImVec2((mx0 + mx1) * 0.5f, bottom - 230), 170, Rgb(226, 196, 134, 15), 7.f);
+		BookSign(g_book, ImVec2((mx0 + mx1) * 0.5f, bottom - 230), 170, Rgb(226, 196, 134, 30), 7.f, false);
 
 		const float room = mx1 - mx0 - 130;
 		std::string partLine = Upper(Tx(kKinds[std::clamp(s.kind, 0, 2)]));
@@ -3501,7 +3727,7 @@ namespace
 		dl->AddRect(ca, cb, kGold, 0.f, 0, 2.f);
 		dl->AddRect(ImVec2(ca.x + 4, ca.y + 4), ImVec2(cb.x - 4, cb.y - 4), Alpha(kGoldHi, 0.3f), 0.f, 0, 1.f);
 		FadeLineH(ca.x, cb.x, ca.y, Rgb(255, 240, 200), 1.5f);
-		Sign(kBooks[g_book].sign, ImVec2(ca.x + 58, ca.y + boxH * 0.5f), 34, kGoldHi, 3.f);
+		BookSign(g_book, ImVec2(ca.x + 58, ca.y + boxH * 0.5f), 34, Rgb(250, 232, 190), 3.f);
 		Text(kTitle, 20, ca.x + 112, ca.y + 14, s.state == 1 ? Rgb(246, 170, 136) : Rgb(236, 214, 170), partLine.c_str(), room);
 		Text(kSerif, 32, ca.x + 112, ca.y + 44, Rgb(250, 242, 220), s.header.c_str(), room);
 
@@ -3587,7 +3813,7 @@ namespace
 		const Achievement& a = *found->second;
 		const bool masked = AchievementMasked(a);
 
-		Sign(6, ImVec2((mx0 + mx1) * 0.5f, kBottom - 230), 170, Rgb(226, 196, 134, 15), 7.f);
+		BookSign(kTabAchievements, ImVec2((mx0 + mx1) * 0.5f, kBottom - 230), 170, Rgb(226, 196, 134, 30), 7.f, false);
 
 		const ImVec2 ca(mx0, kTop), cb(mx1, kTop + 158);
 		dl->AddRectFilledMultiColor(ca, cb, Rgb(112, 84, 24, 240), Rgb(40, 28, 8, 235), Rgb(26, 18, 5, 235), Rgb(84, 62, 18, 240));
@@ -5843,7 +6069,7 @@ namespace
 		FadeLineH(ca.x, cb.x, ca.y, Rgb(255, 240, 200), 1.5f);
 		const ImVec2 signAt(ca.x + 78, (ca.y + cb.y) * 0.5f);
 		SoftGlow(signAt, 76, Alpha(kGoldHi, 0.22f));
-		Sign(kBooks[g_book].sign, signAt, 42, kGoldHi, 3.f);
+		BookSign(g_book, signAt, 42, Rgb(250, 232, 190), 3.f);
 		const float tx = ca.x + 150, room = cb.x - tx - 24;
 		Text(kTitle, 22, tx, ca.y + 14, kGold, Tx(T_change_status_caps));
 		const std::string title = Upper(e.title.empty() ? e.uuid : e.title);
@@ -7399,7 +7625,7 @@ void DrawUi()
 	{
 		const char* message = state.message.empty() ? Tx(T_reading_progress) : state.message.c_str();
 		SoftGlow(ImVec2(kW * 0.5f, kH * 0.42f), 150, Alpha(kGold, 0.18f));
-		Sign(kBooks[g_book].sign, ImVec2(kW * 0.5f, kH * 0.42f), 60, kGoldHi, 4.f);
+		BookSign(g_book, ImVec2(kW * 0.5f, kH * 0.42f), 60, Rgb(250, 232, 190), 4.f);
 		TextCentre(kSerif, 34, kW * 0.5f, kH * 0.5f, kHead, message);
 		FadeLineH(kW * 0.3f, kW * 0.7f, kH * 0.5f + 60, kGold);
 	}
