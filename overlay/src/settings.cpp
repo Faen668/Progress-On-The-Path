@@ -1,0 +1,180 @@
+#include <windows.h>
+#include <shlobj.h>
+#include <algorithm>
+#include <cstdio>
+#include <cstdlib>
+#include <string>
+#include "log.h"
+#include "settings.h"
+
+namespace
+{
+	Settings g_settings;
+
+	std::string IniPath()
+	{
+		HMODULE self = nullptr;
+		GetModuleHandleExA(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS | GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT, reinterpret_cast<LPCSTR>(&GetSettings), &self);
+		char path[MAX_PATH] = "";
+		GetModuleFileNameA(self, path, MAX_PATH);
+		std::string s = path;
+		return s.substr(0, s.find_last_of('\\') + 1) + "potp_overlay.ini";
+	}
+
+	float ReadFloat(const std::string& ini, const char* key, float fallback, float low, float high)
+	{
+		char text[32];
+		char def[32];
+		snprintf(def, sizeof(def), "%g", fallback);
+		GetPrivateProfileStringA("Overlay", key, def, text, sizeof(text), ini.c_str());
+		return std::clamp(static_cast<float>(atof(text)), low, high);
+	}
+
+	int ReadInt(const std::string& ini, const char* key, int fallback)
+	{
+		return static_cast<int>(GetPrivateProfileIntA("Overlay", key, fallback, ini.c_str()));
+	}
+
+	void WriteFloat(const std::string& ini, const char* key, float value)
+	{
+		char text[32];
+		snprintf(text, sizeof(text), "%g", value);
+		WritePrivateProfileStringA("Overlay", key, text, ini.c_str());
+	}
+
+	void WriteInt(const std::string& ini, const char* key, int value)
+	{
+		char text[32];
+		snprintf(text, sizeof(text), "%d", value);
+		WritePrivateProfileStringA("Overlay", key, text, ini.c_str());
+	}
+}
+
+Settings& GetSettings()
+{
+	return g_settings;
+}
+
+void LoadSettings()
+{
+	const std::string ini = IniPath();
+	const Settings d;
+	Settings& s = g_settings;
+	s.scale = ReadFloat(ini, "Scale", d.scale, 0.5f, 2.f);
+	s.widthPercent = ReadFloat(ini, "WidthPercent", d.widthPercent, 40.f, 100.f);
+	s.heightPercent = ReadFloat(ini, "HeightPercent", d.heightPercent, 40.f, 100.f);
+	s.opacity = ReadFloat(ini, "Opacity", d.opacity, 0.5f, 1.f);
+	s.dim = ReadFloat(ini, "DimGame", d.dim, 0.f, 0.9f);
+	s.posX = ReadFloat(ini, "PositionX", d.posX, -1.f, 1.f);
+	s.posY = ReadFloat(ini, "PositionY", d.posY, -1.f, 1.f);
+	s.pauseGame = ReadInt(ini, "PauseGame", d.pauseGame) != 0;
+	s.openOnLastBook = ReadInt(ini, "OpenOnLastBook", d.openOnLastBook) != 0;
+	s.clothSim = ReadInt(ini, "ClothSim", d.clothSim) != 0;
+	s.liveBestiary = ReadInt(ini, "LiveBestiary", d.liveBestiary) != 0;
+	s.tourOffered = ReadInt(ini, "TourOffered", d.tourOffered) != 0;
+	s.hideCompleted = ReadInt(ini, "HideCompleted", d.hideCompleted) != 0;
+	s.hideIgnored = ReadInt(ini, "HideIgnored", d.hideIgnored) != 0;
+	s.hideMissable = ReadInt(ini, "HideMissable", d.hideMissable) != 0;
+	s.revealUndiscovered = ReadInt(ini, "RevealUndiscovered", d.revealUndiscovered) != 0;
+	s.revealHiddenAchievements = ReadInt(ini, "RevealHiddenAchievements", d.revealHiddenAchievements) != 0;
+	s.radialKey = ReadInt(ini, "RadialKey", d.radialKey);
+	s.popupX = static_cast<float>(ReadInt(ini, "PopupX", static_cast<int>(d.popupX * 1000.f))) / 1000.f;
+	s.popupY = static_cast<float>(ReadInt(ini, "PopupY", static_cast<int>(d.popupY * 1000.f))) / 1000.f;
+	s.openKey = static_cast<unsigned>(ReadInt(ini, "OpenKey", static_cast<int>(d.openKey)));
+	// Not a real key, or Home, the old default: the game toggles its HUD with that
+	if (s.openKey == 0 || s.openKey >= 0xFF || s.openKey == VK_HOME)
+		s.openKey = d.openKey;
+	s.updateKey = static_cast<unsigned>(ReadInt(ini, "UpdateKey", static_cast<int>(d.updateKey)));
+	if (s.updateKey == 0 || s.updateKey >= 0xFF || s.updateKey == VK_HOME)
+		s.updateKey = d.updateKey;
+	s.lastBook = ReadInt(ini, "LastBook", d.lastBook);
+	s.wardrobeAnimation = ReadInt(ini, "WardrobeAnimation", d.wardrobeAnimation);
+	{
+		char pins[4096] = "";
+		GetPrivateProfileStringA("Overlay", "WardrobePins", "", pins, sizeof(pins), ini.c_str());
+		s.wardrobePins = pins;
+		static char outfits[32768];
+		outfits[0] = 0;
+		GetPrivateProfileStringA("Overlay", "WardrobeOutfits", "", outfits, sizeof(outfits), ini.c_str());
+		s.wardrobeOutfits = outfits;
+	}
+	s.promptMode = std::clamp(ReadInt(ini, "Prompts", d.promptMode), 0, 2);
+	s.padStyle = std::clamp(ReadInt(ini, "PadStyle", d.padStyle), 0, 4);
+	s.hdrMatchGame = ReadInt(ini, "HdrMatchGame", d.hdrMatchGame) != 0;
+	s.hdrBrightness = ReadFloat(ini, "HdrBrightness", d.hdrBrightness, 80.f, 1000.f);
+	Log("settings read from %s: scale %.2f, %.0f%% x %.0f%%", ini.c_str(), s.scale, s.widthPercent, s.heightPercent);
+}
+
+void SaveSettings()
+{
+	const std::string ini = IniPath();
+	const Settings& s = g_settings;
+	WriteFloat(ini, "Scale", s.scale);
+	WriteFloat(ini, "WidthPercent", s.widthPercent);
+	WriteFloat(ini, "HeightPercent", s.heightPercent);
+	WriteFloat(ini, "Opacity", s.opacity);
+	WriteFloat(ini, "DimGame", s.dim);
+	WriteFloat(ini, "PositionX", s.posX);
+	WriteFloat(ini, "PositionY", s.posY);
+	WriteInt(ini, "PauseGame", s.pauseGame);
+	WriteInt(ini, "OpenOnLastBook", s.openOnLastBook);
+	WriteInt(ini, "ClothSim", s.clothSim);
+	WriteInt(ini, "LiveBestiary", s.liveBestiary);
+	WriteInt(ini, "TourOffered", s.tourOffered);
+	WriteInt(ini, "HideCompleted", s.hideCompleted);
+	WriteInt(ini, "HideIgnored", s.hideIgnored);
+	WriteInt(ini, "HideMissable", s.hideMissable);
+	WriteInt(ini, "RevealUndiscovered", s.revealUndiscovered);
+	WriteInt(ini, "RevealHiddenAchievements", s.revealHiddenAchievements);
+	WriteInt(ini, "RadialKey", s.radialKey);
+	WriteInt(ini, "PopupX", static_cast<int>(s.popupX * 1000.f));
+	WriteInt(ini, "PopupY", static_cast<int>(s.popupY * 1000.f));
+	WriteInt(ini, "OpenKey", static_cast<int>(s.openKey));
+	WriteInt(ini, "UpdateKey", static_cast<int>(s.updateKey));
+	WriteInt(ini, "LastBook", s.lastBook);
+	WriteInt(ini, "WardrobeAnimation", s.wardrobeAnimation);
+	WritePrivateProfileStringA("Overlay", "WardrobePins", s.wardrobePins.c_str(), ini.c_str());
+	WritePrivateProfileStringA("Overlay", "WardrobeOutfits", s.wardrobeOutfits.c_str(), ini.c_str());
+	WriteInt(ini, "Prompts", s.promptMode);
+	WriteInt(ini, "PadStyle", s.padStyle);
+	WriteInt(ini, "HdrMatchGame", s.hdrMatchGame);
+	WriteFloat(ini, "HdrBrightness", s.hdrBrightness);
+}
+
+bool GameHdrLevels(float& paperWhite, float& peak)
+{
+	static std::wstring path;
+	static FILETIME seen{};
+	static ULONGLONG checked = 0;
+	static float paper = 0.f, top = 0.f;
+	if (path.empty())
+	{
+		PWSTR documents = nullptr;
+		if (FAILED(SHGetKnownFolderPath(FOLDERID_Documents, 0, nullptr, &documents)))
+			return false;
+		path = std::wstring(documents) + L"\\The Witcher 3\\dx12user.settings";
+		CoTaskMemFree(documents);
+	}
+	// Looked at once a second at most: the game writes it when its options are left
+	const ULONGLONG now = GetTickCount64();
+	if (now - checked >= 1000)
+	{
+		checked = now;
+		WIN32_FILE_ATTRIBUTE_DATA info{};
+		if (GetFileAttributesExW(path.c_str(), GetFileExInfoStandard, &info) && CompareFileTime(&info.ftLastWriteTime, &seen) != 0)
+		{
+			seen = info.ftLastWriteTime;
+			wchar_t text[32];
+			GetPrivateProfileStringW(L"Visuals", L"HdrPaperWhite", L"0", text, 32, path.c_str());
+			paper = static_cast<float>(_wtof(text));
+			GetPrivateProfileStringW(L"Visuals", L"MaxTVBrightness", L"0", text, 32, path.c_str());
+			top = static_cast<float>(_wtof(text));
+			Log("the game's HDR: paper white %.0f nits, TV peak %.0f nits", paper, top);
+		}
+	}
+	if (paper <= 0.f)
+		return false;
+	paperWhite = paper;
+	peak = top;
+	return true;
+}

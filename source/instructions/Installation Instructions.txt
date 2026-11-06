@@ -1,0 +1,151 @@
+//--------------------------------------------------------
+//-------------------- Requirements ----------------------
+//--------------------------------------------------------
+
+This mod requires 'Shared Utils', maintained by myself and Aeltoth.
+https://www.nexusmods.com/witcher3/mods/12997
+
+Shared Utils is used for the event map pins, so make sure it is installed and up
+to date.
+
+//--------------------------------------------------------
+//-------------------- Installation ----------------------
+//--------------------------------------------------------
+
+1. Copy the 'mods' and 'bin' folders into your Witcher 3 directory.
+   (The folder that contains 'bin', 'content' and 'mods'.)
+
+   This includes 'bin\x64_dx12\PotpOverlay.asi', which draws the mod's window, and
+   Ultimate ASI Loader's 'dinput8.dll', which loads it. If you already have a
+   'dinput8.dll' there from Ultimate ASI Loader, you can keep yours.
+
+   The window needs the DirectX 12 version of the game.
+
+2. Load a save. That's it!
+
+The first time you load a save, Progress on the Path fills in its settings with
+their defaults, so there is no need to edit any settings files. It then builds
+its tracker in the background and shows a short welcome message.
+
+Open the window from the radial menu, or with the F3 key.
+
+Progress on the Path no longer replaces any vanilla scripts, so Script Merger is
+not needed.
+
+Progress on the Path replaces none of the game's quest files, so its place in the
+load order doesn't matter, and it works alongside Brothers In Arms and other mods
+that change the random event quests.
+
+//--------------------------------------------------------
+//------------- Updating From Version 6.x ----------------
+//--------------------------------------------------------
+
+1. Delete your old 'mods\modProgressOnThePath' folder. Version 7.0 installs to
+   'mods\modProgressOnThePathNG'.
+
+2. If you used Script Merger for Progress on the Path, remove its old merge and
+   re-run Script Merger for your other mods. Version 7.0 needs no merging.
+
+3. Copy the 'mods' and 'bin' folders over as normal, overwriting the old menu
+   file when asked, then load your save.
+
+Your progress carries over: quests, map locations and Gwent cards are read
+straight from your save, and collected items and finished events from 6.x are
+picked up automatically.
+
+Entries you marked as ignored, completed or missed by hand in 6.x are stored
+differently in 7.0. Mark them again with Change Status in the window.
+
+//--------------------------------------------------------
+//---------------------- The Window ----------------------
+//--------------------------------------------------------
+
+Open the window from the prompt on the radial menu, or with the F3 key. You can
+change the key in the window's Settings tab. Its tabs are:
+
+- Quests, World Map, Items, Gwent Cards and Missable Quests
+- Bestiary
+- Achievements
+- Settings
+
+The prompts along the bottom of the window show the controls for whatever you're
+doing, on a controller or a keyboard. On a list:
+
+- Change Status     : Marks an entry as completed, ignored or missed, or returns
+                      it to following the game.
+- Enlarge           : Shows an item's model or a Gwent card large, to turn around.
+- Expand / Collapse : Opens or closes the section you're in.
+- Change Visibility : Chooses whether the lists show missable, completed and
+                      ignored entries.
+
+The Settings tab holds the window's own settings and the mod's: full updates,
+collectability tags, event map pins, the New Game+ reset, and which notifications
+show and how they look.
+
+The Full Update key (Numpad 5, change it in the Settings tab) runs a full update.
+A full update also runs whenever you meditate (this can be turned off in the
+Settings tab).
+
+//--------------------------------------------------------
+//------------------- Missable Quests --------------------
+//--------------------------------------------------------
+
+The Missable Quests tab lists every quest you can lock yourself out of, grouped by
+what closes it off, in story order:
+
+- Points of No Return : lost once the story passes a certain point.
+- Choices and Endings : only available, or failed, because of a choice.
+- Easy to Fail        : fail through your own actions.
+
+Missable quests are marked as missed automatically when the game fails them, or
+when their point of no return has passed before you started them.
+
+When you are playing a quest that contains a point of no return, a warning lists
+the missable quests you still need to finish. In the quest journal, missable
+quests are tagged:
+
+[M]   still possible
+[M!]  its point of no return is in the quest you are playing now
+[!]   this quest is a point of no return, with missable quests still open
+
+Highlight a quest in the journal to read what closes it off.
+
+//--------------------------------------------------------
+//------------- Console Commands (Optional) --------------
+//--------------------------------------------------------
+
+These need the debug console to be enabled.
+
+pt_update()           : Runs a full update now.
+pt_reload()           : Rebuilds the tracker from scratch.
+pt_reset()            : Clears every manual ignored / completed / missed mark.
+pt_version()          : Shows the installed version.
+
+//--------------------------------------------------------
+//-------------------- Troubleshooting -------------------
+//--------------------------------------------------------
+
+The window doesn't open
+- Check that 'PotpOverlay.asi' and 'dinput8.dll' are in 'bin\x64_dx12', and that
+  you're running the DirectX 12 version of the game.
+- 'bin\x64_dx12\potp_overlay.log' says what the overlay found when it started.
+- Check that 'modProgressOnThePath.xml' is in
+  'bin\config\r4game\user_config_matrix\pc\', as the window's settings live there.
+
+Nothing is being tracked
+- The tracker starts after the prologue. Give it a few seconds after loading a
+  save, or press the Full Update key.
+- Run pt_reload() from the console to rebuild it.
+
+Event map pins are missing
+- Check 'Show Map Pins' in General Settings. Pins only appear for events you
+  have unlocked and not yet finished.
+- Some events only happen at night, so their pins only show at night.
+
+A quest is marked missed but you can still do it
+- Start it: it goes back to In Progress automatically. If it was marked by
+  hand, use Change Status and choose Automatic.
+
+//--------------------------------------------------------
+//-------------------------- End -------------------------
+//--------------------------------------------------------

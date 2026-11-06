@@ -1,0 +1,8 @@
+{
+  "name": "potp-overlay",
+  "version-string": "1.0",
+  "builtin-baseline": "ee12231b20c95013c6638d845d04c91559a1d1ff",
+  "dependencies": [
+    { "name": "imgui", "features": [ "dx12-binding", "win32-binding" ] }
+  ]
+}

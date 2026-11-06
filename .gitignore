@@ -1,2 +1,16 @@
-release
-tw3-shared-utils
+# Build output: made by CMake, dotnet and utility/create-release.bat
+overlay/build/
+overlay/tools/*/bin/
+overlay/tools/*/obj/
+release/
+__pycache__/
+
+# REDkit's own working files for the project
+progress on the path ng/logs/
+progress on the path ng/cooked/
+progress on the path ng/cookeddlc/
+progress on the path ng/publish/
+
+# Instructions for local Claude Code sessions
+CLAUDE.md
+.claude/
