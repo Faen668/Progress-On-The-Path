@@ -311,6 +311,77 @@ float4 PS(Out i, bool front : SV_IsFrontFace) : SV_Target
 
 	struct Constants { float world[16]; float projection[4]; float eyeAndMask[4]; float pose[4]; float fromPose[4]; };
 
+	// A burst of thick smoke at a two-form creature's feet as it changes, as the game hides its swap behind one: soft puffs
+	// that billow out and up and thin away, each worked out here from its number alone
+	const char kSmokeShader[] = R"(
+cbuffer View : register(b0)
+{
+	row_major float4x4 world;
+	float4 projection;
+	float4 eyeAndMask;   // z: how far back the eye is
+	float4 pose;         // x: seconds since the burst began, y: how big it is, in metres
+	float4 fromPose;     // xyz: where its feet are, as the model has it
+};
+
+struct Out { float4 h : SV_Position; float2 uv : TEXCOORD0; float alpha : TEXCOORD1; float seed : TEXCOORD2; };
+
+float Hash(float n) { return frac(sin(n * 12.9898f) * 43758.5453f); }
+
+Out VS(uint vertex : SV_VertexID, uint puff : SV_InstanceID)
+{
+	Out o;
+	const float n = puff + 1;
+	const float angle = Hash(n) * 6.2831853f, reach = sqrt(Hash(n + 17.1f)), delay = Hash(n + 3.7f) * 0.45f;
+	const float life = 2.4f + Hash(n + 9.3f) * 1.0f;
+	const float u = (pose.x - delay) / life;   // how far through its life this puff is
+	const float size = pose.y;
+	const float2 corners[6] = { float2(-1, -1), float2(1, -1), float2(1, 1), float2(-1, -1), float2(1, 1), float2(-1, 1) };
+	const float2 corner = corners[vertex];
+	o.uv = corner;
+	o.seed = Hash(n + 31.3f);
+	if (u <= 0 || u >= 1)
+	{
+		o.h = float4(0, 0, -1, 1);   // not yet, or gone: behind the near plane
+		o.alpha = 0;
+		return o;
+	}
+	// Out along the ground from the feet, slowing, and rising as it goes
+	const float spread = reach * size * (0.15f + 0.55f * sqrt(u));
+	float3 at = fromPose.xyz + float3(cos(angle) * spread, sin(angle) * spread, size * (0.05f + Hash(n + 5.1f) * 0.45f + 0.95f * pow(u, 1.3f)));
+	const float3 view = mul(float4(at, 1), world).xyz;
+	const float radius = size * (0.17f + 0.3f * sqrt(u)) * (0.7f + 0.6f * Hash(n + 13.7f));
+	const float turn = Hash(n + 21.9f) * 6.2831853f + u * (Hash(n + 2.2f) - 0.5f) * 2;
+	const float2 spun = float2(corner.x * cos(turn) - corner.y * sin(turn), corner.x * sin(turn) + corner.y * cos(turn));
+	const float3 placed = view + float3(spun * radius, 0);
+	const float z = placed.z + eyeAndMask.z;
+	o.h = float4(placed.x * projection.x, placed.y * projection.y, z * projection.z + projection.w, z);
+	// Thick as it bursts, thinning slowly
+	o.alpha = smoothstep(0, 0.06f, u) * (1 - smoothstep(0.45f, 1, u));
+	return o;
+}
+
+float Hash2(float2 c) { return frac(sin(dot(c, float2(127.1f, 311.7f))) * 43758.5453f); }
+float Noise2(float2 x)
+{
+	const float2 c = floor(x), f = frac(x), u = f * f * (3 - 2 * f);
+	return lerp(lerp(Hash2(c), Hash2(c + float2(1, 0)), u.x), lerp(Hash2(c + float2(0, 1)), Hash2(c + float2(1, 1)), u.x), u.y);
+}
+
+float4 PS(Out i) : SV_Target
+{
+	const float d = length(i.uv);
+	if (d >= 1 || i.alpha <= 0)
+		discard;
+	// A soft round puff, broken up so it reads as smoke and not a disc
+	const float2 q = i.uv * 2.2f + i.seed * 40;
+	const float billow = Noise2(q) * 0.6f + Noise2(q * 2.3f) * 0.4f;
+	const float body = saturate(pow(saturate(1 - d), 1.2f) * saturate(billow * 2.4f - 0.55f) * 1.7f);
+	const float lit = 0.75f + 0.25f * saturate(0.5f - i.uv.y * 0.5f);   // a little lighter where it catches the light above
+	const float3 colour = float3(0.42f, 0.4f, 0.38f) * lerp(0.62f, 1.1f, i.seed) * lit;   // each puff its own shade
+	return float4(colour, body * i.alpha);
+}
+)";
+
 	// The stance a new one is fading in from, still playing until it's gone
 	constexpr float kStanceFadeSeconds = 0.15f;   // only bridges the moment it took to work the new one out
 	uint32_t g_boneIntro = 0, g_fromIntro = 0;
@@ -388,6 +459,7 @@ float4 PS(Out i, bool front : SV_IsFrontFace) : SV_Target
 	ID3D12Device* g_device = nullptr;
 	ID3D12RootSignature* g_root = nullptr;
 	ID3D12PipelineState* g_pipeline = nullptr;
+	ID3D12PipelineState* g_smokePipeline = nullptr;   // the smoke a creature changes form behind
 	ID3D12Resource* g_many = nullptr, * g_picture = nullptr, * g_depth = nullptr;
 	ID3D12DescriptorHeap* g_rtv = nullptr, * g_dsv = nullptr;
 	unsigned long long g_pictureView = 0;
@@ -409,6 +481,7 @@ float4 PS(Out i, bool front : SV_IsFrontFace) : SV_Target
 	std::vector<float> g_fitPoints;
 	std::vector<uint8_t> g_fitForm;     // a two-form creature's: which form each of those points is
 	float g_formCentre[2][3] = {};      // and each form's middle, as the camera moves from one to the other
+	float g_formFeet[3] = {}, g_formSize = 1.f;   // where its smoke bursts from, and how big the bigger form is
 	float g_fitEye = -1.f;   // how far back the camera is now, easing to what the angle needs; -1 for at once
 	std::chrono::steady_clock::time_point g_fitLast{};
 	float g_zoom = 1.f;
@@ -525,6 +598,29 @@ float4 PS(Out i, bool front : SV_IsFrontFace) : SV_Target
 		pso.DepthStencilState.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;
 		if (FAILED(g_device->CreateGraphicsPipelineState(&pso, IID_PPV_ARGS(&g_pipeline))))
 			return Fail("no pipeline");
+
+		// The smoke: no vertices of its own, laid over what's drawn and hidden behind it, not hiding what's behind itself
+		ID3DBlob* smokeVs = nullptr, * smokePs = nullptr;
+		if (FAILED(compile(kSmokeShader, sizeof(kSmokeShader) - 1, "smoke", nullptr, nullptr, "VS", "vs_5_0", 0, 0, &smokeVs, &errors))
+			|| FAILED(compile(kSmokeShader, sizeof(kSmokeShader) - 1, "smoke", nullptr, nullptr, "PS", "ps_5_0", 0, 0, &smokePs, &errors)))
+		{
+			Log("item models: smoke shader: %s", errors ? static_cast<const char*>(errors->GetBufferPointer()) : "?");
+			return true;   // a creature changes form without it
+		}
+		pso.VS = { smokeVs->GetBufferPointer(), smokeVs->GetBufferSize() };
+		pso.PS = { smokePs->GetBufferPointer(), smokePs->GetBufferSize() };
+		pso.InputLayout = { nullptr, 0 };
+		D3D12_RENDER_TARGET_BLEND_DESC& blend = pso.BlendState.RenderTarget[0];
+		blend.BlendEnable = TRUE;
+		blend.SrcBlend = D3D12_BLEND_SRC_ALPHA;
+		blend.DestBlend = D3D12_BLEND_INV_SRC_ALPHA;
+		blend.BlendOp = D3D12_BLEND_OP_ADD;
+		blend.SrcBlendAlpha = D3D12_BLEND_ONE;
+		blend.DestBlendAlpha = D3D12_BLEND_INV_SRC_ALPHA;
+		blend.BlendOpAlpha = D3D12_BLEND_OP_ADD;
+		pso.DepthStencilState.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ZERO;
+		if (FAILED(g_device->CreateGraphicsPipelineState(&pso, IID_PPV_ARGS(&g_smokePipeline))))
+			Log("item models: no smoke pipeline");
 		return true;
 	}
 
@@ -954,6 +1050,14 @@ float4 PS(Out i, bool front : SV_IsFrontFace) : SV_Target
 			for (int form = 0; form < 2; ++form)
 				for (int k = 0; k < 3; ++k)
 					g_formCentre[form][k] = formLow[form][k] <= formHigh[form][k] ? (formLow[form][k] + formHigh[form][k]) * 0.5f : g_centre[k];
+			g_formFeet[0] = g_formCentre[0][0];
+			g_formFeet[1] = g_formCentre[0][1];
+			g_formFeet[2] = std::min(formLow[0][2], formLow[1][2]);
+			g_formSize = 0.f;
+			for (int form = 0; form < 2; ++form)
+				if (formLow[form][0] <= formHigh[form][0])
+					g_formSize = std::max(g_formSize, std::max(formHigh[form][0] - formLow[form][0], formHigh[form][2] - formLow[form][2]) * 0.5f);
+			g_formSize = std::max(0.4f, g_formSize);
 		}
 		if (g_keepShowing)
 		{
@@ -1138,6 +1242,19 @@ void ModelViewAnimation(int animation)
 			Log("item models: baking an animation: %s", problem.what());
 		}
 	}).detach();
+}
+
+bool ModelViewFormClock(int& phase, float& seconds)
+{
+	if (g_state != kModelReady || g_formTimes[3] <= 0.f)
+		return false;
+	const float t = fmodf(std::chrono::duration<float>(std::chrono::steady_clock::now() - g_boneStart).count(), g_formTimes[3]);
+	const float hold = g_formTimes[0], change = g_formTimes[1], second = g_formTimes[2];
+	if (t < hold) { phase = 0; seconds = hold - t; }
+	else if (t < hold + change) { phase = 1; seconds = hold + change - t; }
+	else if (t < hold + change + second) { phase = 2; seconds = hold + change + second - t; }
+	else { phase = 3; seconds = g_formTimes[3] - t; }
+	return true;
 }
 
 ModelState ModelViewState()
@@ -1417,6 +1534,25 @@ void ModelViewRender(ID3D12GraphicsCommandList* list)
 		list->SetGraphicsRootDescriptorTable(6, D3D12_GPU_DESCRIPTOR_HANDLE{ part.detail1 });
 		list->SetGraphicsRootDescriptorTable(7, D3D12_GPU_DESCRIPTOR_HANDLE{ part.detail2 });
 		list->DrawIndexedInstanced(part.indexCount, 1, part.firstIndex, part.baseVertex, 0);
+	}
+	// A two-form creature's smoke, from a moment before each change begins until it's thinned away
+	if (g_smokePipeline && g_formTimes[3] > 0.f)
+	{
+		const float cycle = g_formTimes[3];
+		const float t = fmodf(std::chrono::duration<float>(std::chrono::steady_clock::now() - g_boneStart).count(), cycle);
+		float since = FLT_MAX;
+		for (const float start : { g_formTimes[0] - 0.35f, g_formTimes[0] + g_formTimes[1] + g_formTimes[2] - 0.35f })
+			since = std::min(since, fmodf(t - start + cycle * 2.f, cycle));
+		if (since < 4.f)
+		{
+			Constants smoke = c;
+			smoke.pose[0] = since;
+			smoke.pose[1] = g_formSize;
+			memcpy(smoke.fromPose, g_formFeet, sizeof(g_formFeet));
+			list->SetPipelineState(g_smokePipeline);
+			list->SetGraphicsRoot32BitConstants(0, sizeof(Constants) / 4, &smoke, 0);
+			list->DrawInstanced(6, 170, 0, 0);
+		}
 	}
 
 	D3D12_RESOURCE_BARRIER to[2] = { barrier, barrier };

@@ -430,6 +430,10 @@ function PotPOverlay_TextKeys_2(out keys: array<string>)
 	keys.PushBack("custom_item");
 	keys.PushBack("custom_reward_line");
 	keys.PushBack("custom_reward_head");
+	keys.PushBack("form_changes_in");
+	keys.PushBack("form_changing");
+	keys.PushBack("form_returns_in");
+	keys.PushBack("form_returning");
 }
 
 function PotPOverlay_ExportText() : string

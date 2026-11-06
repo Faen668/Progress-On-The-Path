@@ -12,6 +12,9 @@ enum ModelState { kModelNone, kModelLoading, kModelReady, kModelMissing };
 void ModelViewAnimation(int animation);   // the stance from now on, with no reloading of him
 void ModelViewRequest(const std::string& templateName);   // which item: does nothing if it's that one already
 ModelState ModelViewState();
+// A creature in two forms: 0 showing its first, 1 changing into its second, 2 showing that, 3 changing back; and the
+// seconds until the next. False for anything else.
+bool ModelViewFormClock(int& phase, float& seconds);
 void ModelViewShow(float yawDegrees, float pitchDegrees, float zoom = 1.f); // draw it this frame, at this angle, this much closer than framed whole
 unsigned long long ModelViewTexture();                    // for the window to show: 0 until there's something drawn
 

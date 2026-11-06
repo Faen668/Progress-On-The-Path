@@ -3037,6 +3037,16 @@ namespace
 		float y = kTop + 136;
 		Marker(e, ImVec2(mx0 + 28, y + 21));
 		Text(kSerif, 34, mx0 + 66, y, StatusColour(e), StatusText(e));
+		// A creature in two forms: when it next changes, on the right of its status
+		int formPhase = 0;
+		float formSeconds = 0.f;
+		if (LiveCreature(e) && ModelViewFormClock(formPhase, formSeconds))
+		{
+			const std::string count = std::to_string(static_cast<int>(std::ceil(formSeconds)));
+			const std::string when = formPhase == 0 ? TxFill(T_form_changes_in, count) : formPhase == 1 ? Tx(T_form_changing)
+				: formPhase == 2 ? TxFill(T_form_returns_in, count) : Tx(T_form_returning);
+			TextRight(kSerif, 28, mx1 - 12, y + 4, formPhase == 1 || formPhase == 3 ? kGoldHi : kDim, when.c_str());
+		}
 		y += 62;
 
 		const ImVec2 pa(mx0, y), pb(mx1, kBottom);

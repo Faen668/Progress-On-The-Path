@@ -2176,4 +2176,8 @@
 2116570473||potp_ov_custom_item|[2] x[1]
 2116570474||potp_ov_custom_reward_line|Reward: [1]
 2116570475||potp_ov_custom_reward_head|REWARD
+2116570490||potp_ov_form_changes_in|Transforms in [1]
+2116570491||potp_ov_form_changing|Transforming...
+2116570492||potp_ov_form_returns_in|Changes back in [1]
+2116570493||potp_ov_form_returning|Changing back...
 ;overlay-text-end
