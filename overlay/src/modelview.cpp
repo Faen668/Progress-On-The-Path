@@ -340,39 +340,39 @@ Out VS(uint vertex : SV_VertexID, uint puff : SV_InstanceID)
 	Out o;
 	const float n = puff + 1;
 	const float size = pose.y;
-	// The first share are the ring the blast throws out along the ground; the rest the column that billows up after it
-	const bool ring = puff < (uint)(pose.z * 0.55f);
-	const float angle = Hash(n) * 6.2831853f, reach = sqrt(Hash(n + 17.1f));
-	const float delay = ring ? Hash(n + 3.7f) * 0.2f : 0.05f + Hash(n + 3.7f) * 0.35f;
-	const float life = ring ? 2.0f + Hash(n + 9.3f) * 0.9f : 2.2f + Hash(n + 9.3f) * 0.9f;
+	// One cloud: each puff thrown from the feet in its own direction over the ground and up, all at once, slowing as the
+	// cloud swells. Low ones go wide, high ones less so, so it mushrooms rather than making a ring and a column apart.
+	const float angle = Hash(n) * 6.2831853f;
+	const float rise = pow(Hash(n + 17.1f), 1.6f);          // most stay low; a few climb high
+	const float delay = Hash(n + 3.7f) * 0.25f + rise * 0.2f;
+	const float life = 2.3f + Hash(n + 9.3f) * 1.0f;
 	const float u = (pose.x - delay) / life;
 	const float2 corners[6] = { float2(-1, -1), float2(1, -1), float2(1, 1), float2(-1, -1), float2(1, 1), float2(-1, 1) };
 	const float2 corner = corners[vertex];
 	o.uv = corner;
 	o.seed = Hash(n + 31.3f);
 	o.age = saturate(u);
-	o.dense = ring ? 1 : 0;
+	o.dense = 1 - rise;   // the lower, the denser and darker
 	if (u <= 0 || u >= 1)
 	{
-		o.h = float4(0, 0, -1, 1);   // not yet, or gone: behind the near plane
+		o.h = float4(0, 0, -1, 1);
 		o.alpha = 0;
 		return o;
 	}
-	// The ring rushes out fast and slows, low to the ground; the column spreads a little and climbs
-	const float burst = 1 - pow(1 - u, 3);
-	const float spread = ring ? reach * size * (0.1f + 0.85f * burst) : reach * size * (0.05f + 0.35f * sqrt(u));
-	const float height = ring ? size * (0.03f + Hash(n + 5.1f) * 0.12f + 0.18f * u) : size * (0.12f + Hash(n + 5.1f) * 0.5f + 0.9f * pow(u, 0.9f));
+	const float burst = 1 - pow(1 - saturate(u * 1.15f), 3);   // fast, then slowing
+	const float wide = (0.25f + 0.75f * sqrt(Hash(n + 41.7f))) * lerp(1.0f, 0.45f, rise);
+	const float spread = size * (0.06f + 0.9f * wide * burst);
+	const float height = size * (0.04f + rise * (0.25f + 1.0f * burst) + 0.25f * u * u);
 	const float3 at = fromPose.xyz + float3(cos(angle) * spread, sin(angle) * spread, height);
 	const float3 view = mul(float4(at, 1), world).xyz;
-	const float grow = ring ? 0.12f + 0.22f * burst : 0.2f + 0.26f * sqrt(u);
-	const float radius = size * grow * (0.75f + 0.5f * Hash(n + 13.7f));
+	// Big, overlapping puffs, so the cloud reads as one mass and no gaps show between them
+	const float radius = size * (0.18f + 0.3f * burst) * (0.75f + 0.5f * Hash(n + 13.7f));
 	const float turn = Hash(n + 21.9f) * 6.2831853f + u * (Hash(n + 2.2f) - 0.5f) * 2.5f;
 	const float2 spun = float2(corner.x * cos(turn) - corner.y * sin(turn), corner.x * sin(turn) + corner.y * cos(turn));
 	const float3 placed = view + float3(spun * radius, 0);
 	const float z = placed.z + eyeAndMask.z;
 	o.h = float4(placed.x * projection.x, placed.y * projection.y, z * projection.z + projection.w, z);
-	// Thick as it bursts, thinning slowly; the column thinner than the ring
-	o.alpha = smoothstep(0, ring ? 0.04f : 0.1f, u) * (1 - smoothstep(ring ? 0.3f : 0.3f, ring ? 1 : 0.85f, u));
+	o.alpha = smoothstep(0, 0.04f, u) * (1 - smoothstep(0.35f, 1, u));
 	return o;
 }
 
@@ -414,10 +414,12 @@ float4 PS(Out i) : SV_Target
 	const float3 normal = normalize(float3(i.uv.x + (warp.x - 0.5f) * 0.9f, i.uv.y + (warp.y - 0.5f) * 0.9f, sqrt(1 - r2) + 0.25f));
 	const float light = saturate(dot(normal, normalize(float3(-0.45f, 0.75f, 0.5f))));
 	const float shade = lerp(0.3f, 1, light) * lerp(0.75f, 1.05f, billow) * lerp(0.8f, 1.12f, i.seed);
-	// The ring is the dust the blast kicks up, browner and darker; the column greyer and lighter
-	const float3 dark = lerp(float3(0.11f, 0.1f, 0.09f), float3(0.14f, 0.13f, 0.13f), 1 - i.dense);
-	const float3 pale = lerp(float3(0.5f, 0.45f, 0.39f), float3(0.62f, 0.6f, 0.58f), 1 - i.dense);
-	const float3 colour = lerp(dark, pale, shade);
+	// One smoke throughout: a little browner and darker low down where the dust is, greyer and lighter as it climbs, by
+	// degrees, and a warm glow in its heart for the moment of the blast
+	const float3 dark = lerp(float3(0.13f, 0.12f, 0.11f), float3(0.1f, 0.09f, 0.08f), i.dense);
+	const float3 pale = lerp(float3(0.6f, 0.58f, 0.55f), float3(0.5f, 0.45f, 0.4f), i.dense);
+	float3 colour = lerp(dark, pale, shade);
+	colour += float3(1.0f, 0.55f, 0.2f) * saturate(1 - i.age / 0.12f) * (1 - edge) * i.dense * 0.6f;
 	return float4(colour, saturate(density * 1.35f) * i.alpha);
 }
 )";
