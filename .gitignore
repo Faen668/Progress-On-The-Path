@@ -5,11 +5,11 @@ overlay/tools/*/obj/
 release/
 __pycache__/
 
-# REDkit's own working files for the project
-progress on the path ng/logs/
-progress on the path ng/cooked/
-progress on the path ng/cookeddlc/
-progress on the path ng/publish/
+# The REDkit project: only its scripts, its string database and the project file are source; the rest REDkit makes
+/progress on the path ng/*
+!/progress on the path ng/workspace/
+!/progress on the path ng/LocalEditorStringDataBaseW3_UTF8_mod.db
+!/progress on the path ng/progress on the path ng.w3edit
 
 # Instructions for local Claude Code sessions
 CLAUDE.md
