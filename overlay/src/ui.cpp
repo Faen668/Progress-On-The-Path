@@ -1007,6 +1007,21 @@ namespace
 		return g_region == 0 || e.region == g_region;
 	}
 
+	// A section's done and total, counting only the chosen region's entries, as its list shows them
+	struct DoneOf { int done = 0, total = 0; bool All() const { return done == total; } };
+
+	DoneOf RegionCount(const Section& s)
+	{
+		DoneOf c;
+		for (const Entry& e : s.entries)
+			if (g_region == 0 || e.region == g_region)
+			{
+				++c.total;
+				c.done += e.Done() ? 1 : 0;
+			}
+		return c;
+	}
+
 	struct Counts { int done = 0, total = 0, progress = 0, open = 0, ignored = 0, missed = 0; };
 
 	void Add(Counts& c, const Entry& e)
@@ -1836,10 +1851,8 @@ namespace
 		};
 		const auto sectionCount = [](const Section& s)
 		{
-			int done = 0;
-			for (const Entry& e : s.entries)
-				done += e.Done() ? 1 : 0;
-			return std::to_string(done) + " / " + std::to_string(s.entries.size());
+			const DoneOf c = RegionCount(s);
+			return std::to_string(c.done) + " / " + std::to_string(c.total);
 		};
 		const auto headerH = [&](const Section& s)
 		{
@@ -2154,11 +2167,9 @@ namespace
 				const ImU32 stripe = StripeFor(s);
 				dl->AddRectFilledMultiColor(a, ImVec2(a.x + 9, b.y), Mix(stripe, Rgb(255, 255, 255), 0.25f), Mix(stripe, Rgb(255, 255, 255), 0.25f), stripe, stripe);
 				dl->AddRect(a, b, focused ? Rgb(238, 232, 214) : Rgb(78, 66, 44), 0.f, 0, focused ? 2.f : 1.f);
-				int done = 0;
-				for (const Entry& e : s.entries)
-					done += e.Done() ? 1 : 0;
+				const DoneOf counted = RegionCount(s);
 				char count[24];
-				snprintf(count, sizeof(count), "%d / %d", done, static_cast<int>(s.entries.size()));
+				snprintf(count, sizeof(count), "%d / %d", counted.done, counted.total);
 				const float countW = Measure(kSans, 24, count).x;
 				const float room = headerRoom(s, countW);
 				if (s.state == 1)
@@ -2170,7 +2181,7 @@ namespace
 				Text(kSerif, 32, a.x + 30, a.y + 10, open ? Rgb(240, 230, 208) : Rgb(204, 192, 160), s.header.c_str(), room);
 				if (s.book == kBookMissable && s.state != 0)
 					Text(kTitle, 20, a.x + 30, b.y - 34.f, s.state == 1 ? Rgb(246, 136, 100) : kDim, s.state == 1 ? Tx(T_happening_now) : Tx(T_passed));
-				TextRight(kSans, 24, b.x - 70, a.y + 17, done == static_cast<int>(s.entries.size()) ? kGreen : kDim, count);
+				TextRight(kSans, 24, b.x - 70, a.y + 17, counted.All() ? kGreen : kDim, count);
 				const float tx = b.x - 38, ty = a.y + 31;
 				const ImVec2 t[3] = { {tx - 11, ty + (open ? 6.f : -6.f)}, {tx + 11, ty + (open ? 6.f : -6.f)}, {tx, ty + (open ? -8.f : 8.f)} };
 				dl->AddConvexPolyFilled(t, 3, open ? kGoldHi : Rgb(150, 136, 104));
@@ -3343,11 +3354,17 @@ namespace
 		Text(kTitle, 24, mx0 + 6, y, kHead, !group ? Tx(T_still_to_do) : group->kind == 0 && !group->cutoff.empty() ? Tx(T_also_closes) : Tx(T_also_in_group));
 		FadeLineH(mx0, mx1, y + 38, kGold);
 		y += 52;
-		int shown = 0;
+		// With a region chosen, only that region's; the rest are counted, so a group reaching elsewhere still says so
+		int shown = 0, elsewhere = 0;
 		for (const Entry& other : list->entries)
 		{
 			if (other.uuid == e->uuid || other.Done() || other.status == kMissed)
 				continue;
+			if (g_region != 0 && other.region != g_region)
+			{
+				++elsewhere;
+				continue;
+			}
 			const bool hasRegion = other.region > 0 && other.region < kRegionCount;
 			Marker(other, ImVec2(mx0 + 28, y + (hasRegion ? 26 : 20)));
 			const std::string& otherTitle = other.title.empty() ? other.uuid : other.title;
@@ -3360,8 +3377,13 @@ namespace
 		}
 		if (shown == 0)
 		{
-			Text(kSerif, 30, mx0 + 12, y, kDim, Tx(T_nothing_outstanding));
+			Text(kSerif, 30, mx0 + 12, y, kDim, g_region != 0 && elsewhere > 0 ? Tx(T_nothing_in_region) : Tx(T_nothing_outstanding));
 			y += 44.f;
+		}
+		if (elsewhere > 0)
+		{
+			Text(kSans, 22, mx0 + 12, y, Rgb(142, 134, 118), TxFill(T_more_other_regions, std::to_string(elsewhere)).c_str(), mx1 - mx0 - 24);
+			y += 36.f;
 		}
 		dl->PopClipRect();
 		const float contentH = y + g_detailScroll - viewTop, viewH = viewBottom - viewTop;
@@ -3417,10 +3439,8 @@ namespace
 		dl->PushClipRect(ImVec2(mx0 - 4, viewTop), ImVec2(mx1 + 4, viewBottom), true);
 		float y = viewTop - g_detailScroll;
 
-		int done = 0;
-		for (const Entry& e : s.entries)
-			done += e.Done() ? 1 : 0;
-		Text(kSerif, 34, mx0 + 6, y, done == static_cast<int>(s.entries.size()) ? kGreen : kText, TxFill(T_x_of_y, std::to_string(done), std::to_string(s.entries.size())).c_str());
+		const DoneOf counted = RegionCount(s);
+		Text(kSerif, 34, mx0 + 6, y, counted.All() ? kGreen : kText, TxFill(T_x_of_y, std::to_string(counted.done), std::to_string(counted.total)).c_str());
 		y += 58;
 		if (s.state == 1 && !s.cutoff.empty())
 		{
