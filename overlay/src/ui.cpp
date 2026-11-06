@@ -68,6 +68,27 @@ namespace
 		return ch(IM_COL32_R_SHIFT) | ch(IM_COL32_G_SHIFT) | ch(IM_COL32_B_SHIFT) | ch(IM_COL32_A_SHIFT);
 	}
 
+	// A colour setting's value as 0xRRGGBB: hex, or one of the five numbered colours the setting offered before it had a picker
+	int ColourValue(const std::string& value)
+	{
+		static const int kOld[5] = { 0xE8E6E3, 0x9DB4FF, 0xFF8A80, 0x7EDC9A, 0xC9A0E8 };
+		if (value.size() == 1 && value[0] >= '0' && value[0] <= '4')
+			return kOld[value[0] - '0'];
+		const char* s = value.c_str() + (value.rfind('#', 0) == 0 ? 1 : 0);
+		char* end = nullptr;
+		const long rgb = strtol(s, &end, 16);
+		return end != s && *end == 0 && rgb >= 0 && rgb <= 0xFFFFFF ? static_cast<int>(rgb) : kOld[1];
+	}
+
+	std::string ColourHex(int rgb)
+	{
+		char text[8];
+		snprintf(text, sizeof(text), "%06X", rgb & 0xFFFFFF);
+		return text;
+	}
+
+	ImU32 RgbOf(int rgb, int a = 255) { return Rgb((rgb >> 16) & 255, (rgb >> 8) & 255, rgb & 255, a); }
+
 	float Hash(int x, int y)
 	{
 		unsigned h = static_cast<unsigned>(x) * 374761393u + static_cast<unsigned>(y) * 668265263u;
@@ -526,6 +547,18 @@ namespace
 	bool g_captureUpdate = false;   // the full update key, not the one that opens the window
 	double g_captureUntil = 0.0;
 	bool g_setEditing = false;   // inside a slider or choice: left and right change it
+	// A colour setting's picker, open over its page (g_setEditing is on while it is, so Back closes it).
+	// The colour only goes to the mod on Done; Back leaves it as it was.
+	struct ColourPicker
+	{
+		bool open = false;
+		int var = -1;                 // the setting, in its page's vars
+		int original = 0, current = 0, fallback = -1;   // 0xRRGGBB; fallback -1: no default to go back to
+		float hue = 0.f;              // kept apart from the colour, so greys and black don't lose it
+		int focus = 0;                // 0-19 the swatches, 20-22 the bars, 23 Done, 24 Default
+		int drag = -1;                // the bar being dragged with the mouse
+	};
+	ColourPicker g_picker;
 	int g_setPage = 0;           // 0 the window's own settings, then each page of the mod's
 	std::vector<ModPage> g_pages;   // an editable copy of the game's values
 	const Model* g_pagesFrom = nullptr;
@@ -4513,7 +4546,7 @@ namespace
 		std::string icon;     // an achievement's picture, as AchievementPicture takes it
 		int ring = 0;         // and its ring: 0 gold, 1 silver, 2 bronze, 3 none
 		float seconds = 7.f;
-		int fontSize = 18, colour = 1, done = 0, total = 0, more = 0;
+		int fontSize = 18, colour = 0x9DB4FF, done = 0, total = 0, more = 0;
 		std::vector<PopupLine> lines;
 		// A message or a warning from the scripts, rather than a list of what changed
 		int kind = 0;   // 0 what changed, 1 a message, 2 a warning
@@ -4648,7 +4681,7 @@ namespace
 					m.herald = "note";   // no other kind is sent now, but a plain message still has somewhere to go
 				m.seconds = std::max(1.f, static_cast<float>(atof(f[2].c_str())));
 				m.fontSize = atoi(f[3].c_str());
-				m.colour = atoi(f[4].c_str());
+				m.colour = ColourValue(f[4]);
 				m.title = CleanGameText(f[5]);
 				m.body = ParseMessageBody(f[6]);
 			}
@@ -4656,7 +4689,7 @@ namespace
 			{
 				m.seconds = std::max(1.f, static_cast<float>(atof(f[1].c_str())));
 				m.fontSize = atoi(f[2].c_str());
-				m.colour = atoi(f[3].c_str());
+				m.colour = ColourValue(f[3]);
 				m.done = atoi(f[4].c_str());
 				m.total = atoi(f[5].c_str());
 			}
@@ -4678,17 +4711,10 @@ namespace
 		return m;
 	}
 
-	ImU32 PopupTextColour(int colour)
+	// The notification text colour setting, as 0xRRGGBB (see ColourValue)
+	ImU32 PopupTextColour(int rgb)
 	{
-		// The same choices the setting has always offered, as they're shown on a dark panel
-		switch (colour)
-		{
-		case 1: return Rgb(0x9D, 0xB4, 0xFF);
-		case 2: return Rgb(0xFF, 0x8A, 0x80);
-		case 3: return Rgb(0x7E, 0xDC, 0x9A);
-		case 4: return Rgb(0xC9, 0xA0, 0xE8);
-		default: return Rgb(0xE8, 0xE6, 0xE3);
-		}
+		return RgbOf(rgb);
 	}
 
 	// The mark for a line: the icon the mod names, or a drawn one if the game hasn't got it
@@ -4746,8 +4772,8 @@ namespace
 		}
 	}
 
-	// Compact, as it sits over the game
-	constexpr float kPopupHead = 88.f, kPopupRow = 38.f, kPopupGroup = 38.f, kPopupFoot = 12.f;
+	// Compact, as it sits over the game: the herald's band, at the place the settings give
+	constexpr float kPopupHead = 80.f, kPopupRow = 36.f, kPopupGroup = 32.f, kPopupFoot = 16.f;
 
 	struct PopupLayout { float scale, x, y, w, h; int rows; bool headings; };
 
@@ -4811,43 +4837,64 @@ namespace
 		dl->PushClipRect(ImVec2(-10000, -10000), ImVec2(20000, 20000), false);
 
 		const float w = l.w, h = l.h;
-		const ImVec2 a(0, 0), b(w, h);
-		const float sh = 36.f;
-		const ImU32 dark = Rgb(0, 0, 0, 170), clear = Rgb(0, 0, 0, 0);
-		dl->AddRectFilledMultiColor(ImVec2(a.x, a.y - sh), ImVec2(b.x, a.y), clear, clear, dark, dark);
-		dl->AddRectFilledMultiColor(ImVec2(a.x, b.y), ImVec2(b.x, b.y + sh), dark, dark, clear, clear);
-		dl->AddRectFilledMultiColor(ImVec2(a.x - sh, a.y), ImVec2(a.x, b.y), clear, dark, dark, clear);
-		dl->AddRectFilledMultiColor(ImVec2(b.x, a.y), ImVec2(b.x + sh, b.y), dark, clear, clear, dark);
-		Field(2000 + static_cast<int>(h) * 1000 + static_cast<int>(w), a, b, 12.f, [=](float x, float y)
+
+		// The main window's ground: worn dark leather with smoke through it, a little see-through, darker to the edges.
+		// A soft shadow lifts it off the world behind, and gold hairlines along the top and foot fade out at the ends.
+		// The shadow: thin rings outside it, each a little wider, rounder and fainter, so it falls off evenly all the way round
+		constexpr int kRings = 14;
+		constexpr float kRing = 2.4f;
+		for (int i = 0; i < kRings; ++i)
 		{
-			const float big = Fbm(x * 0.006f + 7.f, y * 0.006f, 4);
-			const float grain = Fbm(x * 0.09f, y * 0.09f, 2);
-			const float edge = std::clamp(std::min(std::min(x, w - x), std::min(y, h - y)) / 120.f, 0.f, 1.f);
-			const float light = (0.5f + big * 0.7f + grain * 0.18f) * (0.62f + 0.38f * edge);
-			return Rgb(static_cast<int>(38 * light), static_cast<int>(31 * light), static_cast<int>(21 * light), 244);
+			const float out = (static_cast<float>(i) + 0.5f) * kRing;
+			const float fade = 1.f - static_cast<float>(i) / kRings;
+			dl->AddRect(ImVec2(-out, -out), ImVec2(w + out, h + out), Rgb(0, 0, 0, static_cast<int>(70.f * fade * fade)), out, 0, kRing + 0.6f);
+		}
+		Field(3000000 + static_cast<int>(h) * 4000 + static_cast<int>(w), ImVec2(0, 0), ImVec2(w, h), 12.f, [=](float x, float y)
+		{
+			const float big = Fbm(x * 0.0035f + 3.f, y * 0.0035f, 4);
+			const float grain = Fbm(x * 0.07f, y * 0.07f, 2);
+			const float u = x / w - 0.5f, v = y / h - 0.45f;
+			const float vignette = std::clamp(1.1f - (u * u + v * v) * 1.5f, 0.45f, 1.f);
+			const float value = (9.f + big * 26.f + (grain - 0.5f) * 7.f) * vignette;
+			return Rgb(static_cast<int>(value), static_cast<int>(value * 0.91f), static_cast<int>(value * 0.80f), 222);
 		});
+		FadeLineH(0, w, 0, kGold, 1.6f);
+		FadeLineH(0, w, h - 1, Alpha(kGold, 0.7f), 1.2f);
 
-		// The whole path
-		// The title and the counts on one line, then the percentage with the bar level beside it, under the counts
-		Sign(0, ImVec2(46, 46), 26, kGoldHi, 2.5f);
-		Text(kTitle, 20, 92, 14, kGold, Tx(T_title_caps));
-		char percent[16], counts[32];
+		// The mod's emblem, its name, how far along the whole path is, and a line showing it with what this update added
+		const float textX = 70.f;
+		dl->AddCircleFilled(ImVec2(36, 36), 23, Rgb(10, 9, 7));
+		dl->AddCircle(ImVec2(36, 36), 23, kGold, 40, 1.6f);
+		BookSign(kBookQuest, ImVec2(36, 36), 16.f, kGoldHi, 2.f, false);   // the Quests tab's book
+		Text(kTitle, 24, textX, 14, kHead, Tx(T_title_caps));
 		const int whole = m.total > 0 ? 100 * m.done / m.total : 0;
-		snprintf(percent, sizeof(percent), "%d%%", whole);
-		snprintf(counts, sizeof(counts), "%s", TxFill(T_x_of_y, std::to_string(m.done), std::to_string(m.total)).c_str());
-		TextRight(kSerif, 28, w - 24, 8, kText, counts);
-		Text(kSerif, 34, 92, 38, Rgb(232, 158, 100), percent);
-		const float percentW = std::max(58.f, Measure(kSerif, 34, percent).x);
-		const float barY = 38.f + InkCentre(kSerif, 34, percent).y;
-		const ImVec2 ba(92 + percentW + 16, barY - 5), bb(w - 24, barY + 5);
-		dl->AddRectFilled(ba, bb, Rgb(12, 10, 8, 230));
-		dl->AddRect(ImVec2(ba.x - 1, ba.y - 1), ImVec2(bb.x + 1, bb.y + 1), Rgb(92, 76, 50, 200));
-		const float end = ba.x + (bb.x - ba.x) * (m.total > 0 ? static_cast<float>(m.done) / static_cast<float>(m.total) : 0.f);
-		dl->AddRectFilledMultiColor(ba, ImVec2(end, bb.y), Rgb(126, 84, 30), Rgb(236, 196, 116), Rgb(236, 196, 116), Rgb(126, 84, 30));
+		const std::string counts = TxFill(T_x_of_y, std::to_string(m.done), std::to_string(m.total)) + "  \xC2\xB7  " + std::to_string(whole) + "%";
+		const float countsRight = w - 26.f;
+		TextRight(kSans, 24, countsRight, 16, kDim, counts.c_str());
+		int gained = 0;
+		for (const PopupLine& line : m.lines)
+			gained += line.complete ? 1 : 0;
+		const ImVec2 ma(textX, 56), mb(countsRight, 59);
+		dl->AddRectFilled(ma, mb, Rgb(255, 255, 255, 22));
+		if (m.total > 0)
+		{
+			const float span = mb.x - ma.x;
+			const float before = span * static_cast<float>(std::max(0, m.done - gained)) / static_cast<float>(m.total);
+			const float after = span * static_cast<float>(m.done) / static_cast<float>(m.total);
+			dl->AddRectFilledMultiColor(ma, ImVec2(ma.x + before, mb.y), Rgb(126, 92, 40), kGold, kGold, Rgb(126, 92, 40));
+			if (after > before)
+			{
+				// What this update added: brighter, a few pixels wide at least so a single find still shows
+				const float x0 = ma.x + before, x1 = std::max(ma.x + after, x0 + 4.f);
+				SoftGlow(ImVec2((x0 + x1) * 0.5f, (ma.y + mb.y) * 0.5f), 12, Alpha(kGoldHi, 0.5f));
+				dl->AddRectFilled(ImVec2(x0, ma.y - 1), ImVec2(x1, mb.y + 1), kGoldHi);
+			}
+		}
 
-		// What changed, under what kind of thing it is
+		// What changed, under small headings when there's more than one kind
 		const char* const kHeads[3] = { Tx(T_tab_quests_caps), Tx(T_items_and_cards_caps), Tx(T_tab_world_caps) };
 		const ImU32 ink = PopupTextColour(m.colour);
+		const float room = w - textX - 60.f;
 		float y = kPopupHead;
 		int shown = 0, group = -1;
 		for (const PopupLine& line : m.lines)
@@ -4857,20 +4904,21 @@ namespace
 			if (l.headings && line.group != group)
 			{
 				group = line.group;
-				Text(kTitle, 20, 22, y + 6, kGold, kHeads[group]);
-				FadeLineH(14, w - 14, y + 33, kGold);
+				Text(kSans, 20, textX, y + 6, kDim, kHeads[group]);
 				y += kPopupGroup;
 			}
 			if (!line.icon.empty())
-				PopupIcon(line.icon, ImVec2(38, y + 19));
-			const float textX = line.icon.empty() ? 22.f : 64.f;
-			TextFit(kSerif, 28, textX, y + 2, ink, line.text, w - textX - (line.complete || line.inProgress ? 58.f : 22.f));
+				PopupIcon(line.icon, ImVec2(textX + 12, y + 18));
+			const float lineX = line.icon.empty() ? textX : textX + 36.f;
+			TextFit(kSerif, 28, lineX, y + 1, ink, line.text, room - (lineX - textX));
+			// Its state just after its name: a tick for done, an amber ring for under way
+			const float after = lineX + std::min(Measure(kSerif, 28, line.text.c_str()).x, room - (lineX - textX)) + 16.f;
 			if (line.complete)
-				Tick(ImVec2(w - 34, y + 19), 9, kGreen, 3.f);
+				Tick(ImVec2(after + 8, y + 18), 7, kGreen, 2.5f);
 			else if (line.inProgress)
 			{
-				dl->AddCircle(ImVec2(w - 34, y + 19), 9, kAmber, 20, 2.f);
-				dl->AddCircleFilled(ImVec2(w - 34, y + 19), 4, kAmber);
+				dl->AddCircle(ImVec2(after + 8, y + 18), 7, kAmber, 20, 2.f);
+				dl->AddCircleFilled(ImVec2(after + 8, y + 18), 3, kAmber);
 			}
 			y += kPopupRow;
 			++shown;
@@ -4878,25 +4926,8 @@ namespace
 		const int more = m.more + static_cast<int>(m.lines.size()) - shown;
 		if (more > 0)
 		{
-			char text[96];
-			snprintf(text, sizeof(text), "%s", TxFill(T_and_more, std::to_string(more)).c_str());
-			TextRight(kSerif, 26, w - 22, y + 2, kDim, text);
-		}
-
-		// A smaller copy of the window's tooled frame
-		dl->AddRect(a, b, kGold, 0.f, 0, 2.f);
-		dl->AddRect(ImVec2(5, 5), ImVec2(w - 5, h - 5), Alpha(kGold, 0.3f));
-		FadeLineH(0, w, 0, kGoldHi, 2.f);
-		FadeLineH(0, w, h - 1, kGoldHi, 2.f);
-		const struct { ImVec2 c; float dx, dy; } corners[4] = { {a, 1, 1}, {{b.x, a.y}, -1, 1}, {{a.x, b.y}, 1, -1}, {b, -1, -1} };
-		for (const auto& k : corners)
-		{
-			const ImVec2 inner(k.c.x + k.dx * 10.f, k.c.y + k.dy * 10.f);
-			dl->AddLine(inner, ImVec2(inner.x + k.dx * 24.f, inner.y), kGold, 1.5f);
-			dl->AddLine(inner, ImVec2(inner.x, inner.y + k.dy * 24.f), kGold, 1.5f);
-			Diamond(k.c, 7, Rgb(14, 12, 8));
-			Diamond(k.c, 7, kGoldHi, false, 1.5f);
-			Diamond(k.c, 2.5f, kGoldHi);
+			const std::string text = TxFill(T_and_more, std::to_string(more));
+			Text(kSerif, 26, textX, y + 1, kDim, text.c_str());
 		}
 		dl->PopClipRect();
 
@@ -4971,13 +5002,17 @@ namespace
 		const float h = y + 24.f;
 		const float cx = w * 0.5f;
 		const float bw = w, bh = h - bandTop;
+		// The main window's ground, worn dark leather with smoke through it, faded out at the sides and edges as before
 		Field(3000 + static_cast<int>(bh) * 10 + static_cast<int>(bw) * 100000, ImVec2(0, bandTop), ImVec2(w, h), 14.f, [=](float px, float py)
 		{
 			const float dx = (px - bw * 0.5f) / (bw * 0.5f), dy = (py - bh * 0.5f) / (bh * 0.5f);
 			const float across = std::clamp((1.f - std::fabs(dx)) / 0.3f, 0.f, 1.f);
 			const float down = std::clamp((1.f - std::fabs(dy)) / 0.16f, 0.f, 1.f);
-			const int a = static_cast<int>(240.f * across * down);
-			return Rgb(7, 6, 4, a);
+			const int a = static_cast<int>(236.f * across * down);
+			const float big = Fbm(px * 0.0035f + 3.f, py * 0.0035f, 4);
+			const float grain = Fbm(px * 0.07f, py * 0.07f, 2);
+			const float value = (9.f + big * 26.f + (grain - 0.5f) * 7.f) * (0.7f + 0.3f * across);
+			return Rgb(static_cast<int>(value), static_cast<int>(value * 0.91f), static_cast<int>(value * 0.80f), a);
 		});
 		FadeLineH(w * 0.14f, w * 0.86f, bandTop, line, 1.5f);
 		FadeLineH(w * 0.14f, w * 0.86f, h, line, 1.5f);
@@ -4993,7 +5028,12 @@ namespace
 			AchievementPicture(m.icon, ImVec2(c.x - 27.f, c.y - 27.f), 54.f, false, kRingColours[m.ring]);
 		}
 		else
-			Sign(achievement ? 6 : 0, c, 21.f, line, 2.5f);   // 6: the medal the Achievements tab uses
+		{
+			// The tabs' own icons: the cog for the mod's updates, the crown for an achievement with no picture of its own,
+			// and the Quests book for events and everything else
+			const int book = m.herald == "update" ? kTabSettings : achievement ? kTabAchievements : kBookQuest;
+			BookSign(book, c, 26.f, line, 2.5f, false);
+		}
 
 		TextCentre(kTitle, 22, cx, 92.f, kicker, what);
 		const float headX = cx - std::min(headW, textW) * 0.5f;
@@ -5131,6 +5171,216 @@ namespace
 		}
 	}
 
+	// ------------------------------------------------------------------------------------------
+	// The colour picker (from Completionist-NG's, drawn the window's way)
+	// ------------------------------------------------------------------------------------------
+
+	constexpr int kColourSwatches[] = {
+		0xFFFFFF, 0xC0C0C0, 0x808080, 0x404040, 0xC6A262, 0xFFD700, 0xEAAB00, 0xFFA500, 0xE37222, 0xBD4F19,
+		0xCC3333, 0x990033, 0xB3FF00, 0x9EAB05, 0x13A81C, 0x99FFFF, 0x4398DE, 0x8C6CD0, 0x800080, 0xFF66CC,
+	};
+	constexpr int kSwatchCount = static_cast<int>(std::size(kColourSwatches));
+	constexpr int kSwatchColumns = 10;
+	constexpr int kPickerBars = kSwatchCount;          // 20-22: hue, saturation, brightness
+	constexpr int kPickerDone = kPickerBars + 3;
+	constexpr int kPickerDefault = kPickerDone + 1;
+
+	void Hsv(int rgb, float& h, float& s, float& v)
+	{
+		ImGui::ColorConvertRGBtoHSV(((rgb >> 16) & 255) / 255.f, ((rgb >> 8) & 255) / 255.f, (rgb & 255) / 255.f, h, s, v);
+	}
+
+	int FromHsv(float h, float s, float v)
+	{
+		float r, g, b;
+		ImGui::ColorConvertHSVtoRGB(std::clamp(h, 0.f, 0.9999f), std::clamp(s, 0.f, 1.f), std::clamp(v, 0.f, 1.f), r, g, b);
+		const auto ch = [](float x) { return static_cast<int>(std::lround(std::clamp(x, 0.f, 1.f) * 255.f)); };
+		return (ch(r) << 16) | (ch(g) << 8) | ch(b);
+	}
+
+	// A cut gem of colour: lit along the top, shaded at the foot, ringed in gold when it's the one picked
+	void ColourGem(ImVec2 a, ImVec2 b, int rgb, bool picked, bool lit)
+	{
+		const float h = b.y - a.y;
+		if (picked)
+			dl->AddRectFilled(ImVec2(a.x - 4, a.y - 4), ImVec2(b.x + 4, b.y + 4), Alpha(kGoldHi, 0.28f), 4.f);
+		dl->AddRectFilled(a, b, RgbOf(rgb), 3.f);
+		dl->AddRectFilled(a, ImVec2(b.x, a.y + h * 0.42f), Rgb(255, 255, 255, 34), 3.f, ImDrawFlags_RoundCornersTop);
+		dl->AddRectFilled(ImVec2(a.x, b.y - h * 0.28f), b, Rgb(0, 0, 0, 44), 3.f, ImDrawFlags_RoundCornersBottom);
+		dl->AddRect(a, b, picked || lit ? kGoldHi : Rgb(92, 76, 50), 3.f, 0, picked ? 2.2f : 1.2f);
+	}
+
+	void OpenColourPicker(const ModVar& v, int index)
+	{
+		g_picker = ColourPicker{};
+		g_picker.open = true;
+		g_picker.var = index;
+		g_picker.original = g_picker.current = ColourValue(v.value);
+		g_picker.fallback = v.fallback.empty() ? -1 : ColourValue(v.fallback);
+		float s, b;
+		Hsv(g_picker.current, g_picker.hue, s, b);
+		const int* found = std::find(std::begin(kColourSwatches), std::end(kColourSwatches), g_picker.current);
+		g_picker.focus = found != std::end(kColourSwatches) ? static_cast<int>(found - std::begin(kColourSwatches)) : kPickerBars;
+		g_setEditing = true;
+	}
+
+	// Over the page, between its top and bottom. click and accept are this frame's, held back from the page under it.
+	void DrawColourPicker(ModPage& page, float x0, float x1, float top, float bottom, bool click, bool accept)
+	{
+		ColourPicker& p = g_picker;
+		ModVar& v = page.vars[p.var];
+
+		// The page under it, dimmed
+		dl->AddRectFilled(ImVec2(x0 - 14, top), ImVec2(x1 + 14, bottom), Rgb(6, 5, 4, 170));
+		const float w = std::min(980.f, x1 - x0), h = 560.f;
+		const ImVec2 a((x0 + x1 - w) * 0.5f, std::max(top, (top + bottom - h) * 0.5f)), b(a.x + w, a.y + h);
+		dl->AddRectFilledMultiColor(a, b, Rgb(26, 22, 16, 250), Rgb(26, 22, 16, 250), Rgb(14, 12, 9, 250), Rgb(14, 12, 9, 250));
+		dl->AddRect(a, b, kGold, 0.f, 0, 1.5f);
+		dl->AddRect(ImVec2(a.x + 6, a.y + 6), ImVec2(b.x - 6, b.y - 6), Rgb(92, 72, 44, 120));
+		const float pad = 40.f, inner = w - pad * 2;
+		float y = a.y + 26;
+		const std::string title = Upper(v.label);
+		TextCentre(kTitle, 26, (a.x + b.x) * 0.5f, y, kGoldHi, title.c_str());
+		y += 44;
+		FadeLineH(a.x + pad, b.x - pad, y, kGold);
+		y += 16;
+
+		// Steering: the swatches as a grid, then the bars, then Done and Default
+		if (g_navLeft || g_navRight || g_navUp || g_navDown)
+		{
+			int& f = p.focus;
+			if (f < kSwatchCount)
+			{
+				const int row = f / kSwatchColumns, column = f % kSwatchColumns;
+				if (g_navLeft && column > 0) --f;
+				else if (g_navRight && column + 1 < kSwatchColumns) ++f;
+				else if (g_navUp && row > 0) f -= kSwatchColumns;
+				else if (g_navDown) f = (row + 1) * kSwatchColumns < kSwatchCount ? f + kSwatchColumns : kPickerBars;
+			}
+			else if (f < kPickerDone)
+			{
+				if (g_navUp) f = f == kPickerBars ? kSwatchCount - kSwatchColumns : f - 1;
+				else if (g_navDown) ++f;
+			}
+			else if (g_navUp) f = kPickerDone - 1;
+			else if (g_navLeft && f == kPickerDone && p.fallback >= 0) f = kPickerDefault;
+			else if (g_navRight && f == kPickerDefault) f = kPickerDone;
+		}
+		const auto pick = [&](int rgb)
+		{
+			p.current = rgb;
+			float s, bright;
+			Hsv(rgb, p.hue, s, bright);
+		};
+
+		// The swatches
+		Text(kSans, 22, a.x + pad, y, kDim, Upper(Tx(T_colour_swatches)).c_str());
+		y += 32;
+		const float gap = 12.f, cell = (inner - gap * (kSwatchColumns - 1)) / kSwatchColumns, cellH = std::round(cell * 0.62f);
+		for (int i = 0; i < kSwatchCount; ++i)
+		{
+			const ImVec2 sa(a.x + pad + (i % kSwatchColumns) * (cell + gap), y + (i / kSwatchColumns) * (cellH + gap)), sb(sa.x + cell, sa.y + cellH);
+			const bool here = p.focus == i;
+			if ((click && Hover(sa, sb)) || (here && accept))
+				pick(kColourSwatches[i]);
+			ColourGem(sa, sb, kColourSwatches[i], kColourSwatches[i] == p.current, here || Hover(sa, sb));
+			if (here)
+				dl->AddRect(ImVec2(sa.x - 6, sa.y - 6), ImVec2(sb.x + 6, sb.y + 6), Rgb(255, 248, 230), 4.f, 0, 2.f);
+		}
+		y += 2 * cellH + gap + 24;
+
+		// Your own: hue, saturation and brightness, each its own bar
+		Text(kSans, 22, a.x + pad, y, kDim, Upper(Tx(T_colour_custom)).c_str());
+		y += 30;
+		float hue = p.hue, sat, bright, ignored;
+		Hsv(p.current, ignored, sat, bright);
+		const TextId names[3] = { T_colour_hue, T_colour_saturation, T_colour_brightness };
+		float* values[3] = { &hue, &sat, &bright };
+		bool barMoved = false;
+		for (int k = 0; k < 3; ++k)
+		{
+			const bool here = p.focus == kPickerBars + k;
+			const float lx0 = a.x + pad, lx1 = b.x - pad;
+			const float by = y + 30;
+			const ImVec2 ba(lx0 + 10, by), bb(lx1 - 10, by + 12);
+			const ImVec2 hitA(lx0, y), hitB(lx1, by + 24);
+			if (click && Hover(hitA, hitB))
+				p.drag = k;
+			if (p.drag == k && ImGui::IsMouseDown(0))
+			{
+				*values[k] = std::clamp((g_mouse.x - ba.x) / (bb.x - ba.x), 0.f, 1.f);
+				barMoved = true;
+			}
+			if (here && (g_navLeft || g_navRight))
+			{
+				*values[k] = std::clamp(*values[k] + (g_navRight ? 0.02f : -0.02f), 0.f, 1.f);
+				barMoved = true;
+			}
+			const bool lit = here || p.drag == k || Hover(hitA, hitB);
+			Text(kSans, 22, lx0 + 10, y, lit ? kGoldHi : kText, Tx(names[k]));
+			const std::string amount = std::to_string(static_cast<int>(std::lround(*values[k] * (k == 0 ? 360.f : 100.f)))) + (k == 0 ? "\xC2\xB0" : "%");
+			TextRight(kSans, 22, lx1 - 10, y, kDim, amount.c_str());
+			constexpr int kSegments = 24;
+			for (int i = 0; i < kSegments; ++i)
+			{
+				const float t0 = static_cast<float>(i) / kSegments, t1 = static_cast<float>(i + 1) / kSegments;
+				const auto at = [&](float t) { return RgbOf(k == 0 ? FromHsv(t, 1.f, 1.f) : k == 1 ? FromHsv(hue, t, bright) : FromHsv(hue, sat, t)); };
+				const ImU32 c0 = at(t0), c1 = at(t1);
+				dl->AddRectFilledMultiColor(ImVec2(ba.x + (bb.x - ba.x) * t0, ba.y), ImVec2(ba.x + (bb.x - ba.x) * t1, bb.y), c0, c1, c1, c0);
+			}
+			dl->AddRect(ImVec2(ba.x - 1, ba.y - 1), ImVec2(bb.x + 1, bb.y + 1), lit ? kGoldHi : Rgb(92, 76, 50), 0.f, 0, lit ? 1.6f : 1.f);
+			const ImVec2 knob(ba.x + (bb.x - ba.x) * *values[k], (ba.y + bb.y) * 0.5f);
+			if (lit)
+				SoftGlow(knob, 24, Alpha(kGoldHi, 0.4f));
+			Diamond(knob, 11, Rgb(20, 16, 10));
+			Diamond(knob, 11, here ? Rgb(255, 248, 230) : kGoldHi, false, 2.f);
+			Diamond(knob, 5, RgbOf(k == 0 ? FromHsv(hue, 1.f, 1.f) : FromHsv(hue, sat, bright)));
+			y += 64;
+		}
+		if (!ImGui::IsMouseDown(0))
+			p.drag = -1;
+		if (barMoved)
+		{
+			p.hue = hue;
+			p.current = FromHsv(hue, sat, bright);
+		}
+
+		// Before and after, then Default and Done
+		y += 8;
+		const float chipY = y, chipH = 34.f;
+		float cx = a.x + pad;
+		const auto chip = [&](TextId label, int rgb)
+		{
+			Text(kSans, 22, cx, chipY + 4, kDim, Tx(label));
+			cx += Measure(kSans, 22, Tx(label)).x + 14;
+			ColourGem(ImVec2(cx, chipY), ImVec2(cx + 70, chipY + chipH), rgb, false, false);
+			cx += 70 + 28;
+		};
+		chip(T_colour_current, p.original);
+		chip(T_colour_new, p.current);
+		Text(kSans, 22, cx, chipY + 4, kText, ("#" + ColourHex(p.current)).c_str());
+
+		const auto button = [&](float bx1, const char* label, bool here)
+		{
+			const ImVec2 ba(bx1 - 200, chipY - 4), bb(bx1, chipY + 40);
+			const bool hot = Hover(ba, bb);
+			dl->AddRectFilledMultiColor(ba, bb, Rgb(70, 54, 24), Rgb(70, 54, 24), Rgb(36, 28, 12), Rgb(36, 28, 12));
+			dl->AddRect(ba, bb, hot || here ? kGoldHi : kGold, 0.f, 0, here ? 2.f : 1.5f);
+			TextCentre(kSerif, 28, (ba.x + bb.x) * 0.5f, ba.y + 4, hot || here ? Rgb(255, 248, 230) : kText, label);
+			return (click && hot) || (here && accept);
+		};
+		const bool done = button(b.x - pad, Tx(T_done), p.focus == kPickerDone);
+		if (p.fallback >= 0 && button(b.x - pad - 220, Tx(T_colour_default), p.focus == kPickerDefault))
+			pick(p.fallback);
+		if (done)
+		{
+			v.value = ColourHex(p.current);
+			SendValue(page, v);
+			p.open = false;
+			g_setEditing = false;
+		}
+	}
+
 	// A page of the mod's menu, built from what the game's config says it holds
 	void DrawModPage(ModPage& page)
 	{
@@ -5236,12 +5486,20 @@ namespace
 		}
 
 		const ImVec2 la(x0 - 14, top), lb(x1 + 14, bottom);
-		if (Hover(la, lb) && g_wheel != 0.f)
+		// While a colour picker's open the page under it takes nothing: this frame's click and accept are the picker's.
+		// Back closes it by leaving the control, and the colour stays as it was.
+		if (g_picker.open && (!g_setEditing || g_picker.var < 0 || g_picker.var >= static_cast<int>(page.vars.size())))
+			g_picker.open = false;
+		const bool pickerUp = g_picker.open;
+		const bool pickerClick = g_clicked, pickerAccept = g_navAccept;
+		if (pickerUp)
+			g_clicked = g_navAccept = false;
+		if (Hover(la, lb) && g_wheel != 0.f && !pickerUp)
 		{
 			g_modScroll -= g_wheel * 148.f;
 			g_modFreeScrolled = true;
 		}
-		if (g_pad.rightY != 0.f)
+		if (g_pad.rightY != 0.f && !pickerUp)
 		{
 			g_modScroll -= g_pad.rightY * g_dt * 1300.f;
 			g_modFreeScrolled = true;
@@ -5284,7 +5542,7 @@ namespace
 
 			const int thisFocus = static_cast<int>(std::find(focusable.begin(), focusable.end(), i) - focusable.begin());
 			const ImVec2 a(x0 - 14, ry), b(x1 + 14, ry + rowH - 6);
-			const bool inList = Hover(la, lb);
+			const bool inList = Hover(la, lb) && !pickerUp;
 			if (Hover(a, b) && inList && g_dragSlider < 0 && g_modFocus != thisFocus)
 			{
 				g_modFocus = thisFocus;
@@ -5391,6 +5649,18 @@ namespace
 					Diamond(knob, 5, focused ? Rgb(255, 240, 200) : kGoldHi);
 					TextRight(kSans, 26, x1, ry + 9, nameCol, v.value.c_str());
 				}
+				else if (v.type == kVarColour)
+				{
+					// Its colour and hex on the right; choosing it opens the picker
+					if (!pickerUp && ((focused && g_navAccept) || (Clicked(a, b) && inList)))
+						OpenColourPicker(v, r.index);
+					const int rgb = ColourValue(v.value);
+					const float level = ry + 6 + InkCentre(kSerif, 30, "H").y;
+					const ImVec2 sa(x1 - 74, level - 14), sb(x1 - 4, level + 14);
+					ColourGem(sa, sb, rgb, false, focused);
+					const std::string hex = "#" + ColourHex(rgb);
+					TextRight(kSans, 26, sa.x - 16, ry + 9, nameCol, hex.c_str());
+				}
 				else
 				{
 					const int n = static_cast<int>(v.options.size());
@@ -5421,19 +5691,7 @@ namespace
 						const std::string& name = v.options[shown];
 						const float room = controlW - 80;
 						const float width = std::min(Measure(kSerif, 30, name.c_str()).x, room);
-						const bool swatch = v.id == "ProgressOnThePath_GlobalNotification_Font";   // the notification's text colour
-						const float shift = swatch ? -18.f : 0.f;
-						TextFit(kSerif, 30, (left + right) * 0.5f - width * 0.5f + shift, ry + 6, nameCol, name, room);
-						if (swatch)
-						{
-							const float sx = (left + right) * 0.5f + width * 0.5f + shift + 14.f;
-							// Level with the colour's name: the middle of its capitals, so it stays put whichever name is shown
-							const float level = ry + 6 + InkCentre(kSerif, 30, "H").y;
-							const ImVec2 sa(sx, level - 12), sb(sx + 24, level + 12);
-							dl->AddRectFilled(ImVec2(sa.x - 3, sa.y - 3), ImVec2(sb.x + 3, sb.y + 3), Rgb(18, 15, 11));
-							dl->AddRectFilled(sa, sb, PopupTextColour(shown));
-							dl->AddRect(ImVec2(sa.x - 3, sa.y - 3), ImVec2(sb.x + 3, sb.y + 3), Rgb(120, 100, 66), 0.f, 0, 1.5f);
-						}
+						TextFit(kSerif, 30, (left + right) * 0.5f - width * 0.5f, ry + 6, nameCol, name, room);
 					}
 				}
 			}
@@ -5489,6 +5747,11 @@ namespace
 			hintSize -= 2;
 		const float hintH = WrappedHeight(kSerif, hintSize, hint.c_str(), hintRoom);
 		Text(kSerif, hintSize, ha.x + 26, ha.y + (hb.y - ha.y - hintH) * 0.5f, warn ? Rgb(246, 170, 136) : kText, hint.c_str(), hintRoom);
+
+		if (pickerUp && g_picker.open)
+			DrawColourPicker(page, x0, x1, top, bottom, pickerClick, pickerAccept);
+		g_clicked = pickerClick;
+		g_navAccept = pickerAccept;
 	}
 
 	// The Settings tab: a row of pages, the window's own first and then the mod's
@@ -6537,7 +6800,13 @@ namespace
 		{
 			if (!g_setEditing)
 				hints.push_back({ kPadLT | kPadRT, g_keyPages.c_str(), Tx(T_page), kActNone });
-			if (g_setEditing)
+			if (g_picker.open)
+			{
+				hints.push_back({ kPadUp | kPadDown | kPadLeft | kPadRight, Tx(T_key_arrows), Tx(T_move), kActNone });
+				hints.push_back({ kPadA, Tx(T_key_enter), Tx(T_choose), kActNone });
+				hints.push_back({ kPadB, Tx(T_key_esc), Tx(T_cancel), kActNone });
+			}
+			else if (g_setEditing)
 			{
 				hints.push_back({ kPadLeft | kPadRight, Tx(T_left_right), Tx(T_change), kActNone });
 				hints.push_back({ kPadA | kPadB, Tx(T_key_enter), Tx(T_done), kActNone });
@@ -7395,12 +7664,7 @@ bool UiBackOut()
 
 void UiLoadFonts(float scale)
 {
-	wchar_t module[MAX_PATH] = L"";
-	HMODULE self = nullptr;
-	GetModuleHandleExW(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS | GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT, reinterpret_cast<LPCWSTR>(&UiLoadFonts), &self);
-	GetModuleFileNameW(self, module, MAX_PATH);
-
-	// bin\x64_dx12\dinput8.dll -> mods\modProgressOnThePathNG\fonts. The test program sets its own folder.
+	// PotP's fonts, in its mod folder whatever it's called. The test program sets its own folder.
 	char folder[MAX_PATH * 3] = "";
 #ifdef POTP_OVERLAY_TEST
 	wchar_t overrideFolder[MAX_PATH];
@@ -7411,10 +7675,7 @@ void UiLoadFonts(float scale)
 	else
 #endif
 	{
-		std::wstring path = module;
-		for (int up = 0; up < 3; ++up)
-			path = path.substr(0, path.find_last_of(L'\\'));
-		path += L"\\mods\\modProgressOnThePathNG\\fonts";
+		const std::wstring path = ModFolder() + L"\\fonts";
 		WideCharToMultiByte(CP_UTF8, 0, path.c_str(), -1, folder, sizeof(folder), nullptr, nullptr);
 	}
 

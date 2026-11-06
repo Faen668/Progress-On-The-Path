@@ -11,7 +11,7 @@
 //   G|group|title|intro|presethint     a page of PotP's settings, as Settings.ws defines it
 //   P|name                             a preset of that page
 //   B|                                 a gap between settings
-//   V|id|type|name|value|hint          a setting (type as Settings.ws gives it: TOGGLE, OPTIONS, SLIDER;min;max;steps)
+//   V|id|type|name|value|hint|default  a setting (type as Settings.ws gives it: TOGGLE, OPTIONS, SLIDER;min;max;steps, COLOUR)
 //   O|name                             an option of that setting
 
 @addField(CR4Player)
@@ -400,7 +400,7 @@ function PotPOverlay_ExportSettings() : string
 			{
 				continue;
 			}
-			result += "\nV|" + NameToString(setting.id) + "|" + setting.type_text + "|" + PotPOverlay_Clean(GetLocStringByKeyExt(setting.label)) + "|" + setting.value + "|" + PotPOverlay_Hint(setting.hint_key);
+			result += "\nV|" + NameToString(setting.id) + "|" + setting.type_text + "|" + PotPOverlay_Clean(GetLocStringByKeyExt(setting.label)) + "|" + setting.value + "|" + PotPOverlay_Hint(setting.hint_key) + "|" + setting.default_value;
 			for (Sub = 0; Sub < setting.options.Size(); Sub += 1)
 			{
 				result += "\nO|" + PotPOverlay_Clean(GetLocStringByKeyExt(setting.options[Sub]));

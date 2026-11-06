@@ -116,8 +116,14 @@ bool ParseChunk(Model& model, const std::string& text)
 				v.value = f[4];
 				if (f.size() >= 6)
 					v.hint = Clean(f[5]);
+				if (f.size() >= 7)
+					v.fallback = f[6];
 				const std::string& type = f[2];
-				if (type.rfind("SLIDER", 0) == 0)
+				if (type == "COLOUR")
+				{
+					v.type = kVarColour;
+				}
+				else if (type.rfind("SLIDER", 0) == 0)
 				{
 					v.type = kVarSlider;
 					float low = 0.f, high = 1.f, steps = 1.f;

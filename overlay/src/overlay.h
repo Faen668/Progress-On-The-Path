@@ -5,6 +5,14 @@
 #include <string>
 #include "model.h"
 
+// main.cpp
+// The game's own folder (the one with bin, content and mods), from witcher3.exe: the .asi can be loaded from
+// bin\x64_dx12 or from a loader's plugins or scripts folder under it, so where it sits says nothing.
+std::wstring GameFolder();
+// PotP's own folder under mods: modProgressOnThePathNG, or whatever a player or a mod manager renamed it to for its
+// load order, found as the one with PotP's achievements.dat and fonts. Empty if there's none.
+std::wstring ModFolder();
+
 // d3d12_hook.cpp
 bool InstallD3D12Hooks();
 // ImGui's input queue is filled on one thread and read on the one that presents. Recursive because

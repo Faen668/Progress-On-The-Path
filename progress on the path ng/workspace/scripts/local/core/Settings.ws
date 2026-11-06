@@ -10,7 +10,7 @@ class CPotP_Setting
 {
 	public var group		: name;
 	public var id			: name;		// None for a separator
-	public var type_text	: string;	// TOGGLE, OPTIONS, SLIDER;min;max;steps or SUBTLE_SEPARATOR
+	public var type_text	: string;	// TOGGLE, OPTIONS, SLIDER;min;max;steps, COLOUR (RRGGBB in hex) or SUBTLE_SEPARATOR
 	public var label		: string;	// a string key
 	public var hint_key		: string;	// a string key, or ""
 	public var default_value: string;
@@ -235,7 +235,7 @@ function PotP_DefineSettings(s: CPotP_Settings)
 	s.Group('ProgressOnThePath_NotificationSettings', "potp_ov_set_page_notifications", "potp_ov_set_page_notifications_intro", "potp_ov_set_page_notifications_presets");
 	s.Add('ProgressOnThePath_ShowUpdateNotifications',		"TOGGLE",			"true",	"potp_ov_set_notify_modupdate", "potp_ov_set_notify_modupdate_hint");
 	s.Add('ProgressOnThePath_GlobalNotification_Size',		"SLIDER;14;34;20",	"18",	"potp_ov_set_notify_size", "potp_ov_set_notify_size_hint");
-	PotP_SettingOptions(s.Add('ProgressOnThePath_GlobalNotification_Font', "OPTIONS", "1", "potp_ov_set_notify_colour", "potp_ov_set_notify_colour_hint"), "potp_ov_set_notify_colour_", 5);
+	s.Add('ProgressOnThePath_GlobalNotification_Font',		"COLOUR",			"9DB4FF", "potp_ov_set_notify_colour", "potp_ov_set_notify_colour_hint");
 	s.Add('ProgressOnThePath_GlobalNotification_Time',		"SLIDER;1;15;14",	"7",	"potp_ov_set_notify_time", "potp_ov_set_notify_time_hint");
 	s.Separator();
 	s.Add('ProgressOnThePath_FullNotification_Quest',		"TOGGLE",			"true",	"potp_ov_set_full_quest", "potp_ov_set_full_quest_hint");
@@ -258,11 +258,11 @@ function PotP_DefineSettings(s: CPotP_Settings)
 
 	// Disabled, Lite and Enabled: everything off; brief pop-ups only; everything on
 	preset = s.Preset("potp_ov_set_preset_disabled");
-	PotP_PresetNotifications(preset, "0", "0", "0", "false", "false", "false");
+	PotP_PresetNotifications(preset, "0", "E8E6E3", "0", "false", "false", "false");
 	preset = s.Preset("potp_ov_set_preset_lite");
-	PotP_PresetNotifications(preset, "18", "1", "3", "true", "false", "true");
+	PotP_PresetNotifications(preset, "18", "9DB4FF", "3", "true", "false", "true");
 	preset = s.Preset("potp_ov_set_preset_enabled");
-	PotP_PresetNotifications(preset, "18", "1", "7", "true", "true", "true");
+	PotP_PresetNotifications(preset, "18", "9DB4FF", "7", "true", "true", "true");
 }
 
 function PotP_SettingOptions(setting: CPotP_Setting, key_prefix: string, count: int)

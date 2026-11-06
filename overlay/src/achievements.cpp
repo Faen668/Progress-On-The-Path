@@ -21,6 +21,7 @@
 #include "achievements.h"
 #include "gameicons.h"
 #include "log.h"
+#include "overlay.h"
 
 namespace
 {
@@ -75,7 +76,12 @@ namespace
 		if (GetEnvironmentVariableW(L"POTP_OVERLAY_ACHIEVEMENTS", path, MAX_PATH) > 0)
 			return path;
 #endif
-		return gameFolder + L"\\mods\\modProgressOnThePathNG\\achievements.dat";
+		// The usual folder, else PotP's folder under whatever name it was given for its load order
+		const std::wstring usual = gameFolder + L"\\mods\\modProgressOnThePathNG\\achievements.dat";
+		if (GetFileAttributesW(usual.c_str()) != INVALID_FILE_ATTRIBUTES)
+			return usual;
+		const std::wstring mod = ModFolder();
+		return mod.empty() ? usual : mod + L"\\achievements.dat";
 	}
 
 	// The store's language names, for the languages the window's fonts can show. The rest read in English.

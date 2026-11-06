@@ -37,11 +37,12 @@ struct Section
 	std::vector<Entry> entries;
 };
 
-enum ModVarType { kVarToggle, kVarSlider, kVarOptions };
+enum ModVarType { kVarToggle, kVarSlider, kVarOptions, kVarColour };   // a colour's value is RRGGBB in hex
 
 struct ModVar
 {
 	std::string id, head, label, value, hint;   // head: the part of the menu's name before its colon
+	std::string fallback;                       // its default, as Settings.ws defines it
 	int type = kVarToggle;
 	float low = 0.f, high = 1.f, step = 1.f;
 	std::vector<std::string> options;

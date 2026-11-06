@@ -451,6 +451,15 @@ function PotPOverlay_TextKeys_2(out keys: array<string>)
 	keys.PushBack("tour_settings_general_body");
 	keys.PushBack("tour_settings_notify");
 	keys.PushBack("tour_settings_notify_body");
+	keys.PushBack("colour_swatches");
+	keys.PushBack("colour_custom");
+	keys.PushBack("colour_hue");
+	keys.PushBack("colour_saturation");
+	keys.PushBack("colour_brightness");
+	keys.PushBack("colour_current");
+	keys.PushBack("colour_new");
+	keys.PushBack("colour_default");
+	keys.PushBack("key_arrows");
 }
 
 function PotPOverlay_ExportText() : string

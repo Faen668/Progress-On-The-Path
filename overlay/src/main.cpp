@@ -77,25 +77,94 @@ extern "C" void PotpOverlay_TestKillPage(int page)
 }
 #endif
 
+static DWORD WINAPI StartThread(void*);
+
+std::wstring GameFolder()
+{
+	static const std::wstring found = []
+	{
+		const auto isGame = [](const std::wstring& at)
+		{
+			const DWORD content = GetFileAttributesW((at + L"\\content").c_str());
+			const DWORD bin = GetFileAttributesW((at + L"\\bin").c_str());
+			return content != INVALID_FILE_ATTRIBUTES && (content & FILE_ATTRIBUTE_DIRECTORY) && bin != INVALID_FILE_ATTRIBUTES && (bin & FILE_ATTRIBUTE_DIRECTORY);
+		};
+		// Up from a file until a folder holding both content and bin
+		const auto upFrom = [&](const wchar_t* file) -> std::wstring
+		{
+			std::wstring at = file;
+			for (size_t slash = at.find_last_of(L'\\'); slash != std::wstring::npos; slash = at.find_last_of(L'\\'))
+			{
+				at.resize(slash);
+				if (isGame(at))
+					return at;
+			}
+			return {};
+		};
+		wchar_t path[MAX_PATH] = L"";
+		GetModuleFileNameW(nullptr, path, MAX_PATH);   // witcher3.exe, in bin\x64_dx12
+		std::wstring folder = upFrom(path);
+		if (folder.empty())
+		{
+			HMODULE self = nullptr;
+			GetModuleHandleExW(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS | GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT, reinterpret_cast<LPCWSTR>(&StartThread), &self);
+			GetModuleFileNameW(self, path, MAX_PATH);
+			folder = upFrom(path);
+		}
+		const std::string narrow(folder.begin(), folder.end());
+		Log("the game's folder: %s", folder.empty() ? "not found" : narrow.c_str());
+		return folder;
+	}();
+	return found;
+}
+
+std::wstring ModFolder()
+{
+	static const std::wstring found = []
+	{
+		const std::wstring mods = GameFolder() + L"\\mods\\";
+		const auto isPotP = [&](const std::wstring& name)
+		{
+			return GetFileAttributesW((mods + name + L"\\achievements.dat").c_str()) != INVALID_FILE_ATTRIBUTES
+				&& GetFileAttributesW((mods + name + L"\\fonts\\Cinzel.ttf").c_str()) != INVALID_FILE_ATTRIBUTES;
+		};
+		std::wstring name = isPotP(L"modProgressOnThePathNG") ? L"modProgressOnThePathNG" : L"";
+		if (name.empty())
+		{
+			WIN32_FIND_DATAW item;
+			const HANDLE find = FindFirstFileW((mods + L"*").c_str(), &item);
+			if (find != INVALID_HANDLE_VALUE)
+			{
+				do
+				{
+					if ((item.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) && item.cFileName[0] != L'.' && isPotP(item.cFileName))
+					{
+						name = item.cFileName;
+						break;
+					}
+				} while (FindNextFileW(find, &item));
+				FindClose(find);
+			}
+		}
+		const std::string narrow(name.begin(), name.end());
+		Log("PotP's mod folder: %s", name.empty() ? "not found" : narrow.c_str());
+		return name.empty() ? std::wstring() : mods + name;
+	}();
+	return found;
+}
+
 static DWORD WINAPI StartThread(void*)
 {
 	Log("start thread running");
 	LoadSettings();
-	// The icons' tables, without holding anything else up. bin\\x64_dx12\\this.asi -> the game's folder.
+	// The icons' tables, without holding anything else up
 	CreateThread(nullptr, 0, [](void*) -> DWORD
 	{
 		wchar_t folder[MAX_PATH] = L"";
 #ifdef POTP_OVERLAY_TEST
 		if (GetEnvironmentVariableW(L"POTP_OVERLAY_GAME", folder, MAX_PATH) == 0)
 #endif
-		{
-			HMODULE self = nullptr;
-			GetModuleHandleExW(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS | GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT, reinterpret_cast<LPCWSTR>(&StartThread), &self);
-			GetModuleFileNameW(self, folder, MAX_PATH);
-			for (int up = 0; up < 3; ++up)
-				if (wchar_t* slash = wcsrchr(folder, L'\\'))
-					*slash = 0;
-		}
+			wcsncpy_s(folder, GameFolder().c_str(), _TRUNCATE);
 		BuildGameIconIndex(folder);
 		BuildCardArt(folder);
 		LoadAchievementPack(folder);
