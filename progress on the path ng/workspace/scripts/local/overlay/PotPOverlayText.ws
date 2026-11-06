@@ -460,6 +460,10 @@ function PotPOverlay_TextKeys_2(out keys: array<string>)
 	keys.PushBack("colour_new");
 	keys.PushBack("colour_default");
 	keys.PushBack("key_arrows");
+	keys.PushBack("kill_sum_unique_one");
+	keys.PushBack("kill_sum_generic_one");
+	keys.PushBack("kill_sum_total");
+	keys.PushBack("kill_sum_total_one");
 }
 
 function PotPOverlay_ExportText() : string

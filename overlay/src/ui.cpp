@@ -1681,10 +1681,15 @@ namespace
 				}
 				if (Clicked(a, b))
 					on = i;
-				TextFit(kSerif, 30, x0 + 18, y + 6, Rgb(250, 242, 220), KillName(row), nameW);
-				TextFit(kSans, 22, x0 + 18, y + 44, kGoldHi, KillWhy(row), nameW);
-				TextFit(kSerif, 28, lastX, y + 6, sel ? Rgb(250, 242, 220) : kText, KillLine(row, m), lastW);
-				TextFit(kSerif, 24, lastX, y + 42, sel ? Rgb(214, 200, 170) : kDim, KillHow(row), lastW);
+				// Each column's line with what's under it, or on its own in the middle of the row when nothing is
+				const std::string why = KillWhy(row), how = KillHow(row);
+				const auto alone = [&](int size) { return y + (rowH - Measure(kSerif, size, "H").y) * 0.5f; };
+				TextFit(kSerif, 30, x0 + 18, why.empty() ? alone(30) : y + 6, Rgb(250, 242, 220), KillName(row), nameW);
+				if (!why.empty())
+					TextFit(kSans, 22, x0 + 18, y + 44, kGoldHi, why, nameW);
+				TextFit(kSerif, 28, lastX, how.empty() ? alone(28) : y + 6, sel ? Rgb(250, 242, 220) : kText, KillLine(row, m), lastW);
+				if (!how.empty())
+					TextFit(kSerif, 24, lastX, y + 42, sel ? Rgb(214, 200, 170) : kDim, how, lastW);
 				if (generic && allKills > 0)
 				{
 					const ImVec2 ba(shareX, y + rowH * 0.5f - 7), bb(shareX + shareW, y + rowH * 0.5f + 7);
@@ -1700,9 +1705,10 @@ namespace
 		}
 
 		// How it stands
-		const std::string total = std::to_string(allKills);
-		const std::string kinds = std::to_string(pageKinds);
-		Text(kSerif, 26, x0 + 18, listBottom + 10, kDim, TxFill(generic ? T_kill_sum_generic : T_kill_sum_unique, kinds, total).c_str());
+		// Two sentences, each with its own word for one and for more
+		const TextId kindsText = generic ? (pageKinds == 1 ? T_kill_sum_generic_one : T_kill_sum_generic) : (pageKinds == 1 ? T_kill_sum_unique_one : T_kill_sum_unique);
+		const std::string summary = TxFill(kindsText, std::to_string(pageKinds)) + " " + TxFill(allKills == 1 ? T_kill_sum_total_one : T_kill_sum_total, std::to_string(allKills));
+		Text(kSerif, 26, x0 + 18, listBottom + 10, kDim, summary.c_str());
 		if (generic && g_killKind >= 0)
 			TextRight(kSerif, 26, x1 - 18, listBottom + 10, kGoldHi, KillCategory(g_killKind));
 	}

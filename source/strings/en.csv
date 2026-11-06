@@ -1116,8 +1116,8 @@
 2116569044||potp_ov_kill_why_boss|Boss
 2116569045||potp_ov_kill_why_contract|Contract
 2116569046||potp_ov_kill_why_named|Named foe
-2116569047||potp_ov_kill_sum_unique|[1] unique foes slain. [2] kills in all.
-2116569048||potp_ov_kill_sum_generic|[1] kinds slain. [2] kills in all.
+2116569047||potp_ov_kill_sum_unique|[1] unique foes slain.
+2116569048||potp_ov_kill_sum_generic|[1] kinds slain.
 2116569049||potp_ov_kill_none_unique|No unique foe has fallen yet
 2116569050||potp_ov_kill_none_generic|Nothing has been slain yet
 2116569051||potp_ov_kill_none_kind|Nothing of this kind has been slain yet
@@ -1304,6 +1304,10 @@
 2116569232||potp_ov_colour_new|New
 2116569233||potp_ov_colour_default|Default
 2116569234||potp_ov_key_arrows|Arrows
+2116569235||potp_ov_kill_sum_unique_one|[1] unique foe slain.
+2116569236||potp_ov_kill_sum_generic_one|[1] kind slain.
+2116569237||potp_ov_kill_sum_total|[1] kills in all.
+2116569238||potp_ov_kill_sum_total_one|[1] kill in all.
 ;overlay-text-end
 ;
-; Next id: 2116569235
+; Next id: 2116569239

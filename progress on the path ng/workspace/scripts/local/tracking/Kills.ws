@@ -193,9 +193,15 @@ function PotP_KillHow(action: W3DamageAction, charmed: bool) : string
 			}
 			return inv.GetItemLocalizedNameByUniqueID(item);
 		}
-		return "#fists";
 	}
-	return "";
+
+	// A finisher, a counter or any other blow the game deals itself names no weapon: the sword in his hand did it
+	item = inv.GetCurrentlyHeldSword();
+	if (inv.IsIdValid(item))
+	{
+		return inv.GetItemLocalizedNameByUniqueID(item);
+	}
+	return "#fists";
 }
 
 @addMethod(W3Petard) function PotP_ItemName() : name
