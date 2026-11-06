@@ -8,6 +8,12 @@ https://www.nexusmods.com/witcher3/mods/12997
 Shared Utils is used for the event map pins, so make sure it is installed and up
 to date.
 
+This mod also requires 'Native Quest Hook'.
+https://github.com/Faen668/NativeQuestHook/releases
+
+Native Quest Hook tells Progress on the Path when the game's random events start
+and finish. Without it, events are not tracked.
+
 //--------------------------------------------------------
 //-------------------- Installation ----------------------
 //--------------------------------------------------------
@@ -21,7 +27,11 @@ to date.
 
    The window needs the DirectX 12 version of the game.
 
-2. Load a save. That's it!
+2. Install Native Quest Hook: unzip it into the same Witcher 3 directory. It adds
+   'bin\x64_dx12\NativeQuestHook.asi' and 'mods\modNativeQuestHook'. It doesn't
+   include 'dinput8.dll': the one from step 1 loads it.
+
+3. Load a save. That's it!
 
 Progress on the Path's settings are all in the window's Settings tab, and are kept
 in 'bin\x64_dx12\potp_overlay.ini', so there is no need to edit any settings files.
@@ -51,7 +61,8 @@ that change the random event quests.
    Version 7.0 has no settings menu file: its settings are in the window, and the
    ones you had are carried over the first time it starts.
 
-4. Copy the 'mods' and 'bin' folders over as normal, then load your save.
+4. Copy the 'mods' and 'bin' folders over as normal, install Native Quest Hook,
+   then load your save.
 
 Your progress carries over: quests, map locations and Gwent cards are read
 straight from your save, and collected items and finished events from 6.x are
@@ -138,6 +149,12 @@ Nothing is being tracked
 - The tracker starts after the prologue. Give it a few seconds after loading a
   save, or press the Full Update key.
 - Run pt_reload() from the console to rebuild it.
+
+Random events are never marked as finished
+- Check that 'NativeQuestHook.asi' is in 'bin\x64_dx12' and 'modNativeQuestHook'
+  is in 'mods'.
+- 'bin\x64_dx12\NativeQuestHook.log' says whether it started, and why not if it
+  didn't.
 
 Event map pins are missing
 - Check 'Show Map Pins' in General Settings. Pins only appear for events you
