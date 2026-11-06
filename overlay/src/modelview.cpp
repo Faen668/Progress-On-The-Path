@@ -319,11 +319,19 @@ cbuffer View : register(b0)
 	row_major float4x4 world;
 	float4 projection;
 	float4 eyeAndMask;   // z: how far back the eye is
-	float4 pose;         // x: seconds since the burst began, y: how big it is, in metres
+	float4 pose;         // x: seconds since the burst began, y: how big it is, in metres, z: how many puffs there are
 	float4 fromPose;     // xyz: where its feet are, as the model has it
 };
 
-struct Out { float4 h : SV_Position; float2 uv : TEXCOORD0; float alpha : TEXCOORD1; float seed : TEXCOORD2; };
+struct Out
+{
+	float4 h : SV_Position;
+	float2 uv : TEXCOORD0;
+	float alpha : TEXCOORD1;
+	float seed : TEXCOORD2;
+	float age : TEXCOORD3;     // how far through its life the puff is
+	float dense : TEXCOORD4;   // 1 the thick ring along the ground, 0 the column rising from it
+};
 
 float Hash(float n) { return frac(sin(n * 12.9898f) * 43758.5453f); }
 
@@ -331,32 +339,40 @@ Out VS(uint vertex : SV_VertexID, uint puff : SV_InstanceID)
 {
 	Out o;
 	const float n = puff + 1;
-	const float angle = Hash(n) * 6.2831853f, reach = sqrt(Hash(n + 17.1f)), delay = Hash(n + 3.7f) * 0.45f;
-	const float life = 2.4f + Hash(n + 9.3f) * 1.0f;
-	const float u = (pose.x - delay) / life;   // how far through its life this puff is
 	const float size = pose.y;
+	// The first share are the ring the blast throws out along the ground; the rest the column that billows up after it
+	const bool ring = puff < (uint)(pose.z * 0.55f);
+	const float angle = Hash(n) * 6.2831853f, reach = sqrt(Hash(n + 17.1f));
+	const float delay = ring ? Hash(n + 3.7f) * 0.2f : 0.05f + Hash(n + 3.7f) * 0.35f;
+	const float life = ring ? 2.0f + Hash(n + 9.3f) * 0.9f : 2.2f + Hash(n + 9.3f) * 0.9f;
+	const float u = (pose.x - delay) / life;
 	const float2 corners[6] = { float2(-1, -1), float2(1, -1), float2(1, 1), float2(-1, -1), float2(1, 1), float2(-1, 1) };
 	const float2 corner = corners[vertex];
 	o.uv = corner;
 	o.seed = Hash(n + 31.3f);
+	o.age = saturate(u);
+	o.dense = ring ? 1 : 0;
 	if (u <= 0 || u >= 1)
 	{
 		o.h = float4(0, 0, -1, 1);   // not yet, or gone: behind the near plane
 		o.alpha = 0;
 		return o;
 	}
-	// Out along the ground from the feet, slowing, and rising as it goes
-	const float spread = reach * size * (0.15f + 0.55f * sqrt(u));
-	float3 at = fromPose.xyz + float3(cos(angle) * spread, sin(angle) * spread, size * (0.05f + Hash(n + 5.1f) * 0.45f + 0.95f * pow(u, 1.3f)));
+	// The ring rushes out fast and slows, low to the ground; the column spreads a little and climbs
+	const float burst = 1 - pow(1 - u, 3);
+	const float spread = ring ? reach * size * (0.1f + 0.85f * burst) : reach * size * (0.05f + 0.35f * sqrt(u));
+	const float height = ring ? size * (0.03f + Hash(n + 5.1f) * 0.12f + 0.18f * u) : size * (0.12f + Hash(n + 5.1f) * 0.5f + 0.9f * pow(u, 0.9f));
+	const float3 at = fromPose.xyz + float3(cos(angle) * spread, sin(angle) * spread, height);
 	const float3 view = mul(float4(at, 1), world).xyz;
-	const float radius = size * (0.17f + 0.3f * sqrt(u)) * (0.7f + 0.6f * Hash(n + 13.7f));
-	const float turn = Hash(n + 21.9f) * 6.2831853f + u * (Hash(n + 2.2f) - 0.5f) * 2;
+	const float grow = ring ? 0.12f + 0.22f * burst : 0.2f + 0.26f * sqrt(u);
+	const float radius = size * grow * (0.75f + 0.5f * Hash(n + 13.7f));
+	const float turn = Hash(n + 21.9f) * 6.2831853f + u * (Hash(n + 2.2f) - 0.5f) * 2.5f;
 	const float2 spun = float2(corner.x * cos(turn) - corner.y * sin(turn), corner.x * sin(turn) + corner.y * cos(turn));
 	const float3 placed = view + float3(spun * radius, 0);
 	const float z = placed.z + eyeAndMask.z;
 	o.h = float4(placed.x * projection.x, placed.y * projection.y, z * projection.z + projection.w, z);
-	// Thick as it bursts, thinning slowly
-	o.alpha = smoothstep(0, 0.06f, u) * (1 - smoothstep(0.45f, 1, u));
+	// Thick as it bursts, thinning slowly; the column thinner than the ring
+	o.alpha = smoothstep(0, ring ? 0.04f : 0.1f, u) * (1 - smoothstep(ring ? 0.3f : 0.3f, ring ? 1 : 0.85f, u));
 	return o;
 }
 
@@ -366,19 +382,43 @@ float Noise2(float2 x)
 	const float2 c = floor(x), f = frac(x), u = f * f * (3 - 2 * f);
 	return lerp(lerp(Hash2(c), Hash2(c + float2(1, 0)), u.x), lerp(Hash2(c + float2(0, 1)), Hash2(c + float2(1, 1)), u.x), u.y);
 }
+// Fractal noise: the same noise at finer and finer scales, each fainter, which is what makes billows and wisps
+float Fbm(float2 p)
+{
+	float sum = 0, amp = 0.5f;
+	for (int k = 0; k < 5; ++k)
+	{
+		sum += Noise2(p) * amp;
+		p = float2(p.x * 1.7f - p.y * 1.1f, p.x * 1.1f + p.y * 1.7f) + 3.1f;   // turned as well as scaled, so no grid shows
+		amp *= 0.5f;
+	}
+	return sum;
+}
 
 float4 PS(Out i) : SV_Target
 {
-	const float d = length(i.uv);
-	if (d >= 1 || i.alpha <= 0)
+	const float r2 = dot(i.uv, i.uv);
+	if (r2 >= 1 || i.alpha <= 0)
 		discard;
-	// A soft round puff, broken up so it reads as smoke and not a disc
-	const float2 q = i.uv * 2.2f + i.seed * 40;
-	const float billow = Noise2(q) * 0.6f + Noise2(q * 2.3f) * 0.4f;
-	const float body = saturate(pow(saturate(1 - d), 1.2f) * saturate(billow * 2.4f - 0.55f) * 1.7f);
-	const float lit = 0.75f + 0.25f * saturate(0.5f - i.uv.y * 0.5f);   // a little lighter where it catches the light above
-	const float3 colour = float3(0.42f, 0.4f, 0.38f) * lerp(0.62f, 1.1f, i.seed) * lit;   // each puff its own shade
-	return float4(colour, body * i.alpha);
+	// Folded into itself (noise moved by noise), and churning as it ages, so it billows rather than sits
+	const float2 q = i.uv * 1.7f + i.seed * 37;
+	const float churn = i.age * 1.6f;
+	const float2 warp = float2(Fbm(q + float2(churn, 0)), Fbm(q + float2(5.2f, 1.3f - churn)));
+	const float billow = Fbm(q + warp * 1.9f);
+	// Dense in the middle, ragged at the edge: the noise cuts into it more the further out it is
+	const float edge = sqrt(r2);
+	const float density = saturate((billow - 0.3f + (1 - edge) * 0.6f) * 2.6f) * (1 - smoothstep(0.7f, 1, edge));
+	if (density <= 0.002f)
+		discard;
+	// Lit as a lump of smoke: its rounded face toward the light above is pale, its underside and the gaps between dark
+	const float3 normal = normalize(float3(i.uv.x + (warp.x - 0.5f) * 0.9f, i.uv.y + (warp.y - 0.5f) * 0.9f, sqrt(1 - r2) + 0.25f));
+	const float light = saturate(dot(normal, normalize(float3(-0.45f, 0.75f, 0.5f))));
+	const float shade = lerp(0.3f, 1, light) * lerp(0.75f, 1.05f, billow) * lerp(0.8f, 1.12f, i.seed);
+	// The ring is the dust the blast kicks up, browner and darker; the column greyer and lighter
+	const float3 dark = lerp(float3(0.11f, 0.1f, 0.09f), float3(0.14f, 0.13f, 0.13f), 1 - i.dense);
+	const float3 pale = lerp(float3(0.5f, 0.45f, 0.39f), float3(0.62f, 0.6f, 0.58f), 1 - i.dense);
+	const float3 colour = lerp(dark, pale, shade);
+	return float4(colour, saturate(density * 1.35f) * i.alpha);
 }
 )";
 
@@ -482,6 +522,18 @@ float4 PS(Out i) : SV_Target
 	std::vector<uint8_t> g_fitForm;     // a two-form creature's: which form each of those points is
 	float g_formCentre[2][3] = {};      // and each form's middle, as the camera moves from one to the other
 	float g_formFeet[3] = {}, g_formSize = 1.f;   // where its smoke bursts from, and how big the bigger form is
+
+	// How far into a two-form creature's loop it is. The off-screen test can hold it at a moment (POTP_FORM_AT, seconds),
+	// to see the smoke and the change as they are then.
+	float FormSeconds()
+	{
+		const float seconds = std::chrono::duration<float>(std::chrono::steady_clock::now() - g_boneStart).count();
+#ifdef POTP_OVERLAY_TEST
+		if (const char* at = getenv("POTP_FORM_AT"))
+			return static_cast<float>(atof(at));
+#endif
+		return seconds;
+	}
 	float g_fitEye = -1.f;   // how far back the camera is now, easing to what the angle needs; -1 for at once
 	std::chrono::steady_clock::time_point g_fitLast{};
 	float g_zoom = 1.f;
@@ -1248,7 +1300,7 @@ bool ModelViewFormClock(int& phase, float& seconds)
 {
 	if (g_state != kModelReady || g_formTimes[3] <= 0.f)
 		return false;
-	const float t = fmodf(std::chrono::duration<float>(std::chrono::steady_clock::now() - g_boneStart).count(), g_formTimes[3]);
+	const float t = fmodf(FormSeconds(), g_formTimes[3]);
 	const float hold = g_formTimes[0], change = g_formTimes[1], second = g_formTimes[2];
 	if (t < hold) { phase = 0; seconds = hold - t; }
 	else if (t < hold + change) { phase = 1; seconds = hold + change - t; }
@@ -1396,7 +1448,7 @@ void ModelViewRender(ID3D12GraphicsCommandList* list)
 	// How far a two-form creature has turned, by where its loop is: the first, changing, the second, changing back
 	if (g_formTimes[3] > 0.f)
 	{
-		const float t = fmodf(std::chrono::duration<float>(std::chrono::steady_clock::now() - g_boneStart).count(), g_formTimes[3]);
+		const float t = fmodf(FormSeconds(), g_formTimes[3]);
 		const float hold = g_formTimes[0], change = std::max(0.01f, g_formTimes[1]), second = g_formTimes[2];
 		c.eyeAndMask[1] = t < hold ? 0.f : t < hold + change ? (t - hold) / change : t < hold + change + second ? 1.f : std::max(0.f, 1.f - (t - hold - change - second) / change);
 	}
@@ -1539,19 +1591,21 @@ void ModelViewRender(ID3D12GraphicsCommandList* list)
 	if (g_smokePipeline && g_formTimes[3] > 0.f)
 	{
 		const float cycle = g_formTimes[3];
-		const float t = fmodf(std::chrono::duration<float>(std::chrono::steady_clock::now() - g_boneStart).count(), cycle);
+		const float t = fmodf(FormSeconds(), cycle);
 		float since = FLT_MAX;
 		for (const float start : { g_formTimes[0] - 0.35f, g_formTimes[0] + g_formTimes[1] + g_formTimes[2] - 0.35f })
 			since = std::min(since, fmodf(t - start + cycle * 2.f, cycle));
 		if (since < 4.f)
 		{
 			Constants smoke = c;
+			constexpr UINT kPuffs = 260;
 			smoke.pose[0] = since;
 			smoke.pose[1] = g_formSize;
+			smoke.pose[2] = static_cast<float>(kPuffs);
 			memcpy(smoke.fromPose, g_formFeet, sizeof(g_formFeet));
 			list->SetPipelineState(g_smokePipeline);
 			list->SetGraphicsRoot32BitConstants(0, sizeof(Constants) / 4, &smoke, 0);
-			list->DrawInstanced(6, 170, 0, 0);
+			list->DrawInstanced(6, kPuffs, 0, 0);
 		}
 	}
 
