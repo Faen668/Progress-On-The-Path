@@ -2,7 +2,9 @@
 // decides what's unlocked (customach.cpp). This only does what it can't:
 //   - it's told once what to look at: potpach_begin, a potpach_probe for each thing, a potpach_define for each
 //     achievement with a potpach_reward for each part of its reward, then potpach_end
-//   - PotPAch_Answer: what each probe says now, V|generation|count|value|value... (a section answers done:total)
+//   - PotPAch_Answer: what each probe says now, V|generation|count|language|value|value... (a section answers done:total)
+//   - PotPAch_RewardNames: the reward items' names in the game's language, in the order they were told
+//   - potpach_text, PotPAch_Texts: the packs' own .w3strings keys, and their text in the game's language
 //   - potpach_unlock: sets the achievement's fact to the date, which keeps the unlock in the save, and gives its reward
 //   - potpach_seen: for one that only counts from now on, whether it was already met when this save first saw it
 // Text comes over with every character but letters and digits as _ and two hex digits: see PotPAch_Decode.
@@ -55,6 +57,7 @@ class CPotPAch_Store
 	public var ready		: bool;
 	public var probes		: array<CPotPAch_Probe>;
 	public var defs			: array<CPotPAch_Def>;
+	public var text_keys	: array<string>;
 	public var player		: CR4Player;
 	public var answers		: int;
 }
@@ -159,7 +162,17 @@ exec function potpach_reward(kind: int, amount: int, item: name)
 	store.defs[store.defs.Size() - 1].rewards.PushBack(prize);
 }
 
-exec function potpach_end(generation: int, probes: int, defs: int)
+exec function potpach_text(key: string)
+{
+	var store : CPotPAch_Store = theGame.potp_ach;
+
+	if (store)
+	{
+		store.text_keys.PushBack(PotPAch_Decode(key));
+	}
+}
+
+exec function potpach_end(generation: int, probes: int, defs: int, texts: int)
 {
 	var store : CPotPAch_Store = theGame.potp_ach;
 
@@ -167,7 +180,7 @@ exec function potpach_end(generation: int, probes: int, defs: int)
 	{
 		return;
 	}
-	store.ready = store.generation == generation && store.probes.Size() == probes && store.defs.Size() == defs;
+	store.ready = store.generation == generation && store.probes.Size() == probes && store.defs.Size() == defs && store.text_keys.Size() == texts;
 	store.player = NULL;
 	PotP_Log("Custom achievements: " + defs + " achievements and " + probes + " probes, ready " + store.ready, 'Achievements');
 }
@@ -316,6 +329,33 @@ function PotPAch_SectionValue(probe: CPotPAch_Probe) : string
 	return IntToString(done) + ":" + IntToString(probe.section.Size());
 }
 
+// How many he has: in his inventory, in the stash, or both. The stash is the horse's inventory, as PotP's own item
+// tracking reads it, and what the horse has on counts as in it.
+function PotPAch_ItemCount(probe: CPotPAch_Probe) : int
+{
+	var horse	: W3HorseManager;
+	var stashed	: int;
+	var carried	: int;
+
+	if (probe.key != "stash")
+	{
+		carried = thePlayer.GetInventory().GetItemQuantityByName(probe.item);
+	}
+	if (probe.key != "inventory")
+	{
+		horse = GetWitcherPlayer().GetHorseManager();
+		if (horse)
+		{
+			stashed = horse.GetInventoryComponent().GetItemQuantityByName(probe.item);
+			if (stashed == 0 && horse.IsItemEquippedByName(probe.item))
+			{
+				stashed = 1;
+			}
+		}
+	}
+	return carried + stashed;
+}
+
 function PotPAch_ProbeValue(probe: CPotPAch_Probe) : string
 {
 	switch (probe.kind)
@@ -324,7 +364,7 @@ function PotPAch_ProbeValue(probe: CPotPAch_Probe) : string
 	case "B":	return IntToString(FactsQuerySum("potp_achqb." + probe.key));
 	case "Q":	return PotPAch_QuestValue(probe);
 	case "K":	return PotPAch_KillsValue(probe);
-	case "I":	return IntToString(thePlayer.GetInventory().GetItemQuantityByName(probe.item));
+	case "I":	return IntToString(PotPAch_ItemCount(probe));
 	case "L":	return IntToString(thePlayer.GetLevel());
 	case "C":	return IntToString(thePlayer.GetMoney());
 	case "E":	return PotPAch_EntryValue(probe);
@@ -336,8 +376,10 @@ function PotPAch_ProbeValue(probe: CPotPAch_Probe) : string
 // N: no save loaded. U: this list isn't here, so the overlay sends it.
 function PotPAch_Answer() : string
 {
-	var store	: CPotPAch_Store = theGame.potp_ach;
-	var result	: string;
+	var store		: CPotPAch_Store = theGame.potp_ach;
+	var audio		: string;
+	var subtitles	: string;
+	var result		: string;
 	var Idx		: int;
 
 	if (!thePlayer || !GetWitcherPlayer())
@@ -354,10 +396,78 @@ function PotPAch_Answer() : string
 		PotPAch_NewSession(store);
 	}
 	store.answers += 1;
-	result = "V|" + IntToString(store.generation) + "|" + IntToString(store.probes.Size());
+	theGame.GetGameLanguageName(audio, subtitles);
+	result = "V|" + IntToString(store.generation) + "|" + IntToString(store.probes.Size()) + "|" + StrLower(subtitles);
 	for (Idx = 0; Idx < store.probes.Size(); Idx += 1)
 	{
 		result += "|" + PotPAch_ProbeValue(store.probes[Idx]);
+	}
+	return result;
+}
+
+// The packs' keys in the mod's own .w3strings, in the game's language, separated by bars. Empty for one no .w3strings has.
+function PotPAch_Texts() : string
+{
+	var store	: CPotPAch_Store = theGame.potp_ach;
+	var result	: string;
+	var text	: string;
+	var Idx		: int;
+
+	if (!store || !store.ready)
+	{
+		return "";
+	}
+	for (Idx = 0; Idx < store.text_keys.Size(); Idx += 1)
+	{
+		text = GetLocStringByKeyExt(store.text_keys[Idx]);
+		if (StrStartsWith(text, "#"))
+		{
+			text = "";
+		}
+		if (Idx > 0)
+		{
+			result += "|";
+		}
+		result += StrReplaceAll(text, "|", "/");
+	}
+	return result;
+}
+
+// Each reward item's name as the game shows it, separated by bars
+function PotPAch_RewardNames() : string
+{
+	var store		: CPotPAch_Store = theGame.potp_ach;
+	var definitions	: CDefinitionsManagerAccessor = theGame.GetDefinitionsManager();
+	var result		: string;
+	var shown		: string;
+	var count		: int;
+	var Idx			: int;
+	var Other		: int;
+
+	if (!store || !store.ready)
+	{
+		return "";
+	}
+	for (Idx = 0; Idx < store.defs.Size(); Idx += 1)
+	{
+		for (Other = 0; Other < store.defs[Idx].rewards.Size(); Other += 1)
+		{
+			if (store.defs[Idx].rewards[Other].kind != 1)
+			{
+				continue;
+			}
+			shown = GetLocStringByKeyExt(definitions.GetItemLocalisationKeyName(store.defs[Idx].rewards[Other].item));
+			if (shown == "" || StrStartsWith(shown, "#"))
+			{
+				shown = NameToString(store.defs[Idx].rewards[Other].item);
+			}
+			if (count > 0)
+			{
+				result += "|";
+			}
+			count += 1;
+			result += StrReplaceAll(shown, "|", "/");
+		}
 	}
 	return result;
 }

@@ -11,9 +11,9 @@ find_package(imgui CONFIG REQUIRED)
 
 # An .asi: Ultimate ASI Loader (the dinput8.dll beside the game) loads every one it finds, so this
 # shares the game with other .asi mods instead of competing for the dinput8.dll name.
-add_library(PotpOverlay SHARED src/main.cpp src/d3d12_hook.cpp src/input_hook.cpp src/ui.cpp src/settings.cpp src/pad.cpp src/model.cpp src/engine.cpp src/scan.cpp src/gameicons.cpp src/cardart.cpp src/achievements.cpp src/customach.cpp src/kills.cpp src/cloth.cpp src/itemmodel.cpp src/modelview.cpp src/text.cpp src/log.cpp)
+add_library(PotpOverlay SHARED src/main.cpp src/d3d12_hook.cpp src/input_hook.cpp src/ui.cpp src/settings.cpp src/pad.cpp src/model.cpp src/engine.cpp src/scan.cpp src/gameicons.cpp src/cardart.cpp src/achievements.cpp src/customach.cpp src/achicons.cpp src/kills.cpp src/cloth.cpp src/itemmodel.cpp src/modelview.cpp src/text.cpp src/log.cpp)
 set_target_properties(PotpOverlay PROPERTIES SUFFIX ".asi")
-target_link_libraries(PotpOverlay PRIVATE imgui::imgui d3d12 dxgi dxguid psapi shell32 ole32 uuid xmllite shlwapi)
+target_link_libraries(PotpOverlay PRIVATE imgui::imgui d3d12 dxgi dxguid psapi shell32 ole32 uuid xmllite shlwapi windowscodecs)
 target_compile_options(PotpOverlay PRIVATE /W4 /utf-8 /permissive-)
 target_compile_definitions(PotpOverlay PRIVATE NOMINMAX WIN32_LEAN_AND_MEAN)
 

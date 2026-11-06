@@ -25,6 +25,7 @@ struct Achievement
 	bool custom = false;
 	int ring = 0;                     // 0 gold, 1 silver, 2 bronze, 3 none
 	std::string reward;               // what it gives, empty for nothing
+	std::string picture;              // builtin:<name>, game:<path in the game's files> or file:<full path>
 };
 
 struct AchievementList

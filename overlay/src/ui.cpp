@@ -18,6 +18,7 @@
 #include <set>
 #include <string>
 #include <vector>
+#include "achicons.h"
 #include "achievements.h"
 #include "customach.h"
 #include "log.h"
@@ -1755,6 +1756,8 @@ namespace
 		return &g_achievementsModel;
 	}
 
+	void AchievementPicture(const std::string& icon, ImVec2 at, float size, bool locked, ImU32 colour);
+
 	// The medal in place of a picture that would give a hidden one away
 	void AchievementIcon(const Entry& e, ImVec2 at, float size)
 	{
@@ -1777,15 +1780,17 @@ namespace
 			// locked pictures on Steam: near black at the edges, a dark maroon glow in the middle, the figure a muted rose.
 			const ImU32 kRings[4] = { kGold, Rgb(196, 202, 210), Rgb(198, 132, 84), kGoldDim };
 			const ImVec2 c(at.x + size * 0.5f, at.y + size * 0.5f);
-			if (a->unlocked)
-				Sign(6, c, size * 0.3f, kRings[std::clamp(a->ring, 0, 3)], std::max(1.5f, size * 0.03f));
-			else
+			if (!a->unlocked)
 			{
 				dl->AddRectFilled(at, to, Rgb(22, 8, 13));
 				for (int ring = 0; ring < 6; ++ring)   // stacked, so the middle is the brightest
 					dl->AddCircleFilled(c, size * (0.5f - ring * 0.07f), Rgb(70, 22, 34, 46), 40);
-				Sign(6, c, size * 0.3f, Rgb(128, 66, 74), std::max(1.5f, size * 0.03f));
 			}
+			// A hidden one keeps its picture back too
+			if (AchievementMasked(*a))
+				Sign(6, c, size * 0.3f, Rgb(128, 66, 74), std::max(1.5f, size * 0.03f));
+			else
+				AchievementPicture(a->picture, at, size, !a->unlocked, a->unlocked ? kRings[std::clamp(a->ring, 0, 3)] : Rgb(128, 66, 74));
 		}
 		else if (!a || !texture || AchievementMasked(*a))
 		{
@@ -2294,6 +2299,63 @@ namespace
 		}
 		const LoadedIcon& kept = icons[path] = icon;
 		return kept.texture ? &kept : nullptr;
+	}
+
+	// A picture a mod's pack brought with it, by its full path
+	const LoadedIcon* PackPicture(const std::string& path)
+	{
+		static std::map<std::string, LoadedIcon> pictures;
+		const auto found = pictures.find(path);
+		if (found != pictures.end())
+			return found->second.texture ? &found->second : nullptr;
+		LoadedIcon icon;   // remembered either way, so a broken one isn't read every frame
+		GameTexture pixels;
+		const int size = MultiByteToWideChar(CP_UTF8, 0, path.c_str(), -1, nullptr, 0);
+		std::wstring wide(static_cast<size_t>(size > 0 ? size - 1 : 0), L'\0');
+		if (size > 1)
+			MultiByteToWideChar(CP_UTF8, 0, path.c_str(), -1, wide.data(), size);
+		if (ReadPictureFile(wide, 256, pixels) && UploadIconTexture(pixels, icon.texture))
+		{
+			icon.w = static_cast<float>(pixels.width);
+			icon.h = static_cast<float>(pixels.height);
+		}
+		const LoadedIcon& kept = pictures[path] = icon;
+		return kept.texture ? &kept : nullptr;
+	}
+
+	// A mod's achievement's picture in a size by size box: one of PotP's own icons drawn as lines in colour, or a
+	// picture from the game or the pack, darkened to the locked red while it's locked. The trophy if it can't be had.
+	void AchievementPicture(const std::string& icon, ImVec2 at, float size, bool locked, ImU32 colour)
+	{
+		const LoadedIcon* picture = nullptr;
+		if (icon.rfind("game:", 0) == 0)
+			picture = GameIcon(icon.substr(5), 256);
+		else if (icon.rfind("file:", 0) == 0)
+			picture = PackPicture(icon.substr(5));
+		if (picture)
+		{
+			const float fit = size / std::max(picture->w, picture->h), w = picture->w * fit, h = picture->h * fit;
+			const ImVec2 a(at.x + (size - w) * 0.5f, at.y + (size - h) * 0.5f);
+			dl->AddImage(static_cast<ImTextureID>(picture->texture), a, ImVec2(a.x + w, a.y + h), ImVec2(0, 0), ImVec2(1, 1),
+				locked ? Rgb(150, 86, 94, 200) : Rgb(255, 255, 255));
+			return;
+		}
+		const std::vector<IconLine>* lines = BuiltinAchievementIcon(icon.rfind("builtin:", 0) == 0 ? icon.substr(8) : std::string());
+		if (!lines)
+			lines = BuiltinAchievementIcon("trophy");
+		if (!lines)
+			return;
+		const float scale = size * 0.62f / 24.f;
+		const ImVec2 origin(at.x + size * 0.5f - 12.f * scale, at.y + size * 0.5f - 12.f * scale);
+		const float thick = std::max(1.5f, size * 0.035f);
+		std::vector<ImVec2> points;
+		for (const IconLine& line : *lines)
+		{
+			points.clear();
+			for (size_t i = 0; i + 1 < line.points.size(); i += 2)
+				points.emplace_back(origin.x + line.points[i] * scale, origin.y + line.points[i + 1] * scale);
+			dl->AddPolyline(points.data(), static_cast<int>(points.size()), colour, line.closed ? ImDrawFlags_Closed : ImDrawFlags_None, thick);
+		}
 	}
 
 	// A Gwent card as a thing you can turn over, built as the game's menu builds it (CardSlot.as) from the same
@@ -3864,6 +3926,9 @@ namespace
 				note = list.storeName.empty() ? std::string(Tx(T_unlocked_from_game)) : TxFill(T_unlocked_from_game_on, list.storeName);
 			else
 				note = Tx(T_waiting_for_unlocks);
+			// A mod's pack that couldn't be read in full: said here, so its author knows to look at the log
+			if (g_customFrom && g_customFrom->problems > 0)
+				note += " " + TxFill(T_custom_problems, std::to_string(g_customFrom->problems));
 			const float noteW = rb.x - ra.x - 60;
 			const float noteH = WrappedHeight(kSans, 22, note.c_str(), noteW);
 			if (ry + noteH + 14 <= rb.y)
@@ -4178,7 +4243,8 @@ namespace
 	struct PopupLine { int group = 0; bool complete = false, inProgress = false; std::string icon, text; };
 	struct PopupMessage
 	{
-		std::string herald;   // the banner, and what for: event, update, install, ngplus, content
+		std::string herald;   // the banner, and what for: event, update, install, ngplus, content, achievement
+		std::string icon;     // an achievement's picture, as AchievementPicture takes it
 		float seconds = 7.f;
 		int fontSize = 18, colour = 1, done = 0, total = 0, more = 0;
 		std::vector<PopupLine> lines;
@@ -4296,6 +4362,8 @@ namespace
 				}
 				else if (m.herald == "achievement")
 				{
+					if (f.size() >= 6)
+						m.icon = f[5];
 					m.body = ParseMessageBody(below);   // a mod's achievement: its title stays, its description and reward below
 				}
 				else
@@ -4649,7 +4717,10 @@ namespace
 		const ImVec2 c(cx, bandTop + 2.f);
 		dl->AddCircleFilled(c, 38.f, Rgb(10, 8, 6), 40);
 		dl->AddCircle(c, 38.f, line, 40, 2.5f);
-		Sign(achievement ? 6 : 0, c, 21.f, line, 2.5f);   // 6: the medal the Achievements tab uses
+		if (achievement && !m.icon.empty())
+			AchievementPicture(m.icon, ImVec2(c.x - 27.f, c.y - 27.f), 54.f, false, line);   // its own picture
+		else
+			Sign(achievement ? 6 : 0, c, 21.f, line, 2.5f);   // 6: the medal the Achievements tab uses
 
 		TextCentre(kTitle, 22, cx, 92.f, kicker, what);
 		const float headX = cx - std::min(headW, textW) * 0.5f;

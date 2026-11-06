@@ -17,6 +17,7 @@
 #include <map>
 #include <mutex>
 #include <set>
+#include "achicons.h"
 #include "customach.h"
 #include "log.h"
 #include "overlay.h"
@@ -36,6 +37,17 @@ namespace
 		std::string out(static_cast<size_t>(size > 0 ? size - 1 : 0), '\0');
 		if (size > 1)
 			WideCharToMultiByte(CP_UTF8, 0, text, -1, out.data(), size, nullptr, nullptr);
+		return out;
+	}
+
+	std::wstring Wide(const std::string& text)
+	{
+		if (text.empty())
+			return {};
+		const int size = MultiByteToWideChar(CP_UTF8, 0, text.c_str(), -1, nullptr, 0);
+		std::wstring out(static_cast<size_t>(size > 0 ? size - 1 : 0), L'\0');
+		if (size > 1)
+			MultiByteToWideChar(CP_UTF8, 0, text.c_str(), -1, out.data(), size);
 		return out;
 	}
 
@@ -176,11 +188,40 @@ namespace
 		int kind = 0;   // 0 crowns, 1 an item, 2 experience: the scripts use the same numbers
 		int amount = 0;
 		std::string item;
+		std::string display;   // an item's name in the game's language, once the scripts have said
+	};
+
+	// A title or description in each language the pack has. The game's own language codes: en, pl, de...
+	// Or a key into the mod's own .w3strings, which the scripts look up in the game's language: then the texts
+	// written in the file are only for when the key can't be found
+	struct Localised
+	{
+		std::vector<std::pair<std::string, std::string>> texts;   // language ("" for none), text
+		std::string key;
+		std::string looked;   // the key's text, as the scripts last said: empty when it isn't in any .w3strings
+
+		// The key's text, else the game's language, else the one with no language, else English, else the first,
+		// else the key itself, so a missing string shows what's missing
+		std::string Pick(const std::string& language) const
+		{
+			if (!looked.empty())
+				return looked;
+			for (const char* want : { language.c_str(), "", "en" })
+				for (const auto& [lang, text] : texts)
+					if (lang == want && !text.empty())
+						return text;
+			for (const auto& [lang, text] : texts)
+				if (!text.empty())
+					return text;
+			return key;
+		}
 	};
 
 	struct CustomAch
 	{
-		std::string pack, id, full, title, description;
+		std::string pack, id, full;
+		Localised title, description;
+		std::string icon = "builtin:trophy";   // a file's made into a full path
 		int ring = 0;
 		bool hidden = false, retroactive = true;
 		Condition unlock;
@@ -199,7 +240,8 @@ namespace
 
 	struct Pack
 	{
-		std::string id, title;
+		std::string id;
+		Localised title;
 		std::vector<size_t> items;   // into g_achievements
 	};
 
@@ -219,6 +261,10 @@ namespace
 	int g_problems = 0;
 	int g_generation = 0;
 	std::atomic<bool> g_loaded{ false };
+	std::string g_language = "en";   // the game's, as the scripts last said
+	bool g_namesAsked = false;        // the items' names in that language
+	std::wstring g_gameFolder;
+	std::wstring g_packsSeen;         // each pack's path, time and size, to tell when one changes
 
 	std::mutex g_viewMutex;
 	std::shared_ptr<const CustomAchievementList> g_view;
@@ -396,11 +442,14 @@ namespace
 			}
 			else if (n == "item" || n == "gwentCard")
 			{
-				// Gwent cards are items in the inventory too. The stash isn't read yet: see the schema's open questions.
+				// Gwent cards are items in the inventory too. Where: inventory, the stash (the horse's inventory, as
+				// PotP's own item tracking reads it), or either, counted together
 				c.kind = Kind::Item;
 				Compare(node, c);
+				static const char* const kWhere[] = { "either", "inventory", "stash" };
+				const int place = Choice(node, "where", kWhere, 3, 0);
 				if (Text(node, "name", text))
-					c.probe = AddProbe('I', "", text);
+					c.probe = AddProbe('I', kWhere[place], text);
 			}
 			else if (n == "level" || n == "crowns")
 			{
@@ -446,24 +495,19 @@ namespace
 		}
 	};
 
-	// The text with no lang, else English, else the first
-	std::string PickText(const XNode& parent, const char* element)
+	Localised Collect(const XNode& parent, const char* element)
 	{
-		const XNode* english = nullptr;
-		const XNode* first = nullptr;
+		Localised out;
 		for (const XNode& kid : parent.kids)
-		{
-			if (kid.name != element)
-				continue;
-			const std::string* lang = kid.Attr("lang");
-			if (!lang)
-				return kid.text;
-			if (*lang == "en" && !english)
-				english = &kid;
-			if (!first)
-				first = &kid;
-		}
-		return english ? english->text : first ? first->text : std::string();
+			if (kid.name == element)
+			{
+				if (const std::string* key = kid.Attr("key"); key && out.key.empty())
+					out.key = *key;
+				const std::string* lang = kid.Attr("lang");
+				if (!kid.text.empty() || lang)
+					out.texts.emplace_back(lang ? *lang : std::string(), kid.text);
+			}
+		return out;
 	}
 
 	const Condition* FindRef(const Condition& c, const std::string& ref)
@@ -520,7 +564,7 @@ namespace
 		{
 			if (node.name == "about")
 			{
-				pack.title = PickText(node, "title");
+				pack.title = Collect(node, "title");
 			}
 			else if (node.name == "achievement")
 			{
@@ -535,11 +579,45 @@ namespace
 					r.Problem(node, "this id is used twice");
 				a.full = pack.id + "." + a.id;
 				a.ring = r.Choice(node, "ring", kRings, 4, 0);
+				if (const std::string* icon = node.Attr("icon"))
+				{
+					// A picture that can't be found falls back on the trophy: worth a line in the log, not losing the achievement
+					const auto fallBack = [&](const std::string& why)
+					{
+						Log("custom achievements: %s, %s: icon=\"%s\" %s, so it has the trophy", r.file.c_str(), a.id.c_str(), icon->c_str(), why.c_str());
+						++g_problems;
+					};
+					if (icon->rfind("builtin:", 0) == 0)
+					{
+						if (BuiltinAchievementIcon(icon->substr(8)))
+							a.icon = *icon;
+						else
+							fallBack("isn't one of PotP's icons");
+					}
+					else if (icon->rfind("game:", 0) == 0 && icon->size() > 5)
+					{
+						std::string inGame = icon->substr(5);
+						std::replace(inGame.begin(), inGame.end(), '\\', '/');
+						a.icon = "game:" + inGame;
+					}
+					else if (icon->rfind("file:", 0) == 0 && icon->size() > 5 && icon->find("..") == std::string::npos)
+					{
+						std::string relative = icon->substr(5);
+						std::replace(relative.begin(), relative.end(), '/', '\\');
+						const std::wstring full = path.substr(0, path.find_last_of(L'\\') + 1) + Wide(relative);
+						if (GetFileAttributesW(full.c_str()) != INVALID_FILE_ATTRIBUTES)
+							a.icon = "file:" + Utf8(full.c_str());
+						else
+							fallBack("isn't in the pack's folder");
+					}
+					else
+						fallBack("isn't builtin:, game: or file:");
+				}
 				a.hidden = r.Bool(node, "hidden", false);
 				a.retroactive = r.Bool(node, "retroactive", true);
-				a.title = PickText(node, "title");
-				a.description = PickText(node, "description");
-				if (a.title.empty())
+				a.title = Collect(node, "title");
+				a.description = Collect(node, "description");
+				if (a.title.Pick("en").empty())
 					r.Problem(node, "needs a title");
 
 				bool haveUnlock = false;
@@ -618,8 +696,8 @@ namespace
 				++g_problems;
 			}
 		}
-		if (pack.title.empty())
-			pack.title = pack.id;
+		if (pack.title.texts.empty())
+			pack.title.texts.emplace_back(std::string(), pack.id);
 		Log("custom achievements: %s: %zu achievements from pack %s", r.file.c_str(), pack.items.size(), pack.id.c_str());
 		if (!pack.items.empty())
 			g_packs.push_back(std::move(pack));
@@ -666,6 +744,21 @@ namespace
 	ULONGLONG g_nextAnswer = 0, g_queuedAt = 0;
 	bool g_live = false;
 
+	// Every text a pack gives as a .w3strings key, in a steady order: the scripts answer in the same one
+	std::vector<Localised*> KeyedTexts()
+	{
+		std::vector<Localised*> out;
+		const auto add = [&](Localised& text) { if (!text.key.empty()) out.push_back(&text); };
+		for (Pack& pack : g_packs)
+			add(pack.title);
+		for (CustomAch& a : g_achievements)
+		{
+			add(a.title);
+			add(a.description);
+		}
+		return out;
+	}
+
 	void QueueRegistration()
 	{
 		g_queue.clear();
@@ -679,7 +772,11 @@ namespace
 			for (const Reward& r : a.rewards)
 				g_queue.push_back("potpach_reward(" + std::to_string(r.kind) + ", " + std::to_string(r.amount) + ", " + (r.item.empty() ? std::string("None") : r.item) + ")");
 		}
-		g_queue.push_back("potpach_end(" + std::to_string(g_generation) + ", " + std::to_string(g_probes.size()) + ", " + std::to_string(g_achievements.size()) + ")");
+		std::vector<Localised*> keyed = KeyedTexts();
+		for (const Localised* text : keyed)
+			g_queue.push_back("potpach_text(" + Encode(text->key) + ")");
+		g_queue.push_back("potpach_end(" + std::to_string(g_generation) + ", " + std::to_string(g_probes.size()) + ", " + std::to_string(g_achievements.size())
+			+ ", " + std::to_string(keyed.size()) + ")");
 		Log("custom achievements: telling the scripts about %zu achievements and %zu probes", g_achievements.size(), g_probes.size());
 	}
 
@@ -807,11 +904,14 @@ namespace
 			if (!out.empty())
 				out += ", ";
 			if (r.kind == 0)
-				out += TxFill(T_custom_crowns, std::to_string(r.amount));
+				out += TxFill(r.amount == 1 ? T_custom_crown : T_custom_crowns, std::to_string(r.amount));
 			else if (r.kind == 2)
 				out += TxFill(T_custom_experience, std::to_string(r.amount));
 			else
-				out += TxFill(T_custom_item, std::to_string(r.amount), r.item);
+			{
+				const std::string& name = r.display.empty() ? r.item : r.display;
+				out += r.amount == 1 ? name : TxFill(T_custom_item, std::to_string(r.amount), name);
+			}
 		}
 		return out;
 	}
@@ -826,12 +926,12 @@ namespace
 
 	void Popup(const CustomAch& a)
 	{
-		std::string body = Clean(a.description);
+		std::string body = Clean(a.description.Pick(g_language));
 		const std::string reward = RewardText(a);
 		if (!reward.empty())
 			body += (body.empty() ? "" : "<br/>") + TxFill(T_custom_reward_line, Clean(reward));
 		// The herald banner, at the top of the screen
-		UiPushPopup("H|achievement|8|" + Clean(a.title) + "|" + body);
+		UiPushPopup("H|achievement|8|" + Clean(a.title.Pick(g_language)) + "|" + body + "|" + Clean(a.icon));
 	}
 
 	// The date goes in a fact, and facts hold 16 bits in the save: days since 1 January 2020 last until 2109.
@@ -877,18 +977,19 @@ namespace
 		for (const Pack& pack : g_packs)
 		{
 			CustomAchievementSection section;
-			section.header = pack.title;
+			section.header = pack.title.Pick(g_language);
 			for (size_t index : pack.items)
 			{
 				const CustomAch& c = g_achievements[index];
 				Achievement a;
 				a.custom = true;
 				a.script = "custom:" + c.full;
-				a.title = c.title;
-				a.description = c.description;
+				a.title = c.title.Pick(g_language);
+				a.description = c.description.Pick(g_language);
 				a.hidden = c.hidden;
 				a.unlocked = c.unlocked;
 				a.ring = c.ring;
+				a.picture = c.icon;
 				a.value = c.value;
 				a.target = c.target;
 				a.reward = RewardText(c);
@@ -933,8 +1034,9 @@ namespace
 			return;
 		}
 		const std::vector<std::string> f = Split(text, '|');
-		const bool ours = f.size() >= 3 && f[0] == "V" && atoi(f[1].c_str()) == g_generation && atoi(f[2].c_str()) == static_cast<int>(g_probes.size())
-			&& f.size() == g_probes.size() + 3;
+		// V|generation|probes|language|a value for each probe
+		const bool ours = f.size() >= 4 && f[0] == "V" && atoi(f[1].c_str()) == g_generation && atoi(f[2].c_str()) == static_cast<int>(g_probes.size())
+			&& f.size() == g_probes.size() + 4;
 		if (!ours)
 		{
 			// The scripts don't have this list: a new session, a recompile, or a list sent before they were ready
@@ -949,7 +1051,7 @@ namespace
 		std::vector<Value> values(g_probes.size());
 		for (size_t i = 0; i < g_probes.size(); ++i)
 		{
-			const std::string& field = f[i + 3];
+			const std::string& field = f[i + 4];
 			const size_t colon = field.find(':');
 			values[i].a = atoll(field.c_str());
 			if (colon != std::string::npos)
@@ -958,6 +1060,38 @@ namespace
 
 		bool changed = !g_live;
 		g_live = true;
+		if (f[3] != g_language)
+		{
+			g_language = f[3];
+			g_namesAsked = false;
+			changed = true;
+		}
+		if (!g_namesAsked)
+		{
+			// The reward items' names, in the order potpach_reward told them
+			g_namesAsked = true;
+			std::string names;
+			if (calls.callString("PotPAch_RewardNames", names))
+			{
+				const std::vector<std::string> list = Split(names, '|');
+				size_t next = 0;
+				for (CustomAch& a : g_achievements)
+					for (Reward& r : a.rewards)
+						if (r.kind == 1 && next < list.size())
+							r.display = list[next++];
+				changed = true;
+			}
+			// The packs' .w3strings keys, in the game's language
+			std::string texts;
+			if (calls.callString("PotPAch_Texts", texts))
+			{
+				const std::vector<std::string> list = Split(texts, '|');
+				const std::vector<Localised*> keyed = KeyedTexts();
+				for (size_t k = 0; k < keyed.size(); ++k)
+					keyed[k]->looked = k < list.size() ? list[k] : std::string();
+				changed = true;
+			}
+		}
 		for (size_t i = 0; i < g_achievements.size(); ++i)
 		{
 			CustomAch& a = g_achievements[i];
@@ -1010,50 +1144,103 @@ namespace
 	}
 }
 
+namespace
+{
+	// Each pack's folder name and path, in a steady order
+	std::vector<std::pair<std::wstring, std::wstring>> FindPacks()
+	{
+		const std::wstring mods = g_gameFolder + L"\\mods\\";
+		WIN32_FIND_DATAW found;
+		HANDLE search = FindFirstFileW((mods + L"*").c_str(), &found);
+		std::vector<std::pair<std::wstring, std::wstring>> packs;
+		if (search != INVALID_HANDLE_VALUE)
+		{
+			do
+			{
+				if ((found.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) && found.cFileName[0] != L'.')
+				{
+					const std::wstring path = mods + found.cFileName + L"\\potp_achievements.xml";
+					if (GetFileAttributesW(path.c_str()) != INVALID_FILE_ATTRIBUTES)
+						packs.emplace_back(found.cFileName, path);
+				}
+			} while (FindNextFileW(search, &found));
+			FindClose(search);
+		}
+		std::sort(packs.begin(), packs.end(), [](const auto& a, const auto& b) { return _wcsicmp(a.first.c_str(), b.first.c_str()) < 0; });
+		return packs;
+	}
+
+	// Changes when a pack is added, removed or saved
+	std::wstring PacksSignature(const std::vector<std::pair<std::wstring, std::wstring>>& packs)
+	{
+		std::wstring signature;
+		for (const auto& [folder, path] : packs)
+		{
+			WIN32_FILE_ATTRIBUTE_DATA data{};
+			GetFileAttributesExW(path.c_str(), GetFileExInfoStandard, &data);
+			signature += path + L"|" + std::to_wstring(data.ftLastWriteTime.dwLowDateTime) + L"." + std::to_wstring(data.ftLastWriteTime.dwHighDateTime)
+				+ L"|" + std::to_wstring(data.nFileSizeLow) + L"\n";
+		}
+		return signature;
+	}
+
+	void LoadAll()
+	{
+		g_packs.clear();
+		g_achievements.clear();
+		g_probes.clear();
+		g_probeIndex.clear();
+		g_problems = 0;
+		g_queue.clear();
+		g_queueAt = 0;
+		g_namesAsked = false;
+
+		const auto packs = FindPacks();
+		g_packsSeen = PacksSignature(packs);
+		for (const auto& [folder, path] : packs)
+			ReadPack(path, Utf8(folder.c_str()));
+
+		std::set<std::string> known;
+		for (const CustomAch& a : g_achievements)
+			known.insert(a.full);
+		for (CustomAch& a : g_achievements)
+		{
+			ResolveAchievementConditions(a.unlock, a, known);
+			a.unlockProbe = AddProbe('F', "potp_ach." + a.full);
+			if (!a.retroactive)
+				a.seenProbe = AddProbe('F', "potp_achseen." + a.full);
+		}
+		// Different each time, so the scripts can tell this list from an earlier one and get sent it
+		g_generation = static_cast<int>(GetTickCount64() % 1000000) + 1;
+		Log("custom achievements: %zu packs, %zu achievements, %zu probes, %d problems", g_packs.size(), g_achievements.size(), g_probes.size(), g_problems);
+		Publish();
+	}
+}
+
 void LoadCustomAchievementPacks(const std::wstring& gameFolder)
 {
-	const std::wstring mods = gameFolder + L"\\mods\\";
-	WIN32_FIND_DATAW found;
-	HANDLE search = FindFirstFileW((mods + L"*").c_str(), &found);
-	std::vector<std::wstring> folders;
-	if (search != INVALID_HANDLE_VALUE)
-	{
-		do
-		{
-			if ((found.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) && found.cFileName[0] != L'.')
-				folders.push_back(found.cFileName);
-		} while (FindNextFileW(search, &found));
-		FindClose(search);
-	}
-	std::sort(folders.begin(), folders.end(), [](const std::wstring& a, const std::wstring& b) { return _wcsicmp(a.c_str(), b.c_str()) < 0; });
-
-	for (const std::wstring& folder : folders)
-	{
-		const std::wstring path = mods + folder + L"\\potp_achievements.xml";
-		if (GetFileAttributesW(path.c_str()) != INVALID_FILE_ATTRIBUTES)
-			ReadPack(path, Utf8(folder.c_str()));
-	}
-
-	std::set<std::string> known;
-	for (const CustomAch& a : g_achievements)
-		known.insert(a.full);
-	for (CustomAch& a : g_achievements)
-	{
-		ResolveAchievementConditions(a.unlock, a, known);
-		a.unlockProbe = AddProbe('F', "potp_ach." + a.full);
-		if (!a.retroactive)
-			a.seenProbe = AddProbe('F', "potp_achseen." + a.full);
-	}
-	// Different each time the game starts, so the scripts can tell a list from an earlier session
-	g_generation = static_cast<int>(GetTickCount64() % 1000000) + 1;
-	Log("custom achievements: %zu packs, %zu achievements, %zu probes, %d problems", g_packs.size(), g_achievements.size(), g_probes.size(), g_problems);
-	Publish();
+	g_gameFolder = gameFolder;
+	LoadAll();
 	g_loaded = true;
 }
 
 void CustomAchievementsTick(const CustomAchievementCalls& calls)
 {
-	if (!g_loaded || g_achievements.empty())
+	if (!g_loaded)
+		return;
+	// A pack that's saved, added or removed is read again, so an author sees a change without restarting
+	static ULONGLONG nextLook = 0;
+	const ULONGLONG lookNow = GetTickCount64();
+	if (lookNow >= nextLook)
+	{
+		nextLook = lookNow + 3000;
+		if (PacksSignature(FindPacks()) != g_packsSeen)
+		{
+			Log("custom achievements: a pack changed, reading them again");
+			LoadAll();
+		}
+	}
+	if (g_achievements.empty())
 		return;
 	// The list goes over a few lines a tick, so a big pack never causes a hitch
 	if (g_queueAt < g_queue.size())
