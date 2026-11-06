@@ -69,6 +69,7 @@ struct ModelPart
 	float detailPower = 0.5f, detailAlbedo = 0.f;
 	float ghost[4] = {};            // a creature's: w 1 a barghest, 2 Hym, drawn as their own spectral materials are
 	float detailRange = 5.f;        // how near the camera has to be for the detail to show at all, in metres
+	int form = -1;                  // a two-form creature's: 0 the first form (a human), 1 the second (its monster)
 	int detailMode = 0;   // 1 one map where the tint mask's blue says, 2 two maps, 3 one map everywhere
 	bool shifting = false, keepGray = false, blendColors = false;   // recoloured by its appearance
 	float shiftRed[9] = {}, shiftBlue[9] = {};   // the colour shifts' matrices, as rows
@@ -87,6 +88,7 @@ struct ItemModel
 	bool halfTurned = false;   // asked for before reading: a crossbow, for his back
 	bool creature = false;  // a bestiary creature, in its own idle
 	std::string idle;       // its idle's clip, and the animation set it's from
+	float formTimes[4] = {};   // a two-form creature's, in seconds: the first shown, a change, the second shown, the loop
 	std::vector<MeshBones> meshBones;
 	std::vector<std::shared_ptr<ClothData>> cloths;
 	std::shared_ptr<const BakedAnimation> animation;   // null: it stays as it is

@@ -34,7 +34,7 @@ cbuffer View : register(b0)
 {
 	row_major float4x4 world;
 	float4 projection;   // x, y scale; z, w depth
-	float4 eyeAndMask;   // z: how far back the eye is, w: alpha tested
+	float4 eyeAndMask;   // y: how far a two-form creature has turned into its second, z: how far back the eye is, w: alpha tested
 	float4 pose;         // where this frame and the next start in the bones' table, and how far between them
 	float4 fromPose;     // the same in the stance it's fading from; w: how far it's come, 1 is all the new one
 };
@@ -53,6 +53,7 @@ cbuffer Material : register(b1)
 	float4 detail2;      // second tile x, y; mode: 1 one map by the mask's blue, 2 two maps, 3 one map everywhere
 	float4 options;      // x KeepGray, y BlendColors, z darkened by the vertex colour (the hair graphs), w its specular map scaled
 	float4 ghost;        // w: a spectre, 1 a barghest, 2 Hym, as their own materials draw them
+	float4 forms;        // x: one form of a two-form creature, y: which, 0 the first, 1 the second
 };
 Texture2D diffuseMap : register(t0);
 Texture2D normalMap : register(t1);
@@ -63,7 +64,7 @@ Texture2D detail2Map : register(t5);
 SamplerState surface : register(s0);
 
 struct In { float3 p : POSITION; float3 n : NORMAL; float4 t : TANGENT; float2 uv : TEXCOORD; float4 colour : COLOR; uint4 bones : BLENDINDICES; float4 weights : BLENDWEIGHT; uint3 clothAt : CLOTHINDEX; float3 clothBary : CLOTHBARY; };
-struct Out { float4 h : SV_Position; float3 p : POSITION; float3 n : NORMAL; float3 t : TANGENT; float3 b : BINORMAL; float2 uv : TEXCOORD; float4 colour : COLOR; };
+struct Out { float4 h : SV_Position; float3 p : POSITION; float3 n : NORMAL; float3 t : TANGENT; float3 b : BINORMAL; float2 uv : TEXCOORD0; float4 colour : COLOR; float3 bound : TEXCOORD1; };
 
 Out VS(In i)
 {
@@ -109,6 +110,7 @@ Out VS(In i)
 	o.h = float4(o.p.x * projection.x, o.p.y * projection.y, z * projection.z + projection.w, z);
 	o.uv = i.uv;
 	o.colour = i.colour;
+	o.bound = i.p;   // where it was bound: the dissolve's noise stays on the body as it moves
 	return o;
 }
 
@@ -187,11 +189,32 @@ float3 EnvironmentBrdf(float3 f0, float rough, float nv)
 	return f0 * ab.x + ab.y;
 }
 
+// Smooth noise in space, for the dissolve: a hash at each corner of a cell, blended between them
+float Hash3(float3 c) { return frac(sin(dot(c, float3(127.1f, 311.7f, 74.7f))) * 43758.5453f); }
+float Noise3(float3 x)
+{
+	const float3 c = floor(x), f = frac(x), u = f * f * (3 - 2 * f);
+	const float a = lerp(lerp(Hash3(c), Hash3(c + float3(1, 0, 0)), u.x), lerp(Hash3(c + float3(0, 1, 0)), Hash3(c + float3(1, 1, 0)), u.x), u.y);
+	const float b = lerp(lerp(Hash3(c + float3(0, 0, 1)), Hash3(c + float3(1, 0, 1)), u.x), lerp(Hash3(c + float3(0, 1, 1)), Hash3(c + float3(1, 1, 1)), u.x), u.y);
+	return lerp(a, b, u.z);
+}
+
 float4 PS(Out i, bool front : SV_IsFrontFace) : SV_Target
 {
 	const float4 d = diffuseMap.Sample(surface, i.uv);
 	if (eyeAndMask.w > 0 && d.a < eyeAndMask.w)
 		discard;
+	// A two-form creature: each form burns away in patches as the other comes, the edges between glowing like embers
+	float ember = 0;
+	if (forms.x > 0)
+	{
+		const float shown = forms.y > 0.5f ? eyeAndMask.y : 1 - eyeAndMask.y;
+		const float n = Noise3(i.bound * 5.5f) * 0.65f + Noise3(i.bound * 17) * 0.35f;
+		if (shown < 0.001f || n > shown * 1.02f)
+			discard;
+		if (shown < 0.999f)
+			ember = saturate(1 - (shown * 1.02f - n) / 0.07f);
+	}
 	const float4 tint = flags.x > 0 ? tintMap.Sample(surface, i.uv) : float4(1, 0, 0, 1);
 	const float4 nm = normalMap.Sample(surface, i.uv);
 	const float2 xy = nm.xy * 2 - 1;
@@ -281,6 +304,7 @@ float4 PS(Out i, bool front : SV_IsFrontFace) : SV_Target
 	const float grey = dot(c, float3(0.2126f, 0.7152f, 0.0722f));
 	c = lerp(grey.xxx, c, 0.92f);
 	c = saturate((c - 0.18f) * 1.05f + 0.18f);
+	c = lerp(c, float3(1.0f, 0.62f, 0.25f), ember * 0.9f);
 	return float4(pow(c, 1 / 2.2f), alpha);
 }
 )";
@@ -327,7 +351,7 @@ float4 PS(Out i, bool front : SV_IsFrontFace) : SV_Target
 	{
 		float spec[4], specColour[4], variance[4], flags[4];
 		float red[3][4], blue[3][4];
-		float detail[4], detail2[4], options[4], ghost[4];
+		float detail[4], detail2[4], options[4], ghost[4], forms[4];
 	};
 	constexpr UINT kMaterialStride = 256;
 
@@ -383,9 +407,12 @@ float4 PS(Out i, bool front : SV_IsFrontFace) : SV_Target
 	// A creature's shape as it stands, from its middle, a sample of its points: it's framed by what it shows at the angle it's
 	// seen from, as a wyvern's tail is end on from the front and its whole length from the side. Empty for an item.
 	std::vector<float> g_fitPoints;
+	std::vector<uint8_t> g_fitForm;     // a two-form creature's: which form each of those points is
+	float g_formCentre[2][3] = {};      // and each form's middle, as the camera moves from one to the other
 	float g_fitEye = -1.f;   // how far back the camera is now, easing to what the angle needs; -1 for at once
 	std::chrono::steady_clock::time_point g_fitLast{};
 	float g_zoom = 1.f;
+	float g_formTimes[4] = {};   // a two-form creature's: the first shown, a change, the second shown, the loop
 
 	// Going on the card
 	std::shared_ptr<Loaded> g_uploading;
@@ -622,6 +649,7 @@ float4 PS(Out i, bool front : SV_IsFrontFace) : SV_Target
 		std::vector<SkinVertex> skins;
 		std::vector<uint32_t> indices;
 		std::vector<ClothVertex> clothing;
+		std::vector<uint8_t> vertexForm;   // each vertex's form, for a two-form creature
 		std::vector<uint32_t> firstParticle;
 		{
 			uint32_t particles = 0;
@@ -679,12 +707,15 @@ float4 PS(Out i, bool front : SV_IsFrontFace) : SV_Target
 			values.options[3] = p.graph.rfind("pbr_spec_tint_mask", 0) == 0 ? 1.f : 0.f;
 			for (int k = 0; k < 4; ++k)
 				values.ghost[k] = p.ghost[k];
+			values.forms[0] = p.form >= 0 ? 1.f : 0.f;
+			values.forms[1] = p.form > 0 ? 1.f : 0.f;
 			detailRanges.push_back(p.detailRange);
 			const size_t at = materialBytes.size();
 			materialBytes.resize(at + kMaterialStride);
 			memcpy(materialBytes.data() + at, &values, sizeof(values));
 			g_parts.push_back(part);
 			vertices.insert(vertices.end(), p.vertices.begin(), p.vertices.end());
+			vertexForm.insert(vertexForm.end(), p.vertices.size(), static_cast<uint8_t>(p.form > 0 ? 1 : 0));
 			skins.resize(vertices.size());   // what isn't skinned stays where it is, in the table's first slot
 			if (p.skinning.size() == p.vertices.size())
 				std::copy(p.skinning.begin(), p.skinning.end(), skins.end() - static_cast<ptrdiff_t>(p.skinning.size()));
@@ -782,6 +813,7 @@ float4 PS(Out i, bool front : SV_IsFrontFace) : SV_Target
 		g_boneIntro = model.animation ? model.animation->introFrames : 0;
 		g_boneSlots = model.animation ? model.animation->slots : 1;
 		g_boneDuration = model.animation ? model.animation->duration : 0.f;
+		memcpy(g_formTimes, model.formTimes, sizeof(g_formTimes));
 		if (!g_keepShowing)
 			g_boneStart = std::chrono::steady_clock::now();
 		{
@@ -876,7 +908,10 @@ float4 PS(Out i, bool front : SV_IsFrontFace) : SV_Target
 		}
 		g_radius = std::max(0.001f, sqrtf(furthest)) * (model.animation ? 1.03f : 1.f);   // room to move in
 		g_fitPoints.clear();
+		g_fitForm.clear();
 		g_fitEye = -1.f;
+		float formLow[2][3] = { { FLT_MAX, FLT_MAX, FLT_MAX }, { FLT_MAX, FLT_MAX, FLT_MAX } };
+		float formHigh[2][3] = { { -FLT_MAX, -FLT_MAX, -FLT_MAX }, { -FLT_MAX, -FLT_MAX, -FLT_MAX } };
 		if (model.creature && !g_keepShowing)
 		{
 			// Where it gets to all through its idle, not only as it starts: a siren's wings beat well past where they begin
@@ -906,10 +941,19 @@ float4 PS(Out i, bool front : SV_IsFrontFace) : SV_Target
 								to[axis] += (r[axis * 4] * from.position[0] + r[axis * 4 + 1] * from.position[1] + r[axis * 4 + 2] * from.position[2] + r[axis * 4 + 3]) * weight;
 						}
 					}
+					const uint8_t form = v < vertexForm.size() ? vertexForm[v] : 0;
 					for (int k = 0; k < 3; ++k)
+					{
 						g_fitPoints.push_back(to[k] - g_centre[k]);
+						formLow[form][k] = std::min(formLow[form][k], to[k]);
+						formHigh[form][k] = std::max(formHigh[form][k], to[k]);
+					}
+					g_fitForm.push_back(form);
 				}
 			}
+			for (int form = 0; form < 2; ++form)
+				for (int k = 0; k < 3; ++k)
+					g_formCentre[form][k] = formLow[form][k] <= formHigh[form][k] ? (formLow[form][k] + formHigh[form][k]) * 0.5f : g_centre[k];
 		}
 		if (g_keepShowing)
 		{
@@ -1232,7 +1276,20 @@ void ModelViewRender(ID3D12GraphicsCommandList* list)
 
 	// Row vectors. To its middle, its long axis up, turned, then: the game's z up to the screen's y, its y into the screen.
 	Constants c{};
-	float m[16] = { 1,0,0,0, 0,1,0,0, 0,0,1,0, -g_centre[0],-g_centre[1],-g_centre[2],1 };
+	// How far a two-form creature has turned, by where its loop is: the first, changing, the second, changing back
+	if (g_formTimes[3] > 0.f)
+	{
+		const float t = fmodf(std::chrono::duration<float>(std::chrono::steady_clock::now() - g_boneStart).count(), g_formTimes[3]);
+		const float hold = g_formTimes[0], change = std::max(0.01f, g_formTimes[1]), second = g_formTimes[2];
+		c.eyeAndMask[1] = t < hold ? 0.f : t < hold + change ? (t - hold) / change : t < hold + change + second ? 1.f : std::max(0.f, 1.f - (t - hold - change - second) / change);
+	}
+	// A two-form creature is framed as the form it's showing: from the middle of one to the other's as it changes
+	const bool twoForms = g_formTimes[3] > 0.f && !g_fitForm.empty();
+	float centre[3] = { g_centre[0], g_centre[1], g_centre[2] };
+	if (twoForms)
+		for (int k = 0; k < 3; ++k)
+			centre[k] = g_formCentre[0][k] + (g_formCentre[1][k] - g_formCentre[0][k]) * c.eyeAndMask[1];
+	float m[16] = { 1,0,0,0, 0,1,0,0, 0,0,1,0, -centre[0],-centre[1],-centre[2],1 };
 	if (g_longAxis != 2)
 	{
 		// A turn of the long axis onto z
@@ -1258,16 +1315,19 @@ void ModelViewRender(ID3D12GraphicsCommandList* list)
 	{
 		// Each point in the picture, with room for where the idle takes it past how it starts. The camera's at -eye in z.
 		constexpr float kRoom = 1.06f;
-		float needs = 0.f;
+		float formNeeds[2] = {};
 		for (size_t i = 0; i + 2 < g_fitPoints.size(); i += 3)
 		{
-			float p[4] = { g_fitPoints[i], g_fitPoints[i + 1], g_fitPoints[i + 2], 1.f }, q[4] = {};
+			float p[4] = { g_fitPoints[i] + g_centre[0] - centre[0], g_fitPoints[i + 1] + g_centre[1] - centre[1], g_fitPoints[i + 2] + g_centre[2] - centre[2], 1.f }, q[4] = {};
 			for (int col = 0; col < 3; ++col)
 				for (int row = 0; row < 3; ++row)
 					q[col] += p[row] * m[row * 4 + col];
 			const float across = std::max(fabsf(q[0]), fabsf(q[1]));
-			needs = std::max(needs, across * f * kRoom - q[2]);
+			const int form = twoForms && g_fitForm[i / 3] ? 1 : 0;
+			formNeeds[form] = std::max(formNeeds[form], across * f * kRoom - q[2]);
 		}
+		// One form: what it needs. Two: what the one showing needs, moving to the other's as it changes.
+		float needs = twoForms ? formNeeds[0] + (formNeeds[1] - formNeeds[0]) * c.eyeAndMask[1] : formNeeds[0];
 		// Not so close a turn brings it in and out by much more than half, and eased, so a long one breathes as it turns
 		needs = std::max(needs, whole * 0.5f);
 		const auto at = std::chrono::steady_clock::now();

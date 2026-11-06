@@ -4032,7 +4032,7 @@ namespace
 	}
 }
 
-bool LoadCreature(const std::string& asked, ItemModel& out)
+static bool LoadOneCreature(const std::string& asked, ItemModel& out)
 {
 	if (!g_ready)
 	{
@@ -4362,5 +4362,134 @@ bool LoadCreature(const std::string& asked, ItemModel& out)
 	out.boneSlots.reset();   // the wardrobe's stances are Geralt's: nothing else is baked for it
 	out.idle = clipName + " (" + set + ")" + (look ? " look " + look->name : std::string()) + " rig " + rigPath;
 	Log("item models: %s: %s from %s, %u frames, %.1f s", templatePath.c_str(), clipName.c_str(), set.c_str(), clip.frames, ClipSeconds(clip));
+	return true;
+}
+
+// ---- a creature in two forms, as an alp is a cloaked woman until she turns: each in its own idle, one dissolving into
+// the other and back, on one loop
+
+namespace
+{
+	// A bone's matrix at a moment of a baked loop, between the two frames either side
+	M4 BakedAt(const BakedAnimation& anim, uint32_t slot, float seconds)
+	{
+		M4 m;
+		if (anim.frames < 2 || anim.duration <= 0.f)
+		{
+			const float* r = anim.rows.data() + static_cast<size_t>(slot) * 12;
+			for (int row = 0; row < 3; ++row)
+				for (int c = 0; c < 4; ++c)
+					m.m[c][row] = r[row * 4 + c];
+			return m;
+		}
+		const float at = fmodf(std::max(0.f, seconds), anim.duration) / anim.duration * static_cast<float>(anim.frames - 1);
+		const uint32_t frame = std::min(static_cast<uint32_t>(at), anim.frames - 2);
+		const float t = at - static_cast<float>(frame);
+		const float* a = anim.rows.data() + (static_cast<size_t>(frame) * anim.slots + slot) * 12;
+		const float* b = a + static_cast<size_t>(anim.slots) * 12;
+		for (int row = 0; row < 3; ++row)
+			for (int c = 0; c < 4; ++c)
+				m.m[c][row] = a[row * 4 + c] + (b[row * 4 + c] - a[row * 4 + c]) * t;
+		return m;
+	}
+
+	// The two in one model: the first form's parts, then the second's, their bones' slots after the first's, and both idles
+	// on one loop. The second is turned to face as the first does.
+	void MergeForms(ItemModel& first, ItemModel& second, ItemModel& out)
+	{
+		// How long each is shown and how long a change takes; the loop is made a whole number of the first's idles long, so
+		// it carries on unbroken where the loop starts again, while the second's is out of sight
+		constexpr float kHold = 4.f, kChange = 1.8f, kSecondHold = 7.f;
+		const float firstLoop = std::max(0.5f, first.animation->duration);
+		const float wanted = kHold + kSecondHold + kChange * 2.f;
+		const float cycle = std::ceil(wanted / firstLoop) * firstLoop;
+		const float secondHold = cycle - kHold - kChange * 2.f;
+
+		const uint32_t firstSlots = first.animation->slots, secondSlots = second.animation->slots;
+		out = std::move(first);
+		const size_t bonesBefore = out.meshBones.size(), clothsBefore = out.cloths.size();
+		for (ModelPart& p : out.parts)
+			p.form = 0;
+		for (ModelPart& p : second.parts)
+		{
+			p.form = 1;
+			if (p.meshBones >= 0)
+				p.meshBones += static_cast<int>(bonesBefore);
+			if (p.cloth >= 0)
+				p.cloth += static_cast<int>(clothsBefore);
+			// Unskinned, it would stay with the first's slot 0: its own, turned with it, carries it
+			if (p.skinning.empty())
+				p.skinning.assign(p.vertices.size(), SkinVertex{});
+			for (SkinVertex& s : p.skinning)
+				for (uint16_t& b : s.bones)
+					b = static_cast<uint16_t>(b + firstSlots);
+			out.parts.push_back(std::move(p));
+		}
+		for (MeshBones& b : second.meshBones)
+			out.meshBones.push_back(std::move(b));
+		for (auto& c : second.cloths)
+			out.cloths.push_back(std::move(c));
+		for (int k = 0; k < 3; ++k)
+		{
+			out.boundsMin[k] = std::min(out.boundsMin[k], second.boundsMin[k]);
+			out.boundsMax[k] = std::max(out.boundsMax[k], second.boundsMax[k]);
+		}
+
+		// The second turned by the difference in how they face, as the viewer turns them (row vectors)
+		const float turn = (second.facingYaw - out.facingYaw) * 3.14159265f / 180.f;
+		M4 rotate;
+		rotate.m[0][0] = cosf(turn); rotate.m[0][1] = sinf(turn);
+		rotate.m[1][0] = -sinf(turn); rotate.m[1][1] = cosf(turn);
+
+		auto baked = std::make_shared<BakedAnimation>();
+		baked->slots = firstSlots + secondSlots;
+		baked->frames = static_cast<uint32_t>(std::lround(cycle * kBakedIntroRate)) + 1;
+		baked->duration = cycle;
+		baked->rows.resize(static_cast<size_t>(baked->frames) * baked->slots * 12);
+		float* to = baked->rows.data();
+		const auto put = [&](const M4& m)
+		{
+			for (int row = 0; row < 3; ++row)
+				for (int c = 0; c < 4; ++c)
+					*to++ = m.m[c][row];
+		};
+		for (uint32_t f = 0; f < baked->frames; ++f)
+		{
+			const float t = static_cast<float>(f) / kBakedIntroRate;
+			for (uint32_t s = 0; s < firstSlots; ++s)
+				put(BakedAt(*out.animation, s, t));
+			// The second's idle starts as it begins to show
+			for (uint32_t s = 0; s < secondSlots; ++s)
+				put(BakedAt(*second.animation, s, t - kHold) * rotate);
+		}
+		out.animation = baked;
+		out.formTimes[0] = kHold;
+		out.formTimes[1] = kChange;
+		out.formTimes[2] = secondHold;
+		out.formTimes[3] = cycle;
+		out.idle += " then " + second.idle;
+	}
+}
+
+bool LoadCreature(const std::string& asked, ItemModel& out)
+{
+	// monster+human: shown as the human first, turning into the monster and back
+	const size_t plus = asked.find('+');
+	if (plus == std::string::npos)
+		return LoadOneCreature(asked, out);
+	ItemModel monster, human;
+	const bool gotMonster = LoadOneCreature(asked.substr(0, plus), monster);
+	if (!gotMonster)
+	{
+		out = std::move(monster);
+		return false;
+	}
+	if (!LoadOneCreature(asked.substr(plus + 1), human) || !human.animation || !monster.animation)
+	{
+		Log("item models: %s: its other form didn't come, so it's shown as itself", asked.c_str());
+		out = std::move(monster);
+		return true;
+	}
+	MergeForms(human, monster, out);
 	return true;
 }

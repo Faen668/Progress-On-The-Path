@@ -424,19 +424,19 @@ function PotP_DefineBestiary_4(catalog: CPotP_Catalog)
 
 	catalog.BeginBestiarySection(397222);
 	tracked = catalog.AddBestiary("alp", PotP_E_Primary_DLC2, 1208707, "bestiary_alp.png", "1208708,1208709");
-	tracked.creature_template = "dlc/bob/data/characters/npc_entities/monsters/bruxa_alp.w2ent";
+	tracked.creature_template = "dlc/bob/data/characters/npc_entities/monsters/bruxa_alp.w2ent+dlc/bob/data/living_world/enemy_templates/bruxa_alp_cloaked_hostile_mid.w2ent";
 	tracked.creature_items.PushBack('Silver Dust Bomb 1');
 	tracked.creature_items.PushBack('Vampire Oil 1');
 	tracked.creature_items.PushBack('Black Blood 1');
 	tracked.creature_items.PushBack('Yrden');
 	tracked = catalog.AddBestiary("bruxa", PotP_E_Primary_DLC2, 1188873, "bestiary_bruxa.png", "1188874,1208638");
-	tracked.creature_template = "dlc/bob/data/characters/npc_entities/monsters/bruxa.w2ent";
+	tracked.creature_template = "dlc/bob/data/characters/npc_entities/monsters/bruxa.w2ent+dlc/bob/data/living_world/enemy_templates/bruxa_cloaked_hostile_mid.w2ent";
 	tracked.creature_items.PushBack('Silver Dust Bomb 1');
 	tracked.creature_items.PushBack('Vampire Oil 1');
 	tracked.creature_items.PushBack('Black Blood 1');
 	tracked.creature_items.PushBack('Yrden');
 	tracked = catalog.AddBestiary("dettlaffmonster", PotP_E_Primary_DLC2, 1207195, "bestiary_dettlaff_vampire.png", "1207196");
-	tracked.creature_template = "dlc/bob/data/quests/main_npcs/dettlaff_van_eretein_vampire.w2ent";
+	tracked.creature_template = "dlc/bob/data/quests/main_npcs/dettlaff_van_eretein_monster.w2ent+dlc/bob/data/quests/main_npcs/dettlaff_van_eretein_vampire.w2ent";
 	tracked.creature_items.PushBack('Vampire Oil 1');
 	tracked.creature_items.PushBack('Black Blood 1');
 	tracked.creature_items.PushBack('Quen');
@@ -455,7 +455,7 @@ function PotP_DefineBestiary_4(catalog: CPotP_Catalog)
 	tracked.creature_items.PushBack('Vampire Oil 1');
 	tracked.creature_items.PushBack('Black Blood 1');
 	tracked = catalog.AddBestiary("q701bruxa", PotP_E_Primary_DLC2, 1173626, "bestiary_bruxa_mh.png", "1173624");
-	tracked.creature_template = "dlc/bob/data/quests/main_quests/quest_files/q701_wine_festival/characters/q701_bruxa.w2ent";
+	tracked.creature_template = "dlc/bob/data/quests/main_quests/quest_files/q701_wine_festival/characters/q701_bruxa.w2ent+dlc/bob/data/living_world/enemy_templates/bruxa_cloaked_hostile_mid.w2ent";
 	tracked.creature_items.PushBack('Silver Dust Bomb 1');
 	tracked.creature_items.PushBack('Vampire Oil 1');
 	tracked.creature_items.PushBack('Black Blood 1');

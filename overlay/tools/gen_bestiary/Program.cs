@@ -30,10 +30,23 @@ var kChosen = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
     ["bestiarymonsterhuntmh107"] = @"characters\npc_entities\monsters\czart_mh.w2ent",
     ["bestiarymonsterhuntmh206"] = @"characters\npc_entities\monsters\bies_mh.w2ent",
     ["doppler"] = @"characters\npc_entities\secondary_npc\doppler_guard.w2ent",
+    // Dettlaff the man: shown as him turning into his monster (kHumanForm has the man)
+    ["dettlaffmonster"] = @"dlc\bob\data\quests\main_npcs\dettlaff_van_eretein_monster.w2ent",
     // The journal's is the cloaked woman an alp passes for; the bestiary's about the monster
     ["alp"] = @"dlc\bob\data\characters\npc_entities\monsters\bruxa_alp.w2ent",
     // Grottore is the stubborn knight's spriggan; spriggans as such are the base one, in its other look
     ["mq7002spriggan"] = @"dlc\bob\data\characters\npc_entities\monsters\spriggan.w2ent",
+};
+
+// Monsters that pass for people, by their journal file's name: the human form they're seen in first. The overlay shows the
+// human, turning into the monster and back (the game swaps one for the other behind an effect; there's no clip of it).
+var kHumanForm = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+{
+    ["alp"] = @"dlc\bob\data\living_world\enemy_templates\bruxa_alp_cloaked_hostile_mid.w2ent",
+    ["bruxa"] = @"dlc\bob\data\living_world\enemy_templates\bruxa_cloaked_hostile_mid.w2ent",
+    ["q701bruxa"] = @"dlc\bob\data\living_world\enemy_templates\bruxa_cloaked_hostile_mid.w2ent",
+    // Dettlaff himself; the Beast of Beauclair and higher vampires as such keep one form each, so the three stay apart
+    ["dettlaffmonster"] = @"dlc\bob\data\quests\main_npcs\dettlaff_van_eretein_vampire.w2ent",
 };
 
 // Creatures whose models don't show as they are in the game, by a piece of their template's path: they keep their painting
@@ -96,6 +109,9 @@ foreach (var (name, guids) in categories)
         // A djinn is made of effects the overlay doesn't draw: its painting is shown instead
         if (template is not null && kPaintingOnly.Any(p => template.Contains(p, StringComparison.OrdinalIgnoreCase)))
             template = null;
+        // monster+human, for the overlay to show both
+        if (template is not null && kHumanForm.TryGetValue(suffix, out var human))
+            template += "+" + human;
         if (template is not null)
             pieces[^1].Append($"\ttracked.creature_template = \"{template.Replace('\\', '/')}\";\n");
         foreach (uint other in alsoAs[e])
