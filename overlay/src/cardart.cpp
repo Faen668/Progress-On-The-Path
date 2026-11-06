@@ -2,6 +2,8 @@
 #include <windows.h>
 #include <dxgiformat.h>
 #include <algorithm>
+#include <array>
+#include <cfloat>
 #include <atomic>
 #include <cmath>
 #include <cstring>
@@ -57,7 +59,7 @@ namespace
 		return o == room;
 	}
 
-	bool ReadFromBundle(const std::wstring& path, std::vector<uint8_t>& out)
+	bool ReadFromBundle(const std::wstring& path, std::vector<uint8_t>& out, const char* resource = kResource)
 	{
 		const HANDLE file = CreateFileW(path.c_str(), GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
 		if (file == INVALID_HANDLE_VALUE)
@@ -81,7 +83,7 @@ namespace
 				for (size_t at = 0; at < tocSize && !done; at += kEntry)
 				{
 					const uint8_t* e = toc.data() + at;
-					if (_stricmp(reinterpret_cast<const char*>(e), kResource) != 0)
+					if (_stricmp(reinterpret_cast<const char*>(e), resource) != 0)
 						continue;
 					uint64_t offset = U32(e + 0x11C);
 					if (!older)
@@ -192,13 +194,14 @@ namespace
 
 	struct SubImage { int atlas; uint16_t x0, y0, x1, y1; };
 	struct Fill { uint16_t bitmap; Matrix m; };
-	struct Placed { int character = -1; Matrix m; std::string name; };
+	struct Placed { int character = -1; Matrix m; std::string name; float mul[4] = { 1.f, 1.f, 1.f, 1.f }, add[4] = {}; bool mask = false; };   // colour: c * mul + add, 0 to 1
 	using Display = std::map<int, Placed>;
 	struct Sprite { size_t at = 0, end = 0; };
 
 	struct Gfx
 	{
 		const uint8_t* d = nullptr;
+		std::map<int, std::pair<int, size_t>> shapeAt;   // a shape's tag and where it starts, for drawing it whole
 		std::map<int, SubImage> subs;
 		std::map<int, std::string> atlasNames;
 		std::map<int, std::vector<Fill>> shapes;
@@ -233,6 +236,7 @@ namespace
 	{
 		const uint8_t* d = g.d;
 		const int id = U16(d + p);
+		g.shapeAt[id] = { tag, p };
 		size_t q = SkipRect(d, p + 2);
 		if (tag == 83)
 			q = SkipRect(d, q) + 1;
@@ -314,14 +318,21 @@ namespace
 					Bits r{ d, q };
 					const uint32_t add = r.U(1), multiply = r.U(1);
 					const int n = static_cast<int>(r.U(4));
-					for (uint32_t i = 0; i < 4 * (add + multiply); ++i)
-						r.U(n);
+					for (int i = 0; i < 4; ++i)
+						placed.mul[i] = multiply ? r.I(n) / 256.f : 1.f;
+					for (int i = 0; i < 4; ++i)
+						placed.add[i] = add ? r.I(n) / 255.f : 0.f;
 					q = r.Align();
 				}
 				if (flags & 16)
 					q += 2;
 				if (flags & 32)
+				{
 					placed.name = reinterpret_cast<const char*>(d + q);
+					q += placed.name.size() + 1;
+				}
+				if (flags & 64)
+					placed.mask = true;   // it clips what's above it, and isn't drawn itself
 			}
 		});
 		if (firstFrame && frames.count(0))
@@ -489,6 +500,9 @@ namespace
 		return !gfx.empty();
 	}
 
+
+
+
 	bool Load(const std::vector<uint8_t>& resource)
 	{
 		std::vector<uint8_t> gfxFile;
@@ -548,6 +562,10 @@ namespace
 				Collect(g, display, Matrix{}, pieces);
 				g_frames[kClipShield][label] = std::move(pieces);
 			}
+			std::string labels;
+			for (const auto& [label, pieces] : g_frames[kClipShield])
+				labels += " " + label;
+			Log("card art: faction shields:%s", labels.c_str());
 			break;
 		}
 
@@ -602,7 +620,8 @@ bool UnpackLz4(const uint8_t* in, size_t size, uint8_t* out, size_t room)
 	return Lz4Block(in, size, out, room);
 }
 
-bool UpscaleCardArt(const GameTexture& source, GameTexture& out)
+// Out of its compression, into plain colours
+bool DecodeCardArt(const GameTexture& source, std::vector<uint8_t>& rgba)
 {
 	if ((source.dxgiFormat != DXGI_FORMAT_BC3_UNORM && source.dxgiFormat != DXGI_FORMAT_BC1_UNORM) || source.width == 0 || source.height == 0)
 		return false;
@@ -611,9 +630,7 @@ bool UpscaleCardArt(const GameTexture& source, GameTexture& out)
 	const size_t blockBytes = alpha ? 16 : 8;
 	if (source.pixels.size() < static_cast<size_t>(source.rows) * ((w + 3) / 4) * blockBytes)
 		return false;
-
-	// Out of its compression, into plain colours
-	std::vector<uint8_t> rgba(static_cast<size_t>(w) * h * 4, 255);
+	rgba.assign(static_cast<size_t>(w) * h * 4, 255);
 	const uint8_t* block = source.pixels.data();
 	for (uint32_t by = 0; by < source.rows; ++by)
 		for (uint32_t bx = 0; bx < (w + 3) / 4; ++bx, block += blockBytes)
@@ -666,6 +683,15 @@ bool UpscaleCardArt(const GameTexture& source, GameTexture& out)
 					o[3] = alpha ? alphas[(alphaBits >> (3 * (py * 4 + px))) & 7] : static_cast<uint8_t>(!fourColours && index == 3 ? 0 : 255);
 				}
 		}
+	return true;
+}
+
+bool UpscaleCardArt(const GameTexture& source, GameTexture& out)
+{
+	std::vector<uint8_t> rgba;
+	if (!DecodeCardArt(source, rgba))
+		return false;
+	const uint32_t w = source.width, h = source.height;
 
 	// A cubic filter a little sharper than the usual one, across and then down
 	const auto weight = [](float t)
@@ -732,12 +758,11 @@ bool UpscaleCardArt(const GameTexture& source, GameTexture& out)
 	return true;
 }
 
-void BuildCardArt(const std::wstring& game)
+// Every bundle, in the order the game looks: mods, DLC, then the game
+static std::vector<std::filesystem::path> GameBundles(const std::wstring& game)
 {
 	namespace fs = std::filesystem;
 	std::error_code ec;
-
-	// In the order the game looks: mods, DLC, then the game
 	std::vector<fs::path> bundles;
 	const auto add = [&](const fs::path& folder)
 	{
@@ -759,8 +784,13 @@ void BuildCardArt(const std::wstring& game)
 			add(owner / L"content");
 	}
 	add(fs::path(game) / L"content" / L"content0" / L"bundles");
+	return bundles;
+}
 
-	for (const fs::path& bundle : bundles)
+void BuildCardArt(const std::wstring& game)
+{
+	namespace fs = std::filesystem;
+	for (const fs::path& bundle : GameBundles(game))
 	{
 		std::vector<uint8_t> resource;
 		if (!ReadFromBundle(bundle.wstring(), resource))
@@ -789,7 +819,927 @@ const std::vector<CardPiece>* CardArtFrame(CardClip clip, const std::string& lab
 	return found != g_frames[clip].end() ? &found->second : nullptr;
 }
 
+// Its smaller levels, each averaged from the one above, colour weighted by how opaque it is so a clear surround
+// doesn't darken an edge. The picture is plain RGBA.
+static void AddSmallerLevels(GameTexture& out)
+{
+	const GameTexture* from = &out;
+	std::vector<GameTexture> mips;
+	mips.reserve(8);
+	while (from->width >= 2 && from->height >= 2 && mips.size() < 6)
+	{
+		GameTexture m;
+		m.dxgiFormat = DXGI_FORMAT_R8G8B8A8_UNORM;
+		m.width = from->width / 2;
+		m.height = from->height / 2;
+		m.rowBytes = m.width * 4;
+		m.rows = m.height;
+		m.pixels.resize(static_cast<size_t>(m.width) * m.height * 4);
+		for (uint32_t y = 0; y < m.height; ++y)
+			for (uint32_t x = 0; x < m.width; ++x)
+			{
+				// Colour weighted by how opaque it is, so a mark's clear surround doesn't darken its edge
+				const auto px = [&](uint32_t fx, uint32_t fy) { return from->pixels.data() + (static_cast<size_t>(fy) * from->width + fx) * 4; };
+				const uint8_t* q[4] = { px(x * 2, y * 2), px(x * 2 + 1, y * 2), px(x * 2, y * 2 + 1), px(x * 2 + 1, y * 2 + 1) };
+				int a = 0, c[3] = {};
+				for (const uint8_t* p : q)
+				{
+					a += p[3];
+					for (int k = 0; k < 3; ++k)
+						c[k] += p[k] * p[3];
+				}
+				uint8_t* o = m.pixels.data() + (static_cast<size_t>(y) * m.width + x) * 4;
+				for (int k = 0; k < 3; ++k)
+					o[k] = static_cast<uint8_t>(a > 0 ? c[k] / a : (q[0][k] + q[1][k] + q[2][k] + q[3][k]) / 4);
+				o[3] = static_cast<uint8_t>((a + 2) / 4);
+			}
+		mips.push_back(std::move(m));
+		from = &mips.back();
+	}
+	out.lowerMips = std::move(mips);
+}
+
+// The menu's pictures cut its marks small for the deck list, but the window draws them smaller still: with its own
+// smaller levels, each averaged from the one above, they stay smooth instead of losing pixels
+bool CardArtAtlasWithMips(int atlas, GameTexture& out)
+{
+	const GameTexture* source = CardArtAtlas(atlas);
+	std::vector<uint8_t> rgba;
+	if (!source || !DecodeCardArt(*source, rgba))
+		return false;
+	out = GameTexture{};
+	out.dxgiFormat = DXGI_FORMAT_R8G8B8A8_UNORM;
+	out.width = source->width;
+	out.height = source->height;
+	out.rowBytes = out.width * 4;
+	out.rows = out.height;
+	out.pixels = std::move(rgba);
+	AddSmallerLevels(out);
+	return true;
+}
+
 const GameTexture* CardArtAtlas(int atlas)
 {
 	return g_ready && atlas >= 0 && atlas < static_cast<int>(g_atlases.size()) && !g_atlases[atlas].pixels.empty() ? &g_atlases[atlas] : nullptr;
+}
+
+static constexpr float kPiF = 3.14159265f;
+
+// The world map's pins. The map menu draws them as shapes, not pictures: outlines filled with colours and gradients,
+// so they're drawn here into pictures of our own, once, from the menu the game would load (a mod's, a DLC's, or its own).
+namespace
+{
+	struct VFill
+	{
+		int kind = 0;                 // 0 solid, 0x10 linear, 0x12 or 0x13 radial, 0x40 to 0x43 a picture
+		float colour[4] = { 0.f, 0.f, 0.f, 1.f };
+		Matrix m;                     // a gradient's or a picture's: from its own space into the shape's, translation in pixels
+		std::vector<std::pair<float, std::array<float, 4>>> stops;
+		int bitmap = -1;
+	};
+	struct VLine { float width = 1.f; VFill fill; };
+	struct VEdge { float x0, y0, x1, y1; int fill0, fill1, line; };   // styles are indexes into the shape's lists, -1 none
+	struct VShape { std::vector<VFill> fills; std::vector<VLine> lines; std::vector<VEdge> edges; };
+
+	void ReadColour(const uint8_t* d, size_t& q, bool alpha, float out[4])
+	{
+		out[0] = d[q] / 255.f;
+		out[1] = d[q + 1] / 255.f;
+		out[2] = d[q + 2] / 255.f;
+		out[3] = alpha ? d[q + 3] / 255.f : 1.f;
+		q += alpha ? 4 : 3;
+	}
+
+	bool ReadVFill(const uint8_t* d, size_t& q, int tag, VFill& f)
+	{
+		const bool alpha = tag >= 32;
+		f.kind = d[q++];
+		if (f.kind == 0)
+		{
+			ReadColour(d, q, alpha, f.colour);
+			return true;
+		}
+		if (f.kind == 0x10 || f.kind == 0x12 || f.kind == 0x13)
+		{
+			f.m = ReadMatrix(d, q);
+			const int count = d[q++] & 15;
+			for (int i = 0; i < count; ++i)
+			{
+				const float ratio = d[q++] / 255.f;
+				std::array<float, 4> c{};
+				ReadColour(d, q, alpha, c.data());
+				f.stops.emplace_back(ratio, c);
+			}
+			if (f.kind == 0x13)
+				q += 2;   // the focal point: drawn as a plain radial one
+			return true;
+		}
+		if (f.kind >= 0x40 && f.kind <= 0x43)
+		{
+			f.bitmap = U16(d + q);
+			q += 2;
+			f.m = ReadMatrix(d, q);
+			return true;
+		}
+		return false;
+	}
+
+	bool ReadVStyles(const uint8_t* d, size_t& q, int tag, VShape& s, int& fillBase, int& lineBase)
+	{
+		fillBase = static_cast<int>(s.fills.size());
+		lineBase = static_cast<int>(s.lines.size());
+		int count = d[q++];
+		if (count == 255 && tag != 2)
+		{
+			count = U16(d + q);
+			q += 2;
+		}
+		for (int i = 0; i < count; ++i)
+		{
+			VFill f;
+			if (!ReadVFill(d, q, tag, f))
+				return false;
+			s.fills.push_back(std::move(f));
+		}
+		count = d[q++];
+		if (count == 255)
+		{
+			count = U16(d + q);
+			q += 2;
+		}
+		for (int i = 0; i < count; ++i)
+		{
+			VLine l;
+			l.width = U16(d + q) / 20.f;
+			q += 2;
+			if (tag == 83)
+			{
+				const uint16_t flags = static_cast<uint16_t>(d[q] << 8 | d[q + 1]);
+				q += 2;
+				if (((flags >> 12) & 3) == 2)
+					q += 2;   // a mitre limit
+				if (flags & 0x0800)
+				{
+					if (!ReadVFill(d, q, tag, l.fill))
+						return false;
+				}
+				else
+					ReadColour(d, q, true, l.fill.colour);
+			}
+			else
+				ReadColour(d, q, tag >= 32, l.fill.colour);
+			s.lines.push_back(std::move(l));
+		}
+		return true;
+	}
+
+	bool ReadVShape(const Gfx& g, int tag, size_t p, VShape& s)
+	{
+		const uint8_t* d = g.d;
+		size_t q = SkipRect(d, p + 2);
+		if (tag == 83)
+			q = SkipRect(d, q) + 1;
+		int fillBase = 0, lineBase = 0;
+		if (!ReadVStyles(d, q, tag, s, fillBase, lineBase))
+			return false;
+		Bits r{ d, q };
+		int fillBits = static_cast<int>(r.U(4)), lineBits = static_cast<int>(r.U(4));
+		float x = 0.f, y = 0.f;
+		int fill0 = -1, fill1 = -1, line = -1;
+		const auto styleOf = [](uint32_t v, int base) { return v == 0 ? -1 : base + static_cast<int>(v) - 1; };
+		const auto edge = [&](float nx, float ny)
+		{
+			s.edges.push_back(VEdge{ x, y, nx, ny, fill0, fill1, line });
+			x = nx;
+			y = ny;
+		};
+		for (int guard = 0; guard < 200000; ++guard)
+		{
+			if (r.U(1) == 0)
+			{
+				const uint32_t flags = r.U(5);
+				if (flags == 0)
+					return true;
+				if (flags & 1)
+				{
+					const int n = static_cast<int>(r.U(5));
+					x = r.I(n) / 20.f;
+					y = r.I(n) / 20.f;
+				}
+				if (flags & 2)
+					fill0 = styleOf(r.U(fillBits), fillBase);
+				if (flags & 4)
+					fill1 = styleOf(r.U(fillBits), fillBase);
+				if (flags & 8)
+					line = styleOf(r.U(lineBits), lineBase);
+				if (flags & 16)
+				{
+					size_t at = r.Align();
+					if (!ReadVStyles(d, at, tag, s, fillBase, lineBase))
+						return false;
+					r = Bits{ d, at };
+					fillBits = static_cast<int>(r.U(4));
+					lineBits = static_cast<int>(r.U(4));
+					fill0 = fill1 = line = -1;
+				}
+			}
+			else if (r.U(1) == 1)
+			{
+				const int n = static_cast<int>(r.U(4)) + 2;
+				float dx = 0.f, dy = 0.f;
+				if (r.U(1))
+				{
+					dx = r.I(n) / 20.f;
+					dy = r.I(n) / 20.f;
+				}
+				else if (r.U(1))
+					dy = r.I(n) / 20.f;
+				else
+					dx = r.I(n) / 20.f;
+				edge(x + dx, y + dy);
+			}
+			else
+			{
+				const int n = static_cast<int>(r.U(4)) + 2;
+				const float cx = x + r.I(n) / 20.f, cy = y + r.I(n) / 20.f;
+				const float ax = cx + r.I(n) / 20.f, ay = cy + r.I(n) / 20.f;
+				const float sx = x, sy = y;
+				constexpr int kSteps = 10;
+				for (int i = 1; i <= kSteps; ++i)
+				{
+					const float t = static_cast<float>(i) / kSteps, u = 1.f - t;
+					edge(u * u * sx + 2.f * u * t * cx + t * t * ax, u * u * sy + 2.f * u * t * cy + t * t * ay);
+				}
+			}
+		}
+		return false;
+	}
+
+	struct VInstance { int shape; Matrix m; float mul[4], add[4]; };
+
+	void CollectVector(const Gfx& g, const Display& display, const Matrix& outer, const float mul[4], const float add[4], std::vector<VInstance>& out, int level = 0)
+	{
+		if (level > 8)
+			return;
+		for (const auto& [depth, placed] : display)
+		{
+			if (placed.mask)
+				continue;   // the pins stay within their masks, so they're simply left out
+			const Matrix m = placed.m.Then(outer);
+			float cm[4], ca[4];
+			for (int i = 0; i < 4; ++i)
+			{
+				cm[i] = placed.mul[i] * mul[i];
+				ca[i] = placed.add[i] * mul[i] + add[i];
+			}
+			if (g.shapeAt.count(placed.character))
+			{
+				VInstance v{ placed.character, m, {}, {} };
+				std::copy(cm, cm + 4, v.mul);
+				std::copy(ca, ca + 4, v.add);
+				out.push_back(v);
+				continue;
+			}
+			const auto sprite = g.sprites.find(placed.character);
+			if (sprite != g.sprites.end())
+			{
+				Display inner;
+				PlaySprite(g, sprite->second, nullptr, &inner);
+				CollectVector(g, inner, m, cm, ca, out, level + 1);
+			}
+		}
+	}
+
+	struct Affine { float a, b, c, d, tx, ty; };   // x' = a x + c y + tx
+	Affine Invert(const Affine& m)
+	{
+		const float det = m.a * m.d - m.b * m.c;
+		const float k = fabsf(det) > 1e-12f ? 1.f / det : 0.f;
+		Affine r{ m.d * k, -m.b * k, -m.c * k, m.a * k, 0.f, 0.f };
+		r.tx = -(r.a * m.tx + r.c * m.ty);
+		r.ty = -(r.b * m.tx + r.d * m.ty);
+		return r;
+	}
+
+	// Pictures a pin's fills can use, out of their compression on first use
+	struct PinAtlas { uint32_t w = 0, h = 0; std::vector<uint8_t> rgba; };
+
+	struct PinMenu
+	{
+		std::vector<uint8_t> file, gfx;
+		std::vector<Texture> textures;
+		Gfx g;
+		std::map<int, VShape> shapes;
+		std::map<std::string, PinAtlas> atlases;
+	};
+
+	const PinAtlas* PinAtlasFor(PinMenu& menu, int sub, SubImage& where)
+	{
+		const auto found = menu.g.subs.find(sub);
+		if (found == menu.g.subs.end())
+			return nullptr;
+		where = found->second;
+		const auto name = menu.g.atlasNames.find(where.atlas);
+		if (name == menu.g.atlasNames.end())
+			return nullptr;
+		auto& atlas = menu.atlases[name->second];
+		if (atlas.rgba.empty())
+			for (const Texture& t : menu.textures)
+			{
+				if (t.name != name->second)
+					continue;
+				const uint8_t* h = menu.file.data() + t.data;
+				GameTexture texture;
+				const uint32_t w = U32(h + 8), rows = U32(h + 12), pitch = U32(h + 16), size = U32(h + 20);
+				const uint32_t blocks = std::max(1u, (w + 3) / 4);
+				if (t.data + 28 + size > t.end || pitch == 0 || (pitch != blocks * 8 && pitch != blocks * 16))
+					break;
+				texture.dxgiFormat = pitch == blocks * 16 ? DXGI_FORMAT_BC3_UNORM : DXGI_FORMAT_BC1_UNORM;
+				texture.width = w;
+				texture.height = rows;
+				texture.rowBytes = pitch;
+				texture.rows = (rows + 3) / 4;
+				texture.pixels.assign(h + 28, h + 28 + size);
+				if (DecodeCardArt(texture, atlas.rgba))
+				{
+					atlas.w = w;
+					atlas.h = rows;
+				}
+				break;
+			}
+		return atlas.rgba.empty() ? nullptr : &atlas;
+	}
+
+	// One fill's colour at a point of the shape (in its pixels), straight (not premultiplied)
+	std::array<float, 4> FillColour(PinMenu& menu, const VFill& f, float sx, float sy)
+	{
+		if (f.kind == 0)
+			return { f.colour[0], f.colour[1], f.colour[2], f.colour[3] };
+		const Affine to{ f.m.a / 20.f, f.m.b / 20.f, f.m.c / 20.f, f.m.d / 20.f, f.m.tx, f.m.ty };
+		const Affine back = Invert(to);
+		const float gx = back.a * sx + back.c * sy + back.tx, gy = back.b * sx + back.d * sy + back.ty;
+		if (f.bitmap >= 0)
+		{
+			SubImage where{};
+			const PinAtlas* atlas = PinAtlasFor(menu, f.bitmap, where);
+			if (!atlas)
+				return { 0.f, 0.f, 0.f, 0.f };
+			const float w = static_cast<float>(where.x1 - where.x0), h = static_cast<float>(where.y1 - where.y0);
+			const float u = std::clamp(gx, 0.f, w - 1.f), v = std::clamp(gy, 0.f, h - 1.f);
+			const auto texel = [&](int px, int py)
+			{
+				px = std::clamp(px + where.x0, 0, static_cast<int>(atlas->w) - 1);
+				py = std::clamp(py + where.y0, 0, static_cast<int>(atlas->h) - 1);
+				return atlas->rgba.data() + (static_cast<size_t>(py) * atlas->w + px) * 4;
+			};
+			const int x0 = static_cast<int>(u), y0 = static_cast<int>(v);
+			const float fx = u - x0, fy = v - y0;
+			std::array<float, 4> c{};
+			const uint8_t* q[4] = { texel(x0, y0), texel(x0 + 1, y0), texel(x0, y0 + 1), texel(x0 + 1, y0 + 1) };
+			const float wt[4] = { (1 - fx) * (1 - fy), fx * (1 - fy), (1 - fx) * fy, fx * fy };
+			for (int k = 0; k < 4; ++k)
+				for (int i = 0; i < 4; ++i)
+					c[k] += q[i][k] / 255.f * wt[i];
+			return c;
+		}
+		if (f.stops.empty())
+			return { 0.f, 0.f, 0.f, 0.f };
+		float t = f.kind == 0x10 ? (gx + 16384.f) / 32768.f : std::sqrt(gx * gx + gy * gy) / 16384.f;
+		t = std::clamp(t, 0.f, 1.f);
+		if (t <= f.stops.front().first)
+			return f.stops.front().second;
+		for (size_t i = 1; i < f.stops.size(); ++i)
+			if (t <= f.stops[i].first)
+			{
+				const float span = std::max(f.stops[i].first - f.stops[i - 1].first, 1e-6f);
+				const float k = (t - f.stops[i - 1].first) / span;
+				std::array<float, 4> c{};
+				for (int j = 0; j < 4; ++j)
+					c[j] = f.stops[i - 1].second[j] * (1.f - k) + f.stops[i].second[j] * k;
+				return c;
+			}
+		return f.stops.back().second;
+	}
+
+	// Coverage of the edges with the non-zero rule, a sample in the middle of each small pixel
+	struct Seg { float x0, y0, x1, y1; };
+	void Cover(const std::vector<Seg>& segs, int size, std::vector<uint8_t>& mask)
+	{
+		mask.assign(static_cast<size_t>(size) * size, 0);
+		std::vector<std::pair<float, int>> hits;
+		for (int y = 0; y < size; ++y)
+		{
+			const float sy = y + 0.5f;
+			hits.clear();
+			for (const Seg& s : segs)
+			{
+				if ((s.y0 <= sy) == (s.y1 <= sy))
+					continue;
+				const float t = (sy - s.y0) / (s.y1 - s.y0);
+				hits.emplace_back(s.x0 + (s.x1 - s.x0) * t, s.y1 > s.y0 ? 1 : -1);
+			}
+			std::sort(hits.begin(), hits.end());
+			int winding = 0;
+			for (size_t i = 0; i + 1 < hits.size(); ++i)
+			{
+				winding += hits[i].second;
+				if (winding == 0)
+					continue;
+				const int from = std::max(0, static_cast<int>(std::ceil(hits[i].first - 0.5f)));
+				const int to = std::min(size - 1, static_cast<int>(std::ceil(hits[i + 1].first - 0.5f)) - 1);
+				for (int x = from; x <= to; ++x)
+					mask[static_cast<size_t>(y) * size + x] = 1;
+			}
+		}
+	}
+
+	// One pin, fitted into a square picture of the size asked for, with its smaller levels
+	bool DrawPin(PinMenu& menu, const Display& frame, uint32_t size, GameTexture& out)
+	{
+		const float one[4] = { 1.f, 1.f, 1.f, 1.f }, none[4] = {};
+		std::vector<VInstance> parts;
+		CollectVector(menu.g, frame, Matrix{}, one, none, parts);
+		if (parts.empty())
+			return false;
+		float minX = FLT_MAX, minY = FLT_MAX, maxX = -FLT_MAX, maxY = -FLT_MAX;
+		for (const VInstance& v : parts)
+		{
+			auto found = menu.shapes.find(v.shape);
+			if (found == menu.shapes.end())
+			{
+				VShape s;
+				const auto at = menu.g.shapeAt.at(v.shape);
+				ReadVShape(menu.g, at.first, at.second, s);
+				found = menu.shapes.emplace(v.shape, std::move(s)).first;
+			}
+			for (const VEdge& e : found->second.edges)
+				for (int i = 0; i < 2; ++i)
+				{
+					const float x = i ? e.x1 : e.x0, y = i ? e.y1 : e.y0;
+					const float px = v.m.a * x + v.m.c * y + v.m.tx, py = v.m.b * x + v.m.d * y + v.m.ty;
+					minX = std::min(minX, px);
+					maxX = std::max(maxX, px);
+					minY = std::min(minY, py);
+					maxY = std::max(maxY, py);
+				}
+		}
+		if (minX >= maxX || minY >= maxY)
+			return false;
+
+		constexpr int kSuper = 4;
+		const int big = static_cast<int>(size) * kSuper;
+		const float margin = big * 0.04f;
+		const float k = (big - 2.f * margin) / std::max(maxX - minX, maxY - minY);
+		const float offX = margin + ((big - 2.f * margin) - (maxX - minX) * k) * 0.5f - minX * k;
+		const float offY = margin + ((big - 2.f * margin) - (maxY - minY) * k) * 0.5f - minY * k;
+		std::vector<float> canvas(static_cast<size_t>(big) * big * 4, 0.f);   // premultiplied
+		std::vector<uint8_t> mask;
+		std::vector<Seg> segs;
+
+		for (const VInstance& v : parts)
+		{
+			const VShape& s = menu.shapes[v.shape];
+			const Affine place{ v.m.a * k, v.m.b * k, v.m.c * k, v.m.d * k, v.m.tx * k + offX, v.m.ty * k + offY };
+			const Affine back = Invert(place);
+			const auto at = [&](float x, float y) { return std::make_pair(place.a * x + place.c * y + place.tx, place.b * x + place.d * y + place.ty); };
+			const auto paint = [&](const VFill& fill)
+			{
+				for (int y = 0; y < big; ++y)
+					for (int x = 0; x < big; ++x)
+					{
+						if (!mask[static_cast<size_t>(y) * big + x])
+							continue;
+						const float px = x + 0.5f, py = y + 0.5f;
+						const float sx = back.a * px + back.c * py + back.tx, sy = back.b * px + back.d * py + back.ty;
+						std::array<float, 4> c = FillColour(menu, fill, sx, sy);
+						for (int i = 0; i < 4; ++i)
+							c[i] = std::clamp(c[i] * v.mul[i] + v.add[i], 0.f, 1.f);
+						float* o = canvas.data() + (static_cast<size_t>(y) * big + x) * 4;
+						const float a = c[3];
+						for (int i = 0; i < 3; ++i)
+							o[i] = c[i] * a + o[i] * (1.f - a);
+						o[3] = a + o[3] * (1.f - a);
+					}
+			};
+			// Fills, in the order the shape lists them
+			for (int f = 0; f < static_cast<int>(s.fills.size()); ++f)
+			{
+				segs.clear();
+				for (const VEdge& e : s.edges)
+				{
+					const auto [ax, ay] = at(e.x0, e.y0);
+					const auto [bx, by] = at(e.x1, e.y1);
+					if (e.fill1 == f)
+						segs.push_back(Seg{ ax, ay, bx, by });
+					if (e.fill0 == f)
+						segs.push_back(Seg{ bx, by, ax, ay });
+				}
+				if (segs.empty())
+					continue;
+				Cover(segs, big, mask);
+				paint(s.fills[f]);
+			}
+			// Then outlines: each piece of line as a band, with a round end
+			const float scale = std::sqrt(fabsf(place.a * place.d - place.b * place.c));
+			for (int l = 0; l < static_cast<int>(s.lines.size()); ++l)
+			{
+				segs.clear();
+				const float half = std::max(s.lines[l].width * scale, static_cast<float>(kSuper)) * 0.5f;
+				const auto blob = [&](float cx, float cy)
+				{
+					constexpr int kSides = 10;
+					for (int i = 0; i < kSides; ++i)
+					{
+						const float a0 = i * 2.f * kPiF / kSides, a1 = (i + 1) * 2.f * kPiF / kSides;
+						segs.push_back(Seg{ cx + cosf(a0) * half, cy + sinf(a0) * half, cx + cosf(a1) * half, cy + sinf(a1) * half });
+					}
+				};
+				for (const VEdge& e : s.edges)
+				{
+					if (e.line != l)
+						continue;
+					const auto [ax, ay] = at(e.x0, e.y0);
+					const auto [bx, by] = at(e.x1, e.y1);
+					const float dx = bx - ax, dy = by - ay, len = std::sqrt(dx * dx + dy * dy);
+					if (len > 1e-4f)
+					{
+						const float nx = -dy / len * half, ny = dx / len * half;
+						const float qx[4] = { ax + nx, bx + nx, bx - nx, ax - nx }, qy[4] = { ay + ny, by + ny, by - ny, ay - ny };
+						// one way round, whichever way the line runs, so the bands add up rather than cancel
+						const float area = (qx[1] - qx[0]) * (qy[2] - qy[0]) - (qx[2] - qx[0]) * (qy[1] - qy[0]);
+						for (int i = 0; i < 4; ++i)
+						{
+							const int a = area >= 0 ? i : 3 - i, b = area >= 0 ? (i + 1) % 4 : (6 - i) % 4;
+							segs.push_back(Seg{ qx[a], qy[a], qx[b], qy[b] });
+						}
+					}
+					blob(bx, by);
+				}
+				if (segs.empty())
+					continue;
+				Cover(segs, big, mask);
+				paint(s.lines[l].fill);
+			}
+		}
+
+		// Down to the size asked for, each pixel the average of its small ones
+		out = GameTexture{};
+		out.dxgiFormat = DXGI_FORMAT_R8G8B8A8_UNORM;
+		out.width = out.height = size;
+		out.rowBytes = size * 4;
+		out.rows = size;
+		out.pixels.assign(static_cast<size_t>(size) * size * 4, 0);
+		for (uint32_t y = 0; y < size; ++y)
+			for (uint32_t x = 0; x < size; ++x)
+			{
+				float sum[4] = {};
+				for (int j = 0; j < kSuper; ++j)
+					for (int i = 0; i < kSuper; ++i)
+					{
+						const float* c = canvas.data() + ((static_cast<size_t>(y) * kSuper + j) * big + x * kSuper + i) * 4;
+						for (int n = 0; n < 4; ++n)
+							sum[n] += c[n];
+					}
+				uint8_t* o = out.pixels.data() + (static_cast<size_t>(y) * size + x) * 4;
+				const float a = sum[3] / (kSuper * kSuper);
+				for (int n = 0; n < 3; ++n)
+					o[n] = static_cast<uint8_t>(std::clamp(a > 0.f ? sum[n] / sum[3] : 0.f, 0.f, 1.f) * 255.f + 0.5f);
+				o[3] = static_cast<uint8_t>(std::clamp(a, 0.f, 1.f) * 255.f + 0.5f);
+			}
+		AddSmallerLevels(out);
+		return true;
+	}
+
+	std::map<std::string, GameTexture> g_pins;
+	std::atomic<bool> g_pinsReady{ false };
+}
+
+void BuildMapPins(const std::wstring& game)
+{
+	constexpr const char* kMapMenu = "gameplay\\gui_new\\swf\\worldmap\\panel_worldmap.redswf";
+	for (const std::filesystem::path& bundle : GameBundles(game))
+	{
+		PinMenu menu;
+		if (!ReadFromBundle(bundle.wstring(), menu.file, kMapMenu))
+			continue;
+		if (!ReadResource(menu.file, menu.gfx, menu.textures))
+		{
+			Log("map pins: can't read the map menu in %ls", bundle.c_str());
+			continue;
+		}
+		ReadGfx(menu.g, menu.gfx);
+		const auto pinIcon = std::find_if(menu.g.classes.begin(), menu.g.classes.end(), [](const auto& c) { return c.first.find("PinIcon_") != std::string::npos && c.first.find("Tracker") == std::string::npos; });
+		if (pinIcon == menu.g.classes.end() || !menu.g.sprites.count(pinIcon->second))
+		{
+			Log("map pins: the map menu in %ls has no pins", bundle.c_str());
+			continue;
+		}
+		std::map<std::string, Display> frames;
+		PlaySprite(menu.g, menu.g.sprites[pinIcon->second], &frames, nullptr);
+		int drawn = 0;
+		for (const auto& [label, display] : frames)
+		{
+			GameTexture picture;
+			if (DrawPin(menu, display, 128, picture))
+			{
+				g_pins[label] = std::move(picture);
+				++drawn;
+			}
+		}
+		Log("map pins: %d of %zu drawn, from %ls", drawn, frames.size(), bundle.filename().c_str());
+#ifdef POTP_OVERLAY_TEST
+		// For a look at them all: POTP_PIN_DUMP names a folder for each as a 32-bit picture. POTP_ICON_DUMP lists
+		// other game icons (by their menu paths, separated by ;) to save there too.
+		wchar_t dump[MAX_PATH] = L"";
+		if (GetEnvironmentVariableW(L"POTP_PIN_DUMP", dump, MAX_PATH))
+		{
+			const auto save = [&](const std::string& name, const GameTexture& picture)
+			{
+				std::vector<uint8_t> rgba;
+				if (picture.dxgiFormat == DXGI_FORMAT_R8G8B8A8_UNORM)
+					rgba = picture.pixels;
+				else if (!DecodeCardArt(picture, rgba))
+					return;
+				const std::wstring path = std::wstring(dump) + L"\\" + std::wstring(name.begin(), name.end()) + L".bmp";
+				FILE* f = nullptr;
+				if (_wfopen_s(&f, path.c_str(), L"wb") || !f)
+					return;
+				const uint32_t w = picture.width, h = picture.height, bytes = w * h * 4;
+				uint8_t head[54] = { 'B', 'M' };
+				const auto put = [&](int at, uint32_t v) { memcpy(head + at, &v, 4); };
+				put(2, 54 + bytes); put(10, 54); put(14, 40); put(18, w); put(22, h);
+				head[26] = 1; head[28] = 32;
+				put(34, bytes);
+				fwrite(head, 1, 54, f);
+				for (uint32_t y = 0; y < h; ++y)
+					for (uint32_t x = 0; x < w; ++x)
+					{
+						const uint8_t* c = rgba.data() + ((static_cast<size_t>(h - 1 - y) * w) + x) * 4;
+						const uint8_t bgra[4] = { c[2], c[1], c[0], c[3] };
+						fwrite(bgra, 1, 4, f);
+					}
+				fclose(f);
+			};
+			for (const auto& [label, picture] : g_pins)
+				save(label, picture);
+			char list[4096] = "";
+			if (GetEnvironmentVariableA("POTP_ICON_DUMP", list, sizeof(list)))
+			{
+				std::string all = list;
+				for (size_t at = 0; at < all.size();)
+				{
+					size_t semi = all.find(';', at);
+					if (semi == std::string::npos)
+						semi = all.size();
+					const std::string path = all.substr(at, semi - at);
+					at = semi + 1;
+					GameTexture icon;
+					if (!ReadGameIcon(path, 256, icon))
+					{
+						Log("icon dump: %s not found", path.c_str());
+						continue;
+					}
+					std::string name = path.substr(path.find_last_of('/') + 1);
+					save("icon_" + name.substr(0, name.find('.')), icon);
+				}
+			}
+		}
+#endif
+		g_pinsReady = true;
+		return;
+	}
+	Log("map pins: the map menu wasn't found");
+}
+
+const GameTexture* MapPinPicture(const std::string& label)
+{
+	if (!g_pinsReady)
+		return nullptr;
+	const auto found = g_pins.find(label);
+	return found != g_pins.end() ? &found->second : nullptr;
+}
+
+// A square cut from the top of a card's art, where the face usually is, shrunk to the size asked for with each pixel
+// the average of those it covers, and its smaller levels: for a mark next to the card's name
+bool MakeCardPortrait(const GameTexture& art, uint32_t size, GameTexture& out)
+{
+	std::vector<uint8_t> rgba;
+	if (art.dxgiFormat == DXGI_FORMAT_R8G8B8A8_UNORM && art.pixels.size() >= static_cast<size_t>(art.width) * art.height * 4)
+		rgba = art.pixels;
+	else if (!DecodeCardArt(art, rgba))
+		return false;
+	const float w = static_cast<float>(art.width), h = static_cast<float>(art.height);
+	const float side = std::min(w * 0.84f, h);
+	const float x0 = (w - side) * 0.5f, y0 = std::min(h * 0.05f, h - side);
+	out = GameTexture{};
+	out.dxgiFormat = DXGI_FORMAT_R8G8B8A8_UNORM;
+	out.width = out.height = size;
+	out.rowBytes = size * 4;
+	out.rows = size;
+	out.pixels.assign(static_cast<size_t>(size) * size * 4, 255);
+	const float step = side / size;
+	const int samples = std::max(1, static_cast<int>(std::ceil(step)));
+	for (uint32_t y = 0; y < size; ++y)
+		for (uint32_t x = 0; x < size; ++x)
+		{
+			float sum[4] = {};
+			for (int j = 0; j < samples; ++j)
+				for (int i = 0; i < samples; ++i)
+				{
+					const int sx = std::clamp(static_cast<int>(x0 + (x + (i + 0.5f) / samples) * step), 0, static_cast<int>(art.width) - 1);
+					const int sy = std::clamp(static_cast<int>(y0 + (y + (j + 0.5f) / samples) * step), 0, static_cast<int>(art.height) - 1);
+					const uint8_t* p = rgba.data() + (static_cast<size_t>(sy) * art.width + sx) * 4;
+					for (int k = 0; k < 4; ++k)
+						sum[k] += p[k];
+				}
+			uint8_t* o = out.pixels.data() + (static_cast<size_t>(y) * size + x) * 4;
+			for (int k = 0; k < 3; ++k)
+				o[k] = static_cast<uint8_t>(sum[k] / (samples * samples) + 0.5f);
+			o[3] = 255;
+		}
+	AddSmallerLevels(out);
+	return true;
+}
+
+// An item's icon for a small square: the empty space round it cut away, a tall weapon turned to lie corner to corner,
+// and fitted into a picture of the size asked for, each pixel averaged from samples of the one before, with its smaller
+// levels. Colour is weighted by how opaque it is, so its edges don't darken.
+bool MakeItemTile(const GameTexture& icon, bool weapon, uint32_t size, GameTexture& out)
+{
+	struct Picture
+	{
+		int w = 0, h = 0;
+		std::vector<float> p;   // premultiplied RGBA, 0 to 1
+		std::array<float, 4> At(int x, int y) const
+		{
+			if (x < 0 || y < 0 || x >= w || y >= h)
+				return { 0.f, 0.f, 0.f, 0.f };
+			const float* q = p.data() + (static_cast<size_t>(y) * w + x) * 4;
+			return { q[0], q[1], q[2], q[3] };
+		}
+		std::array<float, 4> Sample(float x, float y) const   // bilinear, x and y in pixels
+		{
+			x -= 0.5f;
+			y -= 0.5f;
+			const int x0 = static_cast<int>(std::floor(x)), y0 = static_cast<int>(std::floor(y));
+			const float fx = x - x0, fy = y - y0;
+			const auto a = At(x0, y0), b = At(x0 + 1, y0), c = At(x0, y0 + 1), d = At(x0 + 1, y0 + 1);
+			std::array<float, 4> r{};
+			for (int k = 0; k < 4; ++k)
+				r[k] = (a[k] * (1 - fx) + b[k] * fx) * (1 - fy) + (c[k] * (1 - fx) + d[k] * fx) * fy;
+			return r;
+		}
+		// The smallest box holding what isn't clear
+		Picture Trimmed() const
+		{
+			int x0 = w, y0 = h, x1 = -1, y1 = -1;
+			for (int y = 0; y < h; ++y)
+				for (int x = 0; x < w; ++x)
+					if (p[(static_cast<size_t>(y) * w + x) * 4 + 3] > 0.04f)
+					{
+						x0 = std::min(x0, x); x1 = std::max(x1, x);
+						y0 = std::min(y0, y); y1 = std::max(y1, y);
+					}
+			if (x1 < x0)
+				return *this;
+			Picture t;
+			t.w = x1 - x0 + 1;
+			t.h = y1 - y0 + 1;
+			t.p.resize(static_cast<size_t>(t.w) * t.h * 4);
+			for (int y = 0; y < t.h; ++y)
+				memcpy(t.p.data() + static_cast<size_t>(y) * t.w * 4, p.data() + (static_cast<size_t>(y + y0) * w + x0) * 4, static_cast<size_t>(t.w) * 4 * sizeof(float));
+			return t;
+		}
+	};
+
+	std::vector<uint8_t> rgba;
+	if (icon.dxgiFormat == DXGI_FORMAT_R8G8B8A8_UNORM && icon.pixels.size() >= static_cast<size_t>(icon.width) * icon.height * 4)
+		rgba = icon.pixels;
+	else if (!DecodeCardArt(icon, rgba))
+		return false;
+	Picture src;
+	src.w = static_cast<int>(icon.width);
+	src.h = static_cast<int>(icon.height);
+	src.p.resize(static_cast<size_t>(src.w) * src.h * 4);
+	for (size_t i = 0; i < static_cast<size_t>(src.w) * src.h; ++i)
+	{
+		const float a = rgba[i * 4 + 3] / 255.f;
+		for (int k = 0; k < 3; ++k)
+			src.p[i * 4 + k] = rgba[i * 4 + k] / 255.f * a;
+		src.p[i * 4 + 3] = a;
+	}
+	Picture item = src.Trimmed();
+
+	// A long weapon stands upright in its icon: turned 38 degrees clockwise it fills a square far better
+	if (weapon && item.h > item.w * 1.4f)
+	{
+		const float angle = 38.f * 3.14159265f / 180.f, cs = std::cos(angle), sn = std::sin(angle);
+		const float cx = item.w * 0.5f, cy = item.h * 0.5f;
+		Picture turned;
+		turned.w = static_cast<int>(std::ceil(item.w * cs + item.h * sn)) + 2;
+		turned.h = static_cast<int>(std::ceil(item.w * sn + item.h * cs)) + 2;
+		turned.p.assign(static_cast<size_t>(turned.w) * turned.h * 4, 0.f);
+		const float ox = turned.w * 0.5f, oy = turned.h * 0.5f;
+		for (int y = 0; y < turned.h; ++y)
+			for (int x = 0; x < turned.w; ++x)
+			{
+				// back from the turned picture into the upright one
+				const float dx = x + 0.5f - ox, dy = y + 0.5f - oy;
+				const float sx = cs * dx + sn * dy + cx, sy = -sn * dx + cs * dy + cy;
+				const auto c = item.Sample(sx, sy);
+				std::copy(c.begin(), c.end(), turned.p.begin() + (static_cast<size_t>(y) * turned.w + x) * 4);
+			}
+		item = turned.Trimmed();
+	}
+
+	// Into the square, the longer side filling it, four by four samples a pixel
+	out = GameTexture{};
+	out.dxgiFormat = DXGI_FORMAT_R8G8B8A8_UNORM;
+	out.width = out.height = size;
+	out.rowBytes = size * 4;
+	out.rows = size;
+	out.pixels.assign(static_cast<size_t>(size) * size * 4, 0);
+	const float k = static_cast<float>(size) / std::max(item.w, item.h);
+	const float offX = (size - item.w * k) * 0.5f, offY = (size - item.h * k) * 0.5f;
+	constexpr int kSamples = 4;
+	for (uint32_t y = 0; y < size; ++y)
+		for (uint32_t x = 0; x < size; ++x)
+		{
+			float sum[4] = {};
+			for (int j = 0; j < kSamples; ++j)
+				for (int i = 0; i < kSamples; ++i)
+				{
+					const float px = (x + (i + 0.5f) / kSamples - offX) / k, py = (y + (j + 0.5f) / kSamples - offY) / k;
+					const auto c = item.Sample(px, py);
+					for (int n = 0; n < 4; ++n)
+						sum[n] += c[n];
+				}
+			uint8_t* o = out.pixels.data() + (static_cast<size_t>(y) * size + x) * 4;
+			const float a = sum[3] / (kSamples * kSamples);
+			for (int n = 0; n < 3; ++n)
+				o[n] = static_cast<uint8_t>(std::clamp(sum[3] > 0.f ? sum[n] / sum[3] : 0.f, 0.f, 1.f) * 255.f + 0.5f);
+			o[3] = static_cast<uint8_t>(std::clamp(a, 0.f, 1.f) * 255.f + 0.5f);
+		}
+	AddSmallerLevels(out);
+	return true;
+}
+
+// The pin's own colour: its bright, solid pixels, a quarter of the way down from the brightest
+bool MapPinColour(const std::string& label, uint8_t rgb[3])
+{
+	const GameTexture* pin = MapPinPicture(label);
+	if (!pin)
+		return false;
+	std::vector<const uint8_t*> bright;
+	for (size_t i = 0; i + 3 < pin->pixels.size(); i += 4)
+	{
+		const uint8_t* p = pin->pixels.data() + i;
+		if (p[3] > 200 && std::max({ p[0], p[1], p[2] }) > 120)
+			bright.push_back(p);
+	}
+	if (bright.empty())
+		return false;
+	std::sort(bright.begin(), bright.end(), [](const uint8_t* a, const uint8_t* b) { return a[0] + a[1] + a[2] > b[0] + b[1] + b[2]; });
+	const uint8_t* p = bright[bright.size() / 4];
+	rgb[0] = p[0];
+	rgb[1] = p[1];
+	rgb[2] = p[2];
+	return true;
+}
+
+// The pin in white, its dark outline kept: for a mark drawn over a pin in its colour. Made the first time it's
+// asked for, on the drawing thread.
+const GameTexture* MapPinWhite(const std::string& label)
+{
+	static std::map<std::string, GameTexture> made;
+	const auto found = made.find(label);
+	if (found != made.end())
+		return &found->second;
+	const GameTexture* pin = MapPinPicture(label);
+	if (!pin)
+		return nullptr;
+	GameTexture white;
+	white.dxgiFormat = pin->dxgiFormat;
+	white.width = pin->width;
+	white.height = pin->height;
+	white.rowBytes = pin->rowBytes;
+	white.rows = pin->rows;
+	white.pixels = pin->pixels;
+	for (size_t i = 0; i + 3 < white.pixels.size(); i += 4)
+	{
+		uint8_t* p = white.pixels.data() + i;
+		const uint8_t top = std::max({ p[0], p[1], p[2] });
+		p[0] = p[1] = p[2] = top > 90 ? 255 : top;
+	}
+	AddSmallerLevels(white);
+	return &made.emplace(label, std::move(white)).first->second;
+}
+
+std::vector<std::string> MapPinLabels()
+{
+	std::vector<std::string> labels;
+	if (g_pinsReady)
+		for (const auto& [label, picture] : g_pins)
+			labels.push_back(label);
+	return labels;
 }

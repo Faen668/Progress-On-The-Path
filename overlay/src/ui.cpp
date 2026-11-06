@@ -1156,6 +1156,16 @@ namespace
 	}
 
 	void CardListMark(const Entry& e, ImVec2 centre);
+	const char* SectionShield(const Section& s);
+	void CardShield(const char* label, ImVec2 centre, float box, ImU32 tint);
+	constexpr const char* kNeutralSun = "#sun";
+	void CardSun(ImVec2 centre, float radius, ImU32 col);
+	constexpr float kShieldRoom = 52.f;   // a Gwent or World Map group's header: its shield or map pin before its name
+	bool HeaderHasMark(const Section& s) { return s.book == kBookGwent || s.book == kBookWorld; }
+	unsigned long long MapPinTexture(const std::string& label);
+	unsigned long long MapPinWhiteTexture(const std::string& label);
+	unsigned long long CardPortraitTexture(const std::string& picture);
+	unsigned long long ItemTileTexture(const std::string& iconPath);
 
 	const char* StatusText(const Entry& e)
 	{
@@ -1911,7 +1921,7 @@ namespace
 		const float rowW = lb.x - la.x - 8.f;
 		const auto headerRoom = [&](const Section& s, float countW)
 		{
-			return lb.x - la.x - 34.f - countW - 90.f - (s.state == 1 ? 40.f : 0.f);
+			return lb.x - la.x - 34.f - countW - 90.f - (s.state == 1 ? 40.f : 0.f) - (HeaderHasMark(s) ? kShieldRoom : 0.f);
 		};
 		const auto sectionCount = [](const Section& s)
 		{
@@ -2242,7 +2252,30 @@ namespace
 					const ImVec2 w[3] = { {w0.x, w0.y - 15}, {w0.x + 15, w0.y + 12}, {w0.x - 15, w0.y + 12} };
 					dl->AddConvexPolyFilled(w, 3, kRed);
 				}
-				Text(kSerif, 32, a.x + 30, a.y + 10, open ? Rgb(240, 230, 208) : Rgb(204, 192, 160), s.header.c_str(), room);
+				float textX = a.x + 30;
+				if (s.book == kBookWorld)
+				{
+					if (const unsigned long long pin = s.pin.empty() ? 0 : MapPinTexture(s.pin))
+					{
+						const float half = 21.f;
+						const ImVec2 c(textX + 20.f, a.y + 31.f);
+						dl->AddImage(static_cast<ImTextureID>(pin), ImVec2(c.x - half, c.y - half), ImVec2(c.x + half, c.y + half), ImVec2(0, 0), ImVec2(1, 1), IM_COL32(255, 255, 255, open || hover ? 255 : 225));
+					}
+					textX += kShieldRoom;
+				}
+				if (s.book == kBookGwent)
+				{
+					const ImU32 shieldTint = IM_COL32(255, 255, 255, open || hover ? 245 : 215);
+					if (const char* shield = SectionShield(s))
+					{
+						if (shield == kNeutralSun)
+							CardSun(ImVec2(textX + 20.f, a.y + 31.f), 19.f, shieldTint);
+						else
+							CardShield(shield, ImVec2(textX + 20.f, a.y + 31.f), 40.f, shieldTint);
+					}
+					textX += kShieldRoom;   // the names line up whether or not there's a shield
+				}
+				Text(kSerif, 32, textX, a.y + 10, open ? Rgb(240, 230, 208) : Rgb(204, 192, 160), s.header.c_str(), room);
 				if (s.book == kBookMissable && s.state != 0)
 					Text(kTitle, 20, a.x + 30, b.y - 34.f, s.state == 1 ? Rgb(246, 136, 100) : kDim, s.state == 1 ? Tx(T_happening_now) : Tx(T_passed));
 				TextRight(kSans, 24, b.x - 70, a.y + 17, counted.All() ? kGreen : kDim, count);
@@ -2775,9 +2808,17 @@ namespace
 		if (found != uploaded.end())
 			return found->second;
 		unsigned long long texture = 0;
-		if (const GameTexture* pixels = CardArtAtlas(atlas))
+		GameTexture withMips;
+		if (CardArtAtlasWithMips(atlas, withMips))
+		{
+			if (!UploadIconTexture(withMips, texture))
+				texture = 0;
+		}
+		else if (const GameTexture* pixels = CardArtAtlas(atlas))
+		{
 			if (!UploadIconTexture(*pixels, texture))
 				texture = 0;
+		}
 		uploaded[atlas] = texture;
 		return texture;
 	}
@@ -2989,6 +3030,155 @@ namespace
 		}
 	}
 
+	// A Gwent group's faction, as most of its cards have it; null when the game has no shield for it
+	const char* SectionShield(const Section& s)
+	{
+		if (s.book != kBookGwent || s.entries.empty())
+			return nullptr;
+		int counts[6] = {};
+		for (const Entry& e : s.entries)
+			if (e.neutral)
+				++counts[0];
+			else if (e.faction >= 0 && e.faction < 6)
+				++counts[e.faction];
+		const int faction = static_cast<int>(std::max_element(counts, counts + 6) - counts);
+		if (faction != 0)
+			return CardArtFrame(kClipShield, CardFactionFrame(faction)) ? CardFactionFrame(faction) : nullptr;
+		// The deck list has no shield for neutral cards (its "Neutral" is the Northern Realms' picture): they have the hero's sun
+		return CardArtFrame(kClipPower, "Hero") ? kNeutralSun : nullptr;
+	}
+
+	// The sun from a hero card's corner, cut out round without the leaves that run along the card's edges
+	void CardSun(ImVec2 centre, float radius, ImU32 col)
+	{
+		const std::vector<CardPiece>* pieces = CardArtFrame(kClipPower, "Hero");
+		if (!pieces || pieces->size() != 1)
+			return;
+		const CardPiece& p = pieces->front();
+		const unsigned long long texture = CardAtlasTexture(p.atlas);
+		if (!texture)
+			return;
+		constexpr float kSunX = 0.322f, kSunY = 0.318f, kSunRadius = 0.30f;   // of the picture, measured from it
+		constexpr int kPoints = 32;
+		const float kRadius = radius;
+		dl->PushTextureID(static_cast<ImTextureID>(texture));
+		dl->PrimReserve(kPoints * 3, kPoints + 1);
+		const unsigned base = dl->_VtxCurrentIdx;
+		const auto uv = [&](float s, float t) { return ImVec2(p.u0 + (p.u1 - p.u0) * s, p.v0 + (p.v1 - p.v0) * t); };
+		dl->PrimWriteVtx(centre, uv(kSunX, kSunY), col);
+		for (int i = 0; i < kPoints; ++i)
+		{
+			const float a = i * 2.f * kPi / kPoints;
+			dl->PrimWriteVtx(ImVec2(centre.x + cos(a) * kRadius, centre.y + sin(a) * kRadius), uv(kSunX + cos(a) * kSunRadius, kSunY + sin(a) * kSunRadius), col);
+		}
+		for (int i = 0; i < kPoints; ++i)
+		{
+			dl->PrimWriteIdx(static_cast<ImDrawIdx>(base));
+			dl->PrimWriteIdx(static_cast<ImDrawIdx>(base + 1 + i));
+			dl->PrimWriteIdx(static_cast<ImDrawIdx>(base + 1 + (i + 1) % kPoints));
+		}
+		dl->PopTextureID();
+	}
+
+	// A world map pin, as the map menu draws it: uploaded the first time it's asked for
+	unsigned long long MapPinTexture(const std::string& label)
+	{
+		static std::map<std::string, unsigned long long> uploaded;
+		const auto found = uploaded.find(label);
+		if (found != uploaded.end())
+			return found->second;
+		const GameTexture* picture = MapPinPicture(label);
+		if (!picture)
+			return 0;   // not drawn yet: asked again next frame
+		unsigned long long texture = 0;
+		if (!UploadIconTexture(*picture, texture))
+			texture = 0;
+		uploaded[label] = texture;
+		return texture;
+	}
+
+	// An item's icon for a slot, its empty edges cut away and a long weapon turned corner to corner: made the first time
+	// it's asked for
+	unsigned long long ItemTileTexture(const std::string& iconPath)
+	{
+		static std::map<std::string, unsigned long long> made;
+		const auto found = made.find(iconPath);
+		if (found != made.end())
+			return found->second;
+		if (!GameIconIndexReady())
+			return 0;   // asked again next frame
+		unsigned long long texture = 0;
+		GameTexture icon, tile;
+		if (ReadGameIcon(iconPath, 256, icon))
+		{
+			const bool weapon = iconPath.find("/weapons/") != std::string::npos;
+			if (MakeItemTile(icon, weapon, 128, tile) && !UploadIconTexture(tile, texture))
+				texture = 0;
+		}
+		made[iconPath] = texture;   // remembered either way, so a missing one isn't looked for every frame
+		return texture;
+	}
+
+	// A square portrait from a Gwent card's art, for a line about the card: made the first time it's asked for
+	unsigned long long CardPortraitTexture(const std::string& picture)
+	{
+		static std::map<std::string, unsigned long long> made;
+		const auto found = made.find(picture);
+		if (found != made.end())
+			return found->second;
+		if (!GameIconIndexReady())
+			return 0;   // asked again next frame
+		unsigned long long texture = 0;
+		GameTexture art, portrait;
+		if (ReadGameIcon("icons/gwint/" + picture + ".png", 2048, art) && MakeCardPortrait(art, 128, portrait))
+			if (!UploadIconTexture(portrait, texture))
+				texture = 0;
+		made[picture] = texture;   // remembered either way, so a missing one isn't looked for every frame
+		return texture;
+	}
+
+	// A world map pin in white, for a mark drawn over a pin in its colour
+	unsigned long long MapPinWhiteTexture(const std::string& label)
+	{
+		static std::map<std::string, unsigned long long> uploaded;
+		const auto found = uploaded.find(label);
+		if (found != uploaded.end())
+			return found->second;
+		const GameTexture* picture = MapPinWhite(label);
+		if (!picture)
+			return 0;
+		unsigned long long texture = 0;
+		if (!UploadIconTexture(*picture, texture))
+			texture = 0;
+		uploaded[label] = texture;
+		return texture;
+	}
+
+	// One of the deck list's faction shields, fitted into a square
+	void CardShield(const char* label, ImVec2 centre, float box, ImU32 tint)
+	{
+		const std::vector<CardPiece>* pieces = CardArtFrame(kClipShield, label);
+		if (!pieces || pieces->empty())
+			return;
+		float minX = FLT_MAX, minY = FLT_MAX, maxX = -FLT_MAX, maxY = -FLT_MAX;
+		for (const CardPiece& p : *pieces)
+			for (int i = 0; i < 4; ++i)
+			{
+				minX = std::min(minX, p.x[i]);
+				maxX = std::max(maxX, p.x[i]);
+				minY = std::min(minY, p.y[i]);
+				maxY = std::max(maxY, p.y[i]);
+			}
+		const float fit = box / std::max(std::max(maxX - minX, maxY - minY), 1.f);
+		const float midX = (minX + maxX) * 0.5f, midY = (minY + maxY) * 0.5f;
+		for (const CardPiece& p : *pieces)
+			if (const unsigned long long texture = CardAtlasTexture(p.atlas))
+			{
+				const auto at = [&](int i) { return ImVec2(centre.x + (p.x[i] - midX) * fit, centre.y + (p.y[i] - midY) * fit); };
+				dl->AddImageQuad(static_cast<ImTextureID>(texture), at(0), at(1), at(2), at(3), ImVec2(p.u0, p.v0), ImVec2(p.u1, p.v0), ImVec2(p.u1, p.v1), ImVec2(p.u0, p.v1), tint);
+			}
+	}
+
 	// A small mark at the end of a card's row, in the game's own pictures: a leader's faction shield, a hero's
 	// sun, a unit's row, a special card's icon
 	void CardListMark(const Entry& e, ImVec2 centre)
@@ -3015,31 +3205,7 @@ namespace
 		// A hero's is the sun alone, without the leaves that run along the card's edges
 		if (hero && pieces->size() == 1)
 		{
-			const CardPiece& p = pieces->front();
-			const unsigned long long texture = CardAtlasTexture(p.atlas);
-			if (!texture)
-				return;
-			constexpr float kSunX = 0.322f, kSunY = 0.318f, kSunRadius = 0.30f;   // of the picture, measured from it
-			constexpr int kPoints = 32;
-			constexpr float kRadius = 19.f;
-			dl->PushTextureID(static_cast<ImTextureID>(texture));
-			dl->PrimReserve(kPoints * 3, kPoints + 1);
-			const unsigned base = dl->_VtxCurrentIdx;
-			const ImU32 col = IM_COL32(255, 255, 255, e.Done() ? 110 : 235);
-			const auto uv = [&](float s, float t) { return ImVec2(p.u0 + (p.u1 - p.u0) * s, p.v0 + (p.v1 - p.v0) * t); };
-			dl->PrimWriteVtx(centre, uv(kSunX, kSunY), col);
-			for (int i = 0; i < kPoints; ++i)
-			{
-				const float a = i * 2.f * kPi / kPoints;
-				dl->PrimWriteVtx(ImVec2(centre.x + cos(a) * kRadius, centre.y + sin(a) * kRadius), uv(kSunX + cos(a) * kSunRadius, kSunY + sin(a) * kSunRadius), col);
-			}
-			for (int i = 0; i < kPoints; ++i)
-			{
-				dl->PrimWriteIdx(static_cast<ImDrawIdx>(base));
-				dl->PrimWriteIdx(static_cast<ImDrawIdx>(base + 1 + i));
-				dl->PrimWriteIdx(static_cast<ImDrawIdx>(base + 1 + (i + 1) % kPoints));
-			}
-			dl->PopTextureID();
+			CardSun(centre, 19.f, IM_COL32(255, 255, 255, e.Done() ? 110 : 235));
 			return;
 		}
 
@@ -4728,6 +4894,55 @@ namespace
 	{
 		const float s = 13.f;
 		const auto has = [&](const char* part) { return icon.find(part) != std::string::npos; };
+		// card:picture, a Gwent card: a square from the top of its art, with rounded corners and a thin gold edge
+		if (icon.rfind("card:", 0) == 0)
+		{
+			if (const unsigned long long portrait = CardPortraitTexture(icon.substr(5)))
+			{
+				const float half = 15.f;
+				const ImVec2 a(c.x - half, c.y - half), b(c.x + half, c.y + half);
+				dl->AddImageRounded(static_cast<ImTextureID>(portrait), a, b, ImVec2(0, 0), ImVec2(1, 1), IM_COL32_WHITE, 4.f);
+				dl->AddRect(a, b, Rgb(196, 160, 96, 220), 4.f, 0, 1.5f);
+				return;
+			}
+		}
+		// pin:Name, one of the world map's pins as the map menu draws it. pin:A%B draws A in B's colour with B in white
+		// over its middle: a quest's diamond, coloured for the part of the game it's from, with its exclamation mark.
+		if (icon.rfind("pin:", 0) == 0)
+		{
+			const float half = 17.f;
+			const size_t split = icon.find('%', 4);
+			const std::string base = icon.substr(4, split == std::string::npos ? std::string::npos : split - 4);
+			const unsigned long long pin = MapPinTexture(base);
+			if (split == std::string::npos)
+			{
+				if (pin)
+					dl->AddImage(static_cast<ImTextureID>(pin), ImVec2(c.x - half, c.y - half), ImVec2(c.x + half, c.y + half));
+				return;
+			}
+			const std::string mark = icon.substr(split + 1);
+			uint8_t rgb[3] = { 255, 255, 255 };
+			MapPinColour(mark, rgb);
+			if (pin)
+				dl->AddImage(static_cast<ImTextureID>(pin), ImVec2(c.x - half, c.y - half), ImVec2(c.x + half, c.y + half), ImVec2(0, 0), ImVec2(1, 1), IM_COL32(rgb[0], rgb[1], rgb[2], 255));
+			if (const unsigned long long white = MapPinWhiteTexture(mark))
+			{
+				const float markHalf = half * 0.6f;   // the mark a little over half the diamond's height
+				dl->AddImage(static_cast<ImTextureID>(white), ImVec2(c.x - markHalf, c.y - markHalf), ImVec2(c.x + markHalf, c.y + markHalf));
+			}
+			return;
+		}
+		// Anything else is an item's icon: in a slot with a thin gold edge, like a card's portrait
+		if (!icon.empty())
+			if (const unsigned long long tile = ItemTileTexture(icon))
+			{
+				const float half = 15.f, inner = 13.f;
+				const ImVec2 a(c.x - half, c.y - half), b(c.x + half, c.y + half);
+				dl->AddRectFilled(a, b, Rgb(22, 19, 14, 235), 4.f);
+				dl->AddImage(static_cast<ImTextureID>(tile), ImVec2(c.x - inner, c.y - inner), ImVec2(c.x + inner, c.y + inner));
+				dl->AddRect(a, b, Rgb(196, 160, 96, 220), 4.f, 0, 1.5f);
+				return;
+			}
 		if (!icon.empty())
 			if (const LoadedIcon* loaded = GameIcon(icon))
 			{
@@ -5109,7 +5324,7 @@ namespace
 	{
 		const ImGuiIO& io = ImGui::GetIO();
 		Settings& st = GetSettings();
-		static const PopupMessage sample = ParsePopup("N|7|18|0|310|1404\\nL|0|1|icons/potp/tracked_gold.png|Blood on the Battlefield\\nL|0|1|icons/potp/tracked_gold.png|Iron Maiden\\nL|1|0|icons/inventory/weapons/axe_01_64x128.png|Angivare\\nL|1|0|icons/inventory/gwint/additional/ico_gwent_dummy_nilfgaard.png|Arachas\\nL|2|0|icons/potp/tracked_banditcamp_dark.png|Bandit Camp: North of the Sawmill");
+		static const PopupMessage sample = ParsePopup("N|7|18|0|310|1404\\nL|0|1|pin:QuestObjectiveOther%QuestAvailable|Blood on the Battlefield\\nL|0|1|pin:QuestObjectiveOther%QuestAvailable|Iron Maiden\\nL|1|0|icons/inventory/weapons/axe_01_64x128.png|Angivare\\nL|1|0|card:nml_toad|Toad\\nL|2|0|pin:BanditCampfire|Bandit Camp: North of the Sawmill");
 		const PopupLayout l = LayOutPopup(sample);
 		const ImVec2 mouse(io.MousePos.x * g_mouseScale.x, io.MousePos.y * g_mouseScale.y);
 		const ImVec2 a(l.x, l.y), b(l.x + l.w * l.scale, l.y + l.h * l.scale);

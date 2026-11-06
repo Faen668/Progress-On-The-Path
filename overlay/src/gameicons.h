@@ -3,7 +3,7 @@
 #include <string>
 #include <vector>
 
-// A picture from the game's own files, found by the path the game's menus use for it: "icons/potp/tracked_gold.png".
+// A picture from the game's own files, found by the path the game's menus use for it: "icons/inventory/weapons/axe_01_64x128.png".
 // Their textures are in the texture.cache of each mod, DLC and the game, under gameplay\gui_new\ and that path.
 struct GameTexture
 {

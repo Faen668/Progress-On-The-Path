@@ -595,20 +595,27 @@ class CPotP_Notifications
 
 	public function GetIcon(tracked: CPotP_Entry) : string
 	{
-		var icon_path : string;
+		var icon_path	: string;
+		var card		: SCardDefinition;
 
 		switch (tracked.category)
 		{
 		case PotP_A_Quest:
 		case PotP_A_Event:
-			if (tracked.dlc_index == 1) { return "icons/potp/tracked_blue.png"; }
-			if (tracked.dlc_index == 2) { return "icons/potp/tracked_red.png"; }
-			return "icons/potp/tracked_gold.png";
+			// The world map's quest diamond, in the colour the map gives each part of the game, with its exclamation mark
+			if (tracked.dlc_index == 1) { return "pin:QuestObjectiveOther%QuestAvailableHoS"; }
+			if (tracked.dlc_index == 2) { return "pin:QuestObjectiveOther%QuestAvailableBaW"; }
+			return "pin:QuestObjectiveOther%QuestAvailable";
 
 		case PotP_A_World:
 			return GetWorldIcon(tracked.filter);
 
 		case PotP_A_Gwent:
+			// The card's own art, which the overlay cuts a portrait from
+			if (tracked.card_names.Size() > 0 && theGame.GetGwintManager().GetGwentCard(tracked.card_names[0], card))
+			{
+				return "card:" + PotPOverlay_CardPicture(card);
+			}
 			icon_path = thePlayer.GetInventory().GetItemIconPathByName(tracked.item_name);
 			if (icon_path == "") { return "icons/inventory/gwint/ico_gwent_hero_neutral.png"; }
 			return icon_path;
@@ -622,25 +629,26 @@ class CPotP_Notifications
 
 	//---------------------------------------------------
 
+	// The world map's own pin for each kind of place, which the overlay draws from the map menu
 	private function GetWorldIcon(filter_value: int) : string
 	{
 		switch (filter_value)
 		{
-		case PotP_I_Camps:	return "icons/potp/tracked_banditcamp_dark.png";
-		case PotP_I_MDens:	return "icons/potp/tracked_monsterden_dark.png";
-		case PotP_I_Nests:	return "icons/potp/tracked_monsternest_dark.png";
-		case PotP_I_Place:	return "icons/potp/tracked_placeofpower_dark.png";
-		case PotP_I_Signs:	return "icons/potp/tracked_roadsign_dark.png";
-		case PotP_I_Sites:	return "icons/potp/tracked_AbandonedSite_dark.png";
-		case PotP_I_Guard:	return "icons/potp/tracked_guardedtreasure_dark.png";
-		case PotP_I_Distr:	return "icons/potp/tracked_personindistress_dark.png";
-		case PotP_I_Knigh:	return "icons/potp/tracked_DistressedKnight_dark.png";
-		case PotP_I_Infes:	return "icons/potp/tracked_VineyardInfestation_dark.png";
-		case PotP_I_Hanse:	return "icons/potp/tracked_HanseBase_dark.png";
-		case PotP_I_Cache:	return "icons/potp/tracked_SmugglersCache_dark.png";
-		case PotP_I_Spoil:	return "icons/potp/tracked_SpoilsOfWar_dark.png";
-		case PotP_I_Hiddn:	return "icons/potp/tracked_HiddenTreasure_dark.png";
-		default:			return "icons/potp/tracked_playerstash_dark.png";
+		case PotP_I_Camps:	return "pin:BanditCampfire";
+		case PotP_I_MDens:	return "pin:DungeonCrawl";
+		case PotP_I_Nests:	return "pin:MonsterNest";
+		case PotP_I_Place:	return "pin:PlaceOfPower";
+		case PotP_I_Signs:	return "pin:RoadSign";
+		case PotP_I_Sites:	return "pin:RescuingTown";
+		case PotP_I_Guard:	return "pin:BossAndTreasure";
+		case PotP_I_Distr:	return "pin:BanditCamp";
+		case PotP_I_Knigh:	return "pin:KnightErrant";
+		case PotP_I_Infes:	return "pin:InfestedVineyard";
+		case PotP_I_Hanse:	return "pin:Hideout";
+		case PotP_I_Cache:	return "pin:Contraband";
+		case PotP_I_Spoil:	return "pin:SpoilsOfWar";
+		case PotP_I_Hiddn:	return "pin:TreasureHuntMappin";
+		default:			return "pin:PlayerStash";
 		}
 	}
 }

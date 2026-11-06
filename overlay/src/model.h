@@ -20,6 +20,7 @@ struct Entry
 	bool gameDone = false;   // the game itself counts it as done
 	std::string picture, description;   // a Gwent card's, as the game's menus name its picture
 	int power = -1, faction = 0, cardType = 0;
+	bool neutral = false;   // a neutral card: faction is the deck it's drawn in
 	std::vector<int> effects;
 	std::string itemTemplate;   // an item's: the name its model is found by
 	std::string image;          // a bestiary entry's: its picture's file name, under the game's journal and icon folders
@@ -34,6 +35,7 @@ struct Section
 	int book = 0, kind = 0, state = 0;
 	std::string header;
 	std::string cutoff;   // a missable group's: the quest that closes it
+	std::string pin;      // a World Map group's: the map's pin for its kind of place
 	std::vector<Entry> entries;
 };
 

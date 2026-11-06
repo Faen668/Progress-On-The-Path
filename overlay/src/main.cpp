@@ -167,6 +167,7 @@ static DWORD WINAPI StartThread(void*)
 			wcsncpy_s(folder, GameFolder().c_str(), _TRUNCATE);
 		BuildGameIconIndex(folder);
 		BuildCardArt(folder);
+		BuildMapPins(folder);
 		LoadAchievementPack(folder);
 		LoadCustomAchievementPacks(folder);
 		BuildModelIndex(folder);

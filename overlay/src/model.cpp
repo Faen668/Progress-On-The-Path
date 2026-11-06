@@ -214,6 +214,8 @@ bool ParseChunk(Model& model, const std::string& text)
 				s.header = Clean(f[4]);
 				if (f.size() >= 6)
 					s.cutoff = Clean(f[5]);
+				if (f.size() >= 7)
+					s.pin = f[6];
 				model.sections.push_back(std::move(s));
 			}
 			break;
@@ -245,6 +247,8 @@ bool ParseChunk(Model& model, const std::string& text)
 					e.picture = f[10];
 					e.power = Int(f[11]);
 					e.faction = Int(f[12]);
+					e.neutral = e.faction >= 10;
+					e.faction %= 10;
 					e.cardType = Int(f[13]);
 					e.description = Clean(f[14]);
 					if (f.size() >= 16)

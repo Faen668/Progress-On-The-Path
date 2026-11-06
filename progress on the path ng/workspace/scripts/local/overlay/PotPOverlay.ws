@@ -4,9 +4,10 @@
 //   H|version|done|total               the whole path
 //   R|index|name                       a region's name, in the game's language
 //   T|key|text                         the overlay's own text, in the game's language (see PotPOverlayText.ws)
-//   S|book|kind|state|header|cutoff    a section (state: 0 nothing, 1 cutoff approaching, 2 cutoff passed; cutoff: the quest that closes it)
+//   S|book|kind|state|header|cutoff|pin    a section (state: 0 nothing, 1 cutoff approaching, 2 cutoff passed; cutoff: the quest that closes it;
+//                                      pin: the world map's pin for its kind of place, as the map menu names it)
 //   E|uuid|status|region|filter|flags|title|tip|manual|gamedone   an entry (flags: 1 missable, 2 mod-added, 4 and 8 the DLC; manual: 0 tracked automatically, 1 ignored, 2 completed, 3 missed; gamedone: the game itself counts it as done)
-//     then, for an item, six empty fields and its template; for a Gwent card: |picture|power|faction|type|description|effects   (picture as the game's menus load it; power -1: a leader; effects separated by commas)
+//     then, for an item, six empty fields and its template; for a Gwent card: |picture|power|faction|type|description|effects   (picture as the game's menus load it; power -1: a leader; faction 10 more for a neutral card, which takes the deck's; effects separated by commas)
 //     or, for a bestiary entry: |||||text|||image|weaknesses   (paragraphs of text separated by ^^; weaknesses separated by semicolons, each name~icon)
 //   G|group|title|intro|presethint     a page of PotP's settings, as Settings.ws defines it
 //   P|name                             a preset of that page
@@ -312,6 +313,16 @@ function PotPOverlay_CreatureFields(main: CPotP_Main, tracked: CPotP_Entry) : st
 	return "|||||" + PotPOverlay_CreatureText(creature, tracked) + "|||" + PotPOverlay_Clean(image) + "|" + PotPOverlay_CreatureWeaknesses(tracked) + "|" + PotPOverlay_Clean(tracked.creature_template);
 }
 
+// The card's art as the game's menus load it, the alternative art when that DLC is switched on
+function PotPOverlay_CardPicture(card: SCardDefinition) : string
+{
+	if (IsNameValid(card.dlcPictureFlag) && theGame.GetDLCManager().IsDLCAvailable('dlc_008_001') && theGame.GetInGameConfigWrapper().GetVarValue('DLC', 'dlc_008_001') == "true")
+	{
+		return card.dlcPicture;
+	}
+	return card.picture;
+}
+
 function PotPOverlay_CardFields(gwent: CR4GwintManager, tracked: CPotP_Entry) : string
 {
 	var card	: SCardDefinition;
@@ -326,17 +337,13 @@ function PotPOverlay_CardFields(gwent: CR4GwintManager, tracked: CPotP_Entry) : 
 	{
 		return "";
 	}
-	picture = card.picture;
-	if (IsNameValid(card.dlcPictureFlag) && theGame.GetDLCManager().IsDLCAvailable('dlc_008_001') && theGame.GetInGameConfigWrapper().GetVarValue('DLC', 'dlc_008_001') == "true")
-	{
-		picture = card.dlcPicture;
-	}
+	picture = PotPOverlay_CardPicture(card);
 	power = card.power;
 	type_flags = card.typeFlags;
 	faction = (int)card.faction;
 	if (card.faction == GwintFaction_Neutral)
 	{
-		faction = (int)gwent.GetSelectedPlayerDeck();
+		faction = 10 + (int)gwent.GetSelectedPlayerDeck();   // drawn in the deck's colours, as the game does; 10 more says it's neutral
 	}
 	if (gwent.IsKingCard(card))
 	{
@@ -470,7 +477,7 @@ function PotPOverlay_ExportSection(section: CPotP_Section) : string
 	{
 		cutoff = section.cutoff.title;
 	}
-	result = "S|" + IntToString((int)section.book) + "|" + IntToString((int)section.missable_kind) + "|" + IntToString(_state) + "|" + PotPOverlay_Clean(header) + "|" + PotPOverlay_Clean(cutoff);
+	result = "S|" + IntToString((int)section.book) + "|" + IntToString((int)section.missable_kind) + "|" + IntToString(_state) + "|" + PotPOverlay_Clean(header) + "|" + PotPOverlay_Clean(cutoff) + "|" + PotPOverlay_SectionPin(section);
 
 	for (Idx = 0; Idx < section.entries.Size(); Idx += 1)
 	{
@@ -790,4 +797,34 @@ function PotPOverlay_Unpause()
 	{
 		theGame.Unpause("PotPOverlay");
 	}
+}
+
+//---------------------------------------------------
+
+// The world map's pin for a World Map group's kind of place, as the map menu's frames are named
+function PotPOverlay_SectionPin(section: CPotP_Section) : string
+{
+	var group : string = section.group;
+
+	if (section.book != PotP_Book_World)
+	{
+		return "";
+	}
+	if (StrFindFirst(group, "_AbandonedSites_") >= 0)		{ return "RescuingTown"; }
+	if (StrFindFirst(group, "_BanditCamp_") >= 0)			{ return "BanditCampfire"; }
+	if (StrFindFirst(group, "_GuardedTreasure_") >= 0)		{ return "BossAndTreasure"; }
+	if (StrFindFirst(group, "_MonsterDens_") >= 0)			{ return "DungeonCrawl"; }
+	if (StrFindFirst(group, "_MonsterNests_") >= 0)			{ return "MonsterNest"; }
+	if (StrFindFirst(group, "_HanseBases_") >= 0)			{ return "Hideout"; }
+	if (StrFindFirst(group, "_DistressedKnights_") >= 0)	{ return "KnightErrant"; }
+	if (StrFindFirst(group, "_InfestedVineyards_") >= 0)	{ return "InfestedVineyard"; }
+	if (StrFindFirst(group, "_PlacesOfPower_") >= 0)		{ return "PlaceOfPower"; }
+	if (StrFindFirst(group, "_PersonsInDistress_") >= 0)	{ return "BanditCamp"; }
+	if (StrFindFirst(group, "_Signposts_") >= 0)			{ return "RoadSign"; }
+	if (StrFindFirst(group, "_PlayerStashes_") >= 0)		{ return "PlayerStash"; }
+	// The ones read from the map's own pins (DynamicPins.ws): named after the pin type
+	if (group == "PotP_Cache_")								{ return "Contraband"; }
+	if (group == "PotP_Spoils_")							{ return "SpoilsOfWar"; }
+	if (group == "PotP_Hidden_")							{ return "TreasureHuntMappin"; }
+	return "";
 }
