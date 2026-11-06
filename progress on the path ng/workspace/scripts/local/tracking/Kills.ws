@@ -1,7 +1,7 @@
 //---------------------------------------------------
 //-- Kills ------------------------------------------
 //---------------------------------------------------
-// What Geralt has killed, by name. It lives in the save, so loading an older save takes the counts back with it.
+// What the player has killed, by name: Geralt, and Ciri in her parts. It lives in the save, so loading an older save takes the counts back with it.
 // It isn't part of the mod's totals.
 
 @addField(W3PlayerWitcher)
@@ -18,6 +18,22 @@ saved var potp_kill_hows : array<string>;   // an item's name key, or #what the 
 
 @addField(W3PlayerWitcher)
 saved var potp_kill_whys : array<int>;      // why it's on the Unique page: a contract's title id, or one of the below
+
+// Ciri's kills wait here while she's the player, since Geralt's lists are out of reach, and join his when he's back
+@addField(CR4Game)
+saved var potp_ciri_kill_keys : array<string>;
+
+@addField(CR4Game)
+saved var potp_ciri_kill_counts : array<int>;
+
+@addField(CR4Game)
+saved var potp_ciri_kill_meta : array<int>;
+
+@addField(CR4Game)
+saved var potp_ciri_kill_hows : array<string>;
+
+@addField(CR4Game)
+saved var potp_ciri_kill_whys : array<int>;
 
 @addField(CNewNPC)
 var potp_kill_counted : bool;
@@ -214,6 +230,7 @@ function PotP_KillHow(action: W3DamageAction, charmed: bool) : string
 function PotP_RecordKill(npc: CNewNPC, action: W3DamageAction)
 {
 	var witcher		: W3PlayerWitcher = GetWitcherPlayer();
+	var ciri		: W3ReplacerCiri;
 	var killer		: CActor;
 	var tracked	: CJournalQuest;
 	var category	: EMonsterCategory;
@@ -228,7 +245,8 @@ function PotP_RecordKill(npc: CNewNPC, action: W3DamageAction)
 	var id			: int;
 	var Idx			: int;
 
-	if (!witcher || thePlayer != witcher || npc.potp_kill_counted || !action)
+	ciri = (W3ReplacerCiri)thePlayer;
+	if ((!witcher && !ciri) || npc.potp_kill_counted || !action)
 	{
 		return;
 	}
@@ -307,21 +325,147 @@ function PotP_RecordKill(npc: CNewNPC, action: W3DamageAction)
 
 	meta = PotP_KillMeta(pool, (int)category, PotP_KillRegion(), RandRange(1000));
 
-	Idx = witcher.potp_kill_keys.FindFirst(key);
-	if (Idx < 0)
+	if (witcher)
 	{
-		witcher.potp_kill_keys.PushBack(key);
-		witcher.potp_kill_counts.PushBack(1);
-		witcher.potp_kill_meta.PushBack(meta);
-		witcher.potp_kill_hows.PushBack(PotP_KillHow(action, charmed));
-		witcher.potp_kill_whys.PushBack(why);
+		witcher.PotP_AddKill(key, 1, meta, PotP_KillHow(action, charmed), why);
 	}
 	else
 	{
-		witcher.potp_kill_counts[Idx] += 1;
-		witcher.potp_kill_meta[Idx] = meta;
-		witcher.potp_kill_hows[Idx] = PotP_KillHow(action, charmed);
+		theGame.PotP_AddCiriKill(key, 1, meta, PotP_KillHow(action, charmed), why);
 	}
+}
+
+@addMethod(W3PlayerWitcher) function PotP_AddKill(key: string, count: int, meta: int, how: string, why: int)
+{
+	var Idx : int = potp_kill_keys.FindFirst(key);
+
+	if (Idx < 0)
+	{
+		potp_kill_keys.PushBack(key);
+		potp_kill_counts.PushBack(count);
+		potp_kill_meta.PushBack(meta);
+		potp_kill_hows.PushBack(how);
+		potp_kill_whys.PushBack(why);
+	}
+	else
+	{
+		potp_kill_counts[Idx] += count;
+		potp_kill_meta[Idx] = meta;
+		potp_kill_hows[Idx] = how;
+	}
+}
+
+@addMethod(CR4Game) function PotP_AddCiriKill(key: string, count: int, meta: int, how: string, why: int)
+{
+	var Idx : int = potp_ciri_kill_keys.FindFirst(key);
+
+	if (Idx < 0)
+	{
+		potp_ciri_kill_keys.PushBack(key);
+		potp_ciri_kill_counts.PushBack(count);
+		potp_ciri_kill_meta.PushBack(meta);
+		potp_ciri_kill_hows.PushBack(how);
+		potp_ciri_kill_whys.PushBack(why);
+	}
+	else
+	{
+		potp_ciri_kill_counts[Idx] += count;
+		potp_ciri_kill_meta[Idx] = meta;
+		potp_ciri_kill_hows[Idx] = how;
+	}
+}
+
+//---------------------------------------------------
+
+// When Geralt is the player: Ciri's kills join his, and the unique foes the save says are dead, from before PotP
+// counted kills, are added once each
+function PotP_KillsSettle()
+{
+	var witcher		: W3PlayerWitcher = GetWitcherPlayer();
+	var game		: CR4Game = theGame;
+	var ids			: array<int>;
+	var regions		: array<int>;
+	var contracts	: array<bool>;
+	var facts		: array<string>;
+	var unless		: array<string>;
+	var row_facts	: array<string>;
+	var key			: string;
+	var why			: int;
+	var dead		: bool;
+	var Idx			: int;
+	var Jdx			: int;
+
+	if (!witcher)
+	{
+		return;
+	}
+
+	for (Idx = 0; Idx < game.potp_ciri_kill_keys.Size(); Idx += 1)
+	{
+		witcher.PotP_AddKill(game.potp_ciri_kill_keys[Idx], game.potp_ciri_kill_counts[Idx], game.potp_ciri_kill_meta[Idx],
+			game.potp_ciri_kill_hows[Idx], game.potp_ciri_kill_whys[Idx]);
+	}
+	game.potp_ciri_kill_keys.Clear();
+	game.potp_ciri_kill_counts.Clear();
+	game.potp_ciri_kill_meta.Clear();
+	game.potp_ciri_kill_hows.Clear();
+	game.potp_ciri_kill_whys.Clear();
+
+	PotP_KillBackfill(ids, regions, contracts, facts, unless);
+	for (Idx = 0; Idx < ids.Size(); Idx += 1)
+	{
+		key = IntToString(ids[Idx]);
+		if (PotP_KillKeyKnown(witcher, key))
+		{
+			continue;
+		}
+		if (StrLen(unless[Idx]) > 0 && FactsQuerySum(unless[Idx]) > 0)
+		{
+			continue;
+		}
+		row_facts = StrSplit(facts[Idx], ",");
+		dead = false;
+		for (Jdx = 0; Jdx < row_facts.Size(); Jdx += 1)
+		{
+			if (FactsQuerySum(row_facts[Jdx]) > 0)
+			{
+				dead = true;
+				break;
+			}
+		}
+		if (!dead)
+		{
+			continue;
+		}
+
+		if (contracts[Idx])
+		{
+			key += "@";
+			why = PotP_KillWhyContract();
+			witcher.PotP_AddKill(key, 1, PotP_KillMeta(3, 0, regions[Idx], RandRange(1000)), "", why);
+		}
+		else
+		{
+			why = PotP_KillWhyNamed();
+			witcher.PotP_AddKill(key, 1, PotP_KillMeta(2, 0, regions[Idx], RandRange(1000)), "", why);
+		}
+		PotP_Log("Kill backfilled from the save: " + GetLocStringById(ids[Idx]), 'PotP Kills');
+	}
+}
+
+// Already counted, as itself or as any contract's target
+function PotP_KillKeyKnown(witcher: W3PlayerWitcher, key: string) : bool
+{
+	var Idx : int;
+
+	for (Idx = 0; Idx < witcher.potp_kill_keys.Size(); Idx += 1)
+	{
+		if (witcher.potp_kill_keys[Idx] == key || StrBeginsWith(witcher.potp_kill_keys[Idx], key + "@"))
+		{
+			return true;
+		}
+	}
+	return false;
 }
 
 //---------------------------------------------------

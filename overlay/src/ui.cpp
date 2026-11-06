@@ -1489,15 +1489,15 @@ namespace
 	// The tale of the last kill. Which line it is was chosen when it happened, so it stays the same each time it's read.
 	std::string KillLine(const KillRow& row, const Model* m)
 	{
-		static const TextId kMonster[] = { T_kill_line_m_1, T_kill_line_m_2, T_kill_line_m_3, T_kill_line_m_4, T_kill_line_m_5, T_kill_line_m_6, T_kill_line_m_7, T_kill_line_m_8 };
-		static const TextId kPerson[] = { T_kill_line_h_1, T_kill_line_h_2, T_kill_line_h_3, T_kill_line_h_4, T_kill_line_h_5, T_kill_line_h_6 };
-		static const TextId kNamed[] = { T_kill_line_u_1, T_kill_line_u_2, T_kill_line_u_3, T_kill_line_u_4, T_kill_line_u_5, T_kill_line_u_6 };
-		static const TextId kContract[] = { T_kill_line_c_1, T_kill_line_c_2, T_kill_line_c_3, T_kill_line_c_4, T_kill_line_c_5, T_kill_line_c_6 };
+		static const TextId kMonster[] = { T_kill_line_m_1, T_kill_line_m_2, T_kill_line_m_3, T_kill_line_m_4, T_kill_line_m_5, T_kill_line_m_6, T_kill_line_m_7, T_kill_line_m_8, T_kill_line_m_9, T_kill_line_m_10, T_kill_line_m_11, T_kill_line_m_12, T_kill_line_m_13, T_kill_line_m_14, T_kill_line_m_15, T_kill_line_m_16, T_kill_line_m_17, T_kill_line_m_18, T_kill_line_m_19, T_kill_line_m_20, T_kill_line_m_21, T_kill_line_m_22, T_kill_line_m_23, T_kill_line_m_24, T_kill_line_m_25, T_kill_line_m_26, T_kill_line_m_27, T_kill_line_m_28, T_kill_line_m_29, T_kill_line_m_30 };
+		static const TextId kPerson[] = { T_kill_line_h_1, T_kill_line_h_2, T_kill_line_h_3, T_kill_line_h_4, T_kill_line_h_5, T_kill_line_h_6, T_kill_line_h_7, T_kill_line_h_8, T_kill_line_h_9, T_kill_line_h_10, T_kill_line_h_11, T_kill_line_h_12, T_kill_line_h_13, T_kill_line_h_14, T_kill_line_h_15, T_kill_line_h_16, T_kill_line_h_17, T_kill_line_h_18, T_kill_line_h_19, T_kill_line_h_20, T_kill_line_h_21, T_kill_line_h_22, T_kill_line_h_23, T_kill_line_h_24, T_kill_line_h_25, T_kill_line_h_26, T_kill_line_h_27, T_kill_line_h_28, T_kill_line_h_29, T_kill_line_h_30 };
+		static const TextId kNamed[] = { T_kill_line_u_1, T_kill_line_u_2, T_kill_line_u_3, T_kill_line_u_4, T_kill_line_u_5, T_kill_line_u_6, T_kill_line_u_7, T_kill_line_u_8, T_kill_line_u_9, T_kill_line_u_10, T_kill_line_u_11, T_kill_line_u_12, T_kill_line_u_13, T_kill_line_u_14, T_kill_line_u_15, T_kill_line_u_16, T_kill_line_u_17, T_kill_line_u_18, T_kill_line_u_19, T_kill_line_u_20, T_kill_line_u_21, T_kill_line_u_22, T_kill_line_u_23, T_kill_line_u_24, T_kill_line_u_25, T_kill_line_u_26, T_kill_line_u_27, T_kill_line_u_28, T_kill_line_u_29, T_kill_line_u_30 };
+		static const TextId kContract[] = { T_kill_line_c_1, T_kill_line_c_2, T_kill_line_c_3, T_kill_line_c_4, T_kill_line_c_5, T_kill_line_c_6, T_kill_line_c_7, T_kill_line_c_8, T_kill_line_c_9, T_kill_line_c_10, T_kill_line_c_11, T_kill_line_c_12, T_kill_line_c_13, T_kill_line_c_14, T_kill_line_c_15, T_kill_line_c_16, T_kill_line_c_17, T_kill_line_c_18, T_kill_line_c_19, T_kill_line_c_20, T_kill_line_c_21, T_kill_line_c_22, T_kill_line_c_23, T_kill_line_c_24, T_kill_line_c_25, T_kill_line_c_26, T_kill_line_c_27, T_kill_line_c_28, T_kill_line_c_29, T_kill_line_c_30 };
 		const TextId* lines = kMonster;
-		int count = 8;
-		if (row.pool == kKillPerson) { lines = kPerson; count = 6; }
-		if (row.pool == kKillNamed) { lines = kNamed; count = 6; }
-		if (row.pool == kKillContract) { lines = kContract; count = 6; }
+		int count = (int)std::size(kMonster);
+		if (row.pool == kKillPerson) { lines = kPerson; count = (int)std::size(kPerson); }
+		if (row.pool == kKillNamed) { lines = kNamed; count = (int)std::size(kNamed); }
+		if (row.pool == kKillContract) { lines = kContract; count = (int)std::size(kContract); }
 		const std::string place = m && row.region > 0 && row.region < kRegionCount && !m->regions[row.region].empty()
 			? m->regions[row.region] : std::string(Tx(T_kill_place_unknown));
 		return TxFill(lines[std::abs(row.random) % count], KillName(row), place);

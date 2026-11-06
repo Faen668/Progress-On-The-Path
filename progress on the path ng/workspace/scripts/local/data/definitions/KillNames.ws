@@ -39,7 +39,7 @@ function PotP_KillNameIds_1(out ids: array<int>)
 	ids.PushBack(166478);
 	ids.PushBack(-166479);
 	ids.PushBack(-166509);
-	ids.PushBack(-166527);
+	ids.PushBack(166527);
 	ids.PushBack(-166554);
 	ids.PushBack(-166555);
 	ids.PushBack(166556);
@@ -62,7 +62,7 @@ function PotP_KillNameIds_1(out ids: array<int>)
 	ids.PushBack(-170702);
 	ids.PushBack(-170703);
 	ids.PushBack(170704);
-	ids.PushBack(-170706);
+	ids.PushBack(170706);
 	ids.PushBack(-170717);
 	ids.PushBack(-170719);
 	ids.PushBack(-170721);
@@ -159,14 +159,14 @@ function PotP_KillNameIds_1(out ids: array<int>)
 	ids.PushBack(-345548);
 	ids.PushBack(-345927);
 	ids.PushBack(-345939);
-	ids.PushBack(-346241);
+	ids.PushBack(346241);
 	ids.PushBack(-346510);
 	ids.PushBack(346758);
 	ids.PushBack(-346764);
 	ids.PushBack(346772);
 	ids.PushBack(346798);
 	ids.PushBack(347481);
-	ids.PushBack(-347621);
+	ids.PushBack(347621);
 	ids.PushBack(349249);
 	ids.PushBack(349468);
 	ids.PushBack(349471);
@@ -227,12 +227,12 @@ function PotP_KillNameIds_2(out ids: array<int>)
 	ids.PushBack(436843);
 	ids.PushBack(438216);
 	ids.PushBack(442264);
-	ids.PushBack(-444254);
+	ids.PushBack(444254);
 	ids.PushBack(444265);
 	ids.PushBack(-446326);
-	ids.PushBack(-447384);
+	ids.PushBack(447384);
 	ids.PushBack(451163);
-	ids.PushBack(-452675);
+	ids.PushBack(452675);
 	ids.PushBack(452676);
 	ids.PushBack(452710);
 	ids.PushBack(452727);
@@ -275,7 +275,7 @@ function PotP_KillNameIds_2(out ids: array<int>)
 	ids.PushBack(-472742);
 	ids.PushBack(472745);
 	ids.PushBack(472898);
-	ids.PushBack(-473973);
+	ids.PushBack(473973);
 	ids.PushBack(-474611);
 	ids.PushBack(-474721);
 	ids.PushBack(-474724);
@@ -438,7 +438,7 @@ function PotP_KillNameIds_3(out ids: array<int>)
 	ids.PushBack(-594974);
 	ids.PushBack(595619);
 	ids.PushBack(595620);
-	ids.PushBack(-595826);
+	ids.PushBack(595826);
 	ids.PushBack(595828);
 	ids.PushBack(595832);
 	ids.PushBack(595850);
@@ -514,7 +514,7 @@ function PotP_KillNameIds_3(out ids: array<int>)
 	ids.PushBack(1042933);
 	ids.PushBack(1042981);
 	ids.PushBack(1042982);
-	ids.PushBack(-1042983);
+	ids.PushBack(1042983);
 	ids.PushBack(-1043384);
 	ids.PushBack(1043714);
 	ids.PushBack(-1043715);
@@ -586,7 +586,7 @@ function PotP_KillNameIds_3(out ids: array<int>)
 	ids.PushBack(1055096);
 	ids.PushBack(1055097);
 	ids.PushBack(1055098);
-	ids.PushBack(-1055103);
+	ids.PushBack(1055103);
 	ids.PushBack(1055104);
 	ids.PushBack(1055105);
 	ids.PushBack(1055106);
@@ -597,7 +597,7 @@ function PotP_KillNameIds_3(out ids: array<int>)
 	ids.PushBack(1055115);
 	ids.PushBack(-1055120);
 	ids.PushBack(-1055121);
-	ids.PushBack(-1055125);
+	ids.PushBack(1055125);
 	ids.PushBack(1055127);
 	ids.PushBack(-1055156);
 	ids.PushBack(1055162);
@@ -770,7 +770,7 @@ function PotP_KillNameIds_4(out ids: array<int>)
 	ids.PushBack(-1079288);
 	ids.PushBack(-1079351);
 	ids.PushBack(-1079397);
-	ids.PushBack(-1079736);
+	ids.PushBack(1079736);
 	ids.PushBack(1079773);
 	ids.PushBack(1080238);
 	ids.PushBack(-1080246);
@@ -823,8 +823,8 @@ function PotP_KillNameIds_4(out ids: array<int>)
 	ids.PushBack(-1086207);
 	ids.PushBack(1086252);
 	ids.PushBack(1086261);
-	ids.PushBack(-1086334);
-	ids.PushBack(-1086335);
+	ids.PushBack(1086334);
+	ids.PushBack(1086335);
 	ids.PushBack(1086456);
 	ids.PushBack(1086457);
 }

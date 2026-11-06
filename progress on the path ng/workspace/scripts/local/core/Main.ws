@@ -58,6 +58,7 @@ statemachine class CPotP_Main
 		PotP_Log("Starting " + version_text, 'PotP Main');
 
 		CheckVersion();
+		PotP_KillsSettle();
 		catalog.Rebuild();
 	}
 

@@ -3,12 +3,13 @@
 Every NPC template's display name is a string id. The list lets a kill be stored by id, so a count
 survives a change of language, and marks the names that belong on the Unique page.
 
-  python gen_killnames.py <folder of templates as JSON> <folder of the game's strings as CSV> [--review]
+  python gen_killnames.py <folder of templates as JSON> <folder of the game's strings as CSV> [<folder of communities as JSON>] [--review]
 
 The JSON comes from W3 Mod Workbench --to-json over the REDkit copy's characters, dlc, living_world,
 quests and gameplay folders; the CSVs from --strings-to-csv over each en.w3strings.
 """
 import glob
+import json
 import os
 import re
 import sys
@@ -43,6 +44,40 @@ ALWAYS = {'Caranthir', 'Eredin', 'Imlerith', 'Dettlaff', 'Weavess', 'Brewess', '
     'Ignis Fatuus', 'Red Miasmal', 'Apiarian Phantom', 'Little Red', 'Syanna', "Gaunter O'Dimm", 'Pesta', 'Hym', 'Iris'}
 # Names that pass the rules but aren't people or monsters anyone fights
 NEVER = {'Book', 'Trap', 'Treasure Chest', 'Time', 'Tower', 'Target Dummy', 'Actor', 'Player', 'Geralt', 'Roach', 'Poppy', 'Black Beauty', "Lil' Bleater", 'Speedy Osvald', 'Racehorse'}
+# Names that pass the rules but say what someone is rather than who: Monsters and Men, not Unique
+GENERIC = {'Adventurer', 'Duke', 'Earl', 'Endrega', 'Pearl Diver', 'Princess', 'Succubus', 'Ticket Seller', 'Troubadour',
+    'Vildkaarl', 'Village Witch', 'Widow', 'Witcher', 'Young One'}
+
+# For a save PotP joins part way through: the unique foes the player (Geralt, or Ciri in her parts) can kill. Their deaths are in the save as
+# actor_<spawn tag>_was_killed facts, which the game sets for any tagged NPC that dies, whoever killed it. So this lists
+# only foes nobody but the player kills, checked against the wiki and the quests. Left out on purpose:
+#   Roche and Ves (Dijkstra's men kill them), Letho (his death is staged), Albin Hart (ghouls), Djenge Frett (the Grossbarts), Orianna (let go; her duel is a trailer), Iris
+#   (released), Napp (Nilfgaardians, in a cutscene), Hal, Sofus the Bull and Boris (fistfights),
+#   Hans of Cidaris (the contract's employer), the La Valette Champion (a horse race).
+KILLABLE = {
+    # Monsters and bosses
+    'Abaya', 'Apiarian Phantom', 'Brewess', 'Caranthir', 'Dettlaff', 'Devil by the Well', 'Doppler', 'Dragon', 'Eredin', 'Gael',
+    'Hagubman', 'Howler', 'Ignis Fatuus', 'Imlerith', "Jenny o'the Woods", 'Kernun', 'King of Wolves', 'Melusine', 'Monster of Tufo',
+    'Morkvarg', 'Morvudd', 'Mourntart', 'Nithral', 'Opinicus', 'Pesta', 'Red Miasmal', 'Royal Griffin', 'Royal Wyvern',
+    'Salma', 'Sarasti', 'Shrieker', 'Therazane', 'Weavess', 'Whispess', 'White Lady', 'Woodland Spirit',
+    # People the player fights and kills
+    'Arnout Vester', 'Cyprian Wiley', 'Dijkstra', 'Hegel Grossbart', 'Jesse Grossbart', 'John Verdun', 'Manfred Grossbart',
+    'Ronvid of the Small Marsh',
+}
+# Tags whose death doesn't say the player killed that foe: the Crones' fog forms only hunt Ciri in her flashback in Ladies of the Wood
+NOT_THE_PLAYER = {'q105_fog_brewess', 'q105_fog_weavess', 'q105_fog_whispess'}
+# A foe someone else can also kill, and the fact that says it went that way: then the death isn't the player's
+UNLESS = {
+    # At the Mercy of Strangers: left on the river bank, he curses Geralt and the drowners get him; Geralt can only kill him later
+    'John Verdun': 'mq1036_cursing_played',
+}
+
+# Where a community's quest is, by its folder, as PotP numbers regions (PotP_R_WO and on); 0 when the folder doesn't say
+# Where the main story's foes die, which their quests' folders don't say
+REGION_WHERE = {'Brewess': 2, 'Whispess': 2, 'Weavess': 2, 'Imlerith': 2, 'King of Wolves': 2, 'Pesta': 2,
+    'Royal Griffin': 1, 'Cyprian Wiley': 3, 'Dijkstra': 3, 'Caranthir': 4, 'Eredin': 4, 'Nithral': 6}
+REGION_FOLDERS = [('prologue_village', 1), ('no_mans_land', 2), ('novigrad', 3), ('skellige', 4), ('dlc/bob/', 5),
+    ('kaer_morhen', 6), ('vizima', 7), ('wyzima', 7)]
 
 
 def read_names(folder):
@@ -86,7 +121,7 @@ def main():
         if not name or name in NEVER:
             continue
         paths = templates_of[name]
-        unique = name in ALWAYS or (all(ONE_CHARACTER.search(p) for p in paths) and not ROLE.search(name))
+        unique = name not in GENERIC and (name in ALWAYS or (all(ONE_CHARACTER.search(p) for p in paths) and not ROLE.search(name)))
         rows.append((string_id, unique, name))
 
     if '--review' in sys.argv:
@@ -117,6 +152,96 @@ def main():
         out.append('')
     with open(OUT, 'w', encoding='utf-8', newline='\r\n') as f:
         f.write('\n'.join(out))
+
+    if len(sys.argv) > 3 and not sys.argv[3].startswith('--'):
+        write_backfill(sys.argv[1], sys.argv[3], by_id, names, rows)
+
+
+def write_backfill(templates_folder, comms_folder, by_id, names, rows):
+    """KillBackfill.ws: for each foe in KILLABLE, the facts its death sets, from the communities that spawn it with tags."""
+    template_name = {}
+    for string_id, paths in by_id.items():
+        for p in paths:
+            template_name[p[:-5].lower() if p.endswith('.json') else p.lower()] = names.get(string_id)
+
+    spawns = defaultdict(list)          # template -> [(tags, community path)]
+    tag_names = defaultdict(set)        # tag -> the names of everything spawned with it
+
+    def walk(node, rel):
+        if isinstance(node, dict):
+            if 'entityTemplate' in node and 'entitySpawnTags' in node:
+                template = node['entityTemplate'].split(':', 1)[-1].replace('\\', '/').lower()
+                tags = node['entitySpawnTags'] or []
+                spawns[template].append((tags, rel))
+                for t in tags:
+                    tag_names[t].add(template_name.get(template))
+            for v in node.values():
+                walk(v, rel)
+        elif isinstance(node, list):
+            for v in node:
+                walk(v, rel)
+
+    for root, _, files in os.walk(comms_folder):
+        for file in files:
+            if file.endswith('.json'):
+                path = os.path.join(root, file)
+                try:
+                    with open(path, encoding='utf-8') as f:
+                        walk(json.load(f), os.path.relpath(path, comms_folder).replace(os.sep, '/'))
+                except ValueError:
+                    pass
+
+    first_id = {}
+    for string_id, unique, name in rows:
+        if unique:
+            first_id.setdefault(name, string_id)   # the scripts take a name's first id, as this list has them
+
+    entries = []
+    for name in sorted(KILLABLE):
+        if name not in first_id:
+            print('backfill: %s is not on the Unique page' % name)
+            continue
+        facts, places = set(), []
+        contract = False
+        for template, name_of in template_name.items():
+            if name_of != name:
+                continue
+            for tags, rel in spawns.get(template, []):
+                # A tag only this foe is spawned with (nameless stand-ins, such as an invisible double, aside): its death and no one else's
+                own = [t for t in tags if tag_names[t] - {None} == {name} and t not in NOT_THE_PLAYER]
+                facts |= {'actor_%s_was_killed' % t for t in own}
+                if own:
+                    places.append(next((region for folder, region in REGION_FOLDERS if folder in rel), 0))
+            # A contract's target as the live count has it: the template is a monster hunt NPC or tagged as its target
+            with open(os.path.join(templates_folder, template + '.json'), encoding='utf-8', errors='replace') as f:
+                text = f.read()
+            contract |= 'MonsterHuntTarget' in text or 'W3MonsterHuntNPC' in text
+        if not facts:
+            print('backfill: no tag of its own for %s' % name)
+            continue
+        region = places[0] if places and all(p == places[0] for p in places) else 0
+        region = REGION_WHERE.get(name, region)
+        entries.append((first_id[name], region, contract, sorted(facts), name))
+
+    out = ['//---------------------------------------------------',
+           '//-- Kill Backfill ----------------------------------',
+           '//---------------------------------------------------',
+           "// Made by overlay/tools/gen_killnames.py from the game's files. Don't edit by hand.",
+           '// For a save PotP joins part way through: each unique foe Geralt can kill, the region its quest is in (0: not',
+           "// known), whether it's a contract's target, the facts its death sets, separated by commas, and a fact that says",
+           "// someone else killed it, or \"\".",
+           '',
+           'function PotP_KillBackfill(out ids: array<int>, out regions: array<int>, out contracts: array<bool>, out facts: array<string>, out unless: array<string>)',
+           '{']
+    for string_id, region, contract, facts, name in entries:
+        out.append('\tids.PushBack(%d); regions.PushBack(%d); contracts.PushBack(%s); facts.PushBack("%s"); unless.PushBack("%s");   // %s'
+                   % (string_id, region, 'true' if contract else 'false', ','.join(facts), UNLESS.get(name, ''), name))
+    out.append('}')
+    out.append('')
+    path = os.path.join(os.path.dirname(OUT), 'KillBackfill.ws')
+    with open(path, 'w', encoding='utf-8', newline='\r\n') as f:
+        f.write('\n'.join(out))
+    print('backfill: %d foes' % len(entries))
 
 
 if __name__ == '__main__':
