@@ -282,7 +282,7 @@ statemachine class CPotP_Tracker
 			master.map_pins.Refresh();
 		}
 
-		if (!silent && PotP_NotificationFlag('ProgressOnThePath_MiscNotification_Enter'))
+		if (!silent && PotP_SettingFlag('ProgressOnThePath_MiscNotification_Enter'))
 		{
 			master.notifications.ShowSingleUpdate(tracked, value);
 		}

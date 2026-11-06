@@ -143,6 +143,113 @@ void SaveSettings()
 	WriteFloat(ini, "HdrBrightness", s.hdrBrightness);
 }
 
+namespace
+{
+	std::wstring DocumentsFile(const wchar_t* name)
+	{
+		PWSTR documents = nullptr;
+		if (FAILED(SHGetKnownFolderPath(FOLDERID_Documents, 0, nullptr, &documents)))
+			return {};
+		std::wstring path = std::wstring(documents) + L"\\The Witcher 3\\" + name;
+		CoTaskMemFree(documents);
+		return path;
+	}
+
+	// A section's key=value lines, as GetPrivateProfileSection gives them
+	std::vector<std::pair<std::string, std::string>> ReadSection(const std::wstring& file, const wchar_t* section)
+	{
+		std::vector<std::pair<std::string, std::string>> out;
+		std::vector<wchar_t> text(32768);
+		const DWORD got = GetPrivateProfileSectionW(section, text.data(), static_cast<DWORD>(text.size()), file.c_str());
+		for (const wchar_t* at = text.data(); at < text.data() + got && *at; at += wcslen(at) + 1)
+		{
+			const std::wstring line = at;
+			const size_t equals = line.find(L'=');
+			if (equals == std::wstring::npos || equals == 0)
+				continue;
+			const auto narrow = [](const std::wstring& w) { return std::string(w.begin(), w.end()); };
+			out.emplace_back(narrow(line.substr(0, equals)), narrow(line.substr(equals + 1)));
+		}
+		return out;
+	}
+}
+
+namespace
+{
+	// The scripts end their lines with a backslash and an n, as a script string has no other way to
+	std::string RealLines(std::string text)
+	{
+		for (size_t at = text.find("\\n"); at != std::string::npos; at = text.find("\\n", at + 1))
+			text.replace(at, 2, "\n");
+		return text;
+	}
+}
+
+std::vector<std::pair<std::string, std::string>> LoadModSettings()
+{
+	const std::string ini = IniPath();
+	const std::wstring wide(ini.begin(), ini.end());
+	auto values = ReadSection(wide, L"ModSettings");
+	if (!values.empty())
+	{
+		// Saved by an earlier build as one line: each id=value again
+		std::vector<std::pair<std::string, std::string>> split;
+		for (const auto& [id, value] : values)
+		{
+			const std::string lines = RealLines(id + "=" + value);
+			size_t start = 0;
+			while (start < lines.size())
+			{
+				size_t end = lines.find('\n', start);
+				if (end == std::string::npos)
+					end = lines.size();
+				const size_t equals = lines.find('=', start);
+				if (equals != std::string::npos && equals > start && equals < end)
+					split.emplace_back(lines.substr(start, equals - start), lines.substr(equals + 1, end - equals - 1));
+				start = end + 1;
+			}
+		}
+		return split;
+	}
+
+	// The first time: the values the game kept for the old menu, so nobody loses theirs
+	const std::wstring game = DocumentsFile(L"dx12user.settings");
+	for (const wchar_t* group : { L"ProgressOnThePath_GeneralSettings", L"ProgressOnThePath_NotificationSettings" })
+		for (auto& value : ReadSection(game, group))
+			values.push_back(std::move(value));
+	if (!values.empty())
+	{
+		std::string text;
+		for (const auto& [id, value] : values)
+			text += id + "=" + value + "\n";
+		SaveModSettings(text);
+	}
+	Log("mod settings: %zu taken from the game's dx12user.settings", values.size());
+	return values;
+}
+
+void SaveModSettings(const std::string& given)
+{
+	const std::string lines = RealLines(given);
+	// GetPrivateProfileSection's form: each key=value ends in a NUL, and the whole in a second one
+	std::string section;
+	size_t start = 0;
+	while (start < lines.size())
+	{
+		size_t end = lines.find('\n', start);
+		if (end == std::string::npos)
+			end = lines.size();
+		if (end > start && lines.find('=', start) < end)
+		{
+			section.append(lines, start, end - start);
+			section.push_back('\0');
+		}
+		start = end + 1;
+	}
+	section.push_back('\0');
+	WritePrivateProfileSectionA("ModSettings", section.c_str(), IniPath().c_str());
+}
+
 bool GameHdrLevels(float& paperWhite, float& peak)
 {
 	static std::wstring path;

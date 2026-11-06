@@ -104,7 +104,6 @@ statemachine class CPotP_Main
 		{
 			FactsSet(PotP_Fact_Initialised(), 1);
 			FactsSet(PotP_Fact_Version(), version_number);
-			PotP_LoadDefaultSettings();
 			return;
 		}
 
@@ -121,7 +120,7 @@ statemachine class CPotP_Main
 	{
 		popup.ShowHerald("install", "", "", "PotP_InstallMessage", true);
 
-		if (version_changed && PotP_NotificationFlag('ProgressOnThePath_ShowUpdateNotifications'))
+		if (version_changed && PotP_SettingFlag('ProgressOnThePath_ShowUpdateNotifications'))
 		{
 			popup.ShowHerald("update", version_text, "", "", false, 5);
 		}
@@ -185,7 +184,7 @@ statemachine class CPotP_Main
 		var now		: float = theGame.GetEngineTimeAsSeconds();
 		var context	: name = theInput.GetContext();
 
-		if (!catalog.is_ready || !PotP_GeneralFlag('ProgressOnThePath_EnableHotKey'))
+		if (!catalog.is_ready || !PotP_SettingFlag('ProgressOnThePath_EnableHotKey'))
 		{
 			return;
 		}
@@ -230,7 +229,7 @@ statemachine class CPotP_Main
 
 	public function OnMeditationStarted()
 	{
-		if (PotP_GeneralFlag('ProgressOnThePath_MeditationUpdate'))
+		if (PotP_SettingFlag('ProgressOnThePath_MeditationUpdate'))
 		{
 			RequestFullUpdate(true);
 		}
@@ -244,9 +243,9 @@ statemachine class CPotP_Main
 	{
 		var current_pins : string;
 
-		if (PotP_GeneralFlag('ProgressOnThePath_ResetForNGPlus'))
+		if (PotP_SettingFlag('ProgressOnThePath_ResetForNGPlus'))
 		{
-			theGame.GetInGameConfigWrapper().SetVarValue('ProgressOnThePath_GeneralSettings', 'ProgressOnThePath_ResetForNGPlus', "false");
+			PotP_SetSetting('ProgressOnThePath_ResetForNGPlus', "false");
 			ResetForNewGamePlus();
 			return;
 		}
@@ -271,10 +270,10 @@ statemachine class CPotP_Main
 
 	private function GetPinSettings() : string
 	{
-		return PotP_GetGeneralValue('ProgressOnThePath_EventMapPins_ShowMapPins') + "|"
-			+ PotP_GetGeneralValue('ProgressOnThePath_EventMapPins_MapPinDescription') + "|"
-			+ PotP_GetGeneralValue('ProgressOnThePath_EventMapPins_MapPinRadius') + "|"
-			+ PotP_GetGeneralValue('ProgressOnThePath_EventMapPins_MapPinType');
+		return PotP_GetSetting('ProgressOnThePath_EventMapPins_ShowMapPins') + "|"
+			+ PotP_GetSetting('ProgressOnThePath_EventMapPins_MapPinDescription') + "|"
+			+ PotP_GetSetting('ProgressOnThePath_EventMapPins_MapPinRadius') + "|"
+			+ PotP_GetSetting('ProgressOnThePath_EventMapPins_MapPinType');
 	}
 
 	//---------------------------------------------------

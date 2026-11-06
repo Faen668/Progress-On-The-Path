@@ -1,5 +1,7 @@
 #pragma once
 #include <string>
+#include <utility>
+#include <vector>
 
 enum PromptMode { kPromptsAuto = 0, kPromptsKeyboard = 1, kPromptsController = 2 };
 enum PadStyle { kPadAuto = 0, kPadXbox = 1, kPadPlayStation = 2, kPadSwitch = 3, kPadSteamDeck = 4 };
@@ -41,6 +43,11 @@ struct Settings
 Settings& GetSettings();
 void LoadSettings();
 void SaveSettings();
+
+// The mod's own settings (Settings.ws defines them), kept in potp_overlay.ini's [ModSettings] as id=value.
+// The first time, the values the game kept for the old settings menu in dx12user.settings.
+std::vector<std::pair<std::string, std::string>> LoadModSettings();
+void SaveModSettings(const std::string& lines);   // id=value lines, as PotP_SettingsValues gives them
 
 // The game's own HDR Paper White and the TV's peak, in nits, from dx12user.settings (read again when it changes).
 // False if it can't be read.

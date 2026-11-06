@@ -8,10 +8,10 @@
 //   E|uuid|status|region|filter|flags|title|tip|manual|gamedone   an entry (flags: 1 missable, 2 mod-added, 4 and 8 the DLC; manual: 0 tracked automatically, 1 ignored, 2 completed, 3 missed; gamedone: the game itself counts it as done)
 //     then, for an item, six empty fields and its template; for a Gwent card: |picture|power|faction|type|description|effects   (picture as the game's menus load it; power -1: a leader; effects separated by commas)
 //     or, for a bestiary entry: |||||text|||image|weaknesses   (paragraphs of text separated by ^^; weaknesses separated by semicolons, each name~icon)
-//   G|group|title|intro|presethint     a page of PotP's settings, as the menu XML defines it
+//   G|group|title|intro|presethint     a page of PotP's settings, as Settings.ws defines it
 //   P|name                             a preset of that page
 //   B|                                 a gap between settings
-//   V|id|type|name|value|hint          a setting (type as the XML has it: TOGGLE, OPTIONS, SLIDER;min;max;steps)
+//   V|id|type|name|value|hint          a setting (type as Settings.ws gives it: TOGGLE, OPTIONS, SLIDER;min;max;steps)
 //   O|name                             an option of that setting
 
 @addField(CR4Player)
@@ -68,7 +68,7 @@ function PotPOverlay_ExportBegin() : string
 	result = "H|" + main.version_text + "|" + IntToString(done) + "|" + IntToString(total);
 	for (Idx = 1; Idx <= 8; Idx += 1)
 	{
-		result += "\nR|" + IntToString(Idx) + "|" + PotPOverlay_Clean(GetLocStringByKeyExt("preset_value_QT_Option_QArea_" + IntToString(Idx)));
+		result += "\nR|" + IntToString(Idx) + "|" + PotPOverlay_Clean(GetLocStringByKeyExt("potp_ov_area_" + IntToString(Idx)));
 	}
 	// What a Gwent card with no known place is: won at random
 	result += "\nR|0|" + PotPOverlay_Clean(GetLocStringByKeyExt("ProgressOnThePath_PreviewTag_RA"));
@@ -363,121 +363,47 @@ function PotPOverlay_Hint(key: string) : string
 	return PotPOverlay_Clean(GetLocStringByKeyExt(key));
 }
 
-function PotPOverlay_IntroKey(group: name) : string
-{
-	switch (group)
-	{
-	case 'ProgressOnThePath_GeneralSettings':		return "potp_hint_general_intro";
-	case 'ProgressOnThePath_NotificationSettings':	return "potp_hint_notify_intro";
-	}
-	return "";
-}
-
-function PotPOverlay_PresetKey(group: name) : string
-{
-	if (group == 'ProgressOnThePath_NotificationSettings')
-	{
-		return "potp_hint_notify_presets";
-	}
-	return "";
-}
-
-function PotPOverlay_HintKey(variable: name) : string
-{
-	switch (variable)
-	{
-	case 'ProgressOnThePath_MeditationUpdate':	return "potp_hint_general_meditation";
-	case 'ProgressOnThePath_EnableHotKey':	return "potp_hint_general_hotkey";
-	case 'ProgressOnThePath_ShowCollectabilityTooltips':	return "potp_hint_general_tooltips";
-	case 'ProgressOnThePath_EventMapPins_ShowMapPins':	return "potp_hint_pins_show";
-	case 'ProgressOnThePath_EventMapPins_MapPinDescription':	return "potp_hint_pins_description";
-	case 'ProgressOnThePath_EventMapPins_MapPinRadius':	return "potp_hint_pins_radius";
-	case 'ProgressOnThePath_EventMapPins_MapPinType':	return "potp_hint_pins_type";
-	case 'ProgressOnThePath_ResetForNGPlus':	return "potp_hint_general_ngplus";
-	case 'ProgressOnThePath_ShowUpdateNotifications':	return "potp_hint_notify_modupdate";
-	case 'ProgressOnThePath_GlobalNotification_Size':	return "potp_hint_notify_size";
-	case 'ProgressOnThePath_GlobalNotification_Font':	return "potp_hint_notify_colour";
-	case 'ProgressOnThePath_GlobalNotification_Time':	return "potp_hint_notify_time";
-	case 'ProgressOnThePath_FullNotification_Quest':	return "potp_hint_full_quest";
-	case 'ProgressOnThePath_FullNotification_World':	return "potp_hint_full_world";
-	case 'ProgressOnThePath_FullNotification_Items':	return "potp_hint_full_items";
-	case 'ProgressOnThePath_FullNotification_Gwent':	return "potp_hint_full_gwent";
-	case 'ProgressOnThePath_FullNotification_Event':	return "potp_hint_full_event";
-	case 'ProgressOnThePath_FullNotification_Nulls':	return "potp_hint_full_nulls";
-	case 'ProgressOnThePath_BackNotification_Quest':	return "potp_hint_back_quest";
-	case 'ProgressOnThePath_BackNotification_World':	return "potp_hint_back_world";
-	case 'ProgressOnThePath_BackNotification_Items':	return "potp_hint_back_items";
-	case 'ProgressOnThePath_BackNotification_Gwent':	return "potp_hint_back_gwent";
-	case 'ProgressOnThePath_BackNotification_Event':	return "potp_hint_back_event";
-	case 'ProgressOnThePath_MiscNotification_Event':	return "potp_hint_misc_event";
-	case 'ProgressOnThePath_MiscNotification_Missable':	return "potp_hint_misc_missable";
-	case 'ProgressOnThePath_MiscNotification_Tracker':	return "potp_hint_misc_tracker";
-	}
-	return "";
-}
-
-// The game's config is the only store. The menu XML is hidden from the game's own menus with
-// visibilityCondition="hideAlways": it's still what defines the settings and keeps them saved, and
-// anything added to it appears here without changing the overlay.
+// The mod's settings, from their definitions in Settings.ws, for the overlay's Settings page
 function PotPOverlay_ExportSettings() : string
 {
-	var config		: CInGameConfigWrapper = theGame.GetInGameConfigWrapper();
-	var result		: string;
-	var group		: name;
-	var variable	: name;
-	var type_text	: string;
-	var left		: string;
-	var right		: string;
-	var Idx			: int;
-	var Var			: int;
-	var Sub			: int;
+	var store	: CPotP_Settings = PotP_Settings();
+	var group	: CPotP_SettingGroup;
+	var setting	: CPotP_Setting;
+	var result	: string;
+	var Idx		: int;
+	var Var		: int;
+	var Sub		: int;
 
-	for (Idx = 0; Idx < config.GetGroupsNum(); Idx += 1)
+	for (Idx = 0; Idx < store.groups.Size(); Idx += 1)
 	{
-		group = config.GetGroupName(Idx);
-		if (StrLeft(NameToString(group), 18) != "ProgressOnThePath_")
+		group = store.groups[Idx];
+		result += "\nG|" + NameToString(group.id) + "|" + PotPOverlay_Clean(GetLocStringByKeyExt(group.label)) + "|" + PotPOverlay_Hint(group.intro) + "|" + PotPOverlay_Hint(group.preset_hint);
+		for (Sub = 0; Sub < group.presets.Size(); Sub += 1)
 		{
-			continue;
+			result += "\nP|" + PotPOverlay_Clean(GetLocStringByKeyExt(group.presets[Sub].label));
 		}
 
-		right = config.GetGroupDisplayName(group);
-		StrSplitLast(right, ".", left, right);
-		result += "\nG|" + NameToString(group) + "|" + PotPOverlay_Clean(GetLocStringByKeyExt("panel_" + right)) + "|" + PotPOverlay_Hint(PotPOverlay_IntroKey(group)) + "|" + PotPOverlay_Hint(PotPOverlay_PresetKey(group));
-
-		for (Sub = 0; Sub < config.GetGroupPresetsNum(group); Sub += 1)
+		for (Var = 0; Var < store.settings.Size(); Var += 1)
 		{
-			result += "\nP|" + PotPOverlay_Clean(GetLocStringByKeyExt("preset_value_" + config.GetGroupPresetDisplayName(group, Sub)));
-		}
-
-		for (Var = 0; Var < config.GetVarsNumByGroupName(group); Var += 1)
-		{
-			variable = config.GetVarNameByGroupName(group, Var);
-			// It only reports what the window already shows
-			if (variable == 'ProgressOnThePath_MiscNotification_Enter')
+			setting = store.settings[Var];
+			if (setting.group != group.id)
 			{
 				continue;
 			}
-
-			type_text = config.GetVarDisplayType(group, variable);
-			// The game gives "SLIDER" alone, and a slider's minimum, maximum and steps as its options
-			if (type_text == "SLIDER" && config.GetVarOptionsNum(group, variable) >= 3)
-			{
-				type_text += ";" + config.GetVarOption(group, variable, 0) + ";" + config.GetVarOption(group, variable, 1) + ";" + config.GetVarOption(group, variable, 2);
-			}
-			if (type_text == "SUBTLE_SEPARATOR")
+			if (setting.type_text == "SUBTLE_SEPARATOR")
 			{
 				result += "\nB|";
 				continue;
 			}
-
-			result += "\nV|" + NameToString(variable) + "|" + type_text + "|" + PotPOverlay_Clean(GetLocStringByKeyExt("option_" + config.GetVarDisplayName(group, variable))) + "|" + config.GetVarValue(group, variable) + "|" + PotPOverlay_Hint(PotPOverlay_HintKey(variable));
-			if (StrLeft(type_text, 7) == "OPTIONS")
+			// It only reports what the window already shows
+			if (setting.id == 'ProgressOnThePath_MiscNotification_Enter')
 			{
-				for (Sub = 0; Sub < config.GetVarOptionsNum(group, variable); Sub += 1)
-				{
-					result += "\nO|" + PotPOverlay_Clean(GetLocStringByKeyExt("preset_value_" + config.GetVarOption(group, variable, Sub)));
-
-				}
+				continue;
+			}
+			result += "\nV|" + NameToString(setting.id) + "|" + setting.type_text + "|" + PotPOverlay_Clean(GetLocStringByKeyExt(setting.label)) + "|" + setting.value + "|" + PotPOverlay_Hint(setting.hint_key);
+			for (Sub = 0; Sub < setting.options.Size(); Sub += 1)
+			{
+				result += "\nO|" + PotPOverlay_Clean(GetLocStringByKeyExt(setting.options[Sub]));
 			}
 		}
 	}
@@ -486,29 +412,17 @@ function PotPOverlay_ExportSettings() : string
 
 exec function potpoverlay_setvar(group_name: name, var_name: name, value: string)
 {
-	theGame.GetInGameConfigWrapper().SetVarValue(group_name, var_name, value);
+	PotP_SetSetting(var_name, value);
 }
 
 exec function potpoverlay_preset(group_name: name, preset: int)
 {
-	theGame.GetInGameConfigWrapper().ApplyGroupPreset(group_name, preset);
+	PotP_Settings().ApplyPreset(group_name, preset);
 }
 
 exec function potpoverlay_resetgroup(group_name: name)
 {
-	// The mod's own defaults: the menu XML gives none, so the game's reset would leave them empty
-	if (group_name == 'ProgressOnThePath_GeneralSettings')
-	{
-		PotP_LoadGeneralDefaults();
-	}
-	else if (group_name == 'ProgressOnThePath_NotificationSettings')
-	{
-		PotP_LoadNotificationDefaults();
-	}
-	else
-	{
-		theGame.GetInGameConfigWrapper().ResetGroupToDefaults(group_name);
-	}
+	PotP_Settings().ResetGroup(group_name);
 }
 
 // When the window closes after a setting changed
@@ -516,7 +430,6 @@ function PotPOverlay_SettingsClosed()
 {
 	var main : CPotP_Main;
 
-	theGame.SaveUserSettings();
 	if (thePlayer)
 	{
 		main = PotP_Get();

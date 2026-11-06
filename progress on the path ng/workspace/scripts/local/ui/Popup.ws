@@ -120,7 +120,7 @@ state Showing in CPotP_Popup
 			}
 
 			kind = "1";
-			seconds = PotP_GetNotificationValue('ProgressOnThePath_GlobalNotification_Time');
+			seconds = PotP_GetSetting('ProgressOnThePath_GlobalNotification_Time');
 			if (message.is_warning)
 			{
 				kind = "2";
@@ -137,7 +137,7 @@ state Showing in CPotP_Popup
 			}
 			else if (main)
 			{
-				main.notifications.QueueForOverlay("P|" + kind + "|" + seconds + "|" + PotP_GetNotificationValue('ProgressOnThePath_GlobalNotification_Size') + "|" + PotP_GetNotificationValue('ProgressOnThePath_GlobalNotification_Font') + "|" + StrReplace(message.title, "|", "/") + "|" + StrReplace(message.body, "|", "/"));
+				main.notifications.QueueForOverlay("P|" + kind + "|" + seconds + "|" + PotP_GetSetting('ProgressOnThePath_GlobalNotification_Size') + "|" + PotP_GetSetting('ProgressOnThePath_GlobalNotification_Font') + "|" + StrReplace(message.title, "|", "/") + "|" + StrReplace(message.body, "|", "/"));
 			}
 		}
 

@@ -372,6 +372,45 @@ namespace
 		}
 	}
 
+	// The mod's settings: the saved values into the scripts' map as they start, and saved again whenever the map's version
+	// moves, which it does for a change from the Settings page or from a script
+	void ModSettingsTick(bool scriptsStarted)
+	{
+		static bool sent = false;
+		static int seenVersion = 0;
+		static ULONGLONG nextLook = 0;
+		if (scriptsStarted)
+		{
+			sent = false;
+			seenVersion = 0;
+		}
+		if (!sent)
+		{
+			if (!FindScriptFunction("PotP_SettingsWanted"))
+				return;   // scripts older than this overlay
+			sent = true;
+			const auto values = LoadModSettings();
+			for (const auto& [id, value] : values)
+				RunExec("potp_setting(" + id + ", " + ExecText(value) + ")", true);
+			RunExec("potp_settings_end(" + std::to_string(values.size()) + ")");
+			return;
+		}
+		const ULONGLONG now = GetTickCount64();
+		if (now < nextLook)
+			return;
+		nextLook = now + 250;
+		const int version = CallInt("PotP_SettingsVersion");
+		if (version == seenVersion)
+			return;
+		seenVersion = version;
+		std::string lines;
+		if (CallString("PotP_SettingsValues", lines) && !lines.empty())
+		{
+			SaveModSettings(lines);
+			Log("mod settings saved (version %d)", version);
+		}
+	}
+
 	// Every quest's title id, from the journals, into the scripts' map: once each time the scripts start, a little a tick.
 	// It lives on theGame, so it lasts through every save loaded after.
 	void QuestTitlesTick(bool scriptsStarted)
@@ -467,6 +506,7 @@ namespace
 				[](const char* name, std::string& out) { return CallString(name, out); } };
 			CustomAchievementsTick(customCalls);
 
+			ModSettingsTick(startedNow);
 			QuestTitlesTick(startedNow);
 
 			if (g_wantWardrobeItems.exchange(false))

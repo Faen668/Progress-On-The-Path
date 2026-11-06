@@ -149,7 +149,6 @@ function PotPOverlay_TextKeys_1(out keys: array<string>)
 	keys.PushBack("show_undiscovered_hint");
 	keys.PushBack("show_secret");
 	keys.PushBack("show_secret_hint");
-	keys.PushBack("notifications_caps");
 	keys.PushBack("notification_position_hint");
 	keys.PushBack("place_it");
 	keys.PushBack("defaults");
@@ -253,11 +252,11 @@ function PotPOverlay_TextKeys_1(out keys: array<string>)
 	keys.PushBack("ward_clear");
 	keys.PushBack("ward_stance");
 	keys.PushBack("ward_back");
+	keys.PushBack("ward_empty");
 }
 
 function PotPOverlay_TextKeys_2(out keys: array<string>)
 {
-	keys.PushBack("ward_empty");
 	keys.PushBack("ward_hint_mouse");
 	keys.PushBack("ward_hint_pad");
 	keys.PushBack("item_stats");

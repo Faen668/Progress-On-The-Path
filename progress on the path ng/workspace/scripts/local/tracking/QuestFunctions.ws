@@ -97,7 +97,7 @@ function PotP_DoUnlockEvent(UUID: string, Location: string, Fact: string)
 
 	main.map_pins.Refresh();
 
-	if (PotP_NotificationFlag('ProgressOnThePath_MiscNotification_Event'))
+	if (PotP_SettingFlag('ProgressOnThePath_MiscNotification_Event'))
 	{
 		main.popup.ShowHerald("event", tracked.title, GetLocStringByKeyExt(Location), tracked.entry_name, false, 5);
 	}

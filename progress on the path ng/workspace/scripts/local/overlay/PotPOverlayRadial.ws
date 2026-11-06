@@ -30,7 +30,7 @@ function PotPOverlay_RadialPadButton() : string
 
 function PotPOverlay_RadialLabel() : string
 {
-	var label : string = GetLocStringByKeyExt("panel_QT_Name");
+	var label : string = GetLocStringByKeyExt("potp_ov_mod_name");
 
 	if (label == "" || label == "#")
 	{

@@ -24,7 +24,7 @@ class CPotP_MapPins
 		var events	: array<CPotP_Entry> = master.catalog.event_entries;
 		var Idx		: int;
 
-		if (!PotP_GeneralFlag('ProgressOnThePath_EventMapPins_ShowMapPins'))
+		if (!PotP_SettingFlag('ProgressOnThePath_EventMapPins_ShowMapPins'))
 		{
 			SU_removeCustomPinByTagPrefix(tag_prefix);
 			return;
@@ -45,7 +45,7 @@ class CPotP_MapPins
 				.description		(GetDescription(events[Idx]))
 				.type				(GetPinType())
 				.filtered_type		("QuestVermentino")
-				.radius				((int) PotP_GetGeneralValue('ProgressOnThePath_EventMapPins_MapPinRadius'))
+				.radius				((int) PotP_GetSetting('ProgressOnThePath_EventMapPins_MapPinRadius'))
 				.position			(events[Idx].position)
 				.region				(events[Idx].map_region)
 				.is_quest			(false)
@@ -71,7 +71,7 @@ class CPotP_MapPins
 
 	private function GetDescription(tracked: CPotP_Entry) : string
 	{
-		if (PotP_GeneralFlag('ProgressOnThePath_EventMapPins_MapPinDescription'))
+		if (PotP_SettingFlag('ProgressOnThePath_EventMapPins_MapPinDescription'))
 		{
 			return GetLocStringByKeyExt(tracked.entry_name + "_Description");
 		}
@@ -82,7 +82,7 @@ class CPotP_MapPins
 
 	private function GetPinType() : string
 	{
-		switch ((int) PotP_GetGeneralValue('ProgressOnThePath_EventMapPins_MapPinType'))
+		switch ((int) PotP_GetSetting('ProgressOnThePath_EventMapPins_MapPinType'))
 		{
 		case 0:		return "QuestAvailable";
 		case 2:		return "QuestAvailableBaW";

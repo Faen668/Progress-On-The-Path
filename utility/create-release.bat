@@ -20,10 +20,6 @@ XCOPY "%modpath%\progress on the path ng\packed\mods\modprogressonthepathng\cont
 mkdir "%modpath%\release\mods\mod%modname%\content\scripts\local\"
 XCOPY "%modpath%\progress on the path ng\workspace\scripts\local" "%modpath%\release\mods\mod%modname%\content\scripts\local\" /e /s /y
 
-::Copy over the menu xml.
-mkdir "%modpath%\release\bin\config\r4game\user_config_matrix\pc\"
-XCOPY "%modPath%\source\menu" "%modpath%\release\bin\config\r4game\user_config_matrix\pc\" /e /s /y
-
 ::Copy over the encoded strings.
 XCOPY "%modpath%\source\strings\" "%modpath%\release\mods\mod%modname%\content\" /e /s /y
 

@@ -503,6 +503,11 @@ namespace
 	std::string g_focusHeader;
 	bool g_freeScrolled = false;   // the list was moved by the right stick or mouse, not by the selection
 	bool g_followSelection = false;
+	// The entry a step of the guided tour shows: selected, its section opened, and shown even if the game hasn't got it yet.
+	// What was selected before comes back when the step ends.
+	std::string g_tourEntry, g_tourEntryWas;
+	int g_tourEntryBook = -1;
+	bool g_tourEntrySet = false;
 	bool g_wasOpen = false;
 	bool g_dragging = false;
 	std::vector<Row> g_rows;
@@ -575,7 +580,7 @@ namespace
 		return g_clicked && Hover(a, b);
 	}
 
-	// One setting of the mod's: the game's config is told at once, and the mod when the window closes
+	// One setting of the mod's: the scripts' settings map is told at once (and saved from there), the mod when the window closes
 	void SendValue(const ModPage& page, const ModVar& v)
 	{
 		RequestExec("potpoverlay_setvar(" + page.id + ", " + v.id + ", " + v.value + ")", false);
@@ -1828,7 +1833,7 @@ namespace
 
 	bool CreatureMasked(const Entry& e)
 	{
-		return !e.gameDone && !GetSettings().revealUndiscovered;
+		return !e.gameDone && !GetSettings().revealUndiscovered && e.uuid != g_tourEntry;
 	}
 
 	void DrawFitted(unsigned long long texture, float w, float h, ImVec2 a, ImVec2 b)
@@ -1847,6 +1852,18 @@ namespace
 	const Entry* DrawList(const Model& m, const Section** selectedSection)
 	{
 		g_headerFocus = nullptr;
+		// The tour's entry, once: selected, with its section open
+		if (!g_tourEntry.empty() && !g_tourEntrySet && g_book == g_tourEntryBook)
+			for (const Section& s : m.sections)
+				for (const Entry& e : s.entries)
+					if (s.book == g_book && e.uuid == g_tourEntry && !g_tourEntrySet)
+					{
+						SetSectionOpen(s, true);
+						g_tourEntryWas = g_selected[g_book];
+						g_selected[g_book] = g_tourEntry;
+						g_followSelection = true;
+						g_tourEntrySet = true;
+					}
 		const Columns c = GetColumns();
 		const ImVec2 la(c.l0, kTop), lb(c.l1, kBottom);
 		const float viewH = lb.y - la.y;
@@ -5299,7 +5316,9 @@ namespace
 				{
 					const float after = x0 + 4 + std::min(Measure(kSerif, 32, v.label.c_str()).x, nameRoom) + 16.f;
 					const std::string key = KeyName(GetSettings().updateKey);
-					KeyCap(after, ry + 7, 40.f, key.c_str(), true, false);
+					// Level with the name's capitals, not the row's middle, which sits lower than the letters
+					const float level = ry + 6 + InkCentre(kSerif, 32, "H").y;
+					KeyCap(after, level - 20.f, 40.f, key.c_str(), true, false);
 				}
 				if (focused)
 				{
@@ -5408,7 +5427,9 @@ namespace
 						if (swatch)
 						{
 							const float sx = (left + right) * 0.5f + width * 0.5f + shift + 14.f;
-							const ImVec2 sa(sx, my - 11), sb(sx + 24, my + 13);
+							// Level with the colour's name: the middle of its capitals, so it stays put whichever name is shown
+							const float level = ry + 6 + InkCentre(kSerif, 30, "H").y;
+							const ImVec2 sa(sx, level - 12), sb(sx + 24, level + 12);
 							dl->AddRectFilled(ImVec2(sa.x - 3, sa.y - 3), ImVec2(sb.x + 3, sb.y + 3), Rgb(18, 15, 11));
 							dl->AddRectFilled(sa, sb, PopupTextColour(shown));
 							dl->AddRect(ImVec2(sa.x - 3, sa.y - 3), ImVec2(sb.x + 3, sb.y + 3), Rgb(120, 100, 66), 0.f, 0, 1.5f);
@@ -5937,7 +5958,8 @@ namespace
 	enum TourSpot { kTourNone, kTourProgress, kTourTabs, kTourRegions, kTourList, kTourDetail, kTourHints, kTourTable, kTourWardList, kTourWardView, kTourWardDyes, kTourWardCards, kTourWardOutfits, kTourPanel };
 	enum TourOpen { kTourOpenNothing, kTourOpenStatus, kTourOpenVisibility, kTourOpenEnlarged };
 	// page: on Settings, which of its pages; open: a panel the step opens over the screen, as using it would
-	struct TourStep { int book; TourSpot spot; TextId title, body; bool wardrobe = false; int page = -1; TourOpen open = kTourOpenNothing; };
+	// entry: an entry to show, by its id, revealed even if the game hasn't got it yet
+	struct TourStep { int book; TourSpot spot; TextId title, body; bool wardrobe = false; int page = -1; TourOpen open = kTourOpenNothing; const char* entry = nullptr; };
 	const TourStep kTourSteps[] = {
 		{ kBookQuest, kTourProgress, T_tour_progress, T_tour_progress_body },
 		{ kBookQuest, kTourTabs, T_tour_tabs, T_tour_tabs_body },
@@ -5958,7 +5980,8 @@ namespace
 		{ kBookItems, kTourWardCards, T_tour_ward_cards, T_tour_ward_cards_body, true },
 		{ kBookItems, kTourWardOutfits, T_tour_ward_outfits, T_tour_ward_outfits_body, true },
 		{ kBookGwent, kTourDetail, T_tour_gwent, T_tour_gwent_body },
-		{ kBookBestiary, kTourDetail, T_tour_bestiary, T_tour_bestiary_body },
+		// The wolf: the first creature most players meet, so it's what the page looks like for them
+		{ kBookBestiary, kTourDetail, T_tour_bestiary, T_tour_bestiary_body, false, -1, kTourOpenNothing, "PotP_Bestiary_wolf" },
 		{ kTabAchievements, kTourList, T_tour_achievements, T_tour_achievements_body },
 		{ kTabKills, kTourTable, T_tour_kills, T_tour_kills_body },
 		{ kTabSettings, kTourTable, T_tour_settings, T_tour_settings_body, false, 0 },
@@ -5976,6 +5999,13 @@ namespace
 	{
 		if (step >= kTourStepCount)
 			step = -2;
+		// The last step's entry goes back to being what it is, and the selection to what it was
+		if (g_tourEntrySet && g_tourEntryBook >= 0 && g_selected[g_tourEntryBook] == g_tourEntry)
+			g_selected[g_tourEntryBook] = g_tourEntryWas;
+		const char* entry = step >= 0 ? kTourSteps[step].entry : nullptr;
+		g_tourEntry = entry ? entry : "";
+		g_tourEntryBook = entry ? kTourSteps[step].book : -1;
+		g_tourEntrySet = false;
 		if (step == -2)
 		{
 			SetBook(g_tourFromBook);

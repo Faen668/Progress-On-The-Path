@@ -144,35 +144,35 @@ class CPotP_Notifications
 		switch (tracked.category)
 		{
 		case PotP_A_Quest:
-			if (PotP_NotificationFlag('ProgressOnThePath_FullNotification_Quest'))
+			if (PotP_SettingFlag('ProgressOnThePath_FullNotification_Quest'))
 			{
 				summary_quest.Increment(GetQuestLine(tracked), GetIcon(tracked));
 			}
 			break;
 
 		case PotP_A_Event:
-			if (PotP_NotificationFlag('ProgressOnThePath_FullNotification_Event'))
+			if (PotP_SettingFlag('ProgressOnThePath_FullNotification_Event'))
 			{
 				summary_quest.Increment(GetQuestLine(tracked), GetIcon(tracked));
 			}
 			break;
 
 		case PotP_A_World:
-			if (PotP_NotificationFlag('ProgressOnThePath_FullNotification_World'))
+			if (PotP_SettingFlag('ProgressOnThePath_FullNotification_World'))
 			{
 				summary_world.Increment(GetWorldLine(tracked.filter), GetIcon(tracked));
 			}
 			break;
 
 		case PotP_A_Items:
-			if (PotP_NotificationFlag('ProgressOnThePath_FullNotification_Items'))
+			if (PotP_SettingFlag('ProgressOnThePath_FullNotification_Items'))
 			{
 				summary_items.Increment(GetItemsLine(tracked.filter), GetIcon(tracked));
 			}
 			break;
 
 		case PotP_A_Gwent:
-			if (PotP_NotificationFlag('ProgressOnThePath_FullNotification_Gwent'))
+			if (PotP_SettingFlag('ProgressOnThePath_FullNotification_Gwent'))
 			{
 				summary_items.Increment(GetItemsLine(tracked.filter), GetIcon(tracked));
 			}
@@ -193,7 +193,7 @@ class CPotP_Notifications
 			return;
 		}
 
-		if (total == 0 && !PotP_NotificationFlag('ProgressOnThePath_FullNotification_Nulls'))
+		if (total == 0 && !PotP_SettingFlag('ProgressOnThePath_FullNotification_Nulls'))
 		{
 			return;
 		}
@@ -212,11 +212,11 @@ class CPotP_Notifications
 
 	private function SummaryEnabled() : bool
 	{
-		return PotP_NotificationFlag('ProgressOnThePath_FullNotification_Quest')
-			|| PotP_NotificationFlag('ProgressOnThePath_FullNotification_World')
-			|| PotP_NotificationFlag('ProgressOnThePath_FullNotification_Items')
-			|| PotP_NotificationFlag('ProgressOnThePath_FullNotification_Gwent')
-			|| PotP_NotificationFlag('ProgressOnThePath_FullNotification_Event');
+		return PotP_SettingFlag('ProgressOnThePath_FullNotification_Quest')
+			|| PotP_SettingFlag('ProgressOnThePath_FullNotification_World')
+			|| PotP_SettingFlag('ProgressOnThePath_FullNotification_Items')
+			|| PotP_SettingFlag('ProgressOnThePath_FullNotification_Gwent')
+			|| PotP_SettingFlag('ProgressOnThePath_FullNotification_Event');
 	}
 
 	//---------------------------------------------------
@@ -253,35 +253,35 @@ class CPotP_Notifications
 		switch (tracked.category)
 		{
 		case PotP_A_Quest:
-			if (PotP_NotificationFlag('ProgressOnThePath_BackNotification_Quest'))
+			if (PotP_SettingFlag('ProgressOnThePath_BackNotification_Quest'))
 			{
 				AddUnique(background_quest, GetQuestUpdateText(tracked), GetIcon(tracked));
 			}
 			break;
 
 		case PotP_A_Event:
-			if (PotP_NotificationFlag('ProgressOnThePath_BackNotification_Event'))
+			if (PotP_SettingFlag('ProgressOnThePath_BackNotification_Event'))
 			{
 				AddUnique(background_quest, GetQuestUpdateText(tracked), GetIcon(tracked));
 			}
 			break;
 
 		case PotP_A_World:
-			if (PotP_NotificationFlag('ProgressOnThePath_BackNotification_World'))
+			if (PotP_SettingFlag('ProgressOnThePath_BackNotification_World'))
 			{
 				AddUnique(background_world, GetWorldUpdatePrefix(tracked.filter) + tracked.title, GetIcon(tracked));
 			}
 			break;
 
 		case PotP_A_Items:
-			if (PotP_NotificationFlag('ProgressOnThePath_BackNotification_Items'))
+			if (PotP_SettingFlag('ProgressOnThePath_BackNotification_Items'))
 			{
 				AddUnique(background_items, GetLocStringByKeyExt("PotP_NotificationLine_Updated") + tracked.title, GetIcon(tracked));
 			}
 			break;
 
 		case PotP_A_Gwent:
-			if (PotP_NotificationFlag('ProgressOnThePath_BackNotification_Gwent'))
+			if (PotP_SettingFlag('ProgressOnThePath_BackNotification_Gwent'))
 			{
 				AddUnique(background_items, GetLocStringByKeyExt("PotP_NotificationLine_Updated") + tracked.title, GetIcon(tracked));
 			}
@@ -417,7 +417,7 @@ class CPotP_Notifications
 		var total_count, done_count : int;
 
 		master.catalog.CountProgress(total_count, done_count);
-		return "N|" + PotP_GetNotificationValue('ProgressOnThePath_GlobalNotification_Time') + "|" + IntToString(GetFontSize()) + "|" + PotP_GetNotificationValue('ProgressOnThePath_GlobalNotification_Font')
+		return "N|" + PotP_GetSetting('ProgressOnThePath_GlobalNotification_Time') + "|" + IntToString(GetFontSize()) + "|" + PotP_GetSetting('ProgressOnThePath_GlobalNotification_Font')
 			+ "|" + IntToString(done_count) + "|" + IntToString(total_count);
 	}
 
@@ -484,11 +484,11 @@ class CPotP_Notifications
 
 	private function GetFontSize() : int
 	{
-		if ((int) PotP_GetNotificationValue('ProgressOnThePath_GlobalNotification_Size') < 14)
+		if ((int) PotP_GetSetting('ProgressOnThePath_GlobalNotification_Size') < 14)
 		{
-			theGame.GetInGameConfigWrapper().SetVarValue('ProgressOnThePath_NotificationSettings', 'ProgressOnThePath_GlobalNotification_Size', "18");
+			PotP_SetSetting('ProgressOnThePath_GlobalNotification_Size', "18");
 		}
-		return (int) PotP_GetNotificationValue('ProgressOnThePath_GlobalNotification_Size');
+		return (int) PotP_GetSetting('ProgressOnThePath_GlobalNotification_Size');
 	}
 
 	//---------------------------------------------------

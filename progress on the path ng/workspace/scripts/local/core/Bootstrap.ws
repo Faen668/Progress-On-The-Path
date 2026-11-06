@@ -312,7 +312,7 @@ function PotP_JournalRegion(tracked: CPotP_Entry) : string
 	{
 		return "";
 	}
-	return " (" + GetLocStringByKeyExt("preset_value_QT_Option_QArea_" + IntToString((int)tracked.region)) + ")";
+	return " (" + GetLocStringByKeyExt("potp_ov_area_" + IntToString((int)tracked.region)) + ")";
 }
 
 //---------------------------------------------------
@@ -322,7 +322,7 @@ function PotP_GetCollectabilityTag(item: name) : string
 	var main	: CPotP_Main = PotP_Get();
 	var tracked	: CPotP_Entry;
 
-	if (!main || !PotP_GeneralFlag('ProgressOnThePath_ShowCollectabilityTooltips'))
+	if (!main || !PotP_SettingFlag('ProgressOnThePath_ShowCollectabilityTooltips'))
 	{
 		return "";
 	}
