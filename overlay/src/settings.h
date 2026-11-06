@@ -8,16 +8,16 @@ enum PadStyle { kPadAuto = 0, kPadXbox = 1, kPadPlayStation = 2, kPadSwitch = 3,
 struct Settings
 {
 	float scale = 1.f;             // 0.5 to 2: everything in the panel
-	float widthPercent = 77.f;     // of the screen, 40 to 100
-	float heightPercent = 82.f;
-	float opacity = 0.97f;         // the panel's ground, 0.5 to 1
-	float dim = 0.45f;             // the game behind it, 0 to 0.9
+	float widthPercent = 98.f;     // of the screen, 40 to 100
+	float heightPercent = 90.f;
+	float opacity = 0.9f;          // the panel's ground, 0.5 to 1
+	float dim = 0.7f;              // the game behind it, 0 to 0.9
 	float posX = 0.f, posY = 0.f;  // dragged this far from the centre, as parts of the screen
-	bool pauseGame = true;
+	bool pauseGame = false;
 	bool openOnLastBook = true;
 	bool clothSim = true;         // cloth on the models moves
 	bool autoRotate = false;      // models in the Bestiary and Items turn slowly by themselves
-	bool liveBestiary = false;    // the Bestiary shows each creature's model in an idle, not its painting
+	bool liveBestiary = true;     // the Bestiary shows each creature's model in an idle, not its painting
 	bool tourOffered = false;     // the guided tour has been offered once
 	bool hideCompleted = false;
 	bool hideIgnored = false;

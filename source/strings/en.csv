@@ -43,7 +43,7 @@
 2116568044||PotP_TROPHY_REPLACER2|y
 2116568045||PotP_PLURAL_REPLACER|s
 2116568046||option_ProgressOnThePath_MeditationUpdate|<font color="#479c9d">Perform A Full Update       :    When Meditating</font>
-2116568047||option_ProgressOnThePath_EnableHotKey|<font color="#479c9d">Perform A Full Update       :    Via Hotkey:</font> <font size="16"> (Set The Key Under Controls)</font>
+2116568047||option_ProgressOnThePath_EnableHotKey|<font color="#479c9d">Perform A Full Update       :    Via Hotkey</font>
 2116568048||option_ProgressOnThePath_GlobalNotification_Size|<font color="#7FD8BE">Global Settings       :   Notification Font Size</font>
 2116568049||option_ProgressOnThePath_GlobalNotification_Time|<font color="#7FD8BE">Global Settings       :   Notification Display Time</font> <font size="16">(Freq in seconds)</font>
 2116568050||option_ProgressOnThePath_GlobalNotification_Font|<font color="#7FD8BE">Global Settings       :   Notification Text Colour</font>
@@ -72,11 +72,11 @@
 2116568141||preset_value_QT_Option_EventIconType_4|Question Mark
 2116568142||ProgressOnThePath_Default_MapPin_Name|Random Event
 2116568143||ProgressOnThePath_Default_MapPin_Description|A Random Event Is Available At This Location
-2116568144||preset_value_QT_Option_GlobalNotificationColour_0|Black / <font color="#E8E6E3">White</font> (Default)
-2116568145||preset_value_QT_Option_GlobalNotificationColour_1|<font color="#233067">Blue</font> / <font color="#9DB4FF">Blue</font>
-2116568146||preset_value_QT_Option_GlobalNotificationColour_2|<font color="#630F0F">Red</font> / <font color="#FF8A80">Red</font>
-2116568147||preset_value_QT_Option_GlobalNotificationColour_3|<font color="#084A23">Green</font> / <font color="#7EDC9A">Green</font>
-2116568148||preset_value_QT_Option_GlobalNotificationColour_4|<font color="#431C53">Purple</font> / <font color="#C9A0E8">Purple</font>
+2116568144||preset_value_QT_Option_GlobalNotificationColour_0|White
+2116568145||preset_value_QT_Option_GlobalNotificationColour_1|Blue
+2116568146||preset_value_QT_Option_GlobalNotificationColour_2|Red
+2116568147||preset_value_QT_Option_GlobalNotificationColour_3|Green
+2116568148||preset_value_QT_Option_GlobalNotificationColour_4|Purple
 2116568149||UpdateProgressOnThePath|PotP: Update Progress Tracker
 2116568151||panel_QT_Page_General|General
 2116568167||option_PotP_TrackingGroup_MainQuests_Prologue_01|Kaer Morhen
@@ -2110,31 +2110,31 @@
 2116570405||potp_ov_tour_progress|Your Progress
 2116570406||potp_ov_tour_progress_body|Everything you've finished across the whole game, out of everything the mod tracks. Achievements and kills have their own tabs and don't count here.
 2116570407||potp_ov_tour_tabs|The Tabs
-2116570408||potp_ov_tour_tabs_body|Each tab is one part of the game. Move between them with [prev] and [next].
+2116570408||potp_ov_tour_tabs_body|Each tab is one part of the game. Move between them with [prev] and [next], or click one.
 2116570409||potp_ov_tour_regions|Regions
 2116570410||potp_ov_tour_regions_body|Narrow a tab down to one part of the world with [left] and [right].
 2116570411||potp_ov_tour_list|The List
-2116570412||potp_ov_tour_list_body|Everything in this tab, in groups. Move with Up and Down, and open or close a group with [toggle].
+2116570412||potp_ov_tour_list_body|Everything in this tab, in groups. Move with [updown], and open or close a group with [toggle].
 2116570413||potp_ov_tour_detail|The Details
 2116570414||potp_ov_tour_detail_body|What the selected entry is, what it needs and what's left to do on it.
-2116570415||potp_ov_tour_hints|Changing Things
-2116570416||potp_ov_tour_hints_body|The prompts along the bottom change with the tab. [status] sets an entry's status by hand, and [vis] chooses whether completed, ignored and missable entries show.
+2116570415||potp_ov_tour_hints|The Prompts
+2116570416||potp_ov_tour_hints_body|Along the bottom are the controls for the screen you're on, for the keyboard or the controller, whichever you're using. Click one to use it. [refresh] reads your progress from the game again.
 2116570417||potp_ov_tour_missable|Missable
 2116570418||potp_ov_tour_missable_body|Things you can lose for good, grouped by the quest that closes them. Check here before you go on with the story.
 2116570419||potp_ov_tour_items|Items
-2116570420||potp_ov_tour_items_body|Each item's model. Turn it with the mouse or the right stick, and enlarge it with [zoom]. Its stats are on the right.
+2116570420||potp_ov_tour_items_body|Each item's own model. Drag it or use the right stick to turn it, and [autoturn] sets it turning by itself. Its stats are on the right.
 2116570421||potp_ov_tour_wardrobe|The Wardrobe
 2116570422||potp_ov_tour_wardrobe_body|On the Items tab, [wardrobe] opens the wardrobe, where you can dress Geralt in anything. It's only a preview, so what he has equipped never changes. Here's how it works.
 2116570423||potp_ov_tour_gwent|Gwent Cards
 2116570424||potp_ov_tour_gwent_body|Every card as it looks in the game, with where to win it.
 2116570425||potp_ov_tour_bestiary|Bestiary
-2116570426||potp_ov_tour_bestiary_body|Every creature, with its journal entry and what works against it.
+2116570426||potp_ov_tour_bestiary_body|Every creature, with its journal entry and what works against it. With Live Bestiary on in Settings, each stands in its own idle, and those that pass for people turn from one form into the other. Scroll its entry with [left] and [right].
 2116570427||potp_ov_tour_achievements|Achievements
 2116570428||potp_ov_tour_achievements_body|Your achievements, and how far along each one is on this save.
 2116570429||potp_ov_tour_kills|Kills
-2116570430||potp_ov_tour_kills_body|Everything Geralt has killed, by name. Unique foes have one page and everything else has the other.
-2116570431||potp_ov_tour_settings|Settings
-2116570432||potp_ov_tour_settings_body|The window's size, the notifications and map pins, and a page that checks your mods' load order.
+2116570430||potp_ov_tour_kills_body|Everything Geralt has killed, by name. [left] and [right] go between unique foes and everything else, [save] sorts by name or by count, and [kind] shows one kind of creature.
+2116570431||potp_ov_tour_settings|Settings: The Window
+2116570432||potp_ov_tour_settings_body|Settings has pages along the top: go between them with [left] and [right]. This one sets the window's size and look and how you control it. Move to a setting, or point at it, to see what it does in the box below.
 2116570433||potp_ov_tour_done|That's Everything
 2116570434||potp_ov_tour_done_body|You can take this tour again from Settings. Good hunting.
 2116570435||potp_ov_item_set|SET BONUS
@@ -2183,6 +2183,19 @@
 2116570492||potp_ov_form_returns_in|Changes back in [1]
 2116570493||potp_ov_form_returning|Changing back...
 2116570494||potp_ov_more_other_regions|And [1] more in other regions.
-2116570494||potp_ov_auto_turn_on|Auto-Turn: On
+2116570509||potp_ov_auto_turn_on|Auto-Turn: On
 2116570495||potp_ov_auto_turn_off|Auto-Turn: Off
+2116570496||potp_ov_help_caps|HELP
+2116570497||potp_ov_tour_status|Setting a Status
+2116570498||potp_ov_tour_status_body|[status] sets the selected entry's status by hand: for something the game didn't count, or something you'd rather not see counted. Choose with [updown] and [accept], or leave it as it was with [back].
+2116570499||potp_ov_tour_visibility|What Shows
+2116570500||potp_ov_tour_visibility_body|[vis] chooses what the lists show. Hide what you've completed, what you've ignored or what's missable, in every tab at once.
+2116570501||potp_ov_tour_world|World Map
+2116570502||potp_ov_tour_world_body|Every place the world map marks, by region: monster nests, treasure, places of power and the rest, as you find and clear them.
+2116570503||potp_ov_tour_enlarge|Enlarging It
+2116570504||potp_ov_tour_enlarge_body|[zoom] shows the model as large as the screen. Zoom in and out with [left] and [right] or the mouse wheel, and close it with [zoom] or [back].
+2116570505||potp_ov_tour_settings_general|Settings: General
+2116570506||potp_ov_tour_settings_general_body|When the mod checks your progress, the hotkey for a full update, and the map pins it puts on the random events.
+2116570507||potp_ov_tour_settings_notify|Settings: Notifications
+2116570508||potp_ov_tour_settings_notify_body|Which notifications show and how they look. The presets set them all at once, and Place It moves where they appear on the screen.
 ;overlay-text-end

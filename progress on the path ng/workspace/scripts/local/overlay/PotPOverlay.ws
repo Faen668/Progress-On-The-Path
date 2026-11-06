@@ -496,7 +496,19 @@ exec function potpoverlay_preset(group_name: name, preset: int)
 
 exec function potpoverlay_resetgroup(group_name: name)
 {
-	theGame.GetInGameConfigWrapper().ResetGroupToDefaults(group_name);
+	// The mod's own defaults: the menu XML gives none, so the game's reset would leave them empty
+	if (group_name == 'ProgressOnThePath_GeneralSettings')
+	{
+		PotP_LoadGeneralDefaults();
+	}
+	else if (group_name == 'ProgressOnThePath_NotificationSettings')
+	{
+		PotP_LoadNotificationDefaults();
+	}
+	else
+	{
+		theGame.GetInGameConfigWrapper().ResetGroupToDefaults(group_name);
+	}
 }
 
 // When the window closes after a setting changed

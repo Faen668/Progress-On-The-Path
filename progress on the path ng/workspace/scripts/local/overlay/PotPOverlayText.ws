@@ -439,6 +439,19 @@ function PotPOverlay_TextKeys_2(out keys: array<string>)
 	keys.PushBack("more_other_regions");
 	keys.PushBack("auto_turn_on");
 	keys.PushBack("auto_turn_off");
+	keys.PushBack("help_caps");
+	keys.PushBack("tour_status");
+	keys.PushBack("tour_status_body");
+	keys.PushBack("tour_visibility");
+	keys.PushBack("tour_visibility_body");
+	keys.PushBack("tour_world");
+	keys.PushBack("tour_world_body");
+	keys.PushBack("tour_enlarge");
+	keys.PushBack("tour_enlarge_body");
+	keys.PushBack("tour_settings_general");
+	keys.PushBack("tour_settings_general_body");
+	keys.PushBack("tour_settings_notify");
+	keys.PushBack("tour_settings_notify_body");
 }
 
 function PotPOverlay_ExportText() : string

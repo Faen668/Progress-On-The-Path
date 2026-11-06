@@ -4195,9 +4195,9 @@ namespace
 		const float m0 = 60.f, gap = 70.f;
 		const float colW = (kW - m0 * 2 - gap) * 0.5f;
 		const float x0 = m0, x1 = m0 + colW + gap;
-		// As tall as there's room for: each column has 10 rows under two headings. When the window's
+		// As tall as there's room for: each column has 10 rows, the left under three headings. When the window's
 		// short the hint below gives up some of its height first, as its text shrinks to fit.
-		constexpr float kRows = 10.f, kHeadings = 2.f;
+		constexpr float kRows = 10.f, kHeadings = 3.f;
 		const float top = 240.f;
 		const float hintH = std::clamp(kH - 106.f - 12.f - top - 54.f * kHeadings - 16.f - 44.f * kRows, 64.f, 104.f);
 		const float rowH = std::clamp((kH - 106.f - hintH - 12.f - top - 54.f * kHeadings - 16.f) / kRows, 44.f, 62.f);
@@ -4381,6 +4381,22 @@ namespace
 		slider(x0, y, { Tx(T_hdr_brightness), Tx(T_hdr_brightness_hint) }, st.hdrBrightness, 80.f, 1000.f, 10.f, Tx(T_nits_format), 1.f);
 		y += rowH + 8;
 
+		// Help: the tour, and putting the window back as it came
+		heading(x0, y, Tx(T_help_caps));
+		if (button(x0, y, { Tx(T_tour_setting), Tx(T_tour_setting_hint) }, Tx(T_tour_setting_button)))
+			g_tourAsked = true;
+		y += rowH;
+
+		if (button(x0, y, { Tx(T_defaults), Tx(T_defaults_hint) }, Tx(T_reset_all)))
+		{
+			const int last = st.lastBook;
+			st = Settings{};
+			st.lastBook = last;
+			g_pendingScale = -1.f;
+			MarkDirty();
+		}
+
+
 		// Right: the controls
 		float ry = top;
 		heading(x1, ry, Tx(T_controls));
@@ -4425,20 +4441,6 @@ namespace
 		toggle(x1, ry, { Tx(T_live_bestiary), Tx(T_live_bestiary_hint) }, st.liveBestiary);
 		ry += rowH;
 		ry += rowH + 8;
-
-		if (button(x0, y, { Tx(T_tour_setting), Tx(T_tour_setting_hint) }, Tx(T_tour_setting_button)))
-			g_tourAsked = true;
-		y += rowH;
-
-		// Reset sits under the window rows on the left
-		if (button(x0, y, { Tx(T_defaults), Tx(T_defaults_hint) }, Tx(T_reset_all)))
-		{
-			const int last = st.lastBook;
-			st = Settings{};
-			st.lastBook = last;
-			g_pendingScale = -1.f;
-			MarkDirty();
-		}
 
 		// The scale is applied when it stops changing, as it means baking the fonts again
 		if (g_dragSlider == scaleRow && !ImGui::IsMouseDown(0))
@@ -5292,6 +5294,13 @@ namespace
 				ModVar& v = page.vars[r.index];
 				const bool danger = v.id.find("Reset") != std::string::npos;
 				TextFit(kSerif, 32, x0 + 4, ry + 6, danger ? Rgb(236, 130, 100) : nameCol, v.label, nameRoom);
+				// The full update's key, as the prompts along the bottom show keys: what this one turns on
+				if (v.id == "ProgressOnThePath_EnableHotKey")
+				{
+					const float after = x0 + 4 + std::min(Measure(kSerif, 32, v.label.c_str()).x, nameRoom) + 16.f;
+					const std::string key = KeyName(GetSettings().updateKey);
+					KeyCap(after, ry + 7, 40.f, key.c_str(), true, false);
+				}
 				if (focused)
 				{
 					warn = danger;
@@ -5393,7 +5402,17 @@ namespace
 						const std::string& name = v.options[shown];
 						const float room = controlW - 80;
 						const float width = std::min(Measure(kSerif, 30, name.c_str()).x, room);
-						TextFit(kSerif, 30, (left + right) * 0.5f - width * 0.5f, ry + 6, nameCol, name, room);
+						const bool swatch = v.id == "ProgressOnThePath_GlobalNotification_Font";   // the notification's text colour
+						const float shift = swatch ? -18.f : 0.f;
+						TextFit(kSerif, 30, (left + right) * 0.5f - width * 0.5f + shift, ry + 6, nameCol, name, room);
+						if (swatch)
+						{
+							const float sx = (left + right) * 0.5f + width * 0.5f + shift + 14.f;
+							const ImVec2 sa(sx, my - 11), sb(sx + 24, my + 13);
+							dl->AddRectFilled(ImVec2(sa.x - 3, sa.y - 3), ImVec2(sb.x + 3, sb.y + 3), Rgb(18, 15, 11));
+							dl->AddRectFilled(sa, sb, PopupTextColour(shown));
+							dl->AddRect(ImVec2(sa.x - 3, sa.y - 3), ImVec2(sb.x + 3, sb.y + 3), Rgb(120, 100, 66), 0.f, 0, 1.5f);
+						}
 					}
 				}
 			}
@@ -5814,20 +5833,124 @@ namespace
 
 	// With the window open and a mod replacing our quest files: says so, once a launch, and leads to the page about it
 	// ------------------------------------------------------------------------------------------
+	// Text with its controls in it as [name]: each drawn as the prompts along the bottom draw them, a key's cap or the
+	// controller's button, for whichever is in use, wrapped with the words round it
+	// ------------------------------------------------------------------------------------------
+
+	struct PromptControl { const char* name; int key; unsigned pad; TextId fixed; };
+	const PromptControl kPromptControls[] = {
+		{ "prev", kKeyQ, kPadLB, T_Count }, { "next", kKeyE, kPadRB, T_Count }, { "left", kKeyA, kPadLT, T_Count }, { "right", kKeyD, kPadRT, T_Count },
+		{ "toggle", kKeyC, kPadY, T_Count }, { "status", kKeyF, kPadX, T_Count }, { "vis", kKeyH, kPadStart, T_Count }, { "zoom", kKeyZ, kPadR3, T_Count },
+		{ "wardrobe", kKeyG, kPadL3, T_Count }, { "save", kKeyS, kPadX, T_Count }, { "clear", kKeyX, kPadY, T_Count }, { "refresh", kKeyR, kPadBack, T_Count },
+		{ "autoturn", kKeyT, kPadA, T_Count }, { "kind", kKeyF, kPadY, T_Count },
+		{ "accept", kKeyCount, kPadA, T_key_enter }, { "back", kKeyCount, kPadB, T_key_esc }, { "updown", kKeyCount, kPadUp | kPadDown, T_up_down },
+	};
+
+	// Its height; drawn only when draw is set
+	float PromptText(Face face, int size, float x, float y, float width, ImU32 col, const std::string& text, bool draw)
+	{
+		const float capH = std::round(size * 1.3f);
+		const float fontH = WrappedHeight(face, size, "H", 100000.f);
+		const float lineH = std::max(fontH, capH + 8.f);
+		const float space = Measure(face, size, " ").x;
+		// A word is its pieces: text, and controls by their place in the table
+		struct Piece { std::string text; int control = -1; float w = 0.f; };
+		const auto controlWidth = [&](int c, float at, float top, bool now)
+		{
+			const PromptControl& pc = kPromptControls[c];
+			if (!g_padPrompts)
+			{
+				const std::string label = pc.key < kKeyCount ? g_keyLabels[pc.key] : std::string(Tx(pc.fixed));
+				return KeyCap(at, top, capH, label.c_str(), now, false);
+			}
+			float w = 0.f;
+			const std::vector<unsigned> buttons = MaskButtons(pc.pad);
+			for (size_t i = 0; i < buttons.size(); ++i)
+				w += PadGlyph(at + w, top, capH, buttons[i], now, PadStyleNow()) + (i + 1 < buttons.size() ? 4.f : 0.f);
+			return w;
+		};
+		float cx = 0.f, cy = 0.f;
+		size_t at = 0;
+		while (at <= text.size())
+		{
+			// The next word, to a space or the end; a line break starts a new line
+			size_t end = at;
+			while (end < text.size() && text[end] != ' ' && text[end] != '\n')
+				++end;
+			const std::string word = text.substr(at, end - at);
+			std::vector<Piece> pieces;
+			for (size_t i = 0; i < word.size();)
+			{
+				const size_t open = word.find('[', i), close = open == std::string::npos ? open : word.find(']', open);
+				int found = -1;
+				if (close != std::string::npos)
+					for (int c = 0; c < static_cast<int>(sizeof(kPromptControls) / sizeof(kPromptControls[0])); ++c)
+						if (word.compare(open + 1, close - open - 1, kPromptControls[c].name) == 0)
+							found = c;
+				if (found < 0)
+				{
+					pieces.push_back({ word.substr(i), -1 });
+					break;
+				}
+				if (open > i)
+					pieces.push_back({ word.substr(i, open - i), -1 });
+				pieces.push_back({ std::string(), found });
+				i = close + 1;
+			}
+			float wordW = 0.f;
+			for (Piece& piece : pieces)
+			{
+				piece.w = piece.control >= 0 ? controlWidth(piece.control, 0.f, 0.f, false) + 4.f : Measure(face, size, piece.text.c_str()).x;
+				wordW += piece.w;
+			}
+			if (cx > 0.f && cx + wordW > width)
+			{
+				cx = 0.f;
+				cy += lineH;
+			}
+			for (const Piece& piece : pieces)
+			{
+				if (draw)
+				{
+					if (piece.control >= 0)
+						controlWidth(piece.control, x + cx + 2.f, y + cy + (lineH - capH) * 0.5f, true);
+					else
+						Text(face, size, x + cx, y + cy + (lineH - fontH) * 0.5f, col, piece.text.c_str());
+				}
+				cx += piece.w;
+			}
+			cx += space;
+			if (end < text.size() && text[end] == '\n')
+			{
+				cx = 0.f;
+				cy += lineH;
+			}
+			at = end + 1;
+		}
+		return cy + lineH;
+	}
+
+	// ------------------------------------------------------------------------------------------
 	// The guided tour: offered once, then the same tabs a step at a time, with what's being talked about lit up
 	// ------------------------------------------------------------------------------------------
 
-	enum TourSpot { kTourNone, kTourProgress, kTourTabs, kTourRegions, kTourList, kTourDetail, kTourHints, kTourTable, kTourWardList, kTourWardView, kTourWardDyes, kTourWardCards, kTourWardOutfits };
-	struct TourStep { int book; TourSpot spot; TextId title, body; bool wardrobe = false; };
+	enum TourSpot { kTourNone, kTourProgress, kTourTabs, kTourRegions, kTourList, kTourDetail, kTourHints, kTourTable, kTourWardList, kTourWardView, kTourWardDyes, kTourWardCards, kTourWardOutfits, kTourPanel };
+	enum TourOpen { kTourOpenNothing, kTourOpenStatus, kTourOpenVisibility, kTourOpenEnlarged };
+	// page: on Settings, which of its pages; open: a panel the step opens over the screen, as using it would
+	struct TourStep { int book; TourSpot spot; TextId title, body; bool wardrobe = false; int page = -1; TourOpen open = kTourOpenNothing; };
 	const TourStep kTourSteps[] = {
 		{ kBookQuest, kTourProgress, T_tour_progress, T_tour_progress_body },
 		{ kBookQuest, kTourTabs, T_tour_tabs, T_tour_tabs_body },
 		{ kBookQuest, kTourRegions, T_tour_regions, T_tour_regions_body },
 		{ kBookQuest, kTourList, T_tour_list, T_tour_list_body },
 		{ kBookQuest, kTourDetail, T_tour_detail, T_tour_detail_body },
+		{ kBookQuest, kTourPanel, T_tour_status, T_tour_status_body, false, -1, kTourOpenStatus },
+		{ kBookQuest, kTourPanel, T_tour_visibility, T_tour_visibility_body, false, -1, kTourOpenVisibility },
 		{ kBookQuest, kTourHints, T_tour_hints, T_tour_hints_body },
+		{ kBookWorld, kTourList, T_tour_world, T_tour_world_body },
 		{ kBookMissable, kTourList, T_tour_missable, T_tour_missable_body },
 		{ kBookItems, kTourDetail, T_tour_items, T_tour_items_body },
+		{ kBookItems, kTourPanel, T_tour_enlarge, T_tour_enlarge_body, false, -1, kTourOpenEnlarged },
 		{ kBookItems, kTourHints, T_tour_wardrobe, T_tour_wardrobe_body },
 		{ kBookItems, kTourWardList, T_tour_ward_list, T_tour_ward_list_body, true },
 		{ kBookItems, kTourWardView, T_tour_ward_view, T_tour_ward_view_body, true },
@@ -5838,7 +5961,9 @@ namespace
 		{ kBookBestiary, kTourDetail, T_tour_bestiary, T_tour_bestiary_body },
 		{ kTabAchievements, kTourList, T_tour_achievements, T_tour_achievements_body },
 		{ kTabKills, kTourTable, T_tour_kills, T_tour_kills_body },
-		{ kTabSettings, kTourTable, T_tour_settings, T_tour_settings_body },
+		{ kTabSettings, kTourTable, T_tour_settings, T_tour_settings_body, false, 0 },
+		{ kTabSettings, kTourTable, T_tour_settings_general, T_tour_settings_general_body, false, 1 },
+		{ kTabSettings, kTourTable, T_tour_settings_notify, T_tour_settings_notify_body, false, 2 },
 		{ kTabSettings, kTourNone, T_tour_done, T_tour_done_body },
 	};
 	constexpr int kTourStepCount = static_cast<int>(sizeof(kTourSteps) / sizeof(kTourSteps[0]));
@@ -5862,6 +5987,11 @@ namespace
 		{
 			SetBook(kTourSteps[step].book);
 			g_region = 0;
+			if (kTourSteps[step].page >= 0)
+			{
+				g_setPage = kTourSteps[step].page;
+				g_setEditing = false;
+			}
 		}
 	}
 
@@ -5936,6 +6066,7 @@ namespace
 		case kTourDetail: a = ImVec2(col.m0 - 8, kTop - 8); b = ImVec2(col.m1 + 8, kBottom + 8); break;
 		case kTourHints: a = ImVec2(60, kH - 96); b = ImVec2(kW - 60, kH - 26); break;
 		case kTourTable: a = ImVec2(36, 160); b = ImVec2(kW - 36, kBottom + 8); break;
+		case kTourPanel: a = b = ImVec2(0, 0); break;   // a panel's open: it's what's shown
 		default: a = b = ImVec2(0, 0); break;
 		}
 	}
@@ -5978,7 +6109,7 @@ namespace
 		const ImU32 dim = Rgb(0, 0, 0, 185);
 		if (step.spot == kTourNone)
 			dl->AddRectFilled(ImVec2(0, 0), ImVec2(kW, kH), dim);
-		else
+		else if (step.spot != kTourPanel)
 		{
 			dl->AddRectFilled(ImVec2(0, 0), ImVec2(kW, a.y), dim);
 			dl->AddRectFilled(ImVec2(0, b.y), ImVec2(kW, kH), dim);
@@ -5987,13 +6118,17 @@ namespace
 			dl->AddRect(a, b, kGoldHi, 0.f, 0, 2.5f);
 		}
 
-		const std::string bodyText = TxKeys(step.body);
-		const char* const body = bodyText.c_str();
-		const float bodyH = WrappedHeight(kSerif, 30, body, textW);
+		const std::string bodyText = Tx(step.body);
+		const float bodyH = PromptText(kSerif, 30, 0.f, 0.f, textW, kText, bodyText, false);
 		const float cardH = 96.f + bodyH + 96.f;
 		float x = (kW - cardW) * 0.5f, y = (kH - cardH) * 0.5f;
 		const float spotH = b.y - a.y, spotW = b.x - a.x;
-		if (step.spot != kTourNone)
+		if (step.spot == kTourPanel)
+		{
+			// Below the panel that's open, over the prompts it leaves
+			y = kH - cardH - 18.f;
+		}
+		else if (step.spot != kTourNone)
 		{
 			if (spotH > kH * 0.4f && spotW < kW * 0.6f)
 			{
@@ -6018,7 +6153,7 @@ namespace
 		const std::string counted = TxFill(T_tour_step, std::to_string(g_tour + 1), std::to_string(kTourStepCount));
 		TextRight(kSans, 22, x + cardW - 32, y + 32.f, kDim, counted.c_str());
 		FadeLineH(x + 24, x + cardW - 24, y + 74.f, kGold);
-		Text(kSerif, 30, x + 32, y + 86.f, kText, body, textW);
+		PromptText(kSerif, 30, x + 32, y + 86.f, textW, kText, bodyText, true);
 		const float by = y + cardH - 72.f, bw = 170.f;
 		const bool last = g_tour + 1 >= kTourStepCount;
 		const bool skip = !last && TourButton(ImVec2(x + 32, by), ImVec2(x + 32 + bw, by + 50), Tx(T_tour_skip), false);
@@ -7309,6 +7444,41 @@ void UiLoadFonts(float scale)
 }
 
 // The tour's wardrobe steps have it open. It's shut again after them, if it was the tour that opened it.
+// The panel a step shows: the status panel or what shows over the entry the list has, or the enlarged model
+static void TourSyncPanels()
+{
+	static int opened = kTourOpenNothing;
+	const int want = g_tour >= 0 ? kTourSteps[g_tour].open : kTourOpenNothing;
+	if (opened != kTourOpenNothing && want != opened)
+	{
+		g_statusOpen = g_visibilityOpen = g_cardZoom = false;
+		opened = kTourOpenNothing;
+	}
+	if (want == kTourOpenStatus && g_itemShown && !(g_statusOpen && !g_visibilityOpen && !g_cardZoom))
+	{
+		g_statusOpen = true;
+		g_visibilityOpen = g_cardZoom = false;
+		opened = want;
+	}
+	else if (want == kTourOpenVisibility && !(g_statusOpen && g_visibilityOpen))
+	{
+		g_statusOpen = g_visibilityOpen = true;
+		g_cardZoom = false;
+		opened = want;
+	}
+	else if (want == kTourOpenEnlarged && !g_cardZoom && g_itemShown && CanEnlarge(*g_itemShown))
+	{
+		// As soon as the model's there to enlarge
+		g_statusOpen = g_cardZoom = true;
+		g_visibilityOpen = false;
+		g_cardZoomT = 0.f;
+		g_cardZoomFrame = ImGui::GetFrameCount();
+		g_cardZoomYaw = g_cardZoomPitch = 0.f;
+		g_modelZoom = 1.f;
+		opened = want;
+	}
+}
+
 static void TourSyncWardrobe(const Model* model)
 {
 	const bool want = g_tour >= 0 && kTourSteps[g_tour].wardrobe && model;
@@ -7531,6 +7701,7 @@ void DrawUi()
 	if (g_tour != -2)
 		TourTakeInput();
 	TourSyncWardrobe(model);
+	TourSyncPanels();
 	const bool statusTakesInput = g_statusOpen;
 	const bool navUp = g_navUp, navDown = g_navDown, navAccept = g_navAccept, clicked = g_clicked;
 	const float stickX = g_pad.rightX, stickY = g_pad.rightY, wheel = g_wheel;

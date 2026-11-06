@@ -42,10 +42,20 @@ function PotP_TrackerNotesOn() : bool
 
 function PotP_LoadDefaultSettings()
 {
+	PotP_LoadGeneralDefaults();
+	PotP_LoadNotificationDefaults();
+}
+
+//---------------------------------------------------
+
+function PotP_LoadGeneralDefaults()
+{
 	var config : CInGameConfigWrapper = theGame.GetInGameConfigWrapper();
 
 	config.SetVarValue('ProgressOnThePath_GeneralSettings', 'ProgressOnThePath_MeditationUpdate',					"true");
 	config.SetVarValue('ProgressOnThePath_GeneralSettings', 'ProgressOnThePath_EnableHotKey',						"true");
+	config.SetVarValue('ProgressOnThePath_GeneralSettings', 'ProgressOnThePath_ShowCollectabilityTooltips',		"true");
+	config.SetVarValue('ProgressOnThePath_GeneralSettings', 'ProgressOnThePath_ResetForNGPlus',					"false");
 	config.SetVarValue('ProgressOnThePath_GeneralSettings', 'ProgressOnThePath_EventMapPins_ShowMapPins',			"true");
 	config.SetVarValue('ProgressOnThePath_GeneralSettings', 'ProgressOnThePath_EventMapPins_MapPinDescription',	"true");
 	config.SetVarValue('ProgressOnThePath_GeneralSettings', 'ProgressOnThePath_EventMapPins_MapPinRadius',			"30");
@@ -53,7 +63,15 @@ function PotP_LoadDefaultSettings()
 	config.SetVarValue('ProgressOnThePath_GeneralSettings', 'ProgressOnThePath_EventMapPins_ShowMiniMap',			"false");
 	config.SetVarValue('ProgressOnThePath_GeneralSettings', 'ProgressOnThePath_EventMapPins_ArrowPointers',		"false");
 	config.SetVarValue('ProgressOnThePath_GeneralSettings', 'ProgressOnThePath_EventMapPins_HighlightedPointers',	"false");
+}
 
+//---------------------------------------------------
+
+function PotP_LoadNotificationDefaults()
+{
+	var config : CInGameConfigWrapper = theGame.GetInGameConfigWrapper();
+
+	config.SetVarValue('ProgressOnThePath_NotificationSettings', 'ProgressOnThePath_ShowUpdateNotifications',	"true");
 	config.SetVarValue('ProgressOnThePath_NotificationSettings', 'ProgressOnThePath_GlobalNotification_Time',	"7");
 	config.SetVarValue('ProgressOnThePath_NotificationSettings', 'ProgressOnThePath_GlobalNotification_Size',	"18");
 	config.SetVarValue('ProgressOnThePath_NotificationSettings', 'ProgressOnThePath_GlobalNotification_Font',	"1");
