@@ -12,6 +12,7 @@
 #include <set>
 #include <mutex>
 #include <unordered_map>
+#include <unordered_set>
 #include "cardart.h"
 #include "gameicons.h"
 #include "log.h"
@@ -52,6 +53,9 @@ namespace
 	std::unordered_map<uint64_t, Located> g_files;
 	std::unordered_map<std::string, std::string> g_templates;   // a template's name, lowered, to its path
 	std::vector<std::string> g_itemDefinitionFiles;             // the .xml files that can define items
+	std::vector<std::string> g_journalFiles;                    // the .journal files, which hold quests among the rest
+	std::vector<std::pair<std::string, uint32_t>> g_questTitles;   // each quest's base name and its title's string id
+	std::atomic<bool> g_questTitlesReady{ false };
 
 	// What the game's item definitions say about what Geralt wears
 	struct WornItem
@@ -87,9 +91,12 @@ namespace
 					std::string name = Lower(std::string(reinterpret_cast<const char*>(e), strnlen(reinterpret_cast<const char*>(e), 0x100)));
 					const bool entity = Ends(name, ".w2ent");
 					const bool itemFile = Ends(name, ".xml") && name.find("item") != std::string::npos;
+					const bool journal = Ends(name, ".journal");
 					if (itemFile)
 						g_itemDefinitionFiles.push_back(name);
-					if (!entity && !itemFile && !Ends(name, ".w2mesh") && !Ends(name, ".w2mi") && !Ends(name, ".w2mg") && !Ends(name, ".buffer") && !Ends(name, ".redcloth") && !Ends(name, ".w2rig") && !Ends(name, ".w2anims"))
+					if (journal)
+						g_journalFiles.push_back(name);
+					if (!entity && !itemFile && !journal && !Ends(name, ".w2mesh") && !Ends(name, ".w2mi") && !Ends(name, ".w2mg") && !Ends(name, ".buffer") && !Ends(name, ".redcloth") && !Ends(name, ".w2rig") && !Ends(name, ".w2anims"))
 						continue;
 					uint64_t offset = U32(e + 0x11C);
 					if (!older)
@@ -2201,6 +2208,38 @@ static bool IsWornCategory(const std::string& category)
 		|| category == "steelsword" || category == "silversword" || category == "crossbow";
 }
 
+// Every quest's title, from its journal: the files first found win, as for the rest, so a mod's own copy counts
+static void ReadQuestTitles()
+{
+	std::unordered_set<std::string> seenFiles, seenQuests;
+	for (const std::string& path : g_journalFiles)
+	{
+		if (!seenFiles.insert(path).second)
+			continue;
+		Red f;
+		if (!ReadGameFile(path, f.data) || !f.Open())
+			continue;
+		for (const RedExport& e : f.exports)
+		{
+			if (f.Name(e.className) != "CJournalQuest")
+				continue;
+			std::string baseName;
+			uint32_t title = 0;
+			f.Object(e, [&](const std::string& n, const std::string& t, size_t v, size_t end)
+			{
+				if (n == "baseName" && t == "String")
+					baseName = f.Text(v, end);
+				else if (n == "title" && t == "LocalizedString" && v + 4 <= end)
+					title = U32(f.data.data() + v);
+			});
+			if (!baseName.empty() && title != 0 && seenQuests.insert(Lower(baseName)).second)
+				g_questTitles.emplace_back(baseName, title);
+		}
+	}
+	Log("quest titles: %zu quests in %zu journal files", g_questTitles.size(), seenFiles.size());
+	g_questTitlesReady = true;
+}
+
 static void ReadWornItems()
 {
 	for (const std::string& path : g_itemDefinitionFiles)
@@ -2300,6 +2339,7 @@ void BuildModelIndex(const std::wstring& game)
 		AddCollisionCache((content / L"collision.cache").wstring());
 	}
 	ReadWornItems();
+	ReadQuestTitles();
 	Log("item models: %zu files in %zu bundles, %zu templates, %zu worn items", g_files.size(), g_bundles.size(), g_templates.size(), g_wornByTemplate.size());
 	g_ready = true;
 }
@@ -2307,6 +2347,11 @@ void BuildModelIndex(const std::wstring& game)
 bool ModelIndexReady()
 {
 	return g_ready;
+}
+
+const std::vector<std::pair<std::string, uint32_t>>* QuestTitles()
+{
+	return g_questTitlesReady ? &g_questTitles : nullptr;
 }
 
 // The turn that brings an item's front to the viewer, worked out by rendering every kind from one angle: what's worn

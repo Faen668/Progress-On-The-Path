@@ -98,6 +98,8 @@ struct ItemModel
 
 void BuildModelIndex(const std::wstring& game);   // on a loading thread
 bool ModelIndexReady();
+// Every quest the game's journals have, from the game, its DLC and mods: its base name and its title's string id. Null until read.
+const std::vector<std::pair<std::string, uint32_t>>* QuestTitles();
 bool LoadItemModel(const std::string& templateName, ItemModel& out);
 
 // Worn armour on Geralt himself. The game builds him from what he has equipped, so this does the same: his head, hair and

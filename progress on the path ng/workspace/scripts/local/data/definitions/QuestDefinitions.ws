@@ -254,7 +254,8 @@ function PotP_DefineQuests_11(catalog: CPotP_Catalog)
 
 	if (PotP_UsingWeatherArtifact())
 	{
-		catalog.AddQuest("_91", PotP_E_ModAdded, PotP_R_VE, PotP_I_Sides, "mod003_weathermachine");
+		catalog.AddQuest("_91", PotP_E_ModAdded, PotP_R_VE, PotP_I_Sides, "weatherartifactquest");
+		catalog.AddQuestAltJournal("mod003_weathermachine");   // older versions of Weather Artifact Remastered
 	}
 
 	catalog.AddQuest("_26", PotP_E_Missable, PotP_R_VE, PotP_I_Sides, "mq1058 Cat Stash", 1105282);
@@ -583,7 +584,8 @@ function PotP_DefineQuests_16(catalog: CPotP_Catalog)
 
 	if (PotP_UsingUnsinkable())
 	{
-		catalog.AddQuest("_102", PotP_E_ModAdded, PotP_R_NA, PotP_I_Sides, "mod001_boat");
+		catalog.AddQuest("_102", PotP_E_ModAdded, PotP_R_NA, PotP_I_Sides, "unsinkablequest");
+		catalog.AddQuestAltJournal("mod001_boat");   // older versions of Unsinkable Quest Remastered
 	}
 	catalog.EndSection();
 }
@@ -595,7 +597,8 @@ function PotP_DefineQuests_17(catalog: CPotP_Catalog)
 	catalog.BeginSection(PotP_Book_Quest, "PotP_Preview_SideQ_8", PotP_A_Quest, "PotP_TrackingGroup_SideQuests_Vizima");
 	if (PotP_UsingCutThroatRazor())
 	{
-		catalog.AddQuest("_01", PotP_E_ModAdded, PotP_R_VI, PotP_I_Sides, "mod002_razor");
+		catalog.AddQuest("_01", PotP_E_ModAdded, PotP_R_VI, PotP_I_Sides, "Cut-Throat Razor");
+		catalog.AddQuestAltJournal("mod002_razor");   // older versions of the Cut-Throat Razor mod
 	}
 	catalog.EndSection();
 }

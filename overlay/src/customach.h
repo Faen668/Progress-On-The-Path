@@ -34,5 +34,8 @@ struct CustomAchievementCalls
 };
 void CustomAchievementsTick(const CustomAchievementCalls& calls);
 
+// Text as one exec argument: letters and digits as they are, anything else as _ and two hex digits (PotPAch_Decode reads it)
+std::string ExecText(const std::string& text);
+
 // Null until the files have been read. A new list replaces it whenever something changes.
 std::shared_ptr<const CustomAchievementList> GetCustomAchievements();

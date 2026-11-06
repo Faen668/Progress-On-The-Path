@@ -113,14 +113,44 @@ statemachine class CPotP_Catalog
 
 	//---------------------------------------------------
 
-	// title_id: the quest's title in the game's own strings (its journal entry's title), when the game has it
+	// title_id: the quest's title in the game's own strings (its journal entry's title). Without one, as a mod's quests
+	// have, the title the overlay found in the quest's journal, or until then its base name.
 	public function AddQuest(suffix: string, type_value: PotP_Preview_Entry_Type, region_value: PotP_Preview_Region, filter_value: PotP_Preview_Quest_Filter, journal_name: string, optional title_id: int)
 	{
 		var tracked : CPotP_Entry = NewEntry(suffix, PotP_A_Quest, type_value, region_value, filter_value, 0);
 		tracked.entry_name = journal_name;
+		if (title_id <= 0)
+		{
+			title_id = PotP_QuestTitleId(journal_name);
+		}
 		if (title_id > 0)
 		{
 			tracked.title = GetLocStringById(title_id);
+		}
+		else if (StrLen(tracked.title) == 0 || StrBeginsWith(tracked.title, "#"))
+		{
+			tracked.title = journal_name;
+		}
+	}
+
+	// The quest's journal name in another version of its mod. Whichever of the two the installed journals have is the one
+	// tracked, as the overlay's table of journals says; with neither in it, the first stays.
+	public function AddQuestAltJournal(journal_name: string)
+	{
+		var tracked	: CPotP_Entry = pending[pending.Size() - 1];
+		var id		: int;
+
+		tracked.alt_entry_name = journal_name;
+		if (PotP_QuestTitleId(tracked.entry_name) > 0)
+		{
+			return;
+		}
+		id = PotP_QuestTitleId(journal_name);
+		if (id > 0)
+		{
+			PotP_Log(tracked.entry_name + " is " + journal_name + " in the installed version of its mod", 'Catalog');
+			tracked.entry_name = journal_name;
+			tracked.title = GetLocStringById(id);
 		}
 	}
 
@@ -300,10 +330,12 @@ statemachine class CPotP_Catalog
 		if (StrLen(tracked.title) == 0 || StrBeginsWith(tracked.title, "#"))
 		{
 			game = PotP_CleanTitle(GetLocStringByKeyExt(theGame.GetDefinitionsManager().GetItemLocalisationKeyName(base_item)));
-			if (StrLen(game) > 0 && !StrBeginsWith(game, "#"))
+			if (StrLen(game) == 0 || StrBeginsWith(game, "#"))
 			{
-				tracked.title = game;
+				// A mod that gives the item no name: its name in the item definitions, at least
+				game = NameToString(base_item);
 			}
+			tracked.title = game;
 		}
 
 		tracked.SetItem(base_item);

@@ -22,6 +22,7 @@ class CPotP_Entry
 	var missable_tip	: string;
 
 	var entry_name		: string;
+	var alt_entry_name	: string;	// a quest's journal name in another version of its mod
 
 	var map_region		: string;
 	var position		: Vector;

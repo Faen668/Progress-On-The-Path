@@ -1224,6 +1224,11 @@ void LoadCustomAchievementPacks(const std::wstring& gameFolder)
 	g_loaded = true;
 }
 
+std::string ExecText(const std::string& text)
+{
+	return Encode(text);
+}
+
 void CustomAchievementsTick(const CustomAchievementCalls& calls)
 {
 	if (!g_loaded)

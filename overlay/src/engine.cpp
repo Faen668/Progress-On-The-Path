@@ -9,6 +9,7 @@
 #include <vector>
 #include "achievements.h"
 #include "customach.h"
+#include "itemmodel.h"
 #include "kills.h"
 #include "log.h"
 #include "overlay.h"
@@ -371,6 +372,42 @@ namespace
 		}
 	}
 
+	// Every quest's title id, from the journals, into the scripts' map: once each time the scripts start, a little a tick.
+	// It lives on theGame, so it lasts through every save loaded after.
+	void QuestTitlesTick(bool scriptsStarted)
+	{
+		static std::vector<std::string> queue;
+		static size_t at = 0;
+		static bool sent = false;
+		if (scriptsStarted)
+			sent = false;
+		if (!sent)
+		{
+			const auto* titles = QuestTitles();
+			if (!titles || !FindScriptFunction("PotP_QuestTitlesWanted"))
+				return;   // not read yet, or scripts older than this overlay
+			sent = true;
+			queue.clear();
+			at = 0;
+			queue.push_back("potp_questtitles_begin(" + std::to_string(titles->size()) + ")");
+			for (const auto& [baseName, id] : *titles)
+				queue.push_back("potp_questtitle(" + ExecText(baseName) + ", " + std::to_string(id) + ")");
+			queue.push_back("potp_questtitles_end(" + std::to_string(titles->size()) + ")");
+		}
+		for (int lines = 0; lines < 100 && at < queue.size(); ++lines)
+			RunExec(queue[at++], true);
+		if (at == queue.size() && !queue.empty())
+		{
+			Log("quest titles: %zu sent to the scripts", queue.size() - 2);
+			std::lock_guard lock(g_stateMutex);
+			if (g_model)
+				g_wantRefresh = true;   // a list read before they came: read it again with its quests' titles
+			queue.clear();
+			queue.shrink_to_fit();
+			at = 0;
+		}
+	}
+
 	void __fastcall hkScriptTick(void* ignored, float dt)
 	{
 		const auto ticks = ++g_ticks;
@@ -380,6 +417,7 @@ namespace
 		void* scripting = *g_scriptingPtr;
 		const bool ready = scripting && *(static_cast<uint8_t*>(scripting) + kScriptingReady) != 0;
 		static bool wasReady;
+		const bool startedNow = ready && !wasReady;
 		if (ready != wasReady)
 		{
 			wasReady = ready;
@@ -428,6 +466,8 @@ namespace
 				[](const std::string& line) { RunExec(line, true); },
 				[](const char* name, std::string& out) { return CallString(name, out); } };
 			CustomAchievementsTick(customCalls);
+
+			QuestTitlesTick(startedNow);
 
 			if (g_wantWardrobeItems.exchange(false))
 			{
