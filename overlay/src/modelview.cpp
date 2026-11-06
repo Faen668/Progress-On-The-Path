@@ -524,12 +524,14 @@ float4 PS(Out i) : SV_Target
 	std::vector<uint8_t> g_fitForm;     // a two-form creature's: which form each of those points is
 	float g_formCentre[2][3] = {};      // and each form's middle, as the camera moves from one to the other
 	float g_formFeet[3] = {}, g_formSize = 1.f;   // where its smoke bursts from, and how big the bigger form is
+	// When the loop began: each creature from its first form, not from where the last one shown had got to
+	std::chrono::steady_clock::time_point g_formStart;
 
 	// How far into a two-form creature's loop it is. The off-screen test can hold it at a moment (POTP_FORM_AT, seconds),
 	// to see the smoke and the change as they are then.
 	float FormSeconds()
 	{
-		const float seconds = std::chrono::duration<float>(std::chrono::steady_clock::now() - g_boneStart).count();
+		const float seconds = std::chrono::duration<float>(std::chrono::steady_clock::now() - g_formStart).count();
 #ifdef POTP_OVERLAY_TEST
 		if (const char* at = getenv("POTP_FORM_AT"))
 			return static_cast<float>(atof(at));
@@ -823,7 +825,7 @@ float4 PS(Out i) : SV_Target
 			const unsigned long long tint = texture(p.tintMask, 0), specular = texture(p.specular, 0);
 			GpuPart part{ static_cast<UINT>(p.indices.size()), static_cast<UINT>(indices.size()), static_cast<INT>(vertices.size()), texture(p.diffuse, model.creature && !p.diffuse.empty() ? g_shadow : g_white), texture(p.normal, g_flatNormal), tint ? tint : g_white, specular ? specular : g_white, texture(p.detail1, g_flatNormal), texture(p.detail2, g_flatNormal), p.masked,
 				// Hair is drawn strand by strand, its fine ends far fainter than a cut-out leaf's edge
-				p.graph.rfind("pbr_hair", 0) == 0 ? 0.12f : 0.33f };
+				p.graph.find("hair") != std::string::npos ? 0.12f : 0.33f };
 			MaterialValues values{};
 			values.spec[0] = p.specScale;
 			values.spec[1] = p.specBase;
@@ -853,7 +855,7 @@ float4 PS(Out i) : SV_Target
 			values.detail2[2] = static_cast<float>(tint ? p.detailMode : p.detailMode == 3 ? 3 : 0);
 			values.options[0] = p.keepGray ? 1.f : 0.f;
 			values.options[1] = p.blendColors ? 1.f : 0.f;
-			values.options[2] = p.graph.rfind("pbr_hair", 0) == 0 ? 1.f : 0.f;
+			values.options[2] = p.graph.find("hair") != std::string::npos ? 1.f : 0.f;
 			values.options[3] = p.graph.rfind("pbr_spec_tint_mask", 0) == 0 ? 1.f : 0.f;
 			for (int k = 0; k < 4; ++k)
 				values.ghost[k] = p.ghost[k];
@@ -964,8 +966,11 @@ float4 PS(Out i) : SV_Target
 		g_boneSlots = model.animation ? model.animation->slots : 1;
 		g_boneDuration = model.animation ? model.animation->duration : 0.f;
 		memcpy(g_formTimes, model.formTimes, sizeof(g_formTimes));
-		if (!g_keepShowing)
+		// A creature in two forms starts its loop afresh, its body with it, so it's shown as its first form a while before
+		// it changes; only Geralt, between pieces of armour, carries on where he was
+		if (!g_keepShowing || g_formTimes[3] > 0.f)
 			g_boneStart = std::chrono::steady_clock::now();
+		g_formStart = g_boneStart;
 		{
 			// A stance baked for the last one's table doesn't fit this one. If it's changed since this was read, it's asked for again.
 			std::lock_guard<std::mutex> hold(g_lock);

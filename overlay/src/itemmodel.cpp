@@ -986,7 +986,7 @@ namespace
 		part.skin = t.graph.find("skin") != std::string::npos;
 		// The hair graphs colour their grey strands the same way, by VarianceColor and VarianceOffset
 		if (t.graph == "pbr_std" || t.graph == "pbr_spec" || t.graph == "pbr_det" || t.graph == "pbr_std_no_wetness" || part.skin
-			|| t.graph.rfind("pbr_hair", 0) == 0)
+			|| t.graph.find("hair") != std::string::npos)   // and the bruxae's own hair graphs, by their names
 		{
 			const auto variance = t.colours.find("variancecolor");
 			if (variance != t.colours.end())
