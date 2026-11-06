@@ -16,6 +16,7 @@ struct Settings
 	bool pauseGame = true;
 	bool openOnLastBook = true;
 	bool clothSim = true;         // cloth on the models moves
+	bool autoRotate = false;      // models in the Bestiary and Items turn slowly by themselves
 	bool liveBestiary = false;    // the Bestiary shows each creature's model in an idle, not its painting
 	bool tourOffered = false;     // the guided tour has been offered once
 	bool hideCompleted = false;

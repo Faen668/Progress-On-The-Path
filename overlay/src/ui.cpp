@@ -2902,6 +2902,12 @@ namespace
 		return g_book == kBookBestiary && GetSettings().liveBestiary && !CreatureMasked(e) && !e.creatureTemplate.empty();
 	}
 
+	// Its model is shown, turning or not as Auto-Turn says: an item's, or a creature's with Live Bestiary on
+	bool ShowsModel(const Entry& e)
+	{
+		return (g_book == kBookItems && !e.itemTemplate.empty()) || LiveCreature(e);
+	}
+
 	bool CanEnlarge(const Entry& e)
 	{
 		return (g_book == kBookGwent && !e.picture.empty()) || ((g_book == kBookItems && !e.itemTemplate.empty()) || LiveCreature(e)) && ModelViewState() == kModelReady;
@@ -2999,6 +3005,8 @@ namespace
 	}
 
 	// False when there's no model of it: a creature then shows its painting
+	constexpr float kSmokeRoom = 1.7f;   // how much bigger a two-form creature's picture is, for its smoke
+
 	bool DrawModelPanel(const Entry& e, float x0, float x1, float top, float bottom, const std::string& request, bool quietIfMissing = false)
 	{
 #ifdef POTP_OVERLAY_TEST
@@ -3049,7 +3057,7 @@ namespace
 			{
 				g_modelYaw += g_pad.rightX * g_dt * 130.f;
 			}
-			else if (shownReady)
+			else if (shownReady && GetSettings().autoRotate)
 			{
 				// A steadied step: uneven frames would otherwise show as small jumps
 				static float steady = 0.f;
@@ -3058,11 +3066,21 @@ namespace
 			}
 		}
 		const float yaw = TurnToShow(g_modelYaw);
-		ModelViewShow(yaw, g_modelPitch);
+		// A creature in two forms is drawn on a bigger picture, the camera as far back again, so it's the same size but its
+		// smoke has room to billow past where the square would have cut it; it shows as far as the panel goes
+		int formPhase = 0;
+		float formSeconds = 0.f;
+		const float spill = ModelViewFormClock(formPhase, formSeconds) ? kSmokeRoom : 1.f;
+		ModelViewShow(yaw, g_modelPitch, 1.f / spill);
 		// Enlarged, it's drawn there alone: this one would show through the dimming behind it, as a dark double
 		const unsigned long long picture = ModelViewTexture();
 		if (picture && !g_cardZoom)
-			dl->AddImage(static_cast<ImTextureID>(picture), a, b);
+		{
+			const float big = side * spill;
+			dl->PushClipRect(ImVec2(x0, top), ImVec2(x1, top + 6.f + room), true);
+			dl->AddImage(static_cast<ImTextureID>(picture), ImVec2(centre.x - big * 0.5f, centre.y - big * 0.5f), ImVec2(centre.x + big * 0.5f, centre.y + big * 0.5f));
+			dl->PopClipRect();
+		}
 		else if (!picture)
 			TextCentre(kSerif, 28, centre.x, centre.y - 18.f, kDim, Tx(T_loading));
 		const std::string hintText = TxKeys(g_padPrompts ? T_hint_turn_pad : T_hint_turn_mouse);
@@ -3239,8 +3257,11 @@ namespace
 			// the model short; then the camera comes closer for the rest
 			const float framed = (kH - 90.f) * (0.72f + 0.28f * ease);
 			const float grow = std::min(g_modelZoom, std::max(1.f, kW / framed));
-			const float side = framed * grow;
-			ModelViewShow(TurnToShow(g_modelYaw), g_modelPitch, g_modelZoom / grow);
+			int formPhase = 0;
+			float formSeconds = 0.f;
+			const float spill = ModelViewFormClock(formPhase, formSeconds) ? kSmokeRoom : 1.f;   // room for its smoke
+			const float side = framed * grow * spill;
+			ModelViewShow(TurnToShow(g_modelYaw), g_modelPitch, g_modelZoom / grow / spill);
 			if (const unsigned long long picture = ModelViewTexture())
 			{
 				dl->PushClipRect(ImVec2(0.f, 0.f), ImVec2(kW, kH), false);
@@ -6060,7 +6081,7 @@ namespace
 		g_modelShown.clear();   // the Items tab starts its item afresh
 	}
 
-	enum HintAction { kActPrev, kActNext, kActMark, kActZoom, kActWardrobe, kActWardPrev, kActWardNext, kActWardPin, kActWardSave, kActWardClear, kActWardStance, kActHide, kActRefresh, kActClose, kActNone };
+	enum HintAction { kActPrev, kActNext, kActMark, kActZoom, kActWardrobe, kActWardPrev, kActWardNext, kActWardPin, kActWardSave, kActWardClear, kActWardStance, kActAutoTurn, kActHide, kActRefresh, kActClose, kActNone };
 
 	struct Hint { unsigned pad; const char* key; std::string text; HintAction action; };
 
@@ -6146,6 +6167,8 @@ namespace
 				hints.push_back({ kPadX, KeyLabel(kKeyF), Tx(T_change_status), kActMark });
 			if (canMark && CanEnlarge(*e))
 				hints.push_back({ kPadR3, KeyLabel(kKeyZ), Tx(T_enlarge), kActZoom });
+			if (canMark && ShowsModel(*e))
+				hints.push_back({ kPadA, KeyLabel(kKeyT), Tx(GetSettings().autoRotate ? T_auto_turn_on : T_auto_turn_off), kActAutoTurn });
 			if (g_book == kBookItems && state.model)
 				hints.push_back({ kPadL3, KeyLabel(kKeyG), Tx(T_ward_open), kActWardrobe });
 			if (g_book != kBookBestiary && g_detailScrollMax > 0.f)
@@ -6157,7 +6180,9 @@ namespace
 		if (!(settingsPage && g_setEditing) && !g_statusOpen && !g_wardrobeOpen)
 			hints.push_back({ kPadB, closeKey.c_str(), Tx(T_close), kActClose });
 
-		const float capH = 42.f, gap = 44.f, inner = 12.f;
+		const float capH = 42.f, inner = 12.f;
+		float gap = 44.f;
+		int textSize = 30;
 		const auto glyphsWidth = [&](const Hint& h)
 		{
 			if (!g_padPrompts)
@@ -6168,17 +6193,28 @@ namespace
 				w += PadGlyph(0, 0, capH, buttons[i], false, PadStyleNow()) + (i + 1 < buttons.size() ? 6.f : 0.f);
 			return w;
 		};
+		// As many as there are fit across: closer together first, then smaller, as on Items with a model to turn
 		float total = 0;
-		for (const Hint& h : hints)
-			total += glyphsWidth(h) + inner + Measure(kSerif, 30, h.text.c_str()).x + gap;
+		for (int fit = 0; fit < 8; ++fit)
+		{
+			total = 0;
+			for (const Hint& h : hints)
+				total += glyphsWidth(h) + inner + Measure(kSerif, textSize, h.text.c_str()).x + gap;
+			if (total - gap <= kW - 96.f)
+				break;
+			if (gap > 26.f)
+				gap -= 9.f;
+			else if (textSize > 24)
+				textSize -= 2;
+		}
 		float x = kW * 0.5f - (total - gap) * 0.5f;
 
 		bool wardrobe = false;
-		bool prev = false, next = false, mark = false, zoom = false, hide = false, refresh = false, close = false;
+		bool prev = false, next = false, mark = false, zoom = false, autoTurn = false, hide = false, refresh = false, close = false;
 		for (const Hint& h : hints)
 		{
 			const float gw = glyphsWidth(h);
-			const float tw = Measure(kSerif, 30, h.text.c_str()).x;
+			const float tw = Measure(kSerif, textSize, h.text.c_str()).x;
 			const ImVec2 a(x, hy), b(x + gw + inner + tw, hy + capH);
 			const bool hot = Hover(a, b) && h.action != kActNone;
 			if (!g_padPrompts)
@@ -6189,7 +6225,7 @@ namespace
 				for (unsigned btn : MaskButtons(h.pad))
 					gx += PadGlyph(gx, hy, capH, btn, true, PadStyleNow()) + 6.f;
 			}
-			Text(kSerif, 30, x + gw + inner, hy + 2, hot ? Rgb(255, 232, 180) : Rgb(232, 196, 128), h.text.c_str());
+			Text(kSerif, textSize, x + gw + inner, hy + 2 + (30 - textSize) * 0.5f, hot ? Rgb(255, 232, 180) : Rgb(232, 196, 128), h.text.c_str());
 			if (Clicked(a, b))
 				switch (h.action)
 				{
@@ -6197,6 +6233,7 @@ namespace
 				case kActNext: next = true; break;
 				case kActMark: mark = true; break;
 				case kActZoom: zoom = true; break;
+				case kActAutoTurn: autoTurn = true; break;
 				case kActWardrobe: wardrobe = true; break;
 				case kActWardPin: g_wardClick = kWardClickPin; break;
 				case kActWardSave: g_wardClick = kWardClickSave; break;
@@ -6222,12 +6259,19 @@ namespace
 				mark = mark || (canMark && (KeyHit(kKeyF) || g_pad.Pressed(kPadX)));
 				zoom = zoom || (canMark && e && CanEnlarge(*e) && (KeyHit(kKeyZ) || g_pad.Pressed(kPadR3)));
 				wardrobe = wardrobe || (g_book == kBookItems && state.model && (KeyHit(kKeyG) || g_pad.Pressed(kPadL3)));
+				// A on an entry: a header's A opens and closes it
+				autoTurn = autoTurn || (canMark && ShowsModel(*e) && (KeyHit(kKeyT) || g_pad.Pressed(kPadA)));
 				hide = hide || KeyHit(kKeyH) || g_pad.Pressed(kPadStart);
 				refresh = refresh || KeyHit(kKeyR) || g_pad.Pressed(kPadBack);
 			}
 			close = close || (g_pad.Pressed(kPadB) && !g_backConsumed);
 		}
 		g_backConsumed = false;
+		if (autoTurn)
+		{
+			GetSettings().autoRotate = !GetSettings().autoRotate;
+			MarkDirty();
+		}
 		if (wardrobe && state.model)
 			OpenWardrobe(*state.model, e);
 		if (prev)

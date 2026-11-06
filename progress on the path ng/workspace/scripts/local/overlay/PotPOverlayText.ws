@@ -437,6 +437,8 @@ function PotPOverlay_TextKeys_2(out keys: array<string>)
 	keys.PushBack("form_returns_in");
 	keys.PushBack("form_returning");
 	keys.PushBack("more_other_regions");
+	keys.PushBack("auto_turn_on");
+	keys.PushBack("auto_turn_off");
 }
 
 function PotPOverlay_ExportText() : string

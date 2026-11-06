@@ -2183,4 +2183,6 @@
 2116570492||potp_ov_form_returns_in|Changes back in [1]
 2116570493||potp_ov_form_returning|Changing back...
 2116570494||potp_ov_more_other_regions|And [1] more in other regions.
+2116570494||potp_ov_auto_turn_on|Auto-Turn: On
+2116570495||potp_ov_auto_turn_off|Auto-Turn: Off
 ;overlay-text-end

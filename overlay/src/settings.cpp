@@ -69,6 +69,7 @@ void LoadSettings()
 	s.posY = ReadFloat(ini, "PositionY", d.posY, -1.f, 1.f);
 	s.pauseGame = ReadInt(ini, "PauseGame", d.pauseGame) != 0;
 	s.openOnLastBook = ReadInt(ini, "OpenOnLastBook", d.openOnLastBook) != 0;
+	s.autoRotate = ReadInt(ini, "AutoRotate", d.autoRotate) != 0;
 	s.clothSim = ReadInt(ini, "ClothSim", d.clothSim) != 0;
 	s.liveBestiary = ReadInt(ini, "LiveBestiary", d.liveBestiary) != 0;
 	s.tourOffered = ReadInt(ini, "TourOffered", d.tourOffered) != 0;
@@ -118,6 +119,7 @@ void SaveSettings()
 	WriteFloat(ini, "PositionY", s.posY);
 	WriteInt(ini, "PauseGame", s.pauseGame);
 	WriteInt(ini, "OpenOnLastBook", s.openOnLastBook);
+	WriteInt(ini, "AutoRotate", s.autoRotate);
 	WriteInt(ini, "ClothSim", s.clothSim);
 	WriteInt(ini, "LiveBestiary", s.liveBestiary);
 	WriteInt(ini, "TourOffered", s.tourOffered);
