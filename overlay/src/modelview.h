@@ -17,7 +17,10 @@ void ModelViewPrefetch(const std::vector<std::string>& requests);
 // A creature in two forms: 0 showing its first, 1 changing into its second, 2 showing that, 3 changing back; and the
 // seconds until the next. False for anything else.
 bool ModelViewFormClock(int& phase, float& seconds);
-void ModelViewShow(float yawDegrees, float pitchDegrees, float zoom = 1.f); // draw it this frame, at this angle, this much closer than framed whole
+// Draw it this frame, at this angle, this much closer than framed whole, and moved across the picture: pan in halves of
+// the picture's width and height, right and down
+void ModelViewShow(float yawDegrees, float pitchDegrees, float zoom = 1.f, float panX = 0.f, float panY = 0.f);
+float ModelViewAspect();   // the picture's width over its height: the model is framed in the square in its middle
 unsigned long long ModelViewTexture();                    // for the window to show: 0 until there's something drawn
 
 

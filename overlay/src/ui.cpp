@@ -710,6 +710,27 @@ namespace
 	// Width of the button; drawn when asked
 	float PadGlyph(float x, float y, float h, unsigned b, bool draw, int style)
 	{
+		// A stick to move: a round cap with its side's letter and an arrow out each way
+		if (b == kPadLStick || b == kPadRStick)
+		{
+			if (draw)
+			{
+				const ImVec2 c(x + h * 0.5f, y + h * 0.5f);
+				const float r = h * 0.5f - 1.f;
+				dl->AddCircleFilled(ImVec2(c.x, c.y + 2.f), r, Rgb(0, 0, 0, 130), 36);
+				dl->AddCircleFilled(c, r, Rgb(26, 24, 21, 240), 36);
+				dl->AddCircle(c, r - 0.5f, Rgb(186, 178, 160), 36, 2.2f);
+				dl->AddCircle(c, r * 0.5f, Rgb(120, 114, 100), 24, 1.6f);
+				const ImU32 arrow = Rgb(238, 232, 218);
+				const float tip = r * 0.86f, base = r * 0.66f, half = r * 0.14f;
+				dl->AddTriangleFilled(ImVec2(c.x, c.y - tip), ImVec2(c.x - half, c.y - base), ImVec2(c.x + half, c.y - base), arrow);
+				dl->AddTriangleFilled(ImVec2(c.x, c.y + tip), ImVec2(c.x + half, c.y + base), ImVec2(c.x - half, c.y + base), arrow);
+				dl->AddTriangleFilled(ImVec2(c.x - tip, c.y), ImVec2(c.x - base, c.y + half), ImVec2(c.x - base, c.y - half), arrow);
+				dl->AddTriangleFilled(ImVec2(c.x + tip, c.y), ImVec2(c.x + base, c.y - half), ImVec2(c.x + base, c.y + half), arrow);
+				TextOnPoint(kSans, 18, c, arrow, b == kPadLStick ? "L" : "R");
+			}
+			return h;
+		}
 		const bool dpad = b == kPadUp || b == kPadDown || b == kPadLeft || b == kPadRight;
 		if (dpad)
 		{
@@ -840,7 +861,7 @@ namespace
 	// The buttons in a mask, in a sensible order
 	std::vector<unsigned> MaskButtons(unsigned mask)
 	{
-		static const unsigned order[] = { kPadLB, kPadRB, kPadLT, kPadRT, kPadL3, kPadR3, kPadBack, kPadStart, kPadA, kPadB, kPadX, kPadY, kPadUp, kPadDown, kPadLeft, kPadRight };
+		static const unsigned order[] = { kPadLStick, kPadRStick, kPadLB, kPadRB, kPadLT, kPadRT, kPadL3, kPadR3, kPadBack, kPadStart, kPadA, kPadB, kPadX, kPadY, kPadUp, kPadDown, kPadLeft, kPadRight };
 		std::vector<unsigned> out;
 		for (unsigned b : order)
 			if (mask & b)
@@ -2690,6 +2711,51 @@ namespace
 	float g_cardZoomT = 0.f, g_cardZoomYaw = 0.f, g_cardZoomPitch = 0.f;
 	int g_cardZoomFrame = 0;   // the frame it opened on
 	float g_modelZoom = 1.f;   // the enlarged model's: how much closer than framed whole
+	// The enlarged model's own turn and place, so turning or moving it leaves the one in the panel as it was
+	float g_zoomYaw = 0.f, g_zoomPitch = 0.f, g_zoomPanX = 0.f, g_zoomPanY = 0.f;
+	// Enlarging and going back are held, not pressed: a thumb slipping on the stick shouldn't do either
+	constexpr float kEnlargeHold = 0.4f;
+	float g_enlargeHeld = 0.f;      // how long R3 or the enlarge key has been down, toward kEnlargeHold
+	bool g_enlargeSpent = false;    // it's done what it was held for: let go before it does it again
+	int g_enlargeFrame = -1;
+	bool g_enlargeFired = false;
+
+	// True on the frame the hold is long enough. Asked any number of times a frame, it counts once.
+	bool EnlargeHeld()
+	{
+		if (ImGui::GetFrameCount() != g_enlargeFrame)
+		{
+			g_enlargeFrame = ImGui::GetFrameCount();
+			g_enlargeFired = false;
+			const bool down = (g_pad.buttons & kPadR3) != 0 || (!g_capture && KeyHeld(kKeyZ));
+			if (!down)
+			{
+				g_enlargeHeld = 0.f;
+				g_enlargeSpent = false;
+			}
+			else if (!g_enlargeSpent)
+			{
+				g_enlargeHeld += g_dt;
+				if (g_enlargeHeld >= kEnlargeHold)
+				{
+					g_enlargeFired = g_enlargeSpent = true;
+					g_enlargeHeld = 0.f;
+				}
+			}
+		}
+		return g_enlargeFired;
+	}
+
+	// How far the hold has got, 0 to 1, for the bar under its prompt
+	float EnlargeProgress()
+	{
+		return g_enlargeSpent ? 0.f : std::clamp(g_enlargeHeld / kEnlargeHold, 0.f, 1.f);
+	}
+
+	enum HintAction { kActPrev, kActNext, kActMark, kActZoom, kActWardrobe, kActWardPrev, kActWardNext, kActWardWear, kActWardPin, kActWardSave, kActWardClear, kActWardStance, kActWardUntracked, kActWardEnlarge, kActWardSearch, kActAutoTurn, kActHide, kActRefresh, kActClose, kActNone };
+
+	struct Hint { unsigned pad; const char* key; std::string text; HintAction action; bool held = false; };   // held: done by holding it, with a bar filling under it
+
 
 	// The bake nearest above the size it will show at, so large words stay sharp
 	ImFont* CardFont(Face face, float shown)
@@ -3338,6 +3404,15 @@ namespace
 
 	// An item's model, turning by itself until it's taken hold of
 	float g_modelYaw = -14.f, g_modelPitch = 6.f;
+
+	// The enlarged model starts as the panel's is, close up framing and placing reset
+	void OpenZoomModel()
+	{
+		g_modelZoom = 1.f;
+		g_zoomYaw = g_modelYaw;
+		g_zoomPitch = g_modelPitch;
+		g_zoomPanX = g_zoomPanY = 0.f;
+	}
 	bool g_modelDragging = false;
 	std::string g_modelShown;
 #ifdef POTP_OVERLAY_TEST
@@ -3526,7 +3601,8 @@ namespace
 		{
 			const float big = side * spill;
 			dl->PushClipRect(ImVec2(x0, top), ImVec2(x1, top + 6.f + room), true);
-			dl->AddImage(static_cast<ImTextureID>(picture), ImVec2(centre.x - big * 0.5f, centre.y - big * 0.5f), ImVec2(centre.x + big * 0.5f, centre.y + big * 0.5f));
+			const float u = 0.5f / ModelViewAspect();   // the square from the picture's middle
+			dl->AddImage(static_cast<ImTextureID>(picture), ImVec2(centre.x - big * 0.5f, centre.y - big * 0.5f), ImVec2(centre.x + big * 0.5f, centre.y + big * 0.5f), ImVec2(0.5f - u, 0.f), ImVec2(0.5f + u, 1.f));
 			dl->PopClipRect();
 		}
 		else if (!picture)
@@ -3674,9 +3750,47 @@ namespace
 		}
 	}
 
-	// The card or model large, over the whole screen dimmed, and it stays where it's turned to
-	void DrawCardZoom(const Entry& e, float stickX, float stickY, float wheel)
+	// A row of prompts, centred, as the window's bottom row draws them: the pad's buttons or the keys, then what they do
+	void DrawPromptRow(const std::vector<Hint>& hints, float y)
 	{
+		const float capH = 42.f, inner = 12.f, gap = 40.f;
+		constexpr int textSize = 28;
+		const auto glyphs = [&](const Hint& h, float at, bool draw)
+		{
+			if (!g_padPrompts)
+				return h.key ? KeyCap(at, y, capH, h.key, draw) : 0.f;
+			float w = 0.f;
+			const std::vector<unsigned> buttons = MaskButtons(h.pad);
+			for (size_t i = 0; i < buttons.size(); ++i)
+				w += PadGlyph(at + w, y, capH, buttons[i], draw, PadStyleNow()) + (i + 1 < buttons.size() ? 6.f : 0.f);
+			return w;
+		};
+		float total = 0.f;
+		for (const Hint& h : hints)
+			total += glyphs(h, 0.f, false) + inner + Measure(kSerif, textSize, h.text.c_str()).x + gap;
+		float x = kW * 0.5f - (total - gap) * 0.5f;
+		for (const Hint& h : hints)
+		{
+			const float gw = glyphs(h, x, true);
+			if (h.held && EnlargeProgress() > 0.f)
+				dl->AddRectFilled(ImVec2(x, y + capH + 5.f), ImVec2(x + gw * EnlargeProgress(), y + capH + 9.f), Rgb(232, 196, 128));
+			Text(kSerif, textSize, x + gw + inner, y + 3, Rgb(232, 196, 128), h.text.c_str());
+			x += gw + inner + Measure(kSerif, textSize, h.text.c_str()).x + gap;
+		}
+	}
+
+	// The card or model large, over the whole screen dimmed, and it stays where it's turned to. A model needs no entry
+	// (the wardrobe's is Geralt); a card does. True when it's asked to close.
+	bool DrawZoom(const Entry* entry, bool model, bool creature, float stickX, float stickY, float wheel, bool stance = false)
+	{
+		if (stance && ImGui::GetFrameCount() > g_cardZoomFrame)
+		{
+			// The d-pad and the arrows: the left stick moves him
+			if (g_pad.Pressed(kPadLeft) || ImGui::IsKeyPressed(ImGuiKey_LeftArrow))
+				StepAnimation(-1);
+			if (g_pad.Pressed(kPadRight) || ImGui::IsKeyPressed(ImGuiKey_RightArrow) || KeyHit(kKeyT))
+				StepAnimation(1);
+		}
 		g_cardZoomT = std::min(1.f, g_cardZoomT + g_dt * 7.f);
 		const float ease = 1.f - (1.f - g_cardZoomT) * (1.f - g_cardZoomT);
 
@@ -3685,15 +3799,16 @@ namespace
 		dl->PopClipRect();
 
 		const ImVec2 centre(kW * 0.5f, (kH - 50.f) * 0.5f);
-		if (g_book == kBookItems || LiveCreature(e))
+		if (model)
 		{
 			if (ImGui::IsMouseDown(0))
 			{
-				g_modelYaw += ImGui::GetIO().MouseDelta.x * 0.45f;
-				g_modelPitch -= ImGui::GetIO().MouseDelta.y * 0.3f;
+				g_zoomYaw += ImGui::GetIO().MouseDelta.x * 0.45f;
+				g_zoomPitch -= ImGui::GetIO().MouseDelta.y * 0.3f;
 			}
-			g_modelYaw += stickX * g_dt * 130.f;
-			g_modelPitch = std::clamp(g_modelPitch + stickY * g_dt * 70.f, -50.f, 50.f);
+			g_zoomYaw += stickX * g_dt * 130.f;
+			g_zoomPitch += stickY * g_dt * 70.f;
+			g_zoomPitch = std::clamp(g_zoomPitch, -50.f, 50.f);
 			// Closer with the right trigger or the wheel up, further with the left, by the same share each second however close
 			float zoomBy = wheel * 0.25f;
 			if ((g_pad.buttons & kPadRT) != 0 || KeyHeld(kKeyD))
@@ -3701,19 +3816,32 @@ namespace
 			if ((g_pad.buttons & kPadLT) != 0 || KeyHeld(kKeyA))
 				zoomBy -= g_dt * 1.4f;
 			g_modelZoom = std::clamp(g_modelZoom * expf(zoomBy), 1.f, 5.f);
-			// The picture grows first, until it's as wide as the screen, so its square edge goes off screen and doesn't cut
-			// the model short; then the camera comes closer for the rest
-			const float framed = (kH - 90.f) * (0.72f + 0.28f * ease);
-			const float grow = std::min(g_modelZoom, std::max(1.f, kW / framed));
+			// The picture covers the whole screen, so the model can be turned and moved anywhere on it without its edge
+			// cutting it short; how close it is comes from the camera alone
+			const float framed = (kH - 90.f) * (0.72f + 0.28f * ease);   // the model framed whole, as it opens
 			int formPhase = 0;
 			float formSeconds = 0.f;
 			const float spill = ModelViewFormClock(formPhase, formSeconds) ? kSmokeRoom : 1.f;   // room for its smoke
-			const float side = framed * grow * spill;
-			ModelViewShow(TurnToShow(g_modelYaw), g_modelPitch, g_modelZoom / grow / spill);
+			const float pictureH = (kH + 60.f) * spill, pictureW = pictureH * ModelViewAspect();
+			const float closer = framed * g_modelZoom / pictureH;
+			// Moved by the left stick, or the right mouse button held, at the same speed on screen however close
+			const float panBy = 2.f / pictureH;   // a move of one is half the picture's height
+			if (ImGui::IsMouseDown(1))
+			{
+				g_zoomPanX += ImGui::GetIO().MouseDelta.x * panBy;
+				g_zoomPanY += ImGui::GetIO().MouseDelta.y * panBy;
+			}
+			const auto dead = [](float v) { return fabsf(v) < 0.15f ? 0.f : v; };
+			g_zoomPanX += dead(g_pad.leftX) * g_dt * 700.f * panBy;
+			g_zoomPanY -= dead(g_pad.leftY) * g_dt * 700.f * panBy;
+			// As far as takes it off any edge, and further the closer it is
+			g_zoomPanX = std::clamp(g_zoomPanX, -(ModelViewAspect() + closer), ModelViewAspect() + closer);
+			g_zoomPanY = std::clamp(g_zoomPanY, -(1.f + closer), 1.f + closer);
+			ModelViewShow(TurnToShow(g_zoomYaw), g_zoomPitch, closer, g_zoomPanX, g_zoomPanY);
 			if (const unsigned long long picture = ModelViewTexture())
 			{
 				dl->PushClipRect(ImVec2(0.f, 0.f), ImVec2(kW, kH), false);
-				dl->AddImage(static_cast<ImTextureID>(picture), ImVec2(centre.x - side * 0.5f, centre.y - side * 0.5f), ImVec2(centre.x + side * 0.5f, centre.y + side * 0.5f), ImVec2(0, 0), ImVec2(1, 1), IM_COL32(255, 255, 255, static_cast<int>(255.f * ease)));
+				dl->AddImage(static_cast<ImTextureID>(picture), ImVec2(centre.x - pictureW * 0.5f, centre.y - pictureH * 0.5f), ImVec2(centre.x + pictureW * 0.5f, centre.y + pictureH * 0.5f), ImVec2(0, 0), ImVec2(1, 1), IM_COL32(255, 255, 255, static_cast<int>(255.f * ease)));
 				dl->PopClipRect();
 			}
 		}
@@ -3730,16 +3858,53 @@ namespace
 			g_cardZoomPitch = std::clamp(g_cardZoomPitch, -40.f, 40.f);
 			const float full = (kH - 110.f) / 1.1f;
 			const float yaw = TurnToShow(g_cardZoomYaw);
-			DrawCardObject(e, centre, full * (0.72f + 0.28f * ease), yaw, g_cardZoomPitch);
+			if (entry)
+				DrawCardObject(*entry, centre, full * (0.72f + 0.28f * ease), yaw, g_cardZoomPitch);
 		}
 
-		const bool model = g_book == kBookItems || LiveCreature(e);
-		const std::string hintText = TxKeys(model ? (g_padPrompts ? T_hint_model_zoom_pad : T_hint_model_zoom_mouse) : (g_padPrompts ? T_hint_zoom_pad : T_hint_zoom_mouse));
-		const char* hint = hintText.c_str();
-		TextCentre(kSans, 26, centre.x, kH - 54.f, Alpha(kText, ease), hint);
+		// A creature in two forms: when it next changes, as the panel says it
+		int formPhase = 0;
+		float formSeconds = 0.f;
+		if (creature && ModelViewFormClock(formPhase, formSeconds))
+		{
+			const std::string count = std::to_string(static_cast<int>(std::ceil(formSeconds)));
+			const std::string when = formPhase == 0 ? TxFill(T_form_changes_in, count) : formPhase == 1 ? Tx(T_form_changing)
+				: formPhase == 2 ? TxFill(T_form_returns_in, count) : Tx(T_form_returning);
+			TextCentre(kSerif, 34, centre.x, 34.f, Alpha(formPhase == 1 || formPhase == 3 ? kGoldHi : kText, ease), when.c_str());
+		}
+
+		// Its prompts, as the window's own row has them, over the dimming
+		std::vector<Hint> hints;
+		if (model)
+		{
+			hints.push_back({ kPadLStick, Tx(T_key_right_drag), Tx(T_move), kActNone });
+			hints.push_back({ kPadRStick, Tx(T_key_drag), Tx(T_zoom_turn), kActNone });
+			hints.push_back({ kPadLT | kPadRT, g_keyPages.c_str(), Tx(T_zoom_zoom), kActNone });
+			if (stance)
+				hints.push_back({ kPadLeft | kPadRight, Tx(T_left_right), TxFill(T_ward_stance_now, AnimationName(GetSettings().wardrobeAnimation)), kActNone });
+		}
+		else
+		{
+			hints.push_back({ kPadRStick, Tx(T_key_drag), Tx(T_zoom_tilt), kActNone });
+		}
+		if (model)
+			hints.push_back({ kPadR3, KeyLabel(kKeyZ), Tx(T_hold_to_close), kActNone, true });
+		hints.push_back({ model ? kPadB : kPadR3 | kPadB, Tx(T_key_esc), Tx(T_close), kActNone });
+		// A dark band under them, so a model filling the screen doesn't drown them out
+		const ImU32 clear = Rgb(0, 0, 0, 0), dark = Rgb(0, 0, 0, static_cast<int>(200.f * ease));
+		dl->AddRectFilledMultiColor(ImVec2(0.f, kH - 170.f), ImVec2(kW, kH - 100.f), clear, clear, dark, dark);
+		dl->AddRectFilled(ImVec2(0.f, kH - 100.f), ImVec2(kW, kH), dark);
+		DrawPromptRow(hints, kH - 80.f);
 
 		// Not on the press that opened it
-		if (ImGui::GetFrameCount() > g_cardZoomFrame && (g_pad.Pressed(kPadR3) || g_pad.Pressed(kPadB) || KeyHit(kKeyZ) || ImGui::IsKeyPressed(ImGuiKey_Escape, false)))
+		// A model's goes back on a hold of the enlarge key, as it opened; a card's still on a press
+		const bool enlargeKey = model ? EnlargeHeld() : (g_pad.Pressed(kPadR3) || KeyHit(kKeyZ));
+		return ImGui::GetFrameCount() > g_cardZoomFrame && (enlargeKey || g_pad.Pressed(kPadB) || ImGui::IsKeyPressed(ImGuiKey_Escape, false));
+	}
+
+	void DrawCardZoom(const Entry& e, float stickX, float stickY, float wheel)
+	{
+		if (DrawZoom(&e, g_book == kBookItems || LiveCreature(e), LiveCreature(e), stickX, stickY, wheel))
 		{
 			g_statusOpen = false;
 			g_cardZoom = false;
@@ -6807,12 +6972,12 @@ namespace
 	// The wardrobe: a panel of its own, opened from the Items tab
 	// ------------------------------------------------------------------------------------------
 
-	constexpr int kWardKinds = 7;
-	const char* const kWardKind[kWardKinds] = { "armor", "pants", "boots", "gloves", "steelsword", "silversword", "crossbow" };
+	constexpr int kWardKinds = 8;
+	const char* const kWardKind[kWardKinds] = { "armor", "pants", "boots", "gloves", "steelsword", "silversword", "crossbow", "mask" };
 
 	const char* WardKindName(int kind)
 	{
-		const TextId names[kWardKinds] = { T_ward_armour, T_ward_trousers, T_ward_boots, T_ward_gloves, T_ward_steel, T_ward_silver, T_ward_crossbow };
+		const TextId names[kWardKinds] = { T_ward_armour, T_ward_trousers, T_ward_boots, T_ward_gloves, T_ward_steel, T_ward_silver, T_ward_crossbow, T_ward_masks };
 		return Tx(names[kind]);
 	}
 
@@ -6840,10 +7005,15 @@ namespace
 	const Model* g_wardListsOf = nullptr;
 	int g_wardKind = 0, g_wardRows[kWardKinds] = {};
 	float g_wardScroll = 0.f, g_wardZoom = 1.f;
-	bool g_wardDragging = false, g_wardOnOutfit = false, g_wardOnPinned = false;
+	bool g_wardDragging = false, g_wardOnOutfit = false, g_wardOnPinned = false, g_wardOnWorn = false;
 	bool g_wardCanDye = false;   // the piece being looked at takes dyes
-	enum WardClick { kWardClickNone, kWardClickPin, kWardClickSave, kWardClickClear, kWardClickStance };
+	enum WardClick { kWardClickNone, kWardClickWear, kWardClickPin, kWardClickSave, kWardClickClear, kWardClickStance, kWardClickUntracked, kWardClickEnlarge, kWardClickSearch };
 	WardClick g_wardClick = kWardClickNone;
+	// What he has on here, by kind: what's pinned when it opens, then what's put on and taken off. He starts with
+	// nothing else, not his real gear.
+	std::map<std::string, PinnedPiece> g_wardWorn;
+	bool g_wardEnlarged = false;   // he's shown large over the whole screen
+	bool g_wardSearch = false;     // the search panel's over it
 
 	struct Outfit { std::string name; std::map<std::string, PinnedPiece> pieces; };
 	std::vector<Outfit> g_outfits;
@@ -6916,14 +7086,21 @@ namespace
 						seenStems.insert(WardStem(e.itemTemplate));
 					}
 			}
-		// Then what the mod doesn't track, by name: the school sets are among it, and they're what take dyes
+		// Then what the mod doesn't track, by name: the school sets are among it, and they're what take dyes. Left out
+		// when the wardrobe's set to hide them.
+		if (GetSettings().wardrobeShowUntracked)
 		{
 			std::lock_guard lock(g_wardExtrasLock);
 			for (int k = 0; k < kWardKinds; ++k)
 			{
 				const size_t from = g_wardLists[k].size();
+				std::set<std::string> seenTitles;
+				for (const WardItem& item : g_wardLists[k])
+					seenTitles.insert(item.title);
+				const bool byTitle = std::string(kWardKind[k]) == "mask";   // many of the masquerade's masks share a name
 				for (const WardExtra& extra : g_wardExtras)
-					if (WornCategory(extra.itemTemplate) == kWardKind[k] && extra.kind == kWardKind[k] && seenStems.insert(WardStem(extra.itemTemplate)).second)
+					if (WornCategory(extra.itemTemplate) == kWardKind[k] && extra.kind == kWardKind[k] && (!byTitle || seenTitles.insert(extra.title).second)
+						&& seenStems.insert(WardStem(extra.itemTemplate)).second)
 						g_wardLists[k].push_back(WardItem{ extra.itemTemplate, extra.title, false, false });
 				std::sort(g_wardLists[k].begin() + static_cast<ptrdiff_t>(from), g_wardLists[k].end(), [](const WardItem& a, const WardItem& b) { return a.title < b.title; });
 			}
@@ -6946,6 +7123,8 @@ namespace
 		g_modelYaw = 0.f;
 		g_modelPitch = 4.f;
 		g_wardClick = kWardClickNone;
+		g_wardWorn = g_pins;
+		g_wardEnlarged = false;
 		// On what was selected, if he can wear it
 		if (e)
 			for (int k = 0; k < kWardKinds; ++k)
@@ -6963,12 +7142,10 @@ namespace
 		g_modelShown.clear();   // the Items tab starts its item afresh
 	}
 
-	enum HintAction { kActPrev, kActNext, kActMark, kActZoom, kActWardrobe, kActWardPrev, kActWardNext, kActWardPin, kActWardSave, kActWardClear, kActWardStance, kActAutoTurn, kActHide, kActRefresh, kActClose, kActNone };
-
-	struct Hint { unsigned pad; const char* key; std::string text; HintAction action; };
-
 	void DrawHints(const Entry* e, const BridgeState& state)
 	{
+		if (g_wardrobeOpen && (g_wardEnlarged || g_wardSearch))
+			return;   // the enlarged view and the search have their own rows, and their own ways out
 		const Settings& st = GetSettings();
 		const float hy = kH - 80;
 		FadeLineH(80, kW - 80, hy - 20, kGoldDim);
@@ -6980,12 +7157,16 @@ namespace
 		if (g_wardrobeOpen)
 		{
 			hints.push_back({ kPadLB | kPadRB, g_keyTabs.c_str(), Tx(T_ward_category), kActNone });
-			hints.push_back({ kPadUp | kPadDown, Tx(T_up_down), Tx(T_ward_try_on), kActNone });
+			hints.push_back({ kPadUp | kPadDown, Tx(T_up_down), Tx(T_move), kActNone });
+			hints.push_back({ kPadA, Tx(T_key_enter), Tx(g_wardOnOutfit ? T_ward_wear : g_wardOnWorn ? T_ward_take_off : T_ward_wear), kActWardWear });
+			hints.push_back({ kPadRT, KeyLabel(kKeyF), Tx(g_wardOnPinned ? T_model_unpin : T_model_pin), kActWardPin });
 			if (g_wardCanDye)
-				hints.push_back({ kPadLT | kPadRT, g_keyPages.c_str(), Tx(T_ward_dye), kActNone });
-			hints.push_back({ kPadA, Tx(T_key_enter), Tx(g_wardOnOutfit ? T_ward_load : g_wardOnPinned ? T_model_unpin : T_model_pin), kActWardPin });
+				hints.push_back({ kPadLT, g_keyPages.c_str(), Tx(T_ward_dye), kActNone });
 			hints.push_back({ kPadX, KeyLabel(kKeyS), Tx(T_ward_save), kActWardSave });
-			hints.push_back({ kPadY, KeyLabel(kKeyX), Tx(g_wardOnOutfit ? T_ward_delete : T_ward_clear), kActWardClear });
+			hints.push_back({ kPadY, KeyLabel(kKeyC), Tx(g_wardOnOutfit ? T_ward_delete : T_ward_clear), kActWardClear });
+			hints.push_back({ kPadStart, KeyLabel(kKeyH), Tx(GetSettings().wardrobeShowUntracked ? T_ward_hide_untracked : T_ward_show_untracked), kActWardUntracked });
+			hints.push_back({ kPadBack, KeyLabel(kKeyR), Tx(T_ward_search), kActWardSearch });
+			hints.push_back({ kPadR3, KeyLabel(kKeyZ), Tx(T_hold_to_enlarge), kActWardEnlarge, true });
 			hints.push_back({ kPadLeft | kPadRight, KeyLabel(kKeyT), Tx(T_ward_stance), kActWardStance });
 			hints.push_back({ kPadB, Tx(T_key_esc), Tx(T_ward_back), kActClose });
 		}
@@ -7054,7 +7235,7 @@ namespace
 			if (canMark)
 				hints.push_back({ kPadX, KeyLabel(kKeyF), Tx(T_change_status), kActMark });
 			if (canMark && CanEnlarge(*e))
-				hints.push_back({ kPadR3, KeyLabel(kKeyZ), Tx(T_enlarge), kActZoom });
+				hints.push_back({ kPadR3, KeyLabel(kKeyZ), Tx(T_hold_to_enlarge), kActZoom, true });
 			if (canMark && ShowsModel(*e))
 				hints.push_back({ kPadA, KeyLabel(kKeyT), Tx(GetSettings().autoRotate ? T_auto_turn_on : T_auto_turn_off), kActAutoTurn });
 			if (g_book == kBookItems && state.model)
@@ -7113,6 +7294,8 @@ namespace
 				for (unsigned btn : MaskButtons(h.pad))
 					gx += PadGlyph(gx, hy, capH, btn, true, PadStyleNow()) + 6.f;
 			}
+			if (h.held && EnlargeProgress() > 0.f)
+				dl->AddRectFilled(ImVec2(x, hy + capH + 5.f), ImVec2(x + gw * EnlargeProgress(), hy + capH + 9.f), Rgb(232, 196, 128));
 			Text(kSerif, textSize, x + gw + inner, hy + 2 + (30 - textSize) * 0.5f, hot ? Rgb(255, 232, 180) : Rgb(232, 196, 128), h.text.c_str());
 			if (Clicked(a, b))
 				switch (h.action)
@@ -7123,7 +7306,11 @@ namespace
 				case kActZoom: zoom = true; break;
 				case kActAutoTurn: autoTurn = true; break;
 				case kActWardrobe: wardrobe = true; break;
+				case kActWardWear: g_wardClick = kWardClickWear; break;
 				case kActWardPin: g_wardClick = kWardClickPin; break;
+				case kActWardUntracked: g_wardClick = kWardClickUntracked; break;
+				case kActWardEnlarge: g_wardClick = kWardClickEnlarge; break;
+				case kActWardSearch: g_wardClick = kWardClickSearch; break;
 				case kActWardSave: g_wardClick = kWardClickSave; break;
 				case kActWardClear: g_wardClick = kWardClickClear; break;
 				case kActWardStance: g_wardClick = kWardClickStance; break;
@@ -7145,7 +7332,7 @@ namespace
 			if (!settingsPage && !g_wardrobeOpen)
 			{
 				mark = mark || (canMark && (KeyHit(kKeyF) || g_pad.Pressed(kPadX)));
-				zoom = zoom || (canMark && e && CanEnlarge(*e) && (KeyHit(kKeyZ) || g_pad.Pressed(kPadR3)));
+				zoom = (EnlargeHeld() && canMark && e && CanEnlarge(*e)) || zoom;
 				wardrobe = wardrobe || (g_book == kBookItems && state.model && (KeyHit(kKeyG) || g_pad.Pressed(kPadL3)));
 				// A on an entry: a header's A opens and closes it
 				autoTurn = autoTurn || (canMark && ShowsModel(*e) && (KeyHit(kKeyT) || g_pad.Pressed(kPadA)));
@@ -7174,7 +7361,7 @@ namespace
 			g_cardZoomT = 0.f;
 			g_cardZoomFrame = ImGui::GetFrameCount();
 			g_cardZoomYaw = g_cardZoomPitch = 0.f;
-			g_modelZoom = 1.f;
+			OpenZoomModel();
 		}
 		if (mark && e)
 		{
@@ -7268,6 +7455,253 @@ namespace
 		return dye.empty() ? itemTemplate : itemTemplate + "#" + dye;
 	}
 
+
+	// ---- the wardrobe's search: every kind's pieces by name, in a panel over it
+
+	struct WardHit { int kind, index; };
+	std::string g_wardQuery;
+	int g_wardSearchRow = 0;
+	float g_wardSearchScroll = 0.f;
+	int g_wardSearchFrame = 0;        // the frame it opened on: not the press that opened it
+
+	void OpenWardSearch()
+	{
+		g_wardSearch = true;
+		g_wardQuery.clear();
+		g_wardSearchRow = 0;
+		g_wardSearchScroll = 0.f;
+		g_wardSearchFrame = ImGui::GetFrameCount();
+		ImGui::GetIO().InputQueueCharacters.resize(0);
+	}
+
+	// Lower case, for matching: plain letters only, the rest as they are
+	std::string WardFold(const std::string& s)
+	{
+		std::string out = s;
+		for (char& c : out)
+			if (c >= 'A' && c <= 'Z')
+				c = static_cast<char>(c - 'A' + 'a');
+		return out;
+	}
+
+	std::vector<WardHit> WardSearchHits()
+	{
+		std::vector<WardHit> hits;
+		const std::string query = WardFold(g_wardQuery);
+		if (query.find_first_not_of(' ') == std::string::npos)
+			return hits;
+		for (int k = 0; k < kWardKinds; ++k)
+			for (int i = 0; i < static_cast<int>(g_wardLists[k].size()); ++i)
+			{
+				const WardItem& item = g_wardLists[k][i];
+				if (item.itemTemplate.rfind(kWornNothing, 0) == 0)
+					continue;
+				if (WardFold(item.title).find(query) != std::string::npos)
+					hits.push_back({ k, i });
+			}
+		std::stable_sort(hits.begin(), hits.end(), [&](const WardHit& a, const WardHit& b)
+		{
+			// Names that start with it first
+			const bool sa = WardFold(g_wardLists[a.kind][a.index].title).rfind(query, 0) == 0;
+			const bool sb = WardFold(g_wardLists[b.kind][b.index].title).rfind(query, 0) == 0;
+			return sa && !sb;
+		});
+		return hits;
+	}
+
+	// The panel, over the wardrobe. Put on or take off, pin, or go to the piece in its own list.
+	void DrawWardSearch(const Model& m)
+	{
+		const bool fresh = ImGui::GetFrameCount() <= g_wardSearchFrame;
+		const bool pad = g_padPrompts;
+		std::vector<WardHit> hits = WardSearchHits();
+		const int count = static_cast<int>(hits.size());
+
+		// Typing, from the keyboard
+		if (!fresh)
+		{
+			for (ImWchar c : ImGui::GetIO().InputQueueCharacters)
+				if (c >= 32 && c != 127 && g_wardQuery.size() < 40)
+				{
+					char utf8[5] = {};
+					ImTextCharToUtf8(utf8, c);
+					g_wardQuery += utf8;
+				}
+			if (ImGui::IsKeyPressed(ImGuiKey_Backspace) && !g_wardQuery.empty())
+			{
+				// a whole character, however many bytes it is
+				size_t cut = g_wardQuery.size() - 1;
+				while (cut > 0 && (static_cast<unsigned char>(g_wardQuery[cut]) & 0xC0) == 0x80)
+					--cut;
+				g_wardQuery.erase(cut);
+			}
+		}
+		ImGui::GetIO().InputQueueCharacters.resize(0);
+
+		hits = WardSearchHits();
+		g_wardSearchRow = std::clamp(g_wardSearchRow, 0, std::max(0, static_cast<int>(hits.size()) - 1));
+
+		// The results: up and down. Typing is on the keyboard; a controller works the results.
+		const bool onResults = true;
+		if (onResults && !fresh)
+		{
+			if (g_navDown) g_wardSearchRow = std::min(g_wardSearchRow + 1, std::max(0, static_cast<int>(hits.size()) - 1));
+			if (g_navUp) g_wardSearchRow = std::max(g_wardSearchRow - 1, 0);
+		}
+		const WardHit* hit = hits.empty() ? nullptr : &hits[g_wardSearchRow];
+		const auto wornHere = [&](const WardHit& h)
+		{
+			const auto worn = g_wardWorn.find(kWardKind[h.kind]);
+			return worn != g_wardWorn.end() && worn->second.itemTemplate == g_wardLists[h.kind][h.index].itemTemplate;
+		};
+		bool wear = false, pinIt = false, jump = false, close = false;
+		if (!fresh)
+		{
+			if (pad)
+			{
+				wear = onResults && g_pad.Pressed(kPadA);
+				pinIt = onResults && g_pad.Pressed(kPadRT);
+				jump = onResults && g_pad.Pressed(kPadX);
+				close = g_pad.Pressed(kPadB);
+			}
+			else
+			{
+				wear = ImGui::IsKeyPressed(ImGuiKey_Enter, false);
+				pinIt = ImGui::IsKeyPressed(ImGuiKey_Tab, false);
+				jump = ImGui::IsKeyPressed(ImGuiKey_RightArrow, false);
+			}
+			close = close || ImGui::IsKeyPressed(ImGuiKey_Escape, false);
+		}
+
+		// The panel
+		dl->AddRectFilled(ImVec2(0.f, 0.f), ImVec2(kW, kH), Rgb(0, 0, 0, 150));
+		// Only the box to type in, then as tall as its results need, up to ten before they scroll. Its top stays put.
+		constexpr float kRowH = 52.f;
+		constexpr int kMostRows = 10;
+		const int shownRows = std::min(static_cast<int>(hits.size()), kMostRows);
+		const bool noneFound = hits.empty() && !g_wardQuery.empty();
+		const float w = 1040.f, h = 172.f + (shownRows > 0 ? shownRows * kRowH + 30.f : noneFound ? 80.f : 0.f);
+		const float top = (kH - 90.f) * 0.5f - (172.f + kMostRows * kRowH + 30.f) * 0.5f;
+		const ImVec2 a(kW * 0.5f - w * 0.5f, top), b(a.x + w, a.y + h);
+		dl->AddRectFilledMultiColor(a, b, Rgb(26, 23, 18, 250), Rgb(26, 23, 18, 250), Rgb(12, 11, 9, 250), Rgb(12, 11, 9, 250));
+		dl->AddRect(a, b, kGold, 0.f, 0, 1.5f);
+		Text(kTitle, 28, a.x + 30.f, a.y + 24.f, kGoldHi, Tx(T_ward_search_title));
+		FadeLineH(a.x + 20.f, b.x - 20.f, a.y + 72.f, kGoldDim);
+
+		// What's typed, with a caret
+		const ImVec2 qa(a.x + 30.f, a.y + 92.f), qb(b.x - 30.f, a.y + 152.f);
+		dl->AddRectFilled(qa, qb, Rgb(0, 0, 0, 160));
+		dl->AddRect(qa, qb, kGoldHi, 0.f, 0, 1.5f);
+		const bool empty = g_wardQuery.empty();
+		Text(kSerif, 32, qa.x + 16.f, qa.y + 10.f, empty ? kDim : kText, empty ? Tx(T_ward_search_hint) : g_wardQuery.c_str());
+		if (!empty && fmodf(static_cast<float>(ImGui::GetTime()), 1.f) < 0.55f)
+		{
+			const float cx = qa.x + 18.f + Measure(kSerif, 32, g_wardQuery.c_str()).x;
+			dl->AddLine(ImVec2(cx, qa.y + 12.f), ImVec2(cx, qb.y - 12.f), kText, 2.f);
+		}
+
+		const float listTop = qb.y + 18.f;
+
+		// The results
+		const float rowH = kRowH, viewH = std::max(0.f, b.y - 30.f - listTop);
+		const ImVec2 la(a.x + 30.f, listTop), lb(b.x - 30.f, listTop + viewH);
+		if (hits.empty())
+		{
+			if (!empty)
+				TextCentre(kSerif, 30, (la.x + lb.x) * 0.5f, listTop + 20.f, kDim, Tx(T_ward_search_none));
+		}
+		else
+		{
+			if (g_wardSearchRow * rowH < g_wardSearchScroll)
+				g_wardSearchScroll = g_wardSearchRow * rowH;
+			if ((g_wardSearchRow + 1) * rowH > g_wardSearchScroll + viewH)
+				g_wardSearchScroll = (g_wardSearchRow + 1) * rowH - viewH;
+			if (Hover(la, lb) && g_wheel != 0.f)
+				g_wardSearchScroll -= g_wheel * 148.f;
+			g_wardSearchScroll = std::clamp(g_wardSearchScroll, 0.f, std::max(0.f, hits.size() * rowH - viewH));
+			dl->PushClipRect(la, lb, true);
+			for (int i = 0; i < static_cast<int>(hits.size()); ++i)
+			{
+				const float y = listTop + i * rowH - g_wardSearchScroll;
+				if (y + rowH < listTop || y > lb.y)
+					continue;
+				const WardHit& r = hits[i];
+				const WardItem& item = g_wardLists[r.kind][r.index];
+				const ImVec2 ra(la.x, y), rb(lb.x, y + rowH - 2.f);
+				const bool sel = i == g_wardSearchRow && onResults;
+				if (sel)
+				{
+					dl->AddRectFilledMultiColor(ra, rb, Rgb(146, 104, 28, 220), Rgb(34, 22, 6, 90), Rgb(34, 22, 6, 90), Rgb(146, 104, 28, 220));
+					dl->AddRect(ra, rb, Rgb(255, 244, 214), 0.f, 0, 1.5f);
+				}
+				else
+					FadeLineH(ra.x, rb.x, rb.y, Rgb(120, 100, 66, 60));
+				const bool pinned = IsPinned(item.itemTemplate), on = wornHere(r);
+				const char* tag = pinned ? Tx(T_model_pinned) : on ? Tx(T_ward_wearing) : "";
+				// Room for the longest word it could have, so the slot's column stays put
+				const float kindW = 170.f, tagW = std::max(Measure(kSans, 22, Tx(T_model_pinned)).x, Measure(kSans, 22, Tx(T_ward_wearing)).x) + 24.f;
+				TextFit(kSerif, 30, ra.x + 14.f, y + 8.f, sel ? Rgb(255, 248, 230) : kText, item.title, rb.x - ra.x - kindW - tagW - 30.f);
+				TextFit(kSans, 22, rb.x - kindW - tagW, y + 15.f, kGold, WardKindName(r.kind), kindW - 10.f);
+				TextRight(kSans, 22, rb.x - 12.f, y + 15.f, pinned ? kGoldHi : kGreen, tag);
+				if (Clicked(ra, rb) && Hover(la, lb))
+				{
+					if (i == g_wardSearchRow)
+						wear = true;
+					g_wardSearchRow = i;
+					hit = &hits[i];
+				}
+			}
+			dl->PopClipRect();
+		}
+
+		// What it does
+		if (hit)
+		{
+			const WardItem& item = g_wardLists[hit->kind][hit->index];
+			const std::string kind = kWardKind[hit->kind];
+			if (wear)
+			{
+				if (wornHere(*hit))
+					g_wardWorn.erase(kind);
+				else
+					g_wardWorn[kind] = PinnedPiece{ item.itemTemplate, item.title, DyeOf(m, item.itemTemplate) };
+			}
+			if (pinIt)
+			{
+				TogglePin(item.itemTemplate, item.title, DyeOf(m, item.itemTemplate));
+				if (IsPinned(item.itemTemplate))
+					g_wardWorn[kind] = PinnedPiece{ item.itemTemplate, item.title, DyeOf(m, item.itemTemplate) };
+			}
+			if (jump)
+			{
+				g_wardKind = hit->kind;
+				g_wardRows[hit->kind] = hit->index;
+				g_wardReveal = true;
+				close = true;
+			}
+		}
+
+		// Its prompts, at the foot of the screen
+		std::vector<Hint> prompts;
+		const bool wearing = hit && wornHere(*hit), pinnedHit = hit && IsPinned(g_wardLists[hit->kind][hit->index].itemTemplate);
+		prompts.push_back({ kPadUp | kPadDown, Tx(T_up_down), Tx(T_move), kActNone });
+		if (hit)
+		{
+			prompts.push_back({ kPadA, Tx(T_key_enter), Tx(wearing ? T_ward_take_off : T_ward_wear), kActNone });
+			prompts.push_back({ kPadRT, Tx(T_key_tab), Tx(pinnedHit ? T_model_unpin : T_model_pin), kActNone });
+			prompts.push_back({ kPadX, Tx(T_key_right), Tx(T_ward_jump), kActNone });
+		}
+		prompts.push_back({ kPadB, Tx(T_key_esc), Tx(T_close), kActNone });
+		dl->AddRectFilled(ImVec2(0.f, kH - 100.f), ImVec2(kW, kH), Rgb(0, 0, 0, 200));
+		DrawPromptRow(prompts, kH - 80.f);
+
+		if (close)
+		{
+			g_wardSearch = false;
+			g_backConsumed = true;   // the wardrobe's own B, later this frame, would close it too
+		}
+	}
+
 	void DrawWardrobe(const Model& m)
 	{
 		BuildWardLists(m);
@@ -7277,10 +7711,13 @@ namespace
 		const int rowCount = itemCount + outfitCount;
 		int& row = g_wardRows[g_wardKind];
 
-		// Keys
+		// Keys: none while he's enlarged, which has its own
 		const WardClick click = g_wardClick;
 		g_wardClick = kWardClickNone;
-		if (!g_capture)
+		const bool enlarged = g_wardEnlarged;
+		const bool searching = g_wardSearch;
+		const bool keys = !g_capture && !enlarged && !searching;
+		if (keys)
 		{
 			int kindStep = 0;
 			if (KeyHit(kKeyQ) || g_pad.Pressed(kPadLB))
@@ -7298,7 +7735,7 @@ namespace
 			if (g_navRight || click == kWardClickStance || KeyHit(kKeyT))
 				StepAnimation(1);
 		}
-		const int step = g_navDown ? 1 : g_navUp ? -1 : g_navPageDown ? 8 : g_navPageUp ? -8 : 0;
+		const int step = enlarged || searching ? 0 : g_navDown ? 1 : g_navUp ? -1 : g_navPageDown ? 8 : g_navPageUp ? -8 : 0;
 		if (step && rowCount > 0)
 			row = std::clamp(row + step, 0, rowCount - 1);
 		row = std::clamp(row, 0, std::max(0, rowCount - 1));
@@ -7306,13 +7743,17 @@ namespace
 		const bool onOutfit = !onItem && row - itemCount < outfitCount;
 		g_wardOnOutfit = onOutfit;
 		g_wardOnPinned = onItem && IsPinned(list[row].itemTemplate);
+		const auto wearing = [&](const WardItem& item)
+		{
+			const auto worn = g_wardWorn.find(kWardKind[g_wardKind]);
+			return worn != g_wardWorn.end() && worn->second.itemTemplate == item.itemTemplate;
+		};
+		g_wardOnWorn = onItem && wearing(list[row]);
 
 		const auto saveOutfit = [&]
 		{
 			Outfit outfit;
-			outfit.pieces = g_pins;
-			if (onItem)
-				outfit.pieces[kWardKind[g_wardKind]] = PinnedPiece{ list[row].itemTemplate, list[row].title, DyeOf(m, list[row].itemTemplate) };
+			outfit.pieces = g_wardWorn;
 			if (outfit.pieces.empty())
 				return;
 			int number = 1;
@@ -7326,25 +7767,53 @@ namespace
 			g_outfits.push_back(std::move(outfit));
 			SaveOutfits();
 		};
+		// Put on or take off what's selected; a saved outfit is put on whole
 		const auto accept = [&]
 		{
 			if (onItem)
 			{
-				TogglePin(list[row].itemTemplate, list[row].title, DyeOf(m, list[row].itemTemplate));
+				const WardItem& item = list[row];
+				const std::string kind = kWardKind[g_wardKind];
+				if (wearing(item) || item.itemTemplate.rfind(kWornNothing, 0) == 0)
+					g_wardWorn.erase(kind);
+				else
+					g_wardWorn[kind] = PinnedPiece{ item.itemTemplate, item.title, DyeOf(m, item.itemTemplate) };
+			}
+			else if (onOutfit)
+			{
+				g_wardWorn = g_outfits[row - itemCount].pieces;
+				for (const auto& [kind, piece] : g_wardWorn)
+					g_wardDyes[piece.itemTemplate] = piece.dye;
+			}
+		};
+		// Pin or unpin it: a pinned piece is what he shows on the Items tab, and it's put on here too
+		const auto pin = [&]
+		{
+			if (onItem)
+			{
+				const WardItem& item = list[row];
+				TogglePin(item.itemTemplate, item.title, DyeOf(m, item.itemTemplate));
+				if (item.itemTemplate.rfind(kWornNothing, 0) == 0)
+					g_wardWorn.erase(kWardKind[g_wardKind]);   // pinned bare: that slot stays empty
+				else if (IsPinned(item.itemTemplate))
+					g_wardWorn[kWardKind[g_wardKind]] = PinnedPiece{ item.itemTemplate, item.title, DyeOf(m, item.itemTemplate) };
 			}
 			else if (onOutfit)
 			{
 				g_pins = g_outfits[row - itemCount].pieces;
+				g_wardWorn = g_pins;
 				for (const auto& [kind, piece] : g_pins)
 					g_wardDyes[piece.itemTemplate] = piece.dye;
 				SavePins();
 			}
 		};
-		if (g_navAccept || click == kWardClickPin)
+		if ((keys && g_navAccept) || (keys && KeyHit(kKeyX)) || click == kWardClickWear)
 			accept();
-		if (!g_capture && (KeyHit(kKeyS) || g_pad.Pressed(kPadX) || click == kWardClickSave))
+		if ((keys && (KeyHit(kKeyF) || g_pad.Pressed(kPadRT))) || click == kWardClickPin)
+			pin();
+		if ((keys && (KeyHit(kKeyS) || g_pad.Pressed(kPadX))) || click == kWardClickSave)
 			saveOutfit();
-		if (!g_capture && (KeyHit(kKeyX) || g_pad.Pressed(kPadY) || click == kWardClickClear))
+		if ((keys && (KeyHit(kKeyC) || g_pad.Pressed(kPadY))) || click == kWardClickClear)
 		{
 			if (onOutfit)
 			{
@@ -7352,8 +7821,26 @@ namespace
 				SaveOutfits();
 				return;
 			}
+			// Everything off and nothing pinned: back to how he starts
+			g_wardWorn.clear();
 			g_pins.clear();
 			SavePins();
+		}
+		if ((keys && (KeyHit(kKeyH) || g_pad.Pressed(kPadStart))) || click == kWardClickUntracked)
+		{
+			st.wardrobeShowUntracked = !st.wardrobeShowUntracked;
+			MarkDirty();
+			g_wardListsOf = nullptr;   // the lists again, next frame
+			return;
+		}
+		if ((keys && (KeyHit(kKeyR) || g_pad.Pressed(kPadBack))) || click == kWardClickSearch)
+			OpenWardSearch();
+		if ((EnlargeHeld() && keys) || click == kWardClickEnlarge)
+		{
+			g_wardEnlarged = true;
+			g_cardZoomT = 0.f;
+			g_cardZoomFrame = ImGui::GetFrameCount();
+			OpenZoomModel();
 		}
 
 		// A and D or the triggers try the piece being looked at in the next dye. Only armour that has them, and that's known once it's loaded.
@@ -7370,12 +7857,13 @@ namespace
 		for (const DyeLook& look : kDyeLooks)
 			if (std::find(dyeLooks.begin(), dyeLooks.end(), look.name) != dyeLooks.end())
 				dyeOrder.push_back(&look);
-		if (!dyeOrder.empty() && !g_capture)
+		if (!dyeOrder.empty() && keys)
 		{
+			// A and D either way; the left trigger round, as the right one pins
 			int dyeStep = 0;
-			if (KeyHit(kKeyA) || g_pad.Pressed(kPadLT))
+			if (KeyHit(kKeyA))
 				dyeStep = -1;
-			if (KeyHit(kKeyD) || g_pad.Pressed(kPadRT))
+			if (KeyHit(kKeyD) || g_pad.Pressed(kPadLT))
 				dyeStep = 1;
 			if (dyeStep)
 			{
@@ -7386,26 +7874,19 @@ namespace
 				const int count = static_cast<int>(dyeOrder.size());
 				dyeNow = dyeOrder[(at + dyeStep + count) % count]->name;
 				SetDye(list[row].itemTemplate, dyeNow);
+				const auto worn = g_wardWorn.find(kWardKind[g_wardKind]);
+				if (worn != g_wardWorn.end() && worn->second.itemTemplate == list[row].itemTemplate)
+					worn->second.dye = dyeNow;
 			}
 		}
 
-		// What he's asked to wear, least important first: what he has on, what's pinned, then what's being looked at
+		// What he's asked to wear: nothing in every slot, then what he has on here. Moving through the list changes nothing.
 		std::string request;
 		const auto wear = [&](const std::string& piece) { request += (request.empty() ? "" : "|") + piece; };
-		// A slot he really has nothing in is bare, not his starting gear
-		if (!m.gear.empty())
-			for (int k = 0; k < kWardKinds; ++k)
-				if (std::none_of(m.gear.begin(), m.gear.end(), [&](const std::string& piece) { return WornCategory(piece) == kWardKind[k]; }))
-					wear(std::string(kWornNothing) + kWardKind[k]);
-		for (const std::string& piece : m.gear)
-			wear(piece);
-		for (const auto& [kind, pin] : g_pins)
-			wear(Dyed(pin.itemTemplate, pin.dye));
-		if (onItem)
-			wear(Dyed(list[row].itemTemplate, dyeNow));
-		else if (onOutfit)
-			for (const auto& [kind, piece] : g_outfits[row - itemCount].pieces)
-				wear(Dyed(piece.itemTemplate, piece.dye));
+		for (int k = 0; k < kWardKinds; ++k)
+			wear(std::string(kWornNothing) + kWardKind[k]);
+		for (const auto& [kind, piece] : g_wardWorn)
+			wear(Dyed(piece.itemTemplate, piece.dye));
 		ModelViewAnimation(st.wardrobeAnimation);
 #ifdef POTP_OVERLAY_TEST
 		ModelViewRequest(!g_modelTest.empty() ? g_modelTest : kModelOnGeralt + request);
@@ -7444,7 +7925,7 @@ namespace
 			const int size = Measure(kTitle, 20, name).x <= room ? 20 : 18;
 			const float w = std::min(Measure(kTitle, size, name).x, room);
 			TextFit(kTitle, size, (a.x + b.x) * 0.5f - w * 0.5f, (a.y + b.y) * 0.5f - InkCentre(kTitle, size, "H").y, on ? kInk : Rgb(198, 188, 166), name, room);
-			if (Clicked(a, b) && !on)
+			if (Clicked(a, b) && !on && !enlarged)
 			{
 				g_wardKind = k;
 				g_wardScroll = 0.f;
@@ -7468,7 +7949,7 @@ namespace
 			const float w = Measure(kSans, 22, label).x;
 			const ImVec2 sa(x1 - w - 22.f, panelTop + 6.f), sb(x1 - 6.f, panelTop + outfitHeadH - 6.f);
 			Text(kSans, 22, sa.x + 8.f, panelTop + 13.f, Hover(sa, sb) ? kGoldHi : Rgb(232, 196, 128), label);
-			if (Clicked(sa, sb))
+			if (Clicked(sa, sb) && !enlarged)
 				saveOutfit();
 		}
 		FadeLineH(x0, x1, panelTop + outfitHeadH, kGoldDim);
@@ -7496,7 +7977,7 @@ namespace
 					names += (names.empty() ? "" : ", ") + piece.title;
 				const float nameW = Measure(kSerif, 28, g_outfits[i].name.c_str()).x + 30.f;
 				TextFit(kSans, 22, x0 + 14.f + nameW, y + 9.f, kDim, names, x1 - x0 - nameW - 34.f);
-				if (Clicked(a, b))
+				if (Clicked(a, b) && !enlarged)
 				{
 					if (sel)
 						accept();
@@ -7541,11 +8022,12 @@ namespace
 				FadeLineH(a.x, b.x, b.y, Rgb(120, 100, 66, 60));
 			}
 			const bool nothing = item.itemTemplate.rfind(kWornNothing, 0) == 0;
-			const char* tag = pinned ? Tx(T_model_pinned) : nothing ? "" : !item.tracked ? Tx(T_ward_not_tracked) : item.done ? Tx(T_ward_collected) : Tx(T_ward_not_collected);
+			const bool on = wearing(item);
+			const char* tag = pinned ? Tx(T_model_pinned) : on ? Tx(T_ward_wearing) : nothing ? "" : !item.tracked ? Tx(T_ward_not_tracked) : item.done ? Tx(T_ward_collected) : Tx(T_ward_not_collected);
 			const float tagW = Measure(kSans, 22, tag).x + 18.f;
 			TextFit(kSerif, 30, x0 + 14.f, y + 8.f, sel ? Rgb(255, 248, 230) : kText, item.title, b.x - a.x - tagW - 26.f);
-			TextRight(kSans, 22, b.x - 12.f, y + 15.f, pinned ? kGoldHi : kDim, tag);
-			if (Clicked(a, b) && Hover(la, lb))
+			TextRight(kSans, 22, b.x - 12.f, y + 15.f, pinned ? kGoldHi : on ? kGreen : kDim, tag);
+			if (Clicked(a, b) && Hover(la, lb) && !enlarged)
 			{
 				if (sel)
 					accept();
@@ -7567,26 +8049,9 @@ namespace
 		for (int k = 0; k < kWardKinds; ++k)
 		{
 			const ImVec2 a(vx0 + (cardW + cardGap) * k, top), b(a.x + cardW, top + cardH);
-			std::string name;
-			const auto pin = g_pins.find(kWardKind[k]);
-			if (onItem && k == g_wardKind)
-				name = list[row].title;
-			else if (pin != g_pins.end())
-				name = pin->second.title;
-			else
-			{
-				for (const std::string& piece : m.gear)
-					if (WornCategory(piece) == kWardKind[k])
-					{
-						name = Tx(T_ward_equipped);
-						for (const WardItem& item : g_wardLists[k])
-							if (_stricmp(item.itemTemplate.c_str(), TemplateOnly(piece).c_str()) == 0)
-								name = item.title;
-					}
-				if (name.empty())
-					name = Tx(m.gear.empty() ? T_ward_starting : T_ward_nothing);
-			}
-			const bool held = pin != g_pins.end();
+			const auto worn = g_wardWorn.find(kWardKind[k]);
+			const std::string name = worn != g_wardWorn.end() ? worn->second.title : Tx(T_ward_nothing);
+			const bool held = g_pins.count(kWardKind[k]) != 0;
 			dl->AddRectFilled(a, b, Rgb(0, 0, 0, 120));
 			dl->AddRect(a, b, held ? kGoldHi : kGoldDim, 0.f, 0, 1.5f);
 			TextFit(kSans, 22, a.x + 8.f, a.y + 4.f, held ? kGoldHi : kGold, WardKindName(k), cardW - 14.f);
@@ -7596,7 +8061,7 @@ namespace
 		// Him
 		const float footH = 74.f;
 		const ImVec2 va(vx0, top + cardH + 6.f), vb(vx1, bottom - footH);
-		if (g_clicked && Hover(va, vb))
+		if (g_clicked && Hover(va, vb) && !enlarged)
 			g_wardDragging = true;
 		if (!ImGui::IsMouseDown(0))
 			g_wardDragging = false;
@@ -7605,27 +8070,29 @@ namespace
 			g_modelYaw += ImGui::GetIO().MouseDelta.x * 0.45f;
 			g_modelPitch = std::clamp(g_modelPitch - ImGui::GetIO().MouseDelta.y * 0.3f, -50.f, 50.f);
 		}
-		if (g_pad.rightX != 0.f)
+		if (g_pad.rightX != 0.f && !enlarged)
 			g_modelYaw += g_pad.rightX * g_dt * 130.f;
-		if (Hover(va, vb) && g_wheel != 0.f)
+		if (Hover(va, vb) && g_wheel != 0.f && !enlarged)
 			g_wardZoom += g_wheel * 0.12f;
-		if (g_pad.rightY != 0.f)
+		if (g_pad.rightY != 0.f && !enlarged)
 			g_wardZoom -= g_pad.rightY * g_dt * 1.1f;
 		g_wardZoom = std::clamp(g_wardZoom, 1.f, 2.4f);
-		ModelViewShow(TurnToShow(g_modelYaw), g_modelPitch);
+		if (!enlarged)
+			ModelViewShow(TurnToShow(g_modelYaw), g_modelPitch);
 		const ImVec2 centre((va.x + vb.x) * 0.5f, (va.y + vb.y) * 0.5f);
 		const float side = std::min(vb.x - va.x, vb.y - va.y) * g_wardZoom;
 		// Zooming goes in toward his head and chest, not his belt
 		const float lift = (g_wardZoom - 1.f) * side * 0.16f;
 		if (ModelViewState() == kModelMissing)
 			TextCentre(kSerif, 28, centre.x, centre.y - 18.f, kDim, Tx(T_no_model));
-		else if (const unsigned long long picture = ModelViewTexture())
+		else if (const unsigned long long picture = enlarged ? 0 : ModelViewTexture())
 		{
 			dl->PushClipRect(va, vb, true);
-			dl->AddImage(static_cast<ImTextureID>(picture), ImVec2(centre.x - side * 0.5f, centre.y - side * 0.5f + lift), ImVec2(centre.x + side * 0.5f, centre.y + side * 0.5f + lift));
+			const float u = 0.5f / ModelViewAspect();   // the square from the picture's middle
+			dl->AddImage(static_cast<ImTextureID>(picture), ImVec2(centre.x - side * 0.5f, centre.y - side * 0.5f + lift), ImVec2(centre.x + side * 0.5f, centre.y + side * 0.5f + lift), ImVec2(0.5f - u, 0.f), ImVec2(0.5f + u, 1.f));
 			dl->PopClipRect();
 		}
-		else
+		else if (!enlarged)
 			TextCentre(kSerif, 28, centre.x, centre.y - 18.f, kDim, Tx(T_loading));
 		// The dyes, down the side of him. A click tries one on.
 		if (!dyeOrder.empty())
@@ -7650,15 +8117,20 @@ namespace
 					dl->AddLine(ImVec2(c.x - dot * 0.35f, c.y + dot * 0.35f), ImVec2(c.x + dot * 0.35f, c.y - dot * 0.35f), kGold, 2.f);
 				}
 				dl->AddCircle(c, dot * 0.5f, on ? Rgb(255, 244, 214) : Hover(a, b) ? kGoldHi : kGoldDim, 24, on ? 3.f : 1.5f);
-				if (Clicked(a, b))
+				if (Clicked(a, b) && !enlarged)
 				{
 					g_wardDragging = false;
 					SetDye(list[row].itemTemplate, dyeOrder[i]->name);
+					const auto worn = g_wardWorn.find(kWardKind[g_wardKind]);
+					if (worn != g_wardWorn.end() && worn->second.itemTemplate == list[row].itemTemplate)
+						worn->second.dye = dyeOrder[i]->name;
 				}
 			}
 		}
 		TextCentre(kSerif, 30, centre.x, vb.y + 4.f, kGoldHi, AnimationName(st.wardrobeAnimation));
 		TextCentre(kSans, 22, centre.x, vb.y + 42.f, kDim, g_padPrompts ? Tx(T_ward_hint_pad) : Tx(T_ward_hint_mouse));
+		if (searching)
+			DrawWardSearch(m);
 	}
 
 	void DrawCursor()
@@ -7782,7 +8254,12 @@ void UiPushPopup(const std::string& text)
 				from = bar + 1;
 			}
 			if (f[0] == "A" && f.size() >= 4 && !f[2].empty())
-				extras.push_back(WardExtra{ f[1], f[2], CleanGameText(f[3]) });
+			{
+				std::string title = CleanGameText(f[3]);
+				if (f.size() >= 5 && f[4] == "lowered")
+					title = TxFill(T_ward_lowered, title);   // a hood mod's hood down: the same name as up
+				extras.push_back(WardExtra{ f[1], f[2], title });
+			}
 		}
 		std::lock_guard lock(g_wardExtrasLock);
 		g_wardExtras = std::move(extras);
@@ -7870,6 +8347,16 @@ bool UiBackOut()
 	if (g_statusOpen)
 	{
 		g_statusOpen = false;
+		return true;
+	}
+	if (g_wardrobeOpen && g_wardEnlarged)
+	{
+		g_wardEnlarged = false;
+		return true;
+	}
+	if (g_wardrobeOpen && g_wardSearch)
+	{
+		g_wardSearch = false;
 		return true;
 	}
 	if (g_wardrobeOpen)
@@ -7986,7 +8473,7 @@ static void TourSyncPanels()
 		g_cardZoomT = 0.f;
 		g_cardZoomFrame = ImGui::GetFrameCount();
 		g_cardZoomYaw = g_cardZoomPitch = 0.f;
-		g_modelZoom = 1.f;
+		OpenZoomModel();
 		opened = want;
 	}
 }
@@ -8333,6 +8820,8 @@ void DrawUi()
 		DrawStatusPanel(*selected, statusTakesInput);
 	}
 	DrawFrame();
+	if (g_wardrobeOpen && g_wardEnlarged && DrawZoom(nullptr, true, false, stickX, stickY, wheel, true))
+		g_wardEnlarged = false;
 	if (g_statusOpen && g_cardZoom)
 	{
 		if (selected && CanEnlarge(*selected))

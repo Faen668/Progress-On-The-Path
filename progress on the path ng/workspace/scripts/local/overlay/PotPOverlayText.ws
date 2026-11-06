@@ -101,8 +101,6 @@ function PotPOverlay_TextKeys_1(out keys: array<string>)
 	keys.PushBack("hint_tilt_mouse");
 	keys.PushBack("hint_turn_pad");
 	keys.PushBack("hint_turn_mouse");
-	keys.PushBack("hint_zoom_pad");
-	keys.PushBack("hint_zoom_mouse");
 	keys.PushBack("no_model");
 	keys.PushBack("loading");
 	keys.PushBack("not_in_bestiary");
@@ -237,26 +235,35 @@ function PotPOverlay_TextKeys_1(out keys: array<string>)
 	keys.PushBack("ward_steel");
 	keys.PushBack("ward_silver");
 	keys.PushBack("ward_crossbow");
+	keys.PushBack("ward_masks");
+	keys.PushBack("ward_lowered");
+	keys.PushBack("ward_search");
+	keys.PushBack("ward_search_title");
+	keys.PushBack("ward_search_hint");
+	keys.PushBack("ward_search_none");
+	keys.PushBack("ward_jump");
 	keys.PushBack("ward_outfits");
 	keys.PushBack("ward_save");
 	keys.PushBack("ward_no_outfits");
 	keys.PushBack("ward_outfit_name");
 	keys.PushBack("ward_collected");
 	keys.PushBack("ward_not_collected");
-	keys.PushBack("ward_starting");
-	keys.PushBack("ward_equipped");
 	keys.PushBack("ward_category");
-	keys.PushBack("ward_try_on");
-	keys.PushBack("ward_load");
 	keys.PushBack("ward_delete");
 	keys.PushBack("ward_clear");
 	keys.PushBack("ward_stance");
-	keys.PushBack("ward_back");
-	keys.PushBack("ward_empty");
+	keys.PushBack("ward_stance_now");
 }
 
 function PotPOverlay_TextKeys_2(out keys: array<string>)
 {
+	keys.PushBack("ward_wear");
+	keys.PushBack("ward_take_off");
+	keys.PushBack("ward_wearing");
+	keys.PushBack("ward_show_untracked");
+	keys.PushBack("ward_hide_untracked");
+	keys.PushBack("ward_back");
+	keys.PushBack("ward_empty");
 	keys.PushBack("ward_hint_mouse");
 	keys.PushBack("ward_hint_pad");
 	keys.PushBack("item_stats");
@@ -500,6 +507,10 @@ function PotPOverlay_TextKeys_2(out keys: array<string>)
 	keys.PushBack("tour_ward_cards_body");
 	keys.PushBack("tour_ward_outfits");
 	keys.PushBack("tour_ward_outfits_body");
+}
+
+function PotPOverlay_TextKeys_3(out keys: array<string>)
+{
 	keys.PushBack("ward_not_tracked");
 	keys.PushBack("update_key");
 	keys.PushBack("pad_cross");
@@ -507,14 +518,13 @@ function PotPOverlay_TextKeys_2(out keys: array<string>)
 	keys.PushBack("pad_square");
 	keys.PushBack("pad_triangle");
 	keys.PushBack("update_key_hint");
-}
-
-function PotPOverlay_TextKeys_3(out keys: array<string>)
-{
 	keys.PushBack("live_bestiary");
 	keys.PushBack("live_bestiary_hint");
-	keys.PushBack("hint_model_zoom_pad");
-	keys.PushBack("hint_model_zoom_mouse");
+	keys.PushBack("zoom_turn");
+	keys.PushBack("zoom_tilt");
+	keys.PushBack("zoom_zoom");
+	keys.PushBack("hold_to_enlarge");
+	keys.PushBack("hold_to_close");
 	keys.PushBack("hdr_caps");
 	keys.PushBack("hdr_match");
 	keys.PushBack("hdr_match_hint");
@@ -558,6 +568,10 @@ function PotPOverlay_TextKeys_3(out keys: array<string>)
 	keys.PushBack("colour_new");
 	keys.PushBack("colour_default");
 	keys.PushBack("key_arrows");
+	keys.PushBack("key_tab");
+	keys.PushBack("key_right");
+	keys.PushBack("key_drag");
+	keys.PushBack("key_right_drag");
 	keys.PushBack("kill_sum_unique_one");
 	keys.PushBack("kill_sum_generic_one");
 	keys.PushBack("kill_sum_total");

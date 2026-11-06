@@ -40,7 +40,9 @@ struct BakedAnimation
 	uint32_t frames = 1, slots = 1;
 	uint32_t introFrames = 0;   // how many of the frames lead into it, at kBakedIntroRate, played once before it loops
 	float duration = 0.f;       // of the part that loops
+	float loopStart = 0.f;      // where in its clip the loop begins, in seconds: the frame most like where the lead in ends
 	std::vector<float> rows;
+	std::vector<char> dangling;   // each slot: on a dangle bone, swung rather than played
 };
 
 struct ModelPart
@@ -50,6 +52,8 @@ struct ModelPart
 	int meshBones = -1;             // in ItemModel::meshBones
 	std::string hungOn;             // a weapon's: the bone of the scabbards' rig it hangs on
 	std::string attachBone;         // a creature's prop: the bone of its rig it's fastened to, rigidly
+	bool onHeadSlot = false;        // a mask that isn't skinned to him: on his head slot, as the game equips it
+	bool rigidComponent = false;    // its component has no skinning attachment: the game draws it as placed, whatever bones its mesh has
 	bool inHand = false;            // the sword he holds, in a stance that holds one
 	std::vector<uint32_t> indices;
 	std::string diffuse, normal;   // texture paths, empty if its material has none
@@ -90,6 +94,8 @@ struct ItemModel
 	std::string idle;       // its idle's clip, and the animation set it's from
 	float formTimes[4] = {};   // a two-form creature's, in seconds: the first shown, a change, the second shown, the loop
 	std::vector<MeshBones> meshBones;
+	std::vector<std::string> dyngs;   // its dangles' physics (.w3dyng): their bones go on Geralt's rig, and swing
+	std::vector<std::string> spareDyngs;   // the rest its templates name, for bones none of those has: two hairstyles share bone names
 	std::vector<std::shared_ptr<ClothData>> cloths;
 	std::shared_ptr<const BakedAnimation> animation;   // null: it stays as it is
 	std::shared_ptr<const void> boneSlots;             // what another animation needs, to be baked for this body

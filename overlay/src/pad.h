@@ -9,6 +9,7 @@ enum PadButtons : unsigned
 	kPadLB = 0x0100, kPadRB = 0x0200,
 	kPadA = 0x1000, kPadB = 0x2000, kPadX = 0x4000, kPadY = 0x8000,
 	kPadLT = 0x10000, kPadRT = 0x20000,   // triggers, as buttons
+	kPadLStick = 0x40000, kPadRStick = 0x80000,   // a stick moved rather than pressed: only for drawing prompts
 };
 
 struct PadState

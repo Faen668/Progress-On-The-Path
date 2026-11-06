@@ -58,10 +58,20 @@ namespace
 	std::atomic<bool> g_questTitlesReady{ false };
 
 	// What the game's item definitions say about what Geralt wears
+	// Another cut of an item for when certain things are worn with it, as the items' definitions give them: a category
+	// (category="armor"), a list of categories, or items by name, all of them or any (all="true"). Hair is cut shorter
+	// under a hood this way, and armour differently with gloves on.
+	struct WornVariant
+	{
+		std::string equip, category;          // category: the one the attribute names
+		std::vector<std::string> items, categories;   // lowered
+		bool all = false;
+		int Rank() const { return !items.empty() ? 2 : !categories.empty() ? 1 : 0; }   // the more particular, the more it counts
+	};
 	struct WornItem
 	{
-		std::string category, equipTemplate;
-		std::vector<std::pair<std::string, std::string>> variants;   // template, the category that being worn calls for it
+		std::string name, category, equipTemplate, slot;   // name and slot lowered; slot: the equip_slot it goes on, if any
+		std::vector<WornVariant> variants;   // a mod's extensions first, then its own
 		std::string bound;   // the item that comes with it: a sword's scabbard
 	};
 	std::unordered_map<std::string, WornItem> g_wornByName, g_wornByTemplate;   // lowered
@@ -96,7 +106,7 @@ namespace
 						g_itemDefinitionFiles.push_back(name);
 					if (journal)
 						g_journalFiles.push_back(name);
-					if (!entity && !itemFile && !journal && !Ends(name, ".w2mesh") && !Ends(name, ".w2mi") && !Ends(name, ".w2mg") && !Ends(name, ".buffer") && !Ends(name, ".redcloth") && !Ends(name, ".w2rig") && !Ends(name, ".w2anims"))
+					if (!entity && !itemFile && !journal && !Ends(name, ".w2mesh") && !Ends(name, ".w2mi") && !Ends(name, ".w2mg") && !Ends(name, ".buffer") && !Ends(name, ".redcloth") && !Ends(name, ".w2rig") && !Ends(name, ".w2anims") && !Ends(name, ".w3dyng"))
 						continue;
 					uint64_t offset = U32(e + 0x11C);
 					if (!older)
@@ -419,6 +429,7 @@ namespace
 	{
 		std::string name, mesh;
 		std::string bone;   // fastened to this bone of the character it's on (a hard attachment's parentSlotName)
+		std::string dyng;   // the dangle physics it's skinned to, or a dangle component's own
 		M4 local, placed;
 		bool shadow = false, skinned = false, fromAppearance = false;
 	};
@@ -441,6 +452,7 @@ namespace
 		std::vector<std::string> skeletons;  // a character's: the rigs its animated components move, its moving agent's first
 		std::vector<std::string> animsets;   // and the animation sets its template gives it
 		std::vector<std::string> dangleSkeletons;   // its dangle buffers' rigs: its rig again, with its hair's bones and the like
+		std::vector<std::string> dyngs;             // its dangle constraints' physics (.w3dyng), each with a rig of its bones
 	};
 
 	void ReadComponents(Red& f, std::vector<Component>& out)
@@ -481,6 +493,17 @@ namespace
 				}
 				else if (n == "transform")
 					c.local = TransformOf(f.data.data() + v, e - v);
+				else if (n == "constraint" && cls == "CAnimDangleComponent" && v + 4 <= e)
+				{
+					const int at = I32(f.data.data() + v) - 1;
+					if (at >= 0 && at < static_cast<int>(f.exports.size()) && f.Name(f.exports[at].className) == "CAnimDangleConstraint_Dyng")
+						f.Object(f.exports[at], [&](const std::string& dn, const std::string&, size_t dv, size_t de)
+						{
+							if (dn == "dyng" && dv + 4 <= de)
+								if (const std::string* p = f.Import(I32(f.data.data() + dv)))
+									c.dyng = *p;
+						});
+				}
 				else if (e >= v + 4 && (n == "mesh" || (n == "resource" && cls == "CClothComponent") || (n == "morphSource" && cls == "CMorphedMeshComponent")))
 				{
 					if (const std::string* path = f.Import(I32(f.data.data() + v)))
@@ -511,7 +534,11 @@ namespace
 			if (child == byExport.end())
 				continue;
 			if (link.relative.m[0][0] == -12345.f)
+			{
 				out[child->second].skinned = true;
+				if (const auto parent = byExport.find(link.parent); parent != byExport.end() && !out[parent->second].dyng.empty())
+					out[child->second].dyng = out[parent->second].dyng;
+			}
 			else if (link.hard)
 			{
 				// Fastened to a bone, it's placed relative to that bone: the bone itself moves it from there
@@ -659,6 +686,16 @@ namespace
 				const std::string& cls = f->Name(e.className);
 				const bool sets = cls == "CAnimAnimsetsParam";
 				const bool agent = Ends(cls, "AgentComponent");
+				if (cls == "CAnimDangleConstraint_Dyng")
+				{
+					f->Object(e, [&](const std::string& n, const std::string&, size_t v, size_t end)
+					{
+						if (n == "dyng" && v + 4 <= end)
+							if (const std::string* p = f->Import(I32(f->data.data() + v)); p && std::find(entity->dyngs.begin(), entity->dyngs.end(), *p) == entity->dyngs.end())
+								entity->dyngs.push_back(*p);
+					});
+					continue;
+				}
 				if (cls == "CAnimDangleBufferComponent")
 				{
 					f->Object(e, [&](const std::string& n, const std::string&, size_t v, size_t end)
@@ -2205,7 +2242,7 @@ static std::string TagValue(const std::string& tag, const char* name)
 static bool IsWornCategory(const std::string& category)
 {
 	return category == "armor" || category == "pants" || category == "boots" || category == "gloves"
-		|| category == "steelsword" || category == "silversword" || category == "crossbow";
+		|| category == "steelsword" || category == "silversword" || category == "crossbow" || category == "mask";
 }
 
 // Every quest's title, from its journal: the files first found win, as for the rest, so a mod's own copy counts
@@ -2240,14 +2277,63 @@ static void ReadQuestTitles()
 	g_questTitlesReady = true;
 }
 
+// Each <variant> in a piece of XML: its template, and what has to be worn for it
+static std::vector<WornVariant> ReadVariants(const std::string& body)
+{
+	std::vector<WornVariant> out;
+	for (size_t v = body.find("<variant"); v != std::string::npos; v = body.find("<variant", v + 8))
+	{
+		if (v + 8 < body.size() && body[v + 8] == 's')
+			continue;   // <variants>, the list itself
+		const size_t end = body.find('>', v);
+		if (end == std::string::npos)
+			break;
+		const std::string tag = body.substr(v, end - v);
+		WornVariant variant;
+		variant.equip = Lower(TagValue(tag, "equip_template"));
+		variant.category = Lower(TagValue(tag, "category"));
+		variant.all = Lower(TagValue(tag, "all")) == "true";
+		if (variant.equip.empty())
+			continue;
+		// What's inside it, up to its close (a self-closed one has nothing)
+		const bool selfClosed = end > v && body[end - 1] == '/';
+		const size_t close = selfClosed ? end : body.find("</variant>", end);
+		const std::string inside = close == std::string::npos ? std::string() : body.substr(end + 1, close - end - 1);
+		const auto each = [&](const char* open, const char* shut, std::vector<std::string>& into)
+		{
+			const size_t openLen = strlen(open);
+			for (size_t at = inside.find(open); at != std::string::npos; at = inside.find(open, at + openLen))
+			{
+				const size_t stop = inside.find(shut, at);
+				if (stop == std::string::npos)
+					break;
+				std::string value = Lower(inside.substr(at + openLen, stop - at - openLen));
+				value.erase(0, value.find_first_not_of(" \t\r\n"));
+				value.erase(value.find_last_not_of(" \t\r\n") + 1);
+				if (!value.empty())
+					into.push_back(value);
+			}
+		};
+		each("<item>", "</item>", variant.items);
+		each("<item_category>", "</item_category>", variant.categories);
+		if (variant.category.empty() && variant.items.empty() && variant.categories.empty())
+			continue;   // nothing calls for it
+		out.push_back(std::move(variant));
+	}
+	return out;
+}
+
 static void ReadWornItems()
 {
+	std::vector<std::string> texts;
 	for (const std::string& path : g_itemDefinitionFiles)
 	{
 		std::vector<uint8_t> data;
-		if (!ReadGameFile(path, data))
-			continue;
-		const std::string text(data.begin(), data.end());
+		if (ReadGameFile(path, data))
+			texts.emplace_back(data.begin(), data.end());
+	}
+	for (const std::string& text : texts)
+	{
 		// An item's own tag has attributes. A bare <item> names one bound to it.
 		const auto nextItem = [&](size_t from)
 		{
@@ -2267,6 +2353,8 @@ static void ReadWornItems()
 			item.category = Lower(TagValue(tag, "category"));
 			item.equipTemplate = Lower(TagValue(tag, "equip_template"));
 			const std::string name = Lower(TagValue(tag, "name"));
+			item.name = name;
+			item.slot = Lower(TagValue(tag, "equip_slot"));
 			const bool scabbard = name.find("scabbard") != std::string::npos;
 			if (!name.empty() && !item.equipTemplate.empty() && (IsWornCategory(item.category) || item.category == "hair" || scabbard))
 			{
@@ -2280,25 +2368,51 @@ static void ReadWornItems()
 							first.erase(first.find_last_not_of(" \t\r\n") + 1);
 							item.bound = first;
 						}
-				for (size_t v = body.find("<variant"); v != std::string::npos; v = body.find("<variant", v + 8))
+				// Its variants: only up to its own close. Bare <item>name</item> lines inside it (bound items, a variant's
+				// items) each close themselves, so its own is the first close with no bare open before it.
+				size_t own = body.size();
+				int depth = 0;
+				for (size_t p = 0; p < body.size(); ++p)
 				{
-					const size_t end = body.find('>', v);
-					if (end == std::string::npos)
+					if (body.compare(p, 6, "<item>") == 0)
+						++depth;
+					else if (body.compare(p, 7, "</item>") == 0 && depth-- == 0)
+					{
+						own = p;
 						break;
-					const std::string variant = body.substr(v, end - v);
-					const std::string equip = Lower(TagValue(variant, "equip_template")), category = Lower(TagValue(variant, "category"));
-					if (!equip.empty() && !category.empty())
-						item.variants.emplace_back(equip, category);
+					}
 				}
-				g_wornByName.emplace(name, item);
-				// The game can give any of them: the cut for wearing with gloves is the same item
-				for (const auto& variant : item.variants)
-					g_wornByTemplate.emplace(variant.first, item);
-				g_wornByTemplate.emplace(item.equipTemplate, std::move(item));
+				item.variants = ReadVariants(body.substr(0, own));
+				g_wornByName.emplace(name, std::move(item));
 			}
 			at = next;
 		}
 	}
+	// Then what mods add to items they don't own: <item_extension name="..."> with more variants, ahead of the item's
+	// own, as they're there to take over from them (a hood's shorter hair in place of the armour's)
+	size_t extensions = 0;
+	for (const std::string& text : texts)
+		for (size_t at = text.find("<item_extension"); at != std::string::npos; at = text.find("<item_extension", at + 15))
+		{
+			const size_t close = text.find('>', at);
+			const size_t end = close == std::string::npos ? std::string::npos : text.find("</item_extension>", close);
+			if (end == std::string::npos)
+				break;
+			const auto found = g_wornByName.find(Lower(TagValue(text.substr(at, close - at), "name")));
+			if (found == g_wornByName.end())
+				continue;
+			std::vector<WornVariant> added = ReadVariants(text.substr(close, end - close));
+			extensions += added.size();
+			found->second.variants.insert(found->second.variants.begin(), added.begin(), added.end());
+		}
+	// By template: the game can give any cut of it, and the cut for wearing with gloves is the same item
+	for (const auto& [name, item] : g_wornByName)
+	{
+		for (const WornVariant& variant : item.variants)
+			g_wornByTemplate.emplace(variant.equip, item);
+		g_wornByTemplate.emplace(item.equipTemplate, item);
+	}
+	Log("item models: %zu worn items, %zu variants added by extensions", g_wornByName.size(), extensions);
 }
 
 void BuildModelIndex(const std::wstring& game)
@@ -2443,6 +2557,23 @@ bool LoadItemModel(const std::string& templateName, ItemModel& out)
 		for (const std::string& include : entity->includes)
 			AddTemplate(include, components, colorings, seen, 0, entities);
 	}
+	// Its dangles' physics, from it and every template it brings in (a hood's tails are often in one of its own)
+	// The ones its drawn meshes are skinned to come first, as two hairstyles' dangles have the same bone names and the
+	// first to name a bone gives it its place
+	for (const Component& c : components)
+		if (!c.mesh.empty() && !c.shadow && !c.dyng.empty() && std::find(out.dyngs.begin(), out.dyngs.end(), c.dyng) == out.dyngs.end())
+			out.dyngs.push_back(c.dyng);
+	const auto addDyngs = [&](const Entity& e)
+	{
+		for (const std::string& d : e.dyngs)
+			if (std::find(out.dyngs.begin(), out.dyngs.end(), d) == out.dyngs.end()
+				&& std::find(out.spareDyngs.begin(), out.spareDyngs.end(), d) == out.spareDyngs.end())
+				out.spareDyngs.push_back(d);
+	};
+	addDyngs(*entity);
+	for (const auto& [path, part] : entities)
+		if (part)
+			addDyngs(*part);
 	const auto coloringOf = [&](const std::string& component) -> const Coloring*
 	{
 		if (!look)
@@ -2460,8 +2591,11 @@ bool LoadItemModel(const std::string& templateName, ItemModel& out)
 		if (c.mesh.empty() || c.shadow)
 			continue;
 		// A crossbow on his back hangs half turned from how it's kept: found by matching the game's own look
-		const M4 placed = (c.skinned ? M4{} : c.placed) * (out.halfTurned ? RotateZ(3.14159265358979f) : M4{});
+		// Cloth is skinned to the rig wherever its component was put: the Hoods mod's Avallach hood is moved up 1.4 m and
+		// modelled at head height, so the move would count his height twice
 		const std::string key = Lower(c.mesh);
+		const bool cloth = Ends(key, ".redcloth");
+		const M4 placed = (c.skinned || cloth ? M4{} : c.placed) * (out.halfTurned ? RotateZ(3.14159265358979f) : M4{});
 		if (key.find("sphere_green") != std::string::npos)   // a marker left in one template, far from the item
 			continue;
 		if (key.rfind("environment\\blockout", 0) == 0)   // an editor's stand-in shape, as the pixie keeps a grey cone
@@ -2490,7 +2624,10 @@ bool LoadItemModel(const std::string& templateName, ItemModel& out)
 		if (readIt)
 		{
 			for (size_t p = partsBefore; p < out.parts.size(); ++p)
+			{
 				out.parts[p].attachBone = c.bone;
+				out.parts[p].rigidComponent = !c.skinned;
+			}
 		}
 		else
 			Log("item models: can't read %s", c.mesh.c_str());
@@ -2579,6 +2716,50 @@ namespace
 		r.m[3][1] = b.position[1];
 		r.m[3][2] = b.position[2];
 		return r;
+	}
+
+	// A matrix of BoneMatrix's back to its turn and place (its scale taken as one)
+	void BoneFromMatrix(const M4& m, Bone& b)
+	{
+		float q[4];
+		const float trace = m.m[0][0] + m.m[1][1] + m.m[2][2];
+		if (trace > 0.f)
+		{
+			const float s = sqrtf(trace + 1.f) * 2.f;
+			q[3] = 0.25f * s;
+			q[0] = (m.m[1][2] - m.m[2][1]) / s;
+			q[1] = (m.m[2][0] - m.m[0][2]) / s;
+			q[2] = (m.m[0][1] - m.m[1][0]) / s;
+		}
+		else if (m.m[0][0] > m.m[1][1] && m.m[0][0] > m.m[2][2])
+		{
+			const float s = sqrtf(1.f + m.m[0][0] - m.m[1][1] - m.m[2][2]) * 2.f;
+			q[3] = (m.m[1][2] - m.m[2][1]) / s;
+			q[0] = 0.25f * s;
+			q[1] = (m.m[1][0] + m.m[0][1]) / s;
+			q[2] = (m.m[2][0] + m.m[0][2]) / s;
+		}
+		else if (m.m[1][1] > m.m[2][2])
+		{
+			const float s = sqrtf(1.f + m.m[1][1] - m.m[0][0] - m.m[2][2]) * 2.f;
+			q[3] = (m.m[2][0] - m.m[0][2]) / s;
+			q[0] = (m.m[1][0] + m.m[0][1]) / s;
+			q[1] = 0.25f * s;
+			q[2] = (m.m[2][1] + m.m[1][2]) / s;
+		}
+		else
+		{
+			const float s = sqrtf(1.f + m.m[2][2] - m.m[0][0] - m.m[1][1]) * 2.f;
+			q[3] = (m.m[0][1] - m.m[1][0]) / s;
+			q[0] = (m.m[2][0] + m.m[0][2]) / s;
+			q[1] = (m.m[2][1] + m.m[1][2]) / s;
+			q[2] = 0.25f * s;
+		}
+		const float length = sqrtf(q[0] * q[0] + q[1] * q[1] + q[2] * q[2] + q[3] * q[3]);
+		for (int k = 0; k < 4; ++k)
+			b.rotation[k] = q[k] / std::max(length, 1e-8f);
+		for (int k = 0; k < 3; ++k)
+			b.position[k] = m.m[3][k];
 	}
 
 	void ToModel(const Rig& rig, const std::vector<Bone>& local, std::vector<M4>& model)
@@ -3147,9 +3328,281 @@ int AnimationCount()
 
 // Works an animation out into the table's rows, on a loading thread. The card blends it from there on, so playing it costs
 // next to nothing on the processor. Null if it can't be read: he stays in whatever he had.
+
+namespace
+{
+	// Geralt's dangles: the bones of his hair, a hood's tails and the like, which the game swings by its physics and his
+	// clips leave still. Each tip trails where the clip takes it, springs back and settles, as a creature's do, and is
+	// kept out of his head, neck and shoulders.
+	struct DangleSwing
+	{
+		using V3 = std::array<float, 3>;
+		const Rig& rig;
+		std::vector<int> dangles;
+		std::vector<char> isDangle;
+		std::vector<V3> tipLocal, at, was;
+		bool started = false;
+		int head = -1, neck = -1, chest = -1, lShoulder = -1, rShoulder = -1;
+
+		explicit DangleSwing(const Rig& r) : rig(r)
+		{
+			const size_t count = rig.parents.size();
+			std::vector<int> firstChild(count, -1);
+			isDangle.assign(count, 0);
+			for (size_t i = 0; i < count; ++i)
+			{
+				const int parent = rig.parents[i];
+				if (parent >= 0 && parent < static_cast<int>(count) && firstChild[parent] < 0)
+					firstChild[parent] = static_cast<int>(i);
+				const std::string name = Lower(rig.names[i]);
+				const bool helper = Ends(name, "_null") || name.find("_ik") != std::string::npos || name.find("hand") != std::string::npos
+					|| name.find("distance_keep") != std::string::npos;
+				if (name.rfind("dyng_", 0) == 0 && !helper && parent >= 0 && parent < static_cast<int>(i))
+				{
+					dangles.push_back(static_cast<int>(i));
+					isDangle[i] = 1;
+				}
+				if (name == "head") head = static_cast<int>(i);
+				if (name == "neck") neck = static_cast<int>(i);
+				if (name == "torso3") chest = static_cast<int>(i);
+				if (name == "l_shoulder") lShoulder = static_cast<int>(i);
+				if (name == "r_shoulder") rShoulder = static_cast<int>(i);
+			}
+			// The point at its end, in its own space: its first child's place, or for the last of a chain, as far on as
+			// it is from its parent
+			tipLocal.resize(dangles.size());
+			for (size_t d = 0; d < dangles.size(); ++d)
+			{
+				const int i = dangles[d];
+				const Bone& own = rig.pose[i];
+				if (firstChild[i] >= 0)
+				{
+					const Bone& child = rig.pose[firstChild[i]];
+					tipLocal[d] = { child.position[0], child.position[1], child.position[2] };
+				}
+				else
+				{
+					const M4 turn = BoneMatrix(Bone{ { 0, 0, 0 }, { own.rotation[0], own.rotation[1], own.rotation[2], own.rotation[3] }, { 1, 1, 1 } });
+					for (int c = 0; c < 3; ++c)
+						tipLocal[d][c] = own.position[0] * turn.m[c][0] + own.position[1] * turn.m[c][1] + own.position[2] * turn.m[c][2];
+				}
+			}
+			at.resize(dangles.size());
+			was.resize(dangles.size());
+		}
+
+		bool Any() const { return !dangles.empty(); }
+
+		static V3 Apply(const M4& m, const V3& p)
+		{
+			V3 r;
+			for (int c = 0; c < 3; ++c)
+				r[c] = p[0] * m.m[0][c] + p[1] * m.m[1][c] + p[2] * m.m[2][c] + m.m[3][c];
+			return r;
+		}
+		static V3 Sub(const V3& a, const V3& b) { return V3{ a[0] - b[0], a[1] - b[1], a[2] - b[2] }; }
+		static float Length(const V3& a) { return sqrtf(a[0] * a[0] + a[1] * a[1] + a[2] * a[2]); }
+
+		// Turns the bone about its own place so its end points along `toward`, and its children with it
+		static void Bend(M4& m, const V3& tip, const V3& toward)
+		{
+			const V3 pivot{ m.m[3][0], m.m[3][1], m.m[3][2] };
+			V3 a = Sub(tip, pivot), b = toward;
+			const float la = Length(a), lb = Length(b);
+			if (la < 1e-5f || lb < 1e-5f)
+				return;
+			for (int c = 0; c < 3; ++c) { a[c] /= la; b[c] /= lb; }
+			const V3 axis{ a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0] };
+			const float s = Length(axis), cosine = std::clamp(a[0] * b[0] + a[1] * b[1] + a[2] * b[2], -1.f, 1.f);
+			if (s < 1e-6f)
+				return;
+			const float x = axis[0] / s, y = axis[1] / s, z = axis[2] / s, k = 1.f - cosine;
+			M4 r;
+			r.m[0][0] = cosine + x * x * k;     r.m[0][1] = x * y * k + z * s;     r.m[0][2] = x * z * k - y * s;
+			r.m[1][0] = y * x * k - z * s;      r.m[1][1] = cosine + y * y * k;    r.m[1][2] = y * z * k + x * s;
+			r.m[2][0] = z * x * k + y * s;      r.m[2][1] = z * y * k - x * s;     r.m[2][2] = cosine + z * z * k;
+			M4 there, back;
+			there.m[3][0] = -pivot[0]; there.m[3][1] = -pivot[1]; there.m[3][2] = -pivot[2];
+			back.m[3][0] = pivot[0]; back.m[3][1] = pivot[1]; back.m[3][2] = pivot[2];
+			m = m * there * r * back;
+		}
+
+		// The bones again from the first dangle down, each dangle pointed as `aim` says, its children following it
+		template <typename Aim>
+		void Rebuild(const std::vector<Bone>& local, std::vector<M4>& model, Aim&& aim) const
+		{
+			size_t d = 0;
+			const size_t count = std::min(rig.parents.size(), std::min(local.size(), model.size()));
+			for (size_t i = dangles.empty() ? count : static_cast<size_t>(dangles[0]); i < count; ++i)
+			{
+				const int parent = rig.parents[i];
+				if (parent >= 0 && parent < static_cast<int>(i))
+					model[i] = BoneMatrix(local[i]) * model[parent];
+				if (!isDangle[i])
+					continue;
+				const V3 pivot{ model[i].m[3][0], model[i].m[3][1], model[i].m[3][2] };
+				const V3 tip = Apply(model[i], tipLocal[d]);
+				Bend(model[i], tip, aim(d, pivot, tip));
+				++d;
+			}
+		}
+
+		// One frame on: each tip trails, springs back, swings no further than a lock would, stays its length and keeps out
+		// of him. `aims` gets where each points, if asked.
+		void Step(const std::vector<Bone>& local, std::vector<M4>& model, std::vector<V3>* aims)
+		{
+			// What it can't pass through, from where he is this frame: his skull, neck, chest and shoulders
+			struct Ball { V3 centre; float radius; };
+			std::vector<Ball> balls;
+			const auto ball = [&](int bone, V3 along, float radius)
+			{
+				if (bone >= 0 && bone < static_cast<int>(model.size()))
+					balls.push_back({ Apply(model[bone], along), radius });
+			};
+			ball(head, { 0.09f, 0.015f, 0.f }, 0.105f);
+			ball(neck, { 0.05f, 0.f, 0.f }, 0.065f);
+			ball(chest, { 0.12f, -0.02f, 0.f }, 0.13f);
+			ball(lShoulder, { 0.02f, 0.f, 0.f }, 0.075f);
+			ball(rShoulder, { 0.02f, 0.f, 0.f }, 0.075f);
+			if (aims)
+				aims->resize(dangles.size());
+			Rebuild(local, model, [&](size_t d, const V3& pivot, const V3& tip)
+			{
+				if (!started)
+					at[d] = was[d] = tip;
+				constexpr float kKeep = 0.82f, kPull = 0.16f;   // how much of its swing it keeps each frame, how hard it's drawn back
+				V3 next;
+				for (int c = 0; c < 3; ++c)
+					next[c] = at[d][c] + (at[d][c] - was[d][c]) * kKeep;
+				for (int c = 0; c < 3; ++c)
+					next[c] += (tip[c] - next[c]) * kPull;
+				// Its weight: the meshes are modelled with their locks held out clear of armour, and the game's physics lets
+				// them fall from there. Settled, a tip hangs kSag below where it's modelled, before its length is kept.
+				constexpr float kSag = 0.03f;
+				next[2] -= kSag * kPull;
+				constexpr float kMostCos = 0.64f;   // 50 degrees from where the clip has it
+				const V3 rest = Sub(tip, pivot);
+				const float want = Length(rest);
+				for (int tries = 0; tries < 8 && want > 1e-6f; ++tries)
+				{
+					const V3 out = Sub(next, pivot);
+					const float now = Length(out);
+					if (now < 1e-6f || (out[0] * rest[0] + out[1] * rest[1] + out[2] * rest[2]) / (now * want) >= kMostCos)
+						break;
+					for (int c = 0; c < 3; ++c)
+						next[c] = (next[c] + tip[c]) * 0.5f;
+				}
+				const auto keepLength = [&]
+				{
+					const float now = Length(Sub(next, pivot));
+					if (now > 1e-6f && want > 1e-6f)
+						for (int c = 0; c < 3; ++c)
+							next[c] = pivot[c] + (next[c] - pivot[c]) * (want / now);
+				};
+				keepLength();
+				// Out of him: a ball its root isn't already inside (a lock grows from inside his scalp)
+				for (int pass = 0; pass < 2; ++pass)
+				{
+					for (const Ball& b : balls)
+					{
+						if (Length(Sub(pivot, b.centre)) < b.radius)
+							continue;
+						const V3 from = Sub(next, b.centre);
+						const float distance = Length(from);
+						if (distance < b.radius && distance > 1e-6f)
+							for (int c = 0; c < 3; ++c)
+								next[c] = b.centre[c] + from[c] * (b.radius / distance);
+					}
+					keepLength();
+				}
+				was[d] = at[d];
+				at[d] = next;
+				const V3 toward = Sub(next, pivot);
+				if (aims)
+					(*aims)[d] = toward;
+				return toward;
+			});
+			started = true;
+		}
+	};
+
+	// Geralt's rig with each worn piece's dangle bones on it, kept with the slot table made for it, so a stance baked
+	// later swings the same bones
+	std::mutex g_slotRigLock;
+	std::vector<std::pair<std::weak_ptr<const void>, std::shared_ptr<const Rig>>> g_slotRigs;
+
+	void RememberSlotRig(const std::shared_ptr<const void>& slots, std::shared_ptr<const Rig> rig)
+	{
+		std::lock_guard hold(g_slotRigLock);
+		g_slotRigs.erase(std::remove_if(g_slotRigs.begin(), g_slotRigs.end(), [](const auto& e) { return e.first.expired(); }), g_slotRigs.end());
+		g_slotRigs.emplace_back(slots, std::move(rig));
+	}
+
+	std::shared_ptr<const Rig> SlotRig(const std::shared_ptr<const void>& slots)
+	{
+		std::lock_guard hold(g_slotRigLock);
+		for (const auto& [weak, rig] : g_slotRigs)
+			if (weak.lock() == slots)
+				return rig;
+		return nullptr;
+	}
+
+	// His rig, and after it each dangle's bones it hasn't, under the bone of the same name
+	std::shared_ptr<const Rig> GeraltRig(const std::vector<std::string>& dyngs)
+	{
+		const auto base = SharedRig();
+		if (!base || dyngs.empty())
+			return base;
+		static std::mutex lock;
+		static std::map<std::string, std::shared_ptr<const Rig>> made;
+		std::string key;
+		for (const std::string& d : dyngs)
+			key += Lower(d) + "|";
+		{
+			std::lock_guard hold(lock);
+			const auto found = made.find(key);
+			if (found != made.end())
+				return found->second;
+		}
+		auto rig = std::make_shared<Rig>(*base);
+		std::map<std::string, int> have;
+		for (size_t i = 0; i < rig->names.size(); ++i)
+			have[Lower(rig->names[i])] = static_cast<int>(i);
+		for (const std::string& path : dyngs)
+		{
+			Rig dangle;
+			if (!ReadRig(path, dangle))
+			{
+				Log("item models: can't read the dangles of %s", path.c_str());
+				continue;
+			}
+			for (size_t i = 0; i < dangle.names.size() && i < dangle.pose.size(); ++i)
+			{
+				const std::string name = Lower(dangle.names[i]);
+				const int parent = dangle.parents[i];
+				if (have.count(name) || parent < 0 || parent >= static_cast<int>(dangle.names.size()))
+					continue;
+				const auto up = have.find(Lower(dangle.names[parent]));
+				if (up == have.end() || rig->names.size() >= 0x7fff)
+					continue;
+				have[name] = static_cast<int>(rig->names.size());
+				rig->names.push_back(dangle.names[i]);
+				rig->parents.push_back(static_cast<int16_t>(up->second));
+				rig->pose.push_back(dangle.pose[i]);
+				rig->rest.push_back(BoneMatrix(dangle.pose[i]) * rig->rest[up->second]);
+			}
+		}
+		std::lock_guard hold(lock);
+		made[key] = rig;
+		return rig;
+	}
+}
+
 std::shared_ptr<const BakedAnimation> BakeAnimation(const std::shared_ptr<const void>& boneSlots, int animation, int from, float fromTime)
 {
-	const auto rigShared = SharedRig();
+	auto rigShared = SlotRig(boneSlots);
+	if (!rigShared)
+		rigShared = SharedRig();
 	if (!rigShared || !boneSlots || animation < 0 || animation >= kAnimationCount)
 		return nullptr;
 	const auto clipShared = SharedClip(animation);
@@ -3183,16 +3636,132 @@ std::shared_ptr<const BakedAnimation> BakeAnimation(const std::shared_ptr<const 
 	// What leads into it: each joint turned toward where it's going, so limbs swing round rather than cutting through him
 	struct LeadFrame { std::vector<Bone> local; Standing at; bool held = false; };
 	std::vector<LeadFrame> lead;
-	const auto addClip = [&](const Clip& c, const Standing& atFirst, const Standing& atLast)
+	// From `from` to `to` seconds into the clip
+	const auto addClip = [&](const Clip& c, const Standing& atFirst, const Standing& atLast, float from = 0.f, float to = -1.f)
 	{
-		const int count = std::max(2, static_cast<int>(ClipSeconds(c) * kBakedIntroRate));
+		if (to < 0.f)
+			to = ClipSeconds(c);
+		const int count = std::max(2, static_cast<int>((to - from) * kBakedIntroRate));
 		for (int i = 0; i < count; ++i)
 		{
 			LeadFrame f;
-			SamplePose(rig, c, i / kBakedIntroRate, f.local);
+			SamplePose(rig, c, std::min(to, from + i / kBakedIntroRate), f.local);
 			f.at = MixStanding(atFirst, atLast, static_cast<float>(i) / (count - 1));
 			lead.push_back(std::move(f));
 		}
+	};
+	// How far apart two poses are: the most any joint you'd see turns between them, in degrees. Not the root's motion bone,
+	// the IK and weapon helpers, twist bones or fingers: they turn a long way and show little.
+	std::vector<char> seen(rig.names.size(), 0);
+	// What his pelvis hangs from: the clips' root bones. Some clips have them turned half round with the pelvis turned back,
+	// so the pelvis is compared and blended as it ends up, not as each has it.
+	std::vector<int> rootward;
+	for (int at = pelvis >= 0 ? rig.parents[pelvis] : -1; at >= 0 && at < static_cast<int>(rig.parents.size()); at = rig.parents[at])
+		rootward.push_back(at);
+	const auto above = [&](const std::vector<Bone>& pose)
+	{
+		M4 m;
+		for (auto it = rootward.rbegin(); it != rootward.rend(); ++it)
+			if (static_cast<size_t>(*it) < pose.size())
+				m = BoneMatrix(pose[*it]) * m;
+		return m;
+	};
+	// The pelvis as it's seen: through its root bones and placed as its clip is, so each clip's own way round is taken out
+	const auto pelvisTurn = [&](const std::vector<Bone>& pose, const Standing& at, Bone& out)
+	{
+		BoneFromMatrix(BoneMatrix(pose[pelvis]) * above(pose) * placingOf(at), out);
+	};
+	for (size_t n = 0; n < rig.names.size(); ++n)
+	{
+		const std::string name = Lower(rig.names[n]);
+		seen[n] = !(static_cast<int>(n) == pelvis || std::find(rootward.begin(), rootward.end(), static_cast<int>(n)) != rootward.end()
+			|| name == "trajectory" || name == "reference" || name.rfind("ik_", 0) == 0 || name.find("weapon") != std::string::npos || name.find("roll") != std::string::npos
+			|| name.rfind("dyng_", 0) == 0 || name.find("thumb") != std::string::npos || name.find("index") != std::string::npos
+			|| name.find("middle") != std::string::npos || name.find("ring") != std::string::npos || name.find("pinky") != std::string::npos);
+	}
+	const auto gap = [&](const std::vector<Bone>& a, const std::vector<Bone>& b, const Standing& atA = Standing{}, const Standing& atB = Standing{})
+	{
+		float most = 0.f;
+		if (pelvis >= 0 && static_cast<size_t>(pelvis) < a.size() && static_cast<size_t>(pelvis) < b.size())
+		{
+			Bone pa, pb;
+			pelvisTurn(a, atA, pa);
+			pelvisTurn(b, atB, pb);
+			float dot = 0.f;
+			for (int k = 0; k < 4; ++k)
+				dot += pa.rotation[k] * pb.rotation[k];
+			most = 2.f * acosf(std::min(1.f, fabsf(dot))) * 57.29578f;
+		}
+		for (size_t n = 0; n < a.size() && n < b.size() && n < seen.size(); ++n)
+		{
+			if (!seen[n])
+				continue;
+			float dot = 0.f;
+			for (int k = 0; k < 4; ++k)
+				dot += a[n].rotation[k] * b[n].rotation[k];
+			most = std::max(most, 2.f * acosf(std::min(1.f, fabsf(dot))) * 57.29578f);
+		}
+		return most;
+	};
+	// Frames for a blend: long enough that no joint turns faster than about 150 degrees a second at its steepest (an
+	// eased blend's steepest is half again its average). Four frames between the game's clips were snapping his arms round.
+	const auto blendFrames = [&](const std::vector<Bone>& a, const Standing& atA, const std::vector<Bone>& b, const Standing& atB, int fewest)
+	{
+		const int frames = std::clamp(static_cast<int>(gap(a, b, atA, atB) * 1.5f / 5.f), fewest, 45);
+		return frames;
+	};
+	// Where a clip's motion starts and stops: the game's transitions often hold still a while at either end, and that
+	// reads as him not answering the button
+	const auto moving = [&](const Clip& c, float& start, float& end)
+	{
+		const float seconds = ClipSeconds(c);
+		std::vector<Bone> first, last, at;
+		SamplePose(rig, c, 0.f, first);
+		SamplePose(rig, c, seconds, last);
+		start = 0.f;
+		end = seconds;
+		for (float t = 0.f; t < seconds; t += 1.f / kBakedIntroRate)
+		{
+			SamplePose(rig, c, t, at);
+			if (gap(first, at) > 2.f)
+			{
+				start = std::max(0.f, t - 2.f / kBakedIntroRate);
+				break;
+			}
+		}
+		for (float t = seconds; t > start; t -= 1.f / kBakedIntroRate)
+		{
+			SamplePose(rig, c, t, at);
+			if (gap(last, at) > 2.f)
+			{
+				end = std::min(seconds, t + 2.f / kBakedIntroRate);
+				break;
+			}
+		}
+		if (end - start < 0.3f)
+		{
+			start = 0.f;
+			end = seconds;
+		}
+	};
+	// The frame of the stance's loop most like a pose, so the lead in goes the shortest way into it
+	uint32_t loopFrom = 0;
+	const uint32_t loopLength = clip.frames > 2 ? clip.frames - 1 : 0;
+	const auto startNear = [&](const std::vector<Bone>& pose, const Standing& poseAt, std::vector<Bone>& target)
+	{
+		float best = FLT_MAX;
+		std::vector<Bone> at;
+		for (uint32_t f = 0; f < loopLength; ++f)
+		{
+			SamplePose(rig, clip, f * clip.frameTime, at);
+			const float g = gap(pose, at, poseAt, standing);
+			if (g < best - 0.5f)
+			{
+				best = g;
+				loopFrom = f;
+			}
+		}
+		SamplePose(rig, clip, loopFrom * clip.frameTime, target);
 	};
 	const auto addBlend = [&](const std::vector<Bone>& a, const Standing& atA, const std::vector<Bone>& b, const Standing& atB, int count)
 	{
@@ -3223,13 +3792,51 @@ std::shared_ptr<const BakedAnimation> BakeAnimation(const std::shared_ptr<const 
 					o.scale[k] += (to.scale[k] - o.scale[k]) * t;
 				}
 			}
+			// The root bones held as the first pose has them, and the pelvis turned the short way as it ends up: blended bone
+			// by bone, a root turned half round one way and a pelvis turned back the other wobble him about as they go
 			f.at = MixStanding(atA, atB, t);
+			if (pelvis >= 0 && static_cast<size_t>(pelvis) < f.local.size() && static_cast<size_t>(pelvis) < b.size())
+			{
+				Bone pa, pb;
+				pelvisTurn(a, atA, pa);
+				pelvisTurn(b, atB, pb);
+				float dot = 0.f, length = 0.f;
+				for (int k = 0; k < 4; ++k)
+					dot += pa.rotation[k] * pb.rotation[k];
+				Bone mixed = pa;
+				for (int k = 0; k < 4; ++k)
+				{
+					mixed.rotation[k] = pa.rotation[k] * (1.f - t) + pb.rotation[k] * (dot < 0.f ? -t : t);
+					length += mixed.rotation[k] * mixed.rotation[k];
+				}
+				length = 1.f / sqrtf(std::max(length, 1e-8f));
+				for (float& value : mixed.rotation)
+					value *= length;
+				for (int k = 0; k < 3; ++k)
+				{
+					mixed.position[k] = pa.position[k] + (pb.position[k] - pa.position[k]) * t;
+					mixed.scale[k] = 1.f;
+				}
+				for (const int r : rootward)
+					if (static_cast<size_t>(r) < f.local.size())
+						f.local[r] = a[r];
+				// Back from as it's seen, through this frame's placing and the first pose's root bones
+				M4 unplace, back;
+				if (Invert(placingOf(f.at), unplace) && Invert(above(a), back))
+				{
+					const float scale[3] = { f.local[pelvis].scale[0], f.local[pelvis].scale[1], f.local[pelvis].scale[2] };
+					BoneFromMatrix(BoneMatrix(mixed) * unplace * back, f.local[pelvis]);
+					memcpy(f.local[pelvis].scale, scale, sizeof(scale));
+				}
+			}
 			lead.push_back(std::move(f));
 		}
 	};
 
 	const auto fromShared = from >= 0 && from < kAnimationCount && from != animation ? SharedClip(from) : nullptr;
 	const bool holdsNow = animation == kAnimationHoldsSword, heldBefore = from == kAnimationHoldsSword;
+	// With no sword on his back there's nothing to draw or put away: he'd reach over his shoulder for nothing
+	const bool hasSword = std::any_of(slots.begin(), slots.end(), [](const BoneSlot& s) { return s.heldBy >= 0; });
 	size_t grabFirst = 0, grabEnd = 0;   // the frames where the sword changes over, when it does
 	if (fromShared)
 	{
@@ -3247,12 +3854,14 @@ std::shared_ptr<const BakedAnimation> BakeAnimation(const std::shared_ptr<const 
 					hand = slot.heldBy;
 				}
 			const std::string action = std::string(holdsNow ? "man_geralt_sword_unsheathe_" : "man_geralt_sword_sheathe_") + (silver ? "silver" : "steel");
-			const auto moving = NamedClip("animations\\man\\combat\\man_geralt_sword.w2anims", action);
-			if (moving)
+			const auto drawing = hasSword ? NamedClip("animations\\man\\combat\\man_geralt_sword.w2anims", action) : nullptr;
+			if (drawing)
 			{
+				const Clip* const moving = drawing.get();
 				std::vector<Bone> first, last;
 				SamplePose(rig, *moving, 0.f, first);
 				SamplePose(rig, *moving, ClipSeconds(*moving), last);
+				startNear(last, StandingOf(rig, *moving, pelvis), target);
 				const Standing movingAt = StandingOf(rig, *moving, pelvis);
 				// The combat clips' arm and knee helpers don't hold up as they're kept, twisting his forearms into a funnel: the
 				// game drives those itself. They go from the stance he's leaving to the one he's going to instead.
@@ -3267,7 +3876,7 @@ std::shared_ptr<const BakedAnimation> BakeAnimation(const std::shared_ptr<const 
 						memcpy(first[n].rotation, was[n].rotation, sizeof(first[n].rotation));
 						memcpy(last[n].rotation, target[n].rotation, sizeof(last[n].rotation));
 					}
-				addBlend(was, wasAt, first, movingAt, 9);
+				addBlend(was, wasAt, first, movingAt, blendFrames(was, wasAt, first, movingAt, 9));
 				grabFirst = lead.size();
 				addClip(*moving, movingAt, movingAt);
 				grabEnd = lead.size();
@@ -3292,11 +3901,12 @@ std::shared_ptr<const BakedAnimation> BakeAnimation(const std::shared_ptr<const 
 							to[k] *= length;
 					}
 				}
-				addBlend(last, movingAt, target, standing, 11);
+				addBlend(last, movingAt, target, standing, blendFrames(last, movingAt, target, standing, 11));
 			}
 			else
 			{
-				addBlend(was, wasAt, target, standing, 15);
+				startNear(was, wasAt, target);
+				addBlend(was, wasAt, target, standing, blendFrames(was, wasAt, target, standing, 15));
 				grabEnd = lead.size();
 			}
 		}
@@ -3324,18 +3934,21 @@ std::shared_ptr<const BakedAnimation> BakeAnimation(const std::shared_ptr<const 
 					break;
 				// Each clip is kept facing its own way, and some turn as they go: it's brought from over him at its
 				// first frame to over him at its last, so nothing has to snap when it's done
+				float start = 0.f, end = 0.f;
+				moving(*real, start, end);
 				std::vector<Bone> first, last;
-				SamplePose(rig, *real, 0.f, first);
-				SamplePose(rig, *real, ClipSeconds(*real), last);
-				const Standing realFirst = StandingOf(rig, *real, pelvis), realLast = StandingOf(rig, *real, pelvis, ClipSeconds(*real));
-				addBlend(now, nowAt, first, realFirst, played ? 4 : 6);
-				addClip(*real, realFirst, realLast);
+				SamplePose(rig, *real, start, first);
+				SamplePose(rig, *real, end, last);
+				const Standing realFirst = StandingOf(rig, *real, pelvis, start), realLast = StandingOf(rig, *real, pelvis, end);
+				addBlend(now, nowAt, first, realFirst, blendFrames(now, nowAt, first, realFirst, played ? 4 : 6));
+				addClip(*real, realFirst, realLast, start, end);
 				now = last;
 				nowAt = realLast;
 				at = next;
 				played = true;
 			}
-			addBlend(now, nowAt, target, standing, at == animation ? 6 : 15);
+			startNear(now, nowAt, target);
+			addBlend(now, nowAt, target, standing, blendFrames(now, nowAt, target, standing, at == animation ? 6 : 15));
 		}
 	}
 
@@ -3376,9 +3989,35 @@ std::shared_ptr<const BakedAnimation> BakeAnimation(const std::shared_ptr<const 
 	baked->duration = ClipSeconds(clip);
 	baked->rows.resize(static_cast<size_t>(baked->frames) * baked->slots * 12);
 	float* to = baked->rows.data();
-	const auto writeFrame = [&](const std::vector<Bone>& local, const Standing& at, bool held)
+	DangleSwing swing(rig);
+	using V3 = DangleSwing::V3;
+	baked->dangling.resize(slots.size());
+	for (size_t s = 0; s < slots.size(); ++s)
+		baked->dangling[s] = slots[s].bone >= 0 && static_cast<size_t>(slots[s].bone) < swing.isDangle.size() && swing.isDangle[slots[s].bone];
+	// aims: where each dangle points, as worked out already. joinTo, joinBy: where the loop has them first, and how far
+	// toward it this frame's swing is taken, so the lead in ends where the loop starts.
+	const auto writeFrame = [&](const std::vector<Bone>& local, const Standing& at, bool held, const std::vector<V3>* aims = nullptr,
+		const std::vector<V3>* joinTo = nullptr, float joinBy = 0.f)
 	{
 		ToModel(rig, local, model);
+		if (swing.Any())
+		{
+			if (aims)
+				swing.Rebuild(local, model, [&](size_t d, const V3&, const V3&) { return (*aims)[d]; });
+			else if (joinTo)
+			{
+				std::vector<V3> own;
+				swing.Step(local, model, &own);
+				swing.Rebuild(local, model, [&](size_t d, const V3&, const V3&)
+				{
+					const V3& a = own[d];
+					const V3& b = (*joinTo)[d];
+					return V3{ a[0] + (b[0] - a[0]) * joinBy, a[1] + (b[1] - a[1]) * joinBy, a[2] + (b[2] - a[2]) * joinBy };
+				});
+			}
+			else
+				swing.Step(local, model, nullptr);
+		}
 		const M4 placing = placingOf(at);
 		for (const BoneSlot& slot : slots)
 		{
@@ -3389,13 +4028,73 @@ std::shared_ptr<const BakedAnimation> BakeAnimation(const std::shared_ptr<const 
 					*to++ = m.m[c][r];
 		}
 	};
-	for (const LeadFrame& f : lead)
-		writeFrame(f.local, f.at, f.held);
+
+	// The dangles' loop first, on a swing of its own: worked out three times, and the third laid over the second, so it
+	// joins up where it starts again
+	const uint32_t loop = loopLength;   // its last frame is its first again
+	const size_t n = swing.dangles.size();
+	const bool dangles = swing.Any() && loop > 0;
+	std::vector<V3> second, third;
 	std::vector<Bone> local;
+	if (dangles)
+	{
+		DangleSwing looping(rig);
+		second.resize(static_cast<size_t>(loop) * n);
+		third.resize(second.size());
+		std::vector<V3> aims;
+		for (uint32_t step = 0; step < loop * 3; ++step)
+		{
+			const uint32_t frame = step % loop;
+			SamplePose(rig, clip, frame * clip.frameTime, local);
+			ToModel(rig, local, model);
+			looping.Step(local, model, &aims);
+			if (step >= loop)
+				std::copy(aims.begin(), aims.end(), (step < loop * 2 ? second : third).begin() + static_cast<size_t>(frame) * n);
+		}
+	}
+	const auto loopAims = [&](uint32_t f, std::vector<V3>& out)
+	{
+		out.resize(n);
+		const float w = static_cast<float>(f) / static_cast<float>(loop);
+		for (size_t d = 0; d < n; ++d)
+		{
+			const V3& a = third[static_cast<size_t>(f) * n + d];
+			const V3& b = second[static_cast<size_t>(f) * n + d];
+			out[d] = V3{ a[0] + (b[0] - a[0]) * w, a[1] + (b[1] - a[1]) * w, a[2] + (b[2] - a[2]) * w };
+		}
+	};
+
+	// The lead in, its last half second of swing drawn to where the loop has it
+	std::vector<V3> joinTo;
+	if (dangles)
+		loopAims(loopFrom, joinTo);
+	const size_t joinFrames = std::min<size_t>(lead.size(), 15);
+	for (size_t i = 0; i < lead.size(); ++i)
+	{
+		const LeadFrame& f = lead[i];
+		if (dangles && i + joinFrames >= lead.size())
+		{
+			const float raw = static_cast<float>(i + joinFrames + 1 - lead.size()) / static_cast<float>(joinFrames + 1);
+			writeFrame(f.local, f.at, f.held, nullptr, &joinTo, raw * raw * (3.f - 2.f * raw));
+		}
+		else
+			writeFrame(f.local, f.at, f.held);
+	}
+
+	// The loop, from the frame the lead in went to
+	baked->loopStart = loopFrom * clip.frameTime;
+	std::vector<V3> aims;
 	for (uint32_t frame = 0; frame < clip.frames; ++frame)
 	{
-		SamplePose(rig, clip, frame * clip.frameTime, local);
-		writeFrame(local, standing, holdsNow);
+		const uint32_t f = loop > 0 ? (frame + loopFrom) % loop : frame;
+		SamplePose(rig, clip, f * clip.frameTime, local);
+		if (dangles)
+		{
+			loopAims(f, aims);
+			writeFrame(local, standing, holdsNow, &aims);
+		}
+		else
+			writeFrame(local, standing, holdsNow);
 	}
 	return baked;
 }
@@ -3425,6 +4124,10 @@ static bool MakeSlots(ItemModel& out, const Rig& rig, bool geralt)
 			slots.push_back(BoneSlot{ bone, offset });
 		return entry->second;
 	};
+	// Whether any of a mesh's bones is one of the rig's by name: a mask bound to bones of its own isn't on him at all
+	std::vector<char> meshNamed(out.meshBones.size(), 0);
+	// On him, a bone a modder's export left in (Blender's "Armature") does nothing in the game: its weight goes to the rest
+	std::vector<std::vector<char>> ignored(out.meshBones.size());
 	for (size_t mesh = 0; mesh < out.meshBones.size(); ++mesh)
 	{
 		const MeshBones& bones = out.meshBones[mesh];
@@ -3456,6 +4159,12 @@ static bool MakeSlots(ItemModel& out, const Rig& rig, bool geralt)
 				named[i] = aliased ? 2 : 1;
 			}
 		}
+		meshNamed[mesh] = std::any_of(named.begin(), named.end(), [](char n) { return n != 0; }) ? 1 : 0;
+		ignored[mesh].assign(count, 0);
+		if (geralt)
+			for (size_t i = 0; i < count; ++i)
+				if (!named[i] && Lower(bones.names[i]).rfind("armature", 0) == 0)
+					ignored[mesh][i] = 1;
 		// A bone the rig hasn't got goes with the nearest joint the mesh is bound to by name, never a helper that turns on its own
 		std::vector<int> candidates;
 		for (size_t i = 0; i < count; ++i)
@@ -3587,6 +4296,25 @@ static bool MakeSlots(ItemModel& out, const Rig& rig, bool geralt)
 				continue;
 			}
 		}
+		// A mask the game equips on his head slot, with no skinning to his bones (none, or only bones of its own, which
+		// would leave it by his feet): fastened to his head bone as the slot is, turned 90 degrees in pitch
+		// (player.w2ent's "head" slot)
+		// A component with no skinning attachment is drawn as placed even when its mesh has bones (the heists' masks are
+		// bound to his head bone but placed at the slot: skinned, they'd count his height twice)
+		const bool ownBonesOnly = part.meshBones >= 0 && static_cast<size_t>(part.meshBones) < meshNamed.size() && !meshNamed[part.meshBones];
+		if (geralt && part.onHeadSlot && (part.skinning.empty() || part.meshBones < 0 || ownBonesOnly || part.rigidComponent))
+		{
+			const auto head = byName.find("head");
+			if (head != byName.end())
+			{
+				constexpr float kQuarter = 3.14159265358979f * 0.5f;
+				const int slot = addSlot(head->second, RotateY(kQuarter));
+				part.skinning.assign(part.vertices.size(), SkinVertex{});
+				for (SkinVertex& v : part.skinning)
+					v.bones[0] = static_cast<uint16_t>(slot);
+				continue;
+			}
+		}
 		if (!part.hungOn.empty())
 		{
 			int slot = 0;
@@ -3612,9 +4340,33 @@ static bool MakeSlots(ItemModel& out, const Rig& rig, bool geralt)
 		if (part.skinning.empty() || part.meshBones < 0)
 			continue;
 		const std::vector<int>& map = slotOf[part.meshBones];
+		const std::vector<char>& skip = ignored[part.meshBones];
 		for (SkinVertex& v : part.skinning)
+		{
+			// The weight on a bone that does nothing shared out among the others, if there are others
+			int kept = 0, dropped = 0;
+			for (int k = 0; k < 4; ++k)
+				(v.bones[k] < skip.size() && skip[v.bones[k]] ? dropped : kept) += v.weights[k];
+			if (dropped > 0 && kept > 0)
+			{
+				int total = 0, last = -1;
+				for (int k = 0; k < 4; ++k)
+				{
+					if (v.bones[k] < skip.size() && skip[v.bones[k]])
+						v.weights[k] = 0;
+					else if (v.weights[k] > 0)
+					{
+						v.weights[k] = static_cast<uint8_t>(std::min(255, v.weights[k] * 255 / kept));
+						total += v.weights[k];
+						last = k;
+					}
+				}
+				if (last >= 0)
+					v.weights[last] = static_cast<uint8_t>(std::clamp(v.weights[last] + 255 - total, 0, 255));
+			}
 			for (uint16_t& bone : v.bones)
 				bone = static_cast<uint16_t>(bone < map.size() ? map[bone] : 0);
+		}
 	}
 
 	out.boneSlots = std::make_shared<std::vector<BoneSlot>>(std::move(slots));
@@ -3623,9 +4375,19 @@ static bool MakeSlots(ItemModel& out, const Rig& rig, bool geralt)
 
 static void MakeBoneTable(ItemModel& out, int animation)
 {
-	const auto rigShared = SharedRig();
+	// Spare ones last, and only those the drawn ones don't name already
+	std::vector<std::string> dyngs = out.dyngs;
+	for (const std::string& d : out.spareDyngs)
+		if (std::find(dyngs.begin(), dyngs.end(), d) == dyngs.end())
+			dyngs.push_back(d);
+#ifdef POTP_OVERLAY_TEST
+	for (const std::string& d : dyngs)
+		Log("dyng probe: %s", d.c_str());
+#endif
+	const auto rigShared = GeraltRig(dyngs);
 	if (!rigShared || !MakeSlots(out, *rigShared, true))
 		return;
+	RememberSlotRig(out.boneSlots, rigShared);
 	out.animation = BakeAnimation(out.boneSlots, animation);
 	if (!out.animation)
 		out.animation = BakeAnimation(out.boneSlots, 0);
@@ -3648,7 +4410,7 @@ std::vector<std::string> ItemDyeLooks(const std::string& templateName)
 	{
 		stems.push_back(TemplateStem(worn->second.equipTemplate));
 		for (const auto& variant : worn->second.variants)
-			stems.push_back(TemplateStem(variant.first));
+			stems.push_back(TemplateStem(variant.equip));
 	}
 	std::lock_guard lock(g_dyeLooksMutex);
 	for (const std::string& stem : stems)
@@ -3695,10 +4457,10 @@ bool LoadItemOnGeralt(const std::string& asked, int animation, ItemModel& out)
 		{
 			// Bare: his body under it, as the game's own bare pieces have it. A weapon's just gone.
 			static const std::map<std::string, WornItem> kBare = {
-				{ "armor", { "armor", "items\\bodyparts\\geralt_items\\trunk\\bare\\t_01_mg__body_medalion.w2ent", {}, {} } },
-				{ "pants", { "pants", "items\\bodyparts\\geralt_items\\legs\\bare\\l_01_mg__body_underwear.w2ent", {}, {} } },
-				{ "boots", { "boots", "items\\bodyparts\\geralt_items\\shoes\\bare\\s_01_mg__body.w2ent", {}, {} } },
-				{ "gloves", { "gloves", "items\\bodyparts\\geralt_items\\gloves\\bare\\g_01_mg__body.w2ent", {}, {} } },
+				{ "armor", { "", "armor", "items\\bodyparts\\geralt_items\\trunk\\bare\\t_01_mg__body_medalion.w2ent", {}, {} } },
+				{ "pants", { "", "pants", "items\\bodyparts\\geralt_items\\legs\\bare\\l_01_mg__body_underwear.w2ent", {}, {} } },
+				{ "boots", { "", "boots", "items\\bodyparts\\geralt_items\\shoes\\bare\\s_01_mg__body.w2ent", {}, {} } },
+				{ "gloves", { "", "gloves", "items\\bodyparts\\geralt_items\\gloves\\bare\\g_01_mg__body.w2ent", {}, {} } },
 			};
 			const std::string kind = last.substr(strlen(kWornNothing));
 			const auto bare = kBare.find(kind);
@@ -3726,25 +4488,43 @@ bool LoadItemOnGeralt(const std::string& asked, int animation, ItemModel& out)
 	// Each in the variant that goes with the rest: armour is cut differently with gloves on
 	// In a stance that holds a sword: the silver if that's what's being looked at, else the steel
 	const bool holdSilver = WornCategory(last) == "silversword";
-	struct Piece { std::string name, hungOn; bool inHand = false; };
+	struct Piece { std::string name, hungOn; bool inHand = false, headSlot = false; };
 	std::vector<Piece> templates = {
 		{ "gameplay\\templates\\characters\\player\\player.w2ent", "" },   // the seam at his neck
 		{ "items\\bodyparts\\geralt_items\\heads\\h_01_mg__geralt.w2ent", "" },
 	};
+	// What he has on, by name, for the variants that name what they go with
+	std::set<std::string> wornNames;
+	for (const auto& [category, item] : wearing)
+		wornNames.insert(item->name);
 	for (const auto& [category, item] : wearing)
 	{
+		// The most particular variant that what he has on calls for: one naming items over one listing categories over
+		// one naming a category, and the first of those (a mod's extension before the item's own)
 		std::string use = item->equipTemplate;
-		for (const auto& variant : item->variants)
-			if (wearing.count(variant.second))
+		int best = -1;
+		for (const WornVariant& variant : item->variants)
+		{
+			int asked = 0, met = 0;
+			const auto check = [&](bool ok) { ++asked; met += ok ? 1 : 0; };
+			if (!variant.category.empty())
+				check(wearing.count(variant.category) != 0);
+			for (const std::string& c : variant.categories)
+				check(wearing.count(c) != 0);
+			for (const std::string& n : variant.items)
+				check(wornNames.count(n) != 0);
+			const bool fits = asked > 0 && (variant.all ? met == asked : met > 0);
+			if (fits && variant.Rank() > best)
 			{
-				use = variant.first;
-				break;
+				best = variant.Rank();
+				use = variant.equip;
 			}
+		}
 		const char* hung = category == "steelsword" ? "steel_sword_back" : category == "silversword" ? "silver_sword_back" : category == "crossbow" ? "crossbow_back" : "";
 		const auto dyed = dyes.find(category);
 		if (dyed != dyes.end() && !dyed->second.empty())
 			use += "#" + dyed->second;
-		templates.push_back({ use, hung, category == (holdSilver ? "silversword" : "steelsword") });
+		templates.push_back({ use, hung, category == (holdSilver ? "silversword" : "steelsword"), item->slot == "head" });
 		// A sword's scabbard: the one it's bound to, else the plain one he starts with
 		if (category == "steelsword" || category == "silversword")
 		{
@@ -3765,6 +4545,12 @@ bool LoadItemOnGeralt(const std::string& asked, int animation, ItemModel& out)
 			continue;
 		}
 		out.clothSkipped += piece.clothSkipped;
+		for (const std::string& d : piece.dyngs)
+			if (std::find(out.dyngs.begin(), out.dyngs.end(), d) == out.dyngs.end())
+				out.dyngs.push_back(d);
+		for (const std::string& d : piece.spareDyngs)
+			if (std::find(out.spareDyngs.begin(), out.spareDyngs.end(), d) == out.spareDyngs.end())
+				out.spareDyngs.push_back(d);
 		const int firstBones = static_cast<int>(out.meshBones.size());
 		for (MeshBones& bones : piece.meshBones)
 			out.meshBones.push_back(std::move(bones));
@@ -3783,6 +4569,7 @@ bool LoadItemOnGeralt(const std::string& asked, int animation, ItemModel& out)
 				part.cloth += firstCloth;
 			part.hungOn = worn.hungOn;
 			part.inHand = worn.inHand;
+			part.onHeadSlot = worn.headSlot;
 			out.parts.push_back(std::move(part));
 		}
 	}

@@ -945,463 +945,477 @@
 2116568873||potp_ov_nothing_yet|Nothing here yet.
 2116568874||potp_ov_added_by_mod|Added by a mod
 2116568875||potp_ov_undiscovered_creature|Undiscovered Creature
-2116568876||potp_ov_hint_tilt_pad|Right stick to tilt, [zoom] to enlarge
-2116568877||potp_ov_hint_tilt_mouse|Drag to tilt, [zoom] to enlarge
-2116568878||potp_ov_hint_turn_pad|Right stick to turn, [zoom] to enlarge
-2116568879||potp_ov_hint_turn_mouse|Drag to turn, [zoom] to enlarge
-2116568880||potp_ov_hint_zoom_pad|Right stick to turn, [zoom] or [back] to close
-2116568881||potp_ov_hint_zoom_mouse|Drag to turn, [zoom] or [back] to close
-2116568882||potp_ov_no_model|There's no model of this to show
-2116568883||potp_ov_loading|Loading...
-2116568884||potp_ov_not_in_bestiary|NOT IN YOUR BESTIARY YET
-2116568885||potp_ov_joins_bestiary|It joins your bestiary when you meet it, or read about it. You can show the undiscovered ones in Settings.
-2116568886||potp_ov_works_against|WHAT WORKS AGAINST IT
-2116568887||potp_ov_about_it|ABOUT IT
-2116568888||potp_ov_also_closes|ALSO CLOSES WITH IT
-2116568889||potp_ov_still_to_do|STILL TO DO HERE
-2116568890||potp_ov_nothing_outstanding|Nothing else outstanding.
-2116568891||potp_ov_across_continent|ACROSS THE CONTINENT
-2116568892||potp_ov_by_section|BY SECTION
-2116568893||potp_ov_prompts_automatic|Automatic
-2116568894||potp_ov_prompts_keyboard|Keyboard
-2116568895||potp_ov_controller|Controller
-2116568896||potp_ov_on|On
-2116568897||potp_ov_off|Off
-2116568898||potp_ov_the_window|THE WINDOW
-2116568899||potp_ov_scale|Scale
-2116568900||potp_ov_scale_hint|How big everything in the window is. The text is drawn again at the new size when you let go.
-2116568901||potp_ov_width|Width
-2116568902||potp_ov_width_hint|How much of the screen's width the window takes. The columns share what there is.
-2116568903||potp_ov_height|Height
-2116568904||potp_ov_height_hint|How much of the screen's height the window takes. Taller windows show more of the list at once.
-2116568905||potp_ov_opacity|Opacity
-2116568906||potp_ov_opacity_hint|How solid the window's background is. Lower lets the game show through it.
-2116568907||potp_ov_dim|Dim the Game
-2116568908||potp_ov_dim_hint|How dark the game gets behind the window. At 0% it stays as it is.
-2116568909||potp_ov_position|Position
-2116568910||potp_ov_position_hint|Puts the window back in the middle of the screen. Drag it by the empty part of its top bar to move it.
-2116568911||potp_ov_centre_it|Centre It
-2116568912||potp_ov_controls|CONTROLS
-2116568913||potp_ov_open_key|Open with Key
-2116568914||potp_ov_open_key_hint|The key that opens and closes the window, on top of the radial menu's prompt. Choose this, then press the key you'd like. Esc cancels.
-2116568915||potp_ov_press_a_key|Press a key...
-2116568916||potp_ov_button_prompts|Button Prompts
-2116568917||potp_ov_button_prompts_hint|Which prompts the window shows. Automatic follows whatever you last touched.
-2116568918||potp_ov_controller_hint|The names and symbols the prompts use for your controller's buttons. Automatic follows the controller the game says you're using.
-2116568919||potp_ov_while_open|WHILE IT'S OPEN
-2116568920||potp_ov_pause_game|Pause the Game
-2116568921||potp_ov_pause_game_hint|Stops the world while the window is open. Off, time carries on, but your character still won't take any input.
-2116568922||potp_ov_last_tab|Open on the Last Tab
-2116568923||potp_ov_last_tab_hint|Opens on the tab you were last on. Off, it always opens on Quests.
-2116568924||potp_ov_show_undiscovered|Show Undiscovered Creatures
-2116568925||potp_ov_show_undiscovered_hint|Shows bestiary entries you haven't reached yet, with their pictures and what works against them. They can give away monsters and quests. Off, each shows as an Undiscovered Creature.
-2116568926||potp_ov_show_secret|Show Secret Achievements
-2116568927||potp_ov_show_secret_hint|Shows what the stores keep secret until it's unlocked. They can give away the story. Off, each shows as a Hidden Achievement.
-2116568928||potp_ov_notification_position_hint|Where PotP's notification shows. The window steps aside while you place it.
-2116568929||potp_ov_place_it|Place It
-2116568930||potp_ov_defaults|Defaults
-2116568931||potp_ov_defaults_hint|Puts every setting back as it was.
-2116568932||potp_ov_reset_all|Reset All
-2116568933||potp_ov_items_and_cards_caps|ITEMS AND CARDS
-2116568934||potp_ov_place_notification|PLACE THE NOTIFICATION
-2116568935||potp_ov_place_drag|Drag it, or move it with the arrows, d-pad or left stick.
-2116568936||potp_ov_place_keep|[accept] keeps it, and [back] cancels.
-2116568937||potp_ov_place_game_note|The game's own notification shows at the bottom left. Yours waits for it.
-2116568938||potp_ov_presets_caps|PRESETS
-2116568939||potp_ov_reset_caps|RESET
-2116568940||potp_ov_ng_reset_hint|Clears what's been recorded for New Game+ as soon as you close this window, if it's on.
-2116568941||potp_ov_this_page|This Page
-2116568942||potp_ov_apply|Apply
-2116568943||potp_ov_reset_it|Reset It
-2116568944||potp_ov_preset_hint|Sets this page's settings to the [1] preset.
-2116568945||potp_ov_reset_page_hint|Puts every setting on this page back to the mod's defaults.
-2116568946||potp_ov_status_auto_hint|Goes back to following the game.
-2116568947||potp_ov_status_completed_hint|Counts as done, whatever the game says.
-2116568948||potp_ov_status_ignored_hint|Counts as done, for something you don't mean to do.
-2116568949||potp_ov_status_missed_hint|Counts as missed, whatever the game says.
-2116568950||potp_ov_missable|Missable
-2116568951||potp_ov_missable_hint|Entries you can miss for good. They stay on the Missable tab either way.
-2116568952||potp_ov_completed_hint|Everything you've finished.
-2116568953||potp_ov_ignored_hint|Everything you've marked as not meaning to do.
-2116568954||potp_ov_change_visibility_caps|CHANGE VISIBILITY
-2116568955||potp_ov_visibility_note|What the lists show, on every tab.
-2116568956||potp_ov_shown_caps|SHOWN
-2116568957||potp_ov_hidden_caps|HIDDEN
-2116568958||potp_ov_change_status_caps|CHANGE STATUS
-2116568959||potp_ov_current_caps|CURRENT
-2116568960||potp_ov_up_down|Up / Down
-2116568961||potp_ov_left_right|Left / Right
-2116568962||potp_ov_move|Move
-2116568963||potp_ov_show_hide|Show / Hide
-2116568964||potp_ov_done|Done
-2116568965||potp_ov_cancel|Cancel
-2116568966||potp_ov_change_tab|Change Tab
-2116568967||potp_ov_previous|Previous
-2116568968||potp_ov_next|Next
-2116568969||potp_ov_page|Page
-2116568970||potp_ov_change|Change
-2116568971||potp_ov_choose|Choose
-2116568972||potp_ov_scroll_text|Scroll Text
-2116568973||potp_ov_region|Region
-2116568974||potp_ov_change_status|Change Status
-2116568975||potp_ov_enlarge|Enlarge
-2116568976||potp_ov_expand_collapse|Expand / Collapse
-2116568977||potp_ov_change_visibility|Change Visibility
-2116568978||potp_ov_refresh|Refresh
-2116568979||potp_ov_close|Close
-2116568980||potp_ov_reading|Reading...
-2116568981||potp_ov_no_pack|The achievements' pack isn't there: is the mod installed?
-2116568982||potp_ov_reading_progress|Reading your progress...
-2116568983||potp_ov_waiting_for_game|Waiting for the game...
-2116568984||potp_ov_script_failed|A script call failed, so reading is off. See potp_overlay.log.
-2116568985||potp_ov_no_scripts|Progress on the Path's scripts aren't in the game: is the mod installed?
-2116568986||potp_ov_reading_stopped|Reading stopped partway.
-2116568987||potp_ov_wrong_build|This isn't a game build the overlay can read, so it can't show your progress.
-2116568988||potp_ov_no_tick|The script tick couldn't be hooked.
-2116568989||potp_ov_urgent_quest|Point of no return in progress: '[1]'
-2116568990||potp_ov_still_open|Still open: [1]
-2116568991||potp_ov_scroll_details|Scroll Details
-2116568992||potp_ov_understood|Understood
-2116568993||potp_ov_also_in_group|ALSO IN THIS GROUP
-2116568994||potp_ov_in_this_group|IN THIS GROUP
-2116568995||potp_ov_model_pin|Pin
-2116568996||potp_ov_model_unpin|Unpin
-2116568997||potp_ov_model_pinned|Pinned
-2116568998||potp_ov_anim_determined|Determined
-2116568999||potp_ov_anim_proud|Proud
-2116569000||potp_ov_anim_aggressive|Aggressive
-2116569001||potp_ov_anim_cheerful|Cheerful
-2116569002||potp_ov_anim_bored|Bored
-2116569003||potp_ov_anim_sad|Sad
-2116569004||potp_ov_anim_exhausted|Exhausted
-2116569005||potp_ov_anim_ready|Ready to Fight
-2116569006||potp_ov_ward_open|Wardrobe
-2116569007||potp_ov_ward_title|WARDROBE
-2116569008||potp_ov_ward_note|Previewing only. Nothing here changes what Geralt has equipped.
-2116569009||potp_ov_ward_armour|ARMOUR
-2116569010||potp_ov_ward_trousers|TROUSERS
-2116569011||potp_ov_ward_boots|BOOTS
-2116569012||potp_ov_ward_gloves|GLOVES
-2116569013||potp_ov_ward_steel|STEEL
-2116569014||potp_ov_ward_silver|SILVER
-2116569015||potp_ov_ward_crossbow|CROSSBOW
-2116569016||potp_ov_ward_outfits|SAVED OUTFITS
-2116569017||potp_ov_ward_save|Save Outfit
-2116569018||potp_ov_ward_no_outfits|None saved yet
-2116569019||potp_ov_ward_outfit_name|Outfit [1]
-2116569020||potp_ov_ward_collected|Collected
-2116569021||potp_ov_ward_not_collected|Not collected
-2116569022||potp_ov_ward_starting|Starting gear
-2116569023||potp_ov_ward_equipped|Equipped
-2116569024||potp_ov_ward_category|Category
-2116569025||potp_ov_ward_try_on|Try On
-2116569026||potp_ov_ward_load|Load
-2116569027||potp_ov_ward_delete|Delete
-2116569028||potp_ov_ward_clear|Clear Pins
-2116569029||potp_ov_ward_stance|Stance
-2116569030||potp_ov_ward_back|Back to Items
-2116569031||potp_ov_ward_empty|Nothing of this kind
-2116569032||potp_ov_ward_hint_mouse|Drag to turn, wheel to zoom
-2116569033||potp_ov_ward_hint_pad|Right stick to turn and zoom
-2116569034||potp_ov_item_stats|STATS
-2116569035||potp_ov_item_slots|Enhancement slots: [1]
-2116569036||potp_ov_tab_kills_caps|KILLS
-2116569037||potp_ov_tab_kills|Kills
-2116569038||potp_ov_kill_page_unique|UNIQUE
-2116569039||potp_ov_kill_page_generic|MONSTERS AND MEN
-2116569040||potp_ov_kill_col_name|NAME
-2116569041||potp_ov_kill_col_last|LAST KILL
-2116569042||potp_ov_kill_col_share|SHARE
-2116569043||potp_ov_kill_col_slain|SLAIN
-2116569044||potp_ov_kill_why_boss|Boss
-2116569045||potp_ov_kill_why_contract|Contract
-2116569046||potp_ov_kill_why_named|Named foe
-2116569047||potp_ov_kill_sum_unique|[1] unique foes slain.
-2116569048||potp_ov_kill_sum_generic|[1] kinds slain.
-2116569049||potp_ov_kill_none_unique|No unique foe has fallen yet
-2116569050||potp_ov_kill_none_generic|Nothing has been slain yet
-2116569051||potp_ov_kill_none_kind|Nothing of this kind has been slain yet
-2116569052||potp_ov_kill_none_note|Counting starts with this version of the mod. The game keeps no record of earlier kills.
-2116569053||potp_ov_kill_reading|Reading the kill list
-2116569054||potp_ov_kill_page|Page
-2116569055||potp_ov_kill_sort_count|Sort: Most Slain
-2116569056||potp_ov_kill_sort_name|Sort: Name
-2116569057||potp_ov_kill_kind_all|All Kinds
-2116569058||potp_ov_kill_place_unknown|the wilds
-2116569059||potp_ov_kill_unnamed|Unnamed foe
-2116569060||potp_ov_kill_cat_0|Unknown
-2116569061||potp_ov_kill_cat_1|Relicts
-2116569062||potp_ov_kill_cat_2|Necrophages
-2116569063||potp_ov_kill_cat_3|Cursed Ones
-2116569064||potp_ov_kill_cat_4|Beasts
-2116569065||potp_ov_kill_cat_5|Insectoids
-2116569066||potp_ov_kill_cat_6|Vampires
-2116569067||potp_ov_kill_cat_7|Specters
-2116569068||potp_ov_kill_cat_8|Draconids
-2116569069||potp_ov_kill_cat_9|Hybrids
-2116569070||potp_ov_kill_cat_10|Ogroids
-2116569071||potp_ov_kill_cat_11|Humans
-2116569072||potp_ov_kill_cat_12|Others
-2116569073||potp_ov_kill_cat_13|Elementa
-2116569074||potp_ov_kill_cat_14|Animals
-2116569075||potp_ov_kill_how_with|Killed with [1]
-2116569076||potp_ov_kill_how_burning|Burned to death
-2116569077||potp_ov_kill_how_bleeding|Bled out
-2116569078||potp_ov_kill_how_poison|Died of poison
-2116569079||potp_ov_kill_how_charmed|Cut down by a charmed ally
-2116569080||potp_ov_kill_how_fists|Killed with bare fists
-2116569081||potp_ov_kill_how_crossbow|Killed with a crossbow
-2116569082||potp_ov_kill_sign_aard|Aard
-2116569083||potp_ov_kill_sign_yrden|Yrden
-2116569084||potp_ov_kill_sign_igni|Igni
-2116569085||potp_ov_kill_sign_quen|Quen
-2116569086||potp_ov_kill_sign_axii|Axii
-2116569087||potp_ov_kill_line_m_1|Another [1] went back to the mud in [2].
-2116569088||potp_ov_kill_line_m_2|One less [1] to foul the air of [2].
-2116569089||potp_ov_kill_line_m_3|Another [1] found out what a witcher is, in [2].
-2116569090||potp_ov_kill_line_m_4|[2] is short one [1] tonight.
-2116569091||potp_ov_kill_line_m_5|One [1] fewer for the folk of [2] to fear.
-2116569092||potp_ov_kill_line_m_6|Another [1] learned why witchers get paid, in [2].
-2116569093||potp_ov_kill_line_m_7|Nothing left of that [1] but a story to tell in [2].
-2116569094||potp_ov_kill_line_m_8|One more [1] for the crows of [2].
-2116569095||potp_ov_kill_line_m_9|[2] has one [1] fewer to whisper about.
-2116569096||potp_ov_kill_line_m_10|Another [1] won't see the sun rise over [2].
-2116569097||potp_ov_kill_line_m_11|A [1] went hunting in [2] and found a witcher instead.
-2116569098||potp_ov_kill_line_m_12|Silver did its work on a [1] in [2].
-2116569099||potp_ov_kill_line_m_13|One more [1] the bards of [2] won't sing about.
-2116569100||potp_ov_kill_line_m_14|A [1] in [2] made its last mistake.
-2116569101||potp_ov_kill_line_m_15|Somewhere in [2], a [1] lies where it fell.
-2116569102||potp_ov_kill_line_m_16|One [1] fewer haunting the wilds of [2].
-2116569103||potp_ov_kill_line_m_17|The folk of [2] can thank a witcher for one less [1].
-2116569104||potp_ov_kill_line_m_18|Another [1] crossed the wrong path in [2].
-2116569105||potp_ov_kill_line_m_19|That [1] in [2] won't be needing its lair any more.
-2116569106||potp_ov_kill_line_m_20|One less [1] for the herbalists of [2] to warn about.
-2116569107||potp_ov_kill_line_m_21|Another [1] ended its days in [2].
-2116569108||potp_ov_kill_line_m_22|A [1] lunged in [2]. It was the last thing it did.
-2116569109||potp_ov_kill_line_m_23|The [1] in [2] got a lesson in silver.
-2116569110||potp_ov_kill_line_m_24|Another [1] left for the flies of [2].
-2116569111||potp_ov_kill_line_m_25|[2] can breathe a little easier: one [1] down.
-2116569112||potp_ov_kill_line_m_26|A [1] in [2] picked a fight it couldn't finish.
-2116569113||potp_ov_kill_line_m_27|That [1] won't trouble the villages of [2] again.
-2116569114||potp_ov_kill_line_m_28|Another [1] hunted down in [2].
-2116569115||potp_ov_kill_line_m_29|One [1] fewer between the travellers of [2] and home.
-2116569116||potp_ov_kill_line_m_30|A [1] in [2] met a blade it couldn't outrun.
-2116569117||potp_ov_kill_line_h_1|One less [1] on the roads of [2].
-2116569118||potp_ov_kill_line_h_2|[2] is short one [1] tonight.
-2116569119||potp_ov_kill_line_h_3|Another [1] picked the wrong witcher in [2].
-2116569120||potp_ov_kill_line_h_4|One more [1] who should have walked away, in [2].
-2116569121||potp_ov_kill_line_h_5|Word from [2]: one [1] fewer.
-2116569122||potp_ov_kill_line_h_6|Another [1] drew steel too quickly in [2].
-2116569123||potp_ov_kill_line_h_7|A [1] in [2] should have kept walking.
-2116569124||potp_ov_kill_line_h_8|Another [1] won't be going home from [2].
-2116569125||potp_ov_kill_line_h_9|A [1] in [2] took a witcher for an easy mark.
-2116569126||potp_ov_kill_line_h_10|[2] lost a [1], and few will mourn.
-2116569127||potp_ov_kill_line_h_11|Another [1] learned the hard way in [2].
-2116569128||potp_ov_kill_line_h_12|A [1] reached for a blade in [2]. Bad idea.
-2116569129||potp_ov_kill_line_h_13|One more [1] who wouldn't listen, in [2].
-2116569130||potp_ov_kill_line_h_14|The crows of [2] have another [1] to pick at.
-2116569131||potp_ov_kill_line_h_15|A [1] in [2] ran out of luck and road.
-2116569132||potp_ov_kill_line_h_16|Another [1] bled out in the mud of [2].
-2116569133||potp_ov_kill_line_h_17|One fewer [1] to bar the way in [2].
-2116569134||potp_ov_kill_line_h_18|A [1] in [2] chose steel over words.
-2116569135||potp_ov_kill_line_h_19|Another [1] won't be drinking in the taverns of [2].
-2116569136||potp_ov_kill_line_h_20|A [1] in [2] never saw the second blow.
-2116569137||potp_ov_kill_line_h_21|Another [1] picked a fight in [2] and lost it.
-2116569138||potp_ov_kill_line_h_22|One more [1] for the gravediggers of [2].
-2116569139||potp_ov_kill_line_h_23|A [1] in [2] won't be telling this story.
-2116569140||potp_ov_kill_line_h_24|[2] buried another [1].
-2116569141||potp_ov_kill_line_h_25|Another [1] thought numbers would be enough, in [2].
-2116569142||potp_ov_kill_line_h_26|A [1] in [2] drew on the wrong stranger.
-2116569143||potp_ov_kill_line_h_27|One [1] fewer to trouble the honest folk of [2].
-2116569144||potp_ov_kill_line_h_28|Another [1] stayed in [2] for good.
-2116569145||potp_ov_kill_line_h_29|A [1] in [2] found out what mutations are for.
-2116569146||potp_ov_kill_line_h_30|Another [1] made a poor choice of enemy in [2].
-2116569147||potp_ov_kill_line_u_1|[1] will trouble [2] no more.
-2116569148||potp_ov_kill_line_u_2|[1] fell at last in [2].
-2116569149||potp_ov_kill_line_u_3|The tale of [1] ended in [2].
-2116569150||potp_ov_kill_line_u_4|[1] met a witcher in [2], and that was that.
-2116569151||potp_ov_kill_line_u_5|[1] made a last stand in [2].
-2116569152||potp_ov_kill_line_u_6|[2] sleeps easier now [1] is gone.
-2116569153||potp_ov_kill_line_u_7|[1] breathed their last in [2].
-2116569154||potp_ov_kill_line_u_8|[1]'s story ended in [2], on a witcher's terms.
-2116569155||potp_ov_kill_line_u_9|[2] will remember the day [1] fell.
-2116569156||potp_ov_kill_line_u_10|[1] is gone, and [2] is quieter for it.
-2116569157||potp_ov_kill_line_u_11|In [2], [1] finally met their match.
-2116569158||potp_ov_kill_line_u_12|[1] won't be seen in [2] again.
-2116569159||potp_ov_kill_line_u_13|[1] fought hard in [2]. Not hard enough.
-2116569160||potp_ov_kill_line_u_14|The bards of [2] will have a verse about [1]'s end.
-2116569161||potp_ov_kill_line_u_15|[1] made one mistake in [2]: standing in the way.
-2116569162||potp_ov_kill_line_u_16|[1] reached the end of the road in [2].
-2116569163||potp_ov_kill_line_u_17|[2] saw the last of [1].
-2116569164||potp_ov_kill_line_u_18|[1] fell in [2], and the world moved on.
-2116569165||potp_ov_kill_line_u_19|No more will [2] hear of [1].
-2116569166||potp_ov_kill_line_u_20|[1] lost a final fight in [2].
-2116569167||potp_ov_kill_line_u_21|A blade settled things with [1] in [2].
-2116569168||potp_ov_kill_line_u_22|[1] went down fighting in [2].
-2116569169||potp_ov_kill_line_u_23|The last anyone saw of [1] was in [2].
-2116569170||potp_ov_kill_line_u_24|[1] had a reckoning coming. It came in [2].
-2116569171||potp_ov_kill_line_u_25|[1] belongs to the tales of [2] now.
-2116569172||potp_ov_kill_line_u_26|Whatever [1] was after, it ended in [2].
-2116569173||potp_ov_kill_line_u_27|[2] can strike [1] off its list of worries.
-2116569174||potp_ov_kill_line_u_28|[1] wasn't walking away from [2].
-2116569175||potp_ov_kill_line_u_29|All that's left of [1] is a tale told in [2].
-2116569176||potp_ov_kill_line_u_30|[1] crossed paths with a witcher in [2]. Only one walked on.
-2116569177||potp_ov_kill_line_c_1|The [1] will trouble [2] no more.
-2116569178||potp_ov_kill_line_c_2|The [1] fell at last in [2].
-2116569179||potp_ov_kill_line_c_3|A contract closed in [2]: the [1] is dead.
-2116569180||potp_ov_kill_line_c_4|The [1] met a witcher in [2], and that was that.
-2116569181||potp_ov_kill_line_c_5|The [1] made a last stand in [2].
-2116569182||potp_ov_kill_line_c_6|[2] sleeps easier now the [1] is gone.
-2116569183||potp_ov_kill_line_c_7|Contract done in [2]: the [1] won't be back.
-2116569184||potp_ov_kill_line_c_8|The [1] of [2] has hunted its last.
-2116569185||potp_ov_kill_line_c_9|The notice boards of [2] can take down the [1].
-2116569186||potp_ov_kill_line_c_10|Coin earned in [2]: the [1] is no more.
-2116569187||potp_ov_kill_line_c_11|The [1] was a big problem for [2]. Was.
-2116569188||potp_ov_kill_line_c_12|Somebody in [2] owes a witcher for the [1].
-2116569189||potp_ov_kill_line_c_13|The [1] in [2] met silver, and silver won.
-2116569190||potp_ov_kill_line_c_14|The [1] is dead, and [2] can rest.
-2116569191||potp_ov_kill_line_c_15|The [1] terrorised [2] for the last time.
-2116569192||potp_ov_kill_line_c_16|Tracked and slain in [2]: the [1].
-2116569193||potp_ov_kill_line_c_17|The [1] of [2] went the way of all monsters.
-2116569194||potp_ov_kill_line_c_18|Job finished in [2]: the [1] lies dead.
-2116569195||potp_ov_kill_line_c_19|The [1] put up a fight in [2]. It lost.
-2116569196||potp_ov_kill_line_c_20|The [1] won't stalk [2] again.
-2116569197||potp_ov_kill_line_c_21|The [1] picked [2] for its hunting ground. Poor choice.
-2116569198||potp_ov_kill_line_c_22|Paid in full: the [1] of [2] is dead.
-2116569199||potp_ov_kill_line_c_23|The [1] gave [2] nightmares. Not any more.
-2116569200||potp_ov_kill_line_c_24|The [1] of [2] was worth every crown.
-2116569201||potp_ov_kill_line_c_25|The [1] had a price on its head in [2]. It's been paid.
-2116569202||potp_ov_kill_line_c_26|Word from [2]: the [1] is finally dead.
-2116569203||potp_ov_kill_line_c_27|The [1] fell in [2], and the reward was collected.
-2116569204||potp_ov_kill_line_c_28|Nobody in [2] has to fear the [1] now.
-2116569205||potp_ov_kill_line_c_29|The [1] was the talk of [2]. Now it's a trophy.
-2116569206||potp_ov_kill_line_c_30|A witcher came to [2] for the [1], and got it.
-2116569207||potp_ov_ward_dye|Dye
-2116569208||potp_ov_ward_dye_default|Undyed
-2116569209||potp_ov_herald_event|NEW EVENT AVAILABLE
-2116569210||potp_ov_herald_event_sub|In [1]. Take a look at the World Map to find it.
-2116569211||potp_ov_herald_update|PROGRESS ON THE PATH UPDATED
-2116569212||potp_ov_herald_update_head|Now on version [1]
-2116569213||potp_ov_herald_install_head|Thank you for installing
-2116569214||potp_ov_herald_install_sub|Open it from the radial menu, or with the key you choose in its Settings tab.
-2116569215||potp_ov_herald_ngplus_head|New Game Plus
-2116569216||potp_ov_herald_content_head|Your tracked content has changed
-2116569217||potp_ov_tour_offer_title|New to Progress on the Path?
-2116569218||potp_ov_tour_offer_body|Take a short tour of what's here. It only takes a minute, and you can start it again from Settings.
-2116569219||potp_ov_tour_offer_yes|Take the Tour
-2116569220||potp_ov_tour_offer_no|Not Now
-2116569221||potp_ov_tour_next|Next
-2116569222||potp_ov_tour_back|Back
-2116569223||potp_ov_tour_finish|Finish
-2116569224||potp_ov_tour_skip|Skip
-2116569225||potp_ov_tour_step|Step [1] of [2]
-2116569226||potp_ov_tour_setting|Guided Tour
-2116569227||potp_ov_tour_setting_hint|A short walk through every tab. It shows you the same screens you use, and changes nothing.
-2116569228||potp_ov_tour_setting_button|Start
-2116569229||potp_ov_tour_progress|Your Progress
-2116569230||potp_ov_tour_progress_body|Everything you've finished across the whole game, out of everything the mod tracks. Achievements and kills have their own tabs and don't count here.
-2116569231||potp_ov_tour_tabs|The Tabs
-2116569232||potp_ov_tour_tabs_body|Each tab is one part of the game. Move between them with [prev] and [next], or click one.
-2116569233||potp_ov_tour_regions|Regions
-2116569234||potp_ov_tour_regions_body|Narrow a tab down to one part of the world with [left] and [right].
-2116569235||potp_ov_tour_list|The List
-2116569236||potp_ov_tour_list_body|Everything in this tab, in groups. Move with [updown], and open or close a group with [toggle].
-2116569237||potp_ov_tour_detail|The Details
-2116569238||potp_ov_tour_detail_body|What the selected entry is, what it needs and what's left to do on it.
-2116569239||potp_ov_tour_hints|The Prompts
-2116569240||potp_ov_tour_hints_body|Along the bottom are the controls for the screen you're on, for the keyboard or the controller, whichever you're using. Click one to use it. [refresh] reads your progress from the game again.
-2116569241||potp_ov_tour_missable|Missable
-2116569242||potp_ov_tour_missable_body|Things you can lose for good, grouped by the quest that closes them. Check here before you go on with the story.
-2116569243||potp_ov_tour_items|Items
-2116569244||potp_ov_tour_items_body|Each item's own model. Drag it or use the right stick to turn it, and [autoturn] sets it turning by itself. Its stats are on the right.
-2116569245||potp_ov_tour_wardrobe|The Wardrobe
-2116569246||potp_ov_tour_wardrobe_body|On the Items tab, [wardrobe] opens the wardrobe, where you can dress Geralt in anything. It's only a preview, so what he has equipped never changes. Here's how it works.
-2116569247||potp_ov_tour_gwent|Gwent Cards
-2116569248||potp_ov_tour_gwent_body|Every card as it looks in the game, with where to win it.
-2116569249||potp_ov_tour_bestiary|Bestiary
-2116569250||potp_ov_tour_bestiary_body|Every creature, with its journal entry and what works against it. With Live Bestiary on in Settings, each stands in its own idle, and those that pass for people turn from one form into the other. Scroll its entry with [left] and [right].
-2116569251||potp_ov_tour_achievements|Achievements
-2116569252||potp_ov_tour_achievements_body|Your achievements, and how far along each one is on this save.
-2116569253||potp_ov_tour_kills|Kills
-2116569254||potp_ov_tour_kills_body|Everything Geralt has killed, by name. [left] and [right] go between unique foes and everything else, [save] sorts by name or by count, and [kind] shows one kind of creature.
-2116569255||potp_ov_tour_settings|Settings: The Window
-2116569256||potp_ov_tour_settings_body|Settings has pages along the top: go between them with [left] and [right]. This one sets the window's size and look and how you control it. Move to a setting, or point at it, to see what it does in the box below.
-2116569257||potp_ov_tour_done|That's Everything
-2116569258||potp_ov_tour_done_body|You can take this tour again from Settings. Good hunting.
-2116569259||potp_ov_item_set|SET BONUS
-2116569260||potp_ov_item_set_worn|[1] of [2] worn
-2116569261||potp_ov_item_set_pieces|[1] pieces
-2116569262||potp_ov_cloth_sim|Cloth Simulation
-2116569263||potp_ov_cloth_sim_hint|Lets capes, coat tails and other cloth on the models move as they do in the game. Off, they hold still and use a little less of your processor. It changes with the next model that's shown.
-2116569264||potp_ov_ward_nothing|Nothing
-2116569265||potp_ov_tour_ward_list|Trying Things On
-2116569266||potp_ov_tour_ward_list_body|Pick a kind along the top with [prev] and [next], then go down its list. Geralt puts on whatever you're on, and Nothing at the bottom takes that piece off.
-2116569267||potp_ov_tour_ward_view|Seeing Him
-2116569268||potp_ov_tour_ward_view_body|Drag him or use the right stick to turn him, and the wheel or the right stick to zoom. Left and Right change his stance, and his cloth moves with him.
-2116569269||potp_ov_tour_ward_dyes|Dyes
-2116569270||potp_ov_tour_ward_dyes_body|School armour can take dyes. When a piece can, the colours show down this side. Change them with [left] and [right], or click one.
-2116569271||potp_ov_tour_ward_cards|Pinning
-2116569272||potp_ov_tour_ward_cards_body|[accept] pins a piece, so it stays on while you try others. These cards show what he has on, with pinned pieces lit up. [clear] clears the pins.
-2116569273||potp_ov_tour_ward_outfits|Saved Outfits
-2116569274||potp_ov_tour_ward_outfits_body|[save] saves what he has on as an outfit. Go down to one to try it, [accept] to load it, and [clear] deletes it.
-2116569275||potp_ov_ward_not_tracked|Not tracked
-2116569276||potp_ov_update_key|Full Update Key
-2116569277||potp_ov_pad_cross|Cross
-2116569278||potp_ov_pad_circle|Circle
-2116569279||potp_ov_pad_square|Square
-2116569280||potp_ov_pad_triangle|Triangle
-2116569281||potp_ov_update_key_hint|The key that runs a full update, if the mod's Via Hotkey setting is on. Choose this, then press the key you'd like. Esc cancels.
-2116569282||potp_ov_live_bestiary|Live Bestiary
-2116569283||potp_ov_live_bestiary_hint|Shows each creature in the Bestiary as the game's own model, standing in one of its idles, in place of the painting. Off, the Bestiary shows the paintings, as the game's does.
-2116569284||potp_ov_hint_model_zoom_pad|Right stick to turn, [left] and [right] to zoom, [zoom] or [back] to close
-2116569285||potp_ov_hint_model_zoom_mouse|Drag to turn, scroll or [left] and [right] to zoom, [zoom] or [back] to close
-2116569286||potp_ov_hdr_caps|HDR
-2116569287||potp_ov_hdr_match|Match the Game
-2116569288||potp_ov_hdr_match_hint|With HDR on in the game, the window is as bright as the game's own menus, from its Paper White setting. Off, it uses HDR Brightness below. Nothing changes without HDR.
-2116569289||potp_ov_hdr_brightness|HDR Brightness
-2116569290||potp_ov_hdr_brightness_hint|How bright the window's white is with HDR on, in nits, when Match the Game is off. Nothing changes without HDR.
-2116569291||potp_ov_nits_format|%.0f nits
-2116569292||potp_ov_herald_achievement|ACHIEVEMENT UNLOCKED
-2116569293||potp_ov_custom_crowns|[1] crowns
-2116569294||potp_ov_custom_experience|[1] experience
-2116569295||potp_ov_custom_item|[2] x[1]
-2116569296||potp_ov_custom_reward_line|Reward: [1]
-2116569297||potp_ov_custom_reward_head|REWARD
-2116569298||potp_ov_custom_crown|[1] crown
-2116569299||potp_ov_custom_problems|Some custom achievements couldn't be read ([1]). The overlay's log, PotpOverlay.log, says why.
-2116569300||potp_ov_form_changes_in|Transforms in [1]
-2116569301||potp_ov_form_changing|Transforming...
-2116569302||potp_ov_form_returns_in|Changes back in [1]
-2116569303||potp_ov_form_returning|Changing back...
-2116569304||potp_ov_more_other_regions|And [1] more in other regions.
-2116569305||potp_ov_auto_turn_on|Auto-Turn: On
-2116569306||potp_ov_auto_turn_off|Auto-Turn: Off
-2116569307||potp_ov_help_caps|HELP
-2116569308||potp_ov_tour_status|Setting a Status
-2116569309||potp_ov_tour_status_body|[status] sets the selected entry's status by hand: for something the game didn't count, or something you'd rather not see counted. Choose with [updown] and [accept], or leave it as it was with [back].
-2116569310||potp_ov_tour_visibility|What Shows
-2116569311||potp_ov_tour_visibility_body|[vis] chooses what the lists show. Hide what you've completed, what you've ignored or what's missable, in every tab at once.
-2116569312||potp_ov_tour_world|World Map
-2116569313||potp_ov_tour_world_body|Every place the world map marks, by region: monster nests, treasure, places of power and the rest, as you find and clear them.
-2116569314||potp_ov_tour_enlarge|Enlarging It
-2116569315||potp_ov_tour_enlarge_body|[zoom] shows the model as large as the screen. Zoom in and out with [left] and [right] or the mouse wheel, and close it with [zoom] or [back].
-2116569316||potp_ov_tour_settings_general|Settings: General
-2116569317||potp_ov_tour_settings_general_body|When the mod checks your progress, the hotkey for a full update, and the map pins it puts on the random events.
-2116569318||potp_ov_tour_settings_notify|Settings: Notifications
-2116569319||potp_ov_tour_settings_notify_body|Which notifications show and how they look. The presets set them all at once, and Place It moves where they appear on the screen.
-2116569320||potp_ov_colour_swatches|Swatches
-2116569321||potp_ov_colour_custom|Your Own
-2116569322||potp_ov_colour_hue|Hue
-2116569323||potp_ov_colour_saturation|Saturation
-2116569324||potp_ov_colour_brightness|Brightness
-2116569325||potp_ov_colour_current|Current
-2116569326||potp_ov_colour_new|New
-2116569327||potp_ov_colour_default|Default
-2116569328||potp_ov_key_arrows|Arrows
-2116569329||potp_ov_kill_sum_unique_one|[1] unique foe slain.
-2116569330||potp_ov_kill_sum_generic_one|[1] kind slain.
-2116569331||potp_ov_kill_sum_total|[1] kills in all.
-2116569332||potp_ov_kill_sum_total_one|[1] kill in all.
+2116568876||potp_ov_hint_tilt_pad|Right stick to tilt, hold [zoom] to enlarge
+2116568877||potp_ov_hint_tilt_mouse|Drag to tilt, hold [zoom] to enlarge
+2116568878||potp_ov_hint_turn_pad|Right stick to turn, hold [zoom] to enlarge
+2116568879||potp_ov_hint_turn_mouse|Drag to turn, hold [zoom] to enlarge
+2116568880||potp_ov_no_model|There's no model of this to show
+2116568881||potp_ov_loading|Loading...
+2116568882||potp_ov_not_in_bestiary|NOT IN YOUR BESTIARY YET
+2116568883||potp_ov_joins_bestiary|It joins your bestiary when you meet it, or read about it. You can show the undiscovered ones in Settings.
+2116568884||potp_ov_works_against|WHAT WORKS AGAINST IT
+2116568885||potp_ov_about_it|ABOUT IT
+2116568886||potp_ov_also_closes|ALSO CLOSES WITH IT
+2116568887||potp_ov_still_to_do|STILL TO DO HERE
+2116568888||potp_ov_nothing_outstanding|Nothing else outstanding.
+2116568889||potp_ov_across_continent|ACROSS THE CONTINENT
+2116568890||potp_ov_by_section|BY SECTION
+2116568891||potp_ov_prompts_automatic|Automatic
+2116568892||potp_ov_prompts_keyboard|Keyboard
+2116568893||potp_ov_controller|Controller
+2116568894||potp_ov_on|On
+2116568895||potp_ov_off|Off
+2116568896||potp_ov_the_window|THE WINDOW
+2116568897||potp_ov_scale|Scale
+2116568898||potp_ov_scale_hint|How big everything in the window is. The text is drawn again at the new size when you let go.
+2116568899||potp_ov_width|Width
+2116568900||potp_ov_width_hint|How much of the screen's width the window takes. The columns share what there is.
+2116568901||potp_ov_height|Height
+2116568902||potp_ov_height_hint|How much of the screen's height the window takes. Taller windows show more of the list at once.
+2116568903||potp_ov_opacity|Opacity
+2116568904||potp_ov_opacity_hint|How solid the window's background is. Lower lets the game show through it.
+2116568905||potp_ov_dim|Dim the Game
+2116568906||potp_ov_dim_hint|How dark the game gets behind the window. At 0% it stays as it is.
+2116568907||potp_ov_position|Position
+2116568908||potp_ov_position_hint|Puts the window back in the middle of the screen. Drag it by the empty part of its top bar to move it.
+2116568909||potp_ov_centre_it|Centre It
+2116568910||potp_ov_controls|CONTROLS
+2116568911||potp_ov_open_key|Open with Key
+2116568912||potp_ov_open_key_hint|The key that opens and closes the window, on top of the radial menu's prompt. Choose this, then press the key you'd like. Esc cancels.
+2116568913||potp_ov_press_a_key|Press a key...
+2116568914||potp_ov_button_prompts|Button Prompts
+2116568915||potp_ov_button_prompts_hint|Which prompts the window shows. Automatic follows whatever you last touched.
+2116568916||potp_ov_controller_hint|The names and symbols the prompts use for your controller's buttons. Automatic follows the controller the game says you're using.
+2116568917||potp_ov_while_open|WHILE IT'S OPEN
+2116568918||potp_ov_pause_game|Pause the Game
+2116568919||potp_ov_pause_game_hint|Stops the world while the window is open. Off, time carries on, but your character still won't take any input.
+2116568920||potp_ov_last_tab|Open on the Last Tab
+2116568921||potp_ov_last_tab_hint|Opens on the tab you were last on. Off, it always opens on Quests.
+2116568922||potp_ov_show_undiscovered|Show Undiscovered Creatures
+2116568923||potp_ov_show_undiscovered_hint|Shows bestiary entries you haven't reached yet, with their pictures and what works against them. They can give away monsters and quests. Off, each shows as an Undiscovered Creature.
+2116568924||potp_ov_show_secret|Show Secret Achievements
+2116568925||potp_ov_show_secret_hint|Shows what the stores keep secret until it's unlocked. They can give away the story. Off, each shows as a Hidden Achievement.
+2116568926||potp_ov_notification_position_hint|Where PotP's notification shows. The window steps aside while you place it.
+2116568927||potp_ov_place_it|Place It
+2116568928||potp_ov_defaults|Defaults
+2116568929||potp_ov_defaults_hint|Puts every setting back as it was.
+2116568930||potp_ov_reset_all|Reset All
+2116568931||potp_ov_items_and_cards_caps|ITEMS AND CARDS
+2116568932||potp_ov_place_notification|PLACE THE NOTIFICATION
+2116568933||potp_ov_place_drag|Drag it, or move it with the arrows, d-pad or left stick.
+2116568934||potp_ov_place_keep|[accept] keeps it, and [back] cancels.
+2116568935||potp_ov_place_game_note|The game's own notification shows at the bottom left. Yours waits for it.
+2116568936||potp_ov_presets_caps|PRESETS
+2116568937||potp_ov_reset_caps|RESET
+2116568938||potp_ov_ng_reset_hint|Clears what's been recorded for New Game+ as soon as you close this window, if it's on.
+2116568939||potp_ov_this_page|This Page
+2116568940||potp_ov_apply|Apply
+2116568941||potp_ov_reset_it|Reset It
+2116568942||potp_ov_preset_hint|Sets this page's settings to the [1] preset.
+2116568943||potp_ov_reset_page_hint|Puts every setting on this page back to the mod's defaults.
+2116568944||potp_ov_status_auto_hint|Goes back to following the game.
+2116568945||potp_ov_status_completed_hint|Counts as done, whatever the game says.
+2116568946||potp_ov_status_ignored_hint|Counts as done, for something you don't mean to do.
+2116568947||potp_ov_status_missed_hint|Counts as missed, whatever the game says.
+2116568948||potp_ov_missable|Missable
+2116568949||potp_ov_missable_hint|Entries you can miss for good. They stay on the Missable tab either way.
+2116568950||potp_ov_completed_hint|Everything you've finished.
+2116568951||potp_ov_ignored_hint|Everything you've marked as not meaning to do.
+2116568952||potp_ov_change_visibility_caps|CHANGE VISIBILITY
+2116568953||potp_ov_visibility_note|What the lists show, on every tab.
+2116568954||potp_ov_shown_caps|SHOWN
+2116568955||potp_ov_hidden_caps|HIDDEN
+2116568956||potp_ov_change_status_caps|CHANGE STATUS
+2116568957||potp_ov_current_caps|CURRENT
+2116568958||potp_ov_up_down|Up / Down
+2116568959||potp_ov_left_right|Left / Right
+2116568960||potp_ov_move|Move
+2116568961||potp_ov_show_hide|Show / Hide
+2116568962||potp_ov_done|Done
+2116568963||potp_ov_cancel|Cancel
+2116568964||potp_ov_change_tab|Change Tab
+2116568965||potp_ov_previous|Previous
+2116568966||potp_ov_next|Next
+2116568967||potp_ov_page|Page
+2116568968||potp_ov_change|Change
+2116568969||potp_ov_choose|Choose
+2116568970||potp_ov_scroll_text|Scroll Text
+2116568971||potp_ov_region|Region
+2116568972||potp_ov_change_status|Change Status
+2116568973||potp_ov_enlarge|Enlarge
+2116568974||potp_ov_expand_collapse|Expand / Collapse
+2116568975||potp_ov_change_visibility|Change Visibility
+2116568976||potp_ov_refresh|Refresh
+2116568977||potp_ov_close|Close
+2116568978||potp_ov_reading|Reading...
+2116568979||potp_ov_no_pack|The achievements' pack isn't there: is the mod installed?
+2116568980||potp_ov_reading_progress|Reading your progress...
+2116568981||potp_ov_waiting_for_game|Waiting for the game...
+2116568982||potp_ov_script_failed|A script call failed, so reading is off. See potp_overlay.log.
+2116568983||potp_ov_no_scripts|Progress on the Path's scripts aren't in the game: is the mod installed?
+2116568984||potp_ov_reading_stopped|Reading stopped partway.
+2116568985||potp_ov_wrong_build|This isn't a game build the overlay can read, so it can't show your progress.
+2116568986||potp_ov_no_tick|The script tick couldn't be hooked.
+2116568987||potp_ov_urgent_quest|Point of no return in progress: '[1]'
+2116568988||potp_ov_still_open|Still open: [1]
+2116568989||potp_ov_scroll_details|Scroll Details
+2116568990||potp_ov_understood|Understood
+2116568991||potp_ov_also_in_group|ALSO IN THIS GROUP
+2116568992||potp_ov_in_this_group|IN THIS GROUP
+2116568993||potp_ov_model_pin|Pin
+2116568994||potp_ov_model_unpin|Unpin
+2116568995||potp_ov_model_pinned|Pinned
+2116568996||potp_ov_anim_determined|Determined
+2116568997||potp_ov_anim_proud|Proud
+2116568998||potp_ov_anim_aggressive|Aggressive
+2116568999||potp_ov_anim_cheerful|Cheerful
+2116569000||potp_ov_anim_bored|Bored
+2116569001||potp_ov_anim_sad|Sad
+2116569002||potp_ov_anim_exhausted|Exhausted
+2116569003||potp_ov_anim_ready|Ready to Fight
+2116569004||potp_ov_ward_open|Wardrobe
+2116569005||potp_ov_ward_title|WARDROBE
+2116569006||potp_ov_ward_note|Previewing only. Nothing here changes what Geralt has equipped.
+2116569007||potp_ov_ward_armour|ARMOUR
+2116569008||potp_ov_ward_trousers|TROUSERS
+2116569009||potp_ov_ward_boots|BOOTS
+2116569010||potp_ov_ward_gloves|GLOVES
+2116569011||potp_ov_ward_steel|STEEL
+2116569012||potp_ov_ward_silver|SILVER
+2116569013||potp_ov_ward_crossbow|CROSSBOW
+2116569014||potp_ov_ward_masks|MASKS
+2116569015||potp_ov_ward_lowered|[1] (Lowered)
+2116569016||potp_ov_ward_search|Search
+2116569017||potp_ov_ward_search_title|SEARCH THE WARDROBE
+2116569018||potp_ov_ward_search_hint|Type a name to search every slot
+2116569019||potp_ov_ward_search_none|Nothing matches
+2116569020||potp_ov_ward_jump|Go To
+2116569021||potp_ov_ward_outfits|SAVED OUTFITS
+2116569022||potp_ov_ward_save|Save Outfit
+2116569023||potp_ov_ward_no_outfits|None saved yet
+2116569024||potp_ov_ward_outfit_name|Outfit [1]
+2116569025||potp_ov_ward_collected|Collected
+2116569026||potp_ov_ward_not_collected|Not collected
+2116569027||potp_ov_ward_category|Category
+2116569028||potp_ov_ward_delete|Delete
+2116569029||potp_ov_ward_clear|Clear All
+2116569030||potp_ov_ward_stance|Stance
+2116569031||potp_ov_ward_stance_now|Stance: [1]
+2116569032||potp_ov_ward_wear|Wear
+2116569033||potp_ov_ward_take_off|Take Off
+2116569034||potp_ov_ward_wearing|Wearing
+2116569035||potp_ov_ward_show_untracked|Show Untracked
+2116569036||potp_ov_ward_hide_untracked|Hide Untracked
+2116569037||potp_ov_ward_back|Back to Items
+2116569038||potp_ov_ward_empty|Nothing of this kind
+2116569039||potp_ov_ward_hint_mouse|Drag to turn, wheel to zoom
+2116569040||potp_ov_ward_hint_pad|Right stick to turn and zoom
+2116569041||potp_ov_item_stats|STATS
+2116569042||potp_ov_item_slots|Enhancement slots: [1]
+2116569043||potp_ov_tab_kills_caps|KILLS
+2116569044||potp_ov_tab_kills|Kills
+2116569045||potp_ov_kill_page_unique|UNIQUE
+2116569046||potp_ov_kill_page_generic|MONSTERS AND MEN
+2116569047||potp_ov_kill_col_name|NAME
+2116569048||potp_ov_kill_col_last|LAST KILL
+2116569049||potp_ov_kill_col_share|SHARE
+2116569050||potp_ov_kill_col_slain|SLAIN
+2116569051||potp_ov_kill_why_boss|Boss
+2116569052||potp_ov_kill_why_contract|Contract
+2116569053||potp_ov_kill_why_named|Named foe
+2116569054||potp_ov_kill_sum_unique|[1] unique foes slain.
+2116569055||potp_ov_kill_sum_generic|[1] kinds slain.
+2116569056||potp_ov_kill_none_unique|No unique foe has fallen yet
+2116569057||potp_ov_kill_none_generic|Nothing has been slain yet
+2116569058||potp_ov_kill_none_kind|Nothing of this kind has been slain yet
+2116569059||potp_ov_kill_none_note|Counting starts with this version of the mod. The game keeps no record of earlier kills.
+2116569060||potp_ov_kill_reading|Reading the kill list
+2116569061||potp_ov_kill_page|Page
+2116569062||potp_ov_kill_sort_count|Sort: Most Slain
+2116569063||potp_ov_kill_sort_name|Sort: Name
+2116569064||potp_ov_kill_kind_all|All Kinds
+2116569065||potp_ov_kill_place_unknown|the wilds
+2116569066||potp_ov_kill_unnamed|Unnamed foe
+2116569067||potp_ov_kill_cat_0|Unknown
+2116569068||potp_ov_kill_cat_1|Relicts
+2116569069||potp_ov_kill_cat_2|Necrophages
+2116569070||potp_ov_kill_cat_3|Cursed Ones
+2116569071||potp_ov_kill_cat_4|Beasts
+2116569072||potp_ov_kill_cat_5|Insectoids
+2116569073||potp_ov_kill_cat_6|Vampires
+2116569074||potp_ov_kill_cat_7|Specters
+2116569075||potp_ov_kill_cat_8|Draconids
+2116569076||potp_ov_kill_cat_9|Hybrids
+2116569077||potp_ov_kill_cat_10|Ogroids
+2116569078||potp_ov_kill_cat_11|Humans
+2116569079||potp_ov_kill_cat_12|Others
+2116569080||potp_ov_kill_cat_13|Elementa
+2116569081||potp_ov_kill_cat_14|Animals
+2116569082||potp_ov_kill_how_with|Killed with [1]
+2116569083||potp_ov_kill_how_burning|Burned to death
+2116569084||potp_ov_kill_how_bleeding|Bled out
+2116569085||potp_ov_kill_how_poison|Died of poison
+2116569086||potp_ov_kill_how_charmed|Cut down by a charmed ally
+2116569087||potp_ov_kill_how_fists|Killed with bare fists
+2116569088||potp_ov_kill_how_crossbow|Killed with a crossbow
+2116569089||potp_ov_kill_sign_aard|Aard
+2116569090||potp_ov_kill_sign_yrden|Yrden
+2116569091||potp_ov_kill_sign_igni|Igni
+2116569092||potp_ov_kill_sign_quen|Quen
+2116569093||potp_ov_kill_sign_axii|Axii
+2116569094||potp_ov_kill_line_m_1|Another [1] went back to the mud in [2].
+2116569095||potp_ov_kill_line_m_2|One less [1] to foul the air of [2].
+2116569096||potp_ov_kill_line_m_3|Another [1] found out what a witcher is, in [2].
+2116569097||potp_ov_kill_line_m_4|[2] is short one [1] tonight.
+2116569098||potp_ov_kill_line_m_5|One [1] fewer for the folk of [2] to fear.
+2116569099||potp_ov_kill_line_m_6|Another [1] learned why witchers get paid, in [2].
+2116569100||potp_ov_kill_line_m_7|Nothing left of that [1] but a story to tell in [2].
+2116569101||potp_ov_kill_line_m_8|One more [1] for the crows of [2].
+2116569102||potp_ov_kill_line_m_9|[2] has one [1] fewer to whisper about.
+2116569103||potp_ov_kill_line_m_10|Another [1] won't see the sun rise over [2].
+2116569104||potp_ov_kill_line_m_11|A [1] went hunting in [2] and found a witcher instead.
+2116569105||potp_ov_kill_line_m_12|Silver did its work on a [1] in [2].
+2116569106||potp_ov_kill_line_m_13|One more [1] the bards of [2] won't sing about.
+2116569107||potp_ov_kill_line_m_14|A [1] in [2] made its last mistake.
+2116569108||potp_ov_kill_line_m_15|Somewhere in [2], a [1] lies where it fell.
+2116569109||potp_ov_kill_line_m_16|One [1] fewer haunting the wilds of [2].
+2116569110||potp_ov_kill_line_m_17|The folk of [2] can thank a witcher for one less [1].
+2116569111||potp_ov_kill_line_m_18|Another [1] crossed the wrong path in [2].
+2116569112||potp_ov_kill_line_m_19|That [1] in [2] won't be needing its lair any more.
+2116569113||potp_ov_kill_line_m_20|One less [1] for the herbalists of [2] to warn about.
+2116569114||potp_ov_kill_line_m_21|Another [1] ended its days in [2].
+2116569115||potp_ov_kill_line_m_22|A [1] lunged in [2]. It was the last thing it did.
+2116569116||potp_ov_kill_line_m_23|The [1] in [2] got a lesson in silver.
+2116569117||potp_ov_kill_line_m_24|Another [1] left for the flies of [2].
+2116569118||potp_ov_kill_line_m_25|[2] can breathe a little easier: one [1] down.
+2116569119||potp_ov_kill_line_m_26|A [1] in [2] picked a fight it couldn't finish.
+2116569120||potp_ov_kill_line_m_27|That [1] won't trouble the villages of [2] again.
+2116569121||potp_ov_kill_line_m_28|Another [1] hunted down in [2].
+2116569122||potp_ov_kill_line_m_29|One [1] fewer between the travellers of [2] and home.
+2116569123||potp_ov_kill_line_m_30|A [1] in [2] met a blade it couldn't outrun.
+2116569124||potp_ov_kill_line_h_1|One less [1] on the roads of [2].
+2116569125||potp_ov_kill_line_h_2|[2] is short one [1] tonight.
+2116569126||potp_ov_kill_line_h_3|Another [1] picked the wrong witcher in [2].
+2116569127||potp_ov_kill_line_h_4|One more [1] who should have walked away, in [2].
+2116569128||potp_ov_kill_line_h_5|Word from [2]: one [1] fewer.
+2116569129||potp_ov_kill_line_h_6|Another [1] drew steel too quickly in [2].
+2116569130||potp_ov_kill_line_h_7|A [1] in [2] should have kept walking.
+2116569131||potp_ov_kill_line_h_8|Another [1] won't be going home from [2].
+2116569132||potp_ov_kill_line_h_9|A [1] in [2] took a witcher for an easy mark.
+2116569133||potp_ov_kill_line_h_10|[2] lost a [1], and few will mourn.
+2116569134||potp_ov_kill_line_h_11|Another [1] learned the hard way in [2].
+2116569135||potp_ov_kill_line_h_12|A [1] reached for a blade in [2]. Bad idea.
+2116569136||potp_ov_kill_line_h_13|One more [1] who wouldn't listen, in [2].
+2116569137||potp_ov_kill_line_h_14|The crows of [2] have another [1] to pick at.
+2116569138||potp_ov_kill_line_h_15|A [1] in [2] ran out of luck and road.
+2116569139||potp_ov_kill_line_h_16|Another [1] bled out in the mud of [2].
+2116569140||potp_ov_kill_line_h_17|One fewer [1] to bar the way in [2].
+2116569141||potp_ov_kill_line_h_18|A [1] in [2] chose steel over words.
+2116569142||potp_ov_kill_line_h_19|Another [1] won't be drinking in the taverns of [2].
+2116569143||potp_ov_kill_line_h_20|A [1] in [2] never saw the second blow.
+2116569144||potp_ov_kill_line_h_21|Another [1] picked a fight in [2] and lost it.
+2116569145||potp_ov_kill_line_h_22|One more [1] for the gravediggers of [2].
+2116569146||potp_ov_kill_line_h_23|A [1] in [2] won't be telling this story.
+2116569147||potp_ov_kill_line_h_24|[2] buried another [1].
+2116569148||potp_ov_kill_line_h_25|Another [1] thought numbers would be enough, in [2].
+2116569149||potp_ov_kill_line_h_26|A [1] in [2] drew on the wrong stranger.
+2116569150||potp_ov_kill_line_h_27|One [1] fewer to trouble the honest folk of [2].
+2116569151||potp_ov_kill_line_h_28|Another [1] stayed in [2] for good.
+2116569152||potp_ov_kill_line_h_29|A [1] in [2] found out what mutations are for.
+2116569153||potp_ov_kill_line_h_30|Another [1] made a poor choice of enemy in [2].
+2116569154||potp_ov_kill_line_u_1|[1] will trouble [2] no more.
+2116569155||potp_ov_kill_line_u_2|[1] fell at last in [2].
+2116569156||potp_ov_kill_line_u_3|The tale of [1] ended in [2].
+2116569157||potp_ov_kill_line_u_4|[1] met a witcher in [2], and that was that.
+2116569158||potp_ov_kill_line_u_5|[1] made a last stand in [2].
+2116569159||potp_ov_kill_line_u_6|[2] sleeps easier now [1] is gone.
+2116569160||potp_ov_kill_line_u_7|[1] breathed their last in [2].
+2116569161||potp_ov_kill_line_u_8|[1]'s story ended in [2], on a witcher's terms.
+2116569162||potp_ov_kill_line_u_9|[2] will remember the day [1] fell.
+2116569163||potp_ov_kill_line_u_10|[1] is gone, and [2] is quieter for it.
+2116569164||potp_ov_kill_line_u_11|In [2], [1] finally met their match.
+2116569165||potp_ov_kill_line_u_12|[1] won't be seen in [2] again.
+2116569166||potp_ov_kill_line_u_13|[1] fought hard in [2]. Not hard enough.
+2116569167||potp_ov_kill_line_u_14|The bards of [2] will have a verse about [1]'s end.
+2116569168||potp_ov_kill_line_u_15|[1] made one mistake in [2]: standing in the way.
+2116569169||potp_ov_kill_line_u_16|[1] reached the end of the road in [2].
+2116569170||potp_ov_kill_line_u_17|[2] saw the last of [1].
+2116569171||potp_ov_kill_line_u_18|[1] fell in [2], and the world moved on.
+2116569172||potp_ov_kill_line_u_19|No more will [2] hear of [1].
+2116569173||potp_ov_kill_line_u_20|[1] lost a final fight in [2].
+2116569174||potp_ov_kill_line_u_21|A blade settled things with [1] in [2].
+2116569175||potp_ov_kill_line_u_22|[1] went down fighting in [2].
+2116569176||potp_ov_kill_line_u_23|The last anyone saw of [1] was in [2].
+2116569177||potp_ov_kill_line_u_24|[1] had a reckoning coming. It came in [2].
+2116569178||potp_ov_kill_line_u_25|[1] belongs to the tales of [2] now.
+2116569179||potp_ov_kill_line_u_26|Whatever [1] was after, it ended in [2].
+2116569180||potp_ov_kill_line_u_27|[2] can strike [1] off its list of worries.
+2116569181||potp_ov_kill_line_u_28|[1] wasn't walking away from [2].
+2116569182||potp_ov_kill_line_u_29|All that's left of [1] is a tale told in [2].
+2116569183||potp_ov_kill_line_u_30|[1] crossed paths with a witcher in [2]. Only one walked on.
+2116569184||potp_ov_kill_line_c_1|The [1] will trouble [2] no more.
+2116569185||potp_ov_kill_line_c_2|The [1] fell at last in [2].
+2116569186||potp_ov_kill_line_c_3|A contract closed in [2]: the [1] is dead.
+2116569187||potp_ov_kill_line_c_4|The [1] met a witcher in [2], and that was that.
+2116569188||potp_ov_kill_line_c_5|The [1] made a last stand in [2].
+2116569189||potp_ov_kill_line_c_6|[2] sleeps easier now the [1] is gone.
+2116569190||potp_ov_kill_line_c_7|Contract done in [2]: the [1] won't be back.
+2116569191||potp_ov_kill_line_c_8|The [1] of [2] has hunted its last.
+2116569192||potp_ov_kill_line_c_9|The notice boards of [2] can take down the [1].
+2116569193||potp_ov_kill_line_c_10|Coin earned in [2]: the [1] is no more.
+2116569194||potp_ov_kill_line_c_11|The [1] was a big problem for [2]. Was.
+2116569195||potp_ov_kill_line_c_12|Somebody in [2] owes a witcher for the [1].
+2116569196||potp_ov_kill_line_c_13|The [1] in [2] met silver, and silver won.
+2116569197||potp_ov_kill_line_c_14|The [1] is dead, and [2] can rest.
+2116569198||potp_ov_kill_line_c_15|The [1] terrorised [2] for the last time.
+2116569199||potp_ov_kill_line_c_16|Tracked and slain in [2]: the [1].
+2116569200||potp_ov_kill_line_c_17|The [1] of [2] went the way of all monsters.
+2116569201||potp_ov_kill_line_c_18|Job finished in [2]: the [1] lies dead.
+2116569202||potp_ov_kill_line_c_19|The [1] put up a fight in [2]. It lost.
+2116569203||potp_ov_kill_line_c_20|The [1] won't stalk [2] again.
+2116569204||potp_ov_kill_line_c_21|The [1] picked [2] for its hunting ground. Poor choice.
+2116569205||potp_ov_kill_line_c_22|Paid in full: the [1] of [2] is dead.
+2116569206||potp_ov_kill_line_c_23|The [1] gave [2] nightmares. Not any more.
+2116569207||potp_ov_kill_line_c_24|The [1] of [2] was worth every crown.
+2116569208||potp_ov_kill_line_c_25|The [1] had a price on its head in [2]. It's been paid.
+2116569209||potp_ov_kill_line_c_26|Word from [2]: the [1] is finally dead.
+2116569210||potp_ov_kill_line_c_27|The [1] fell in [2], and the reward was collected.
+2116569211||potp_ov_kill_line_c_28|Nobody in [2] has to fear the [1] now.
+2116569212||potp_ov_kill_line_c_29|The [1] was the talk of [2]. Now it's a trophy.
+2116569213||potp_ov_kill_line_c_30|A witcher came to [2] for the [1], and got it.
+2116569214||potp_ov_ward_dye|Dye
+2116569215||potp_ov_ward_dye_default|Undyed
+2116569216||potp_ov_herald_event|NEW EVENT AVAILABLE
+2116569217||potp_ov_herald_event_sub|In [1]. Take a look at the World Map to find it.
+2116569218||potp_ov_herald_update|PROGRESS ON THE PATH UPDATED
+2116569219||potp_ov_herald_update_head|Now on version [1]
+2116569220||potp_ov_herald_install_head|Thank you for installing
+2116569221||potp_ov_herald_install_sub|Open it from the radial menu, or with the key you choose in its Settings tab.
+2116569222||potp_ov_herald_ngplus_head|New Game Plus
+2116569223||potp_ov_herald_content_head|Your tracked content has changed
+2116569224||potp_ov_tour_offer_title|New to Progress on the Path?
+2116569225||potp_ov_tour_offer_body|Take a short tour of what's here. It only takes a minute, and you can start it again from Settings.
+2116569226||potp_ov_tour_offer_yes|Take the Tour
+2116569227||potp_ov_tour_offer_no|Not Now
+2116569228||potp_ov_tour_next|Next
+2116569229||potp_ov_tour_back|Back
+2116569230||potp_ov_tour_finish|Finish
+2116569231||potp_ov_tour_skip|Skip
+2116569232||potp_ov_tour_step|Step [1] of [2]
+2116569233||potp_ov_tour_setting|Guided Tour
+2116569234||potp_ov_tour_setting_hint|A short walk through every tab. It shows you the same screens you use, and changes nothing.
+2116569235||potp_ov_tour_setting_button|Start
+2116569236||potp_ov_tour_progress|Your Progress
+2116569237||potp_ov_tour_progress_body|Everything you've finished across the whole game, out of everything the mod tracks. Achievements and kills have their own tabs and don't count here.
+2116569238||potp_ov_tour_tabs|The Tabs
+2116569239||potp_ov_tour_tabs_body|Each tab is one part of the game. Move between them with [prev] and [next], or click one.
+2116569240||potp_ov_tour_regions|Regions
+2116569241||potp_ov_tour_regions_body|Narrow a tab down to one part of the world with [left] and [right].
+2116569242||potp_ov_tour_list|The List
+2116569243||potp_ov_tour_list_body|Everything in this tab, in groups. Move with [updown], and open or close a group with [toggle].
+2116569244||potp_ov_tour_detail|The Details
+2116569245||potp_ov_tour_detail_body|What the selected entry is, what it needs and what's left to do on it.
+2116569246||potp_ov_tour_hints|The Prompts
+2116569247||potp_ov_tour_hints_body|Along the bottom are the controls for the screen you're on, for the keyboard or the controller, whichever you're using. Click one to use it. [refresh] reads your progress from the game again.
+2116569248||potp_ov_tour_missable|Missable
+2116569249||potp_ov_tour_missable_body|Things you can lose for good, grouped by the quest that closes them. Check here before you go on with the story.
+2116569250||potp_ov_tour_items|Items
+2116569251||potp_ov_tour_items_body|Each item's own model. Drag it or use the right stick to turn it, and [autoturn] sets it turning by itself. Its stats are on the right.
+2116569252||potp_ov_tour_wardrobe|The Wardrobe
+2116569253||potp_ov_tour_wardrobe_body|On the Items tab, [wardrobe] opens the wardrobe, where you can dress Geralt in anything. It's only a preview, so what he has equipped never changes. Here's how it works.
+2116569254||potp_ov_tour_gwent|Gwent Cards
+2116569255||potp_ov_tour_gwent_body|Every card as it looks in the game, with where to win it.
+2116569256||potp_ov_tour_bestiary|Bestiary
+2116569257||potp_ov_tour_bestiary_body|Every creature, with its journal entry and what works against it. With Live Bestiary on in Settings, each stands in its own idle, and those that pass for people turn from one form into the other. Scroll its entry with [left] and [right].
+2116569258||potp_ov_tour_achievements|Achievements
+2116569259||potp_ov_tour_achievements_body|Your achievements, and how far along each one is on this save.
+2116569260||potp_ov_tour_kills|Kills
+2116569261||potp_ov_tour_kills_body|Everything Geralt has killed, by name. [left] and [right] go between unique foes and everything else, [save] sorts by name or by count, and [kind] shows one kind of creature.
+2116569262||potp_ov_tour_settings|Settings: The Window
+2116569263||potp_ov_tour_settings_body|Settings has pages along the top: go between them with [left] and [right]. This one sets the window's size and look and how you control it. Move to a setting, or point at it, to see what it does in the box below.
+2116569264||potp_ov_tour_done|That's Everything
+2116569265||potp_ov_tour_done_body|You can take this tour again from Settings. Good hunting.
+2116569266||potp_ov_item_set|SET BONUS
+2116569267||potp_ov_item_set_worn|[1] of [2] worn
+2116569268||potp_ov_item_set_pieces|[1] pieces
+2116569269||potp_ov_cloth_sim|Cloth Simulation
+2116569270||potp_ov_cloth_sim_hint|Lets capes, coat tails and other cloth on the models move as they do in the game. Off, they hold still and use a little less of your processor. It changes with the next model that's shown.
+2116569271||potp_ov_ward_nothing|Nothing
+2116569272||potp_ov_tour_ward_list|Trying Things On
+2116569273||potp_ov_tour_ward_list_body|Pick a kind along the top with [prev] and [next], then go down its list. Geralt puts on whatever you're on, and Nothing at the bottom takes that piece off.
+2116569274||potp_ov_tour_ward_view|Seeing Him
+2116569275||potp_ov_tour_ward_view_body|Drag him or use the right stick to turn him, and the wheel or the right stick to zoom. Left and Right change his stance, and his cloth moves with him.
+2116569276||potp_ov_tour_ward_dyes|Dyes
+2116569277||potp_ov_tour_ward_dyes_body|School armour can take dyes. When a piece can, the colours show down this side. Change them with [left] and [right], or click one.
+2116569278||potp_ov_tour_ward_cards|Pinning
+2116569279||potp_ov_tour_ward_cards_body|[accept] pins a piece, so it stays on while you try others. These cards show what he has on, with pinned pieces lit up. [clear] clears the pins.
+2116569280||potp_ov_tour_ward_outfits|Saved Outfits
+2116569281||potp_ov_tour_ward_outfits_body|[save] saves what he has on as an outfit. Go down to one to try it, [accept] to load it, and [clear] deletes it.
+2116569282||potp_ov_ward_not_tracked|Not tracked
+2116569283||potp_ov_update_key|Full Update Key
+2116569284||potp_ov_pad_cross|Cross
+2116569285||potp_ov_pad_circle|Circle
+2116569286||potp_ov_pad_square|Square
+2116569287||potp_ov_pad_triangle|Triangle
+2116569288||potp_ov_update_key_hint|The key that runs a full update, if the mod's Via Hotkey setting is on. Choose this, then press the key you'd like. Esc cancels.
+2116569289||potp_ov_live_bestiary|Live Bestiary
+2116569290||potp_ov_live_bestiary_hint|Shows each creature in the Bestiary as the game's own model, standing in one of its idles, in place of the painting. Off, the Bestiary shows the paintings, as the game's does.
+2116569291||potp_ov_zoom_turn|Turn
+2116569292||potp_ov_zoom_tilt|Tilt
+2116569293||potp_ov_zoom_zoom|Zoom
+2116569294||potp_ov_hold_to_enlarge|Hold to Enlarge
+2116569295||potp_ov_hold_to_close|Hold to Close
+2116569296||potp_ov_hdr_caps|HDR
+2116569297||potp_ov_hdr_match|Match the Game
+2116569298||potp_ov_hdr_match_hint|With HDR on in the game, the window is as bright as the game's own menus, from its Paper White setting. Off, it uses HDR Brightness below. Nothing changes without HDR.
+2116569299||potp_ov_hdr_brightness|HDR Brightness
+2116569300||potp_ov_hdr_brightness_hint|How bright the window's white is with HDR on, in nits, when Match the Game is off. Nothing changes without HDR.
+2116569301||potp_ov_nits_format|%.0f nits
+2116569302||potp_ov_herald_achievement|ACHIEVEMENT UNLOCKED
+2116569303||potp_ov_custom_crowns|[1] crowns
+2116569304||potp_ov_custom_experience|[1] experience
+2116569305||potp_ov_custom_item|[2] x[1]
+2116569306||potp_ov_custom_reward_line|Reward: [1]
+2116569307||potp_ov_custom_reward_head|REWARD
+2116569308||potp_ov_custom_crown|[1] crown
+2116569309||potp_ov_custom_problems|Some custom achievements couldn't be read ([1]). The overlay's log, PotpOverlay.log, says why.
+2116569310||potp_ov_form_changes_in|Transforms in [1]
+2116569311||potp_ov_form_changing|Transforming...
+2116569312||potp_ov_form_returns_in|Changes back in [1]
+2116569313||potp_ov_form_returning|Changing back...
+2116569314||potp_ov_more_other_regions|And [1] more in other regions.
+2116569315||potp_ov_auto_turn_on|Auto-Turn: On
+2116569316||potp_ov_auto_turn_off|Auto-Turn: Off
+2116569317||potp_ov_help_caps|HELP
+2116569318||potp_ov_tour_status|Setting a Status
+2116569319||potp_ov_tour_status_body|[status] sets the selected entry's status by hand: for something the game didn't count, or something you'd rather not see counted. Choose with [updown] and [accept], or leave it as it was with [back].
+2116569320||potp_ov_tour_visibility|What Shows
+2116569321||potp_ov_tour_visibility_body|[vis] chooses what the lists show. Hide what you've completed, what you've ignored or what's missable, in every tab at once.
+2116569322||potp_ov_tour_world|World Map
+2116569323||potp_ov_tour_world_body|Every place the world map marks, by region: monster nests, treasure, places of power and the rest, as you find and clear them.
+2116569324||potp_ov_tour_enlarge|Enlarging It
+2116569325||potp_ov_tour_enlarge_body|Hold [zoom] to show the model as large as the screen. Zoom in and out with [left] and [right] or the mouse wheel, and close it by holding [zoom] again or with [back].
+2116569326||potp_ov_tour_settings_general|Settings: General
+2116569327||potp_ov_tour_settings_general_body|When the mod checks your progress, the hotkey for a full update, and the map pins it puts on the random events.
+2116569328||potp_ov_tour_settings_notify|Settings: Notifications
+2116569329||potp_ov_tour_settings_notify_body|Which notifications show and how they look. The presets set them all at once, and Place It moves where they appear on the screen.
+2116569330||potp_ov_colour_swatches|Swatches
+2116569331||potp_ov_colour_custom|Your Own
+2116569332||potp_ov_colour_hue|Hue
+2116569333||potp_ov_colour_saturation|Saturation
+2116569334||potp_ov_colour_brightness|Brightness
+2116569335||potp_ov_colour_current|Current
+2116569336||potp_ov_colour_new|New
+2116569337||potp_ov_colour_default|Default
+2116569338||potp_ov_key_arrows|Arrows
+2116569339||potp_ov_key_tab|Tab
+2116569340||potp_ov_key_right|Right
+2116569341||potp_ov_key_drag|Drag
+2116569342||potp_ov_key_right_drag|Right drag
+2116569343||potp_ov_kill_sum_unique_one|[1] unique foe slain.
+2116569344||potp_ov_kill_sum_generic_one|[1] kind slain.
+2116569345||potp_ov_kill_sum_total|[1] kills in all.
+2116569346||potp_ov_kill_sum_total_one|[1] kill in all.
 ;overlay-text-end
 ;
-; Next id: 2116569333
+; Next id: 2116569347

@@ -109,8 +109,9 @@ function PotPOverlay_GearDye(witcher: W3PlayerWitcher, item: SItemUniqueId) : st
 	return "#" + NameToString(dye);
 }
 
-// Every piece of armour there is, for the wardrobe, which can show more than the mod tracks:
-// WARD, then A|kind|template|title. Many share a model, which the overlay sorts out.
+// Every piece of armour there is, and every mask, for the wardrobe, which can show more than the mod tracks:
+// WARD, then A|kind|template|title, and |lowered for a hood mod's hood down (it has the same name as with it up).
+// Many share a model, which the overlay sorts out.
 function PotPOverlay_WardrobeItems() : string
 {
 	var dm			: CDefinitionsManagerAccessor = theGame.GetDefinitionsManager();
@@ -118,6 +119,7 @@ function PotPOverlay_WardrobeItems() : string
 	var result		: string = "WARD";
 	var title		: string;
 	var category	: name;
+	var template_name	: string;
 	var Idx			: int;
 
 	items = dm.GetItemsWithTag('Armor');
@@ -138,6 +140,32 @@ function PotPOverlay_WardrobeItems() : string
 			continue;
 		}
 		result += "\nA|" + NameToString(category) + PotPOverlay_GearTemplate(items[Idx]) + "|" + PotPOverlay_Clean(title);
+	}
+
+	// Masks aren't armour: they're quick slot items, most from the masquerades. Only what's made for Geralt to wear:
+	// those for women are left out (by name, or a woman's model: w_ or female in the template's name), placeholders, and
+	// of the masquerades' masks only his own (sq301_item__geralt_..., q703's mandragora_mask_geralt), as the rest are
+	// made for other guests' heads.
+	items = dm.GetItemsWithTag('QuickSlot');
+	for (Idx = 0; Idx < items.Size(); Idx += 1)
+	{
+		template_name = dm.GetItemEquipTemplate(items[Idx]);
+		if (dm.GetItemCategory(items[Idx]) != 'mask' || dm.ItemHasTag(items[Idx], 'NoShow') || StrFindFirst(NameToString(items[Idx]), "woman") >= 0
+			|| StrFindFirst(template_name, "__w_") >= 0 || StrFindFirst(template_name, "female") >= 0 || StrFindFirst(template_name, "placeholder") >= 0
+			|| ((StrFindFirst(template_name, "sq301_item__") >= 0 || StrFindFirst(template_name, "mandragora") >= 0) && StrFindFirst(template_name, "geralt") < 0))
+		{
+			continue;
+		}
+		title = GetLocStringByKeyExt(dm.GetItemLocalisationKeyName(items[Idx]));
+		if (StrLen(title) == 0 || StrBeginsWith(title, "#"))
+		{
+			continue;
+		}
+		result += "\nA|mask" + PotPOverlay_GearTemplate(items[Idx]) + "|" + PotPOverlay_Clean(title);
+		if (StrFindFirst(NameToString(items[Idx]), "Lowered") >= 0)
+		{
+			result += "|lowered";
+		}
 	}
 	return result;
 }

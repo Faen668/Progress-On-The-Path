@@ -25,7 +25,9 @@
 
 namespace
 {
-	constexpr UINT kSize = 1408;   // large enough for the enlarged view, drawn smaller in the panel
+	// The screen's shape, so the enlarged view can fill the screen; the panel and the wardrobe show the square from its
+	// middle, which is what the model is framed to
+	constexpr UINT kHeight = 1408, kWidth = 2504;
 	constexpr DXGI_FORMAT kColour = DXGI_FORMAT_R8G8B8A8_UNORM, kDepth = DXGI_FORMAT_D32_FLOAT;
 	constexpr UINT kSamples = 4;
 
@@ -440,6 +442,7 @@ float4 PS(Out i) : SV_Target
 	ID3D12Resource* g_skins = nullptr;
 	uint32_t g_boneFrames = 1, g_boneSlots = 1;
 	float g_boneDuration = 0.f;
+	float g_boneLoopStart = 0.f;   // where in its clip the loop begins
 	std::chrono::steady_clock::time_point g_boneStart;
 	std::shared_ptr<const void> g_boneSlotsShared;
 	// Cloth: what carries each vertex, the particles' places on the card, a few frames' worth so one isn't written while it's drawn
@@ -543,6 +546,7 @@ float4 PS(Out i) : SV_Target
 	float g_fitEye = -1.f;   // how far back the camera is now, easing to what the angle needs; -1 for at once
 	std::chrono::steady_clock::time_point g_fitLast{};
 	float g_zoom = 1.f;
+	float g_panX = 0.f, g_panY = 0.f;
 	float g_formTimes[4] = {};   // a two-form creature's: the first shown, a change, the second shown, the loop
 
 	// Going on the card
@@ -687,7 +691,8 @@ float4 PS(Out i) : SV_Target
 		D3D12_HEAP_PROPERTIES heap{ D3D12_HEAP_TYPE_DEFAULT };
 		D3D12_RESOURCE_DESC desc{};
 		desc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
-		desc.Width = desc.Height = kSize;
+		desc.Width = kWidth;
+		desc.Height = kHeight;
 		desc.DepthOrArraySize = desc.MipLevels = 1;
 		desc.Format = kColour;
 		desc.SampleDesc.Count = kSamples;
@@ -1011,6 +1016,7 @@ float4 PS(Out i) : SV_Target
 		g_boneIntro = model.animation ? model.animation->introFrames : 0;
 		g_boneSlots = model.animation ? model.animation->slots : 1;
 		g_boneDuration = model.animation ? model.animation->duration : 0.f;
+		g_boneLoopStart = model.animation ? model.animation->loopStart : 0.f;
 		memcpy(g_formTimes, model.formTimes, sizeof(g_formTimes));
 		// A creature in two forms starts its loop afresh, its body with it, so it's shown as its first form a while before
 		// it changes; only Geralt, between pieces of armour, carries on where he was
@@ -1383,9 +1389,9 @@ void ModelViewAnimation(int animation)
 	float fromTime = 0.f;
 	if (g_boneFrames > 1 && g_boneDuration > 0.f)
 	{
+		// The loop starts part way into its clip, where the lead in went to
 		const float seconds = std::chrono::duration<float>(std::chrono::steady_clock::now() - g_boneStart).count() - g_boneIntro / kBakedIntroRate;
-		if (seconds > 0.f)
-			fromTime = fmodf(seconds, g_boneDuration);
+		fromTime = fmodf(std::max(0.f, seconds) + g_boneLoopStart, g_boneDuration);
 	}
 	const unsigned asked = ++g_animationAsked;
 	std::shared_ptr<const void> slots;
@@ -1429,12 +1435,19 @@ ModelState ModelViewState()
 	return g_keepShowing ? kModelReady : static_cast<ModelState>(g_state.load());
 }
 
-void ModelViewShow(float yawDegrees, float pitchDegrees, float zoom)
+void ModelViewShow(float yawDegrees, float pitchDegrees, float zoom, float panX, float panY)
 {
 	g_yaw = yawDegrees;
 	g_pitch = pitchDegrees;
 	g_zoom = std::clamp(zoom, 0.25f, 8.f);
+	g_panX = panX;
+	g_panY = panY;
 	g_showThisFrame = true;
+}
+
+float ModelViewAspect()
+{
+	return static_cast<float>(kWidth) / kHeight;
 }
 
 unsigned long long ModelViewTexture()
@@ -1530,6 +1543,7 @@ void ModelViewRender(ID3D12GraphicsCommandList* list)
 			g_boneIntro = stance->introFrames;
 			g_boneSlots = stance->slots;
 			g_boneDuration = stance->duration;
+			g_boneLoopStart = stance->loopStart;
 			g_boneStart = std::chrono::steady_clock::now();
 		}
 	}
@@ -1546,8 +1560,8 @@ void ModelViewRender(ID3D12GraphicsCommandList* list)
 	const float clear[4] = { 0.f, 0.f, 0.f, 0.f };
 	list->ClearRenderTargetView(rtv, clear, 0, nullptr);
 	list->ClearDepthStencilView(dsv, D3D12_CLEAR_FLAG_DEPTH, 1.f, 0, 0, nullptr);
-	const D3D12_VIEWPORT viewport{ 0.f, 0.f, static_cast<float>(kSize), static_cast<float>(kSize), 0.f, 1.f };
-	const D3D12_RECT scissor{ 0, 0, static_cast<LONG>(kSize), static_cast<LONG>(kSize) };
+	const D3D12_VIEWPORT viewport{ 0.f, 0.f, static_cast<float>(kWidth), static_cast<float>(kHeight), 0.f, 1.f };
+	const D3D12_RECT scissor{ 0, 0, static_cast<LONG>(kWidth), static_cast<LONG>(kHeight) };
 	list->RSSetViewports(1, &viewport);
 	list->RSSetScissorRects(1, &scissor);
 	list->SetGraphicsRootSignature(g_root);
@@ -1621,8 +1635,12 @@ void ModelViewRender(ID3D12GraphicsCommandList* list)
 		eye = g_fitEye;
 	}
 	eye /= g_zoom;
+	// Moved across the picture after it's framed: half the picture's width at the model's distance is eye / f
+	c.world[12] += g_panX * eye / f;
+	c.world[13] -= g_panY * eye / f;
 	const float nearZ = std::max(0.01f, eye - g_radius * 1.5f), farZ = eye + g_radius * 1.5f;
-	c.projection[0] = c.projection[1] = f;
+	c.projection[0] = f * kHeight / kWidth;   // wider than tall: the same scale up and down, more room across
+	c.projection[1] = f;
 	c.projection[2] = farZ / (farZ - nearZ);
 	c.projection[3] = -nearZ * farZ / (farZ - nearZ);
 	c.eyeAndMask[2] = eye;
