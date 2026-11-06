@@ -931,7 +931,7 @@ namespace
 		if (!reward.empty())
 			body += (body.empty() ? "" : "<br/>") + TxFill(T_custom_reward_line, Clean(reward));
 		// The herald banner, at the top of the screen
-		UiPushPopup("H|achievement|8|" + Clean(a.title.Pick(g_language)) + "|" + body + "|" + Clean(a.icon));
+		UiPushPopup("H|achievement|8|" + Clean(a.title.Pick(g_language)) + "|" + body + "|" + Clean(a.icon) + "|" + std::to_string(a.ring));
 	}
 
 	// The date goes in a fact, and facts hold 16 bits in the save: days since 1 January 2020 last until 2109.

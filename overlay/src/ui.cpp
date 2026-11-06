@@ -4266,6 +4266,7 @@ namespace
 	{
 		std::string herald;   // the banner, and what for: event, update, install, ngplus, content, achievement
 		std::string icon;     // an achievement's picture, as AchievementPicture takes it
+		int ring = 0;         // and its ring: 0 gold, 1 silver, 2 bronze, 3 none
 		float seconds = 7.f;
 		int fontSize = 18, colour = 1, done = 0, total = 0, more = 0;
 		std::vector<PopupLine> lines;
@@ -4385,6 +4386,8 @@ namespace
 				{
 					if (f.size() >= 6)
 						m.icon = f[5];
+					if (f.size() >= 7)
+						m.ring = std::clamp(atoi(f[6].c_str()), 0, 3);
 					m.body = ParseMessageBody(below);   // a mod's achievement: its title stays, its description and reward below
 				}
 				else
@@ -4739,7 +4742,11 @@ namespace
 		dl->AddCircleFilled(c, 38.f, Rgb(10, 8, 6), 40);
 		dl->AddCircle(c, 38.f, line, 40, 2.5f);
 		if (achievement && !m.icon.empty())
-			AchievementPicture(m.icon, ImVec2(c.x - 27.f, c.y - 27.f), 54.f, false, line);   // its own picture
+		{
+			// Its own picture, in its ring's colour as in the tab: gold is the banner's own bright gold
+			const ImU32 kRingColours[4] = { line, Rgb(196, 202, 210), Rgb(198, 132, 84), kGoldDim };
+			AchievementPicture(m.icon, ImVec2(c.x - 27.f, c.y - 27.f), 54.f, false, kRingColours[m.ring]);
+		}
 		else
 			Sign(achievement ? 6 : 0, c, 21.f, line, 2.5f);   // 6: the medal the Achievements tab uses
 
