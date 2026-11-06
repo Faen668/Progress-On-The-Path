@@ -6,6 +6,7 @@
 #include <cmath>
 #include <cstring>
 #include <filesystem>
+#include <list>
 #include <map>
 #include <memory>
 #include <set>
@@ -3791,8 +3792,18 @@ namespace
 			FindMotion(include, out, seen, depth + 1);
 	}
 
+	// A set's clips, by name. Kept once read: a man's dozens of sets take a while to open, and every creature with a man's
+	// form opens them to choose its idle.
 	std::vector<std::string> ClipNames(const std::string& path)
 	{
+		static std::mutex lock;
+		static std::map<std::string, std::vector<std::string>> known;
+		{
+			std::lock_guard<std::mutex> hold(lock);
+			const auto found = known.find(path);
+			if (found != known.end())
+				return found->second;
+		}
 		std::vector<std::string> names;
 		const std::shared_ptr<Red> file = OpenFile(path);
 		if (!file)
@@ -3804,6 +3815,8 @@ namespace
 					if (n == "name" && v + 2 <= end)
 						names.push_back(file->Name(U16(file->data.data() + v)));
 				});
+		std::lock_guard<std::mutex> hold(lock);
+		known[path] = names;
 		return names;
 	}
 
@@ -4471,7 +4484,34 @@ namespace
 	}
 }
 
+// The last few creatures shown, as they were made: going back to one is then a moment, not reading and baking it again
+static bool LoadCreatureAnew(const std::string& asked, ItemModel& out);
+
 bool LoadCreature(const std::string& asked, ItemModel& out)
+{
+	static std::mutex lock;
+	static std::list<std::pair<std::string, ItemModel>> recent;   // most recent first
+	constexpr size_t kKept = 4;
+	{
+		std::lock_guard<std::mutex> hold(lock);
+		for (auto it = recent.begin(); it != recent.end(); ++it)
+			if (it->first == asked)
+			{
+				recent.splice(recent.begin(), recent, it);
+				out = it->second;
+				return true;
+			}
+	}
+	if (!LoadCreatureAnew(asked, out))
+		return false;
+	std::lock_guard<std::mutex> hold(lock);
+	recent.emplace_front(asked, out);
+	if (recent.size() > kKept)
+		recent.pop_back();
+	return true;
+}
+
+static bool LoadCreatureAnew(const std::string& asked, ItemModel& out)
 {
 	// monster+human: shown as the human first, turning into the monster and back
 	const size_t plus = asked.find('+');

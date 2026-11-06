@@ -12,6 +12,8 @@ enum ModelState { kModelNone, kModelLoading, kModelReady, kModelMissing };
 void ModelViewAnimation(int animation);   // the stance from now on, with no reloading of him
 void ModelViewRequest(const std::string& templateName);   // which item: does nothing if it's that one already
 ModelState ModelViewState();
+// Reads these ahead, behind the one shown, so going to them is quick: creatures only, nearest first
+void ModelViewPrefetch(const std::vector<std::string>& requests);
 // A creature in two forms: 0 showing its first, 1 changing into its second, 2 showing that, 3 changing back; and the
 // seconds until the next. False for anything else.
 bool ModelViewFormClock(int& phase, float& seconds);

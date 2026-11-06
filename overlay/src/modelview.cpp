@@ -5,6 +5,7 @@
 #include <d3dcompiler.h>
 #include <algorithm>
 #include <iterator>
+#include <list>
 #include <atomic>
 #include <chrono>
 #include <cmath>
@@ -12,6 +13,7 @@
 #include <map>
 #include <memory>
 #include <mutex>
+#include <set>
 #include <thread>
 #include <vector>
 #include "gameicons.h"
@@ -793,6 +795,50 @@ float4 PS(Out i) : SV_Target
 		return buffer;
 	}
 
+	// Textures read lately, as they came out of the game's caches: unpacking them is most of a model's wait, and the same
+	// ones come again as the list is gone up and down. The oldest go once they're more than a budget's worth.
+	std::mutex g_textureLock;
+	std::list<std::pair<std::string, std::shared_ptr<const GameTexture>>> g_recentTextures;   // most recent first
+	size_t g_recentBytes = 0;
+	constexpr size_t kRecentTextureBytes = 256u << 20;
+
+	size_t TextureBytes(const GameTexture& t)
+	{
+		size_t bytes = t.pixels.size();
+		for (const GameTexture& m : t.lowerMips)
+			bytes += m.pixels.size();
+		return bytes;
+	}
+
+	bool RecentTexture(const std::string& path, GameTexture& out)
+	{
+		std::lock_guard<std::mutex> hold(g_textureLock);
+		for (auto it = g_recentTextures.begin(); it != g_recentTextures.end(); ++it)
+			if (it->first == path)
+			{
+				g_recentTextures.splice(g_recentTextures.begin(), g_recentTextures, it);
+				out = *it->second;
+				return true;
+			}
+		return false;
+	}
+
+	void KeepTexture(const std::string& path, const GameTexture& texture)
+	{
+		auto kept = std::make_shared<const GameTexture>(texture);
+		const size_t bytes = TextureBytes(texture);
+		if (bytes == 0 || bytes > kRecentTextureBytes / 4)
+			return;
+		std::lock_guard<std::mutex> hold(g_textureLock);
+		g_recentTextures.emplace_front(path, std::move(kept));
+		g_recentBytes += bytes;
+		while (g_recentBytes > kRecentTextureBytes && g_recentTextures.size() > 1)
+		{
+			g_recentBytes -= TextureBytes(*g_recentTextures.back().second);
+			g_recentTextures.pop_back();
+		}
+	}
+
 	// All of it's on the card: put it together
 	void FinishUpload()
 	{
@@ -1150,6 +1196,67 @@ float4 PS(Out i) : SV_Target
 	}
 }
 
+void ModelViewPrefetch(const std::vector<std::string>& creatures)
+{
+	// One at a time, behind what's shown, and only creatures: a model kept and its textures kept are then a moment to show.
+	// Asked again each frame, so it's only those near what's chosen now.
+	static std::mutex lock;
+	static std::vector<std::string> waiting;
+	static bool running = false;
+	static std::set<std::string> done;
+	std::lock_guard<std::mutex> hold(lock);
+	waiting.clear();
+	for (const std::string& name : creatures)
+		if (name.compare(0, strlen(kModelCreature), kModelCreature) == 0 && !done.count(name))
+			waiting.push_back(name);
+	if (running || waiting.empty() || g_state != kModelReady)
+		return;
+	running = true;
+	std::thread([]
+	{
+		SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_BELOW_NORMAL);
+		for (;;)
+		{
+			std::string name;
+			{
+				std::lock_guard<std::mutex> hold(lock);
+				if (waiting.empty() || g_state != kModelReady)
+				{
+					running = false;
+					return;
+				}
+				name = waiting.front();
+				waiting.erase(waiting.begin());
+				done.insert(name);
+				if (done.size() > 64)
+					done.clear();   // the caches will have let most of them go by then
+			}
+			try
+			{
+				ItemModel model;
+				if (!LoadCreature(name.substr(strlen(kModelCreature)), model))
+					continue;
+				std::set<std::string> paths;
+				for (const ModelPart& p : model.parts)
+					if (!p.shadowOnly)
+						for (const std::string* path : { &p.diffuse, &p.normal, &p.tintMask, &p.specular, &p.detail1, &p.detail2 })
+							if (!path->empty())
+								paths.insert(*path);
+				for (const std::string& path : paths)
+				{
+					GameTexture texture;
+					if (!RecentTexture(path, texture) && ReadGameTexture(path, 1024, texture, true))
+						KeepTexture(path, texture);
+				}
+			}
+			catch (const std::exception& problem)
+			{
+				Log("item models: reading ahead %s: %s", name.c_str(), problem.what());
+			}
+		}
+	}).detach();
+}
+
 void ModelViewRequest(const std::string& templateName)
 {
 	{
@@ -1227,7 +1334,8 @@ void ModelViewRequest(const std::string& templateName)
 							// One bad texture costs that texture, never the game: nothing above a thread can catch this
 							try
 							{
-								ReadGameTexture(*jobs[at].first, 1024, *jobs[at].second, true);
+								if (!RecentTexture(*jobs[at].first, *jobs[at].second) && ReadGameTexture(*jobs[at].first, 1024, *jobs[at].second, true))
+									KeepTexture(*jobs[at].first, *jobs[at].second);
 							}
 							catch (const std::exception& problem)
 							{

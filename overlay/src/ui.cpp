@@ -7358,6 +7358,27 @@ void DrawUi()
 		selected = DrawList(*model, &section);
 		g_creatureShown = selected;
 		g_itemShown = selected;
+		// The creatures either side of it in the list, read ahead while it's shown
+		if (selected && g_book == kBookBestiary && GetSettings().liveBestiary)
+		{
+			std::vector<std::string> around;
+			for (size_t i = 0; i < g_rows.size(); ++i)
+			{
+				const Row& row = g_rows[i];
+				if (row.entry < 0 || model->sections[row.section].entries[row.entry].uuid != selected->uuid)
+					continue;
+				for (int step = 1; step <= 2; ++step)
+					for (const int at : { static_cast<int>(i) + step, static_cast<int>(i) - step })
+						if (at >= 0 && at < static_cast<int>(g_rows.size()) && g_rows[at].entry >= 0)
+						{
+							const Entry& other = model->sections[g_rows[at].section].entries[g_rows[at].entry];
+							if (LiveCreature(other))
+								around.push_back(kModelCreature + other.creatureTemplate);
+						}
+				break;
+			}
+			ModelViewPrefetch(around);
+		}
 		if (g_headerFocus && g_book == kBookMissable)
 		{
 			DrawGroupDetail(*model, *g_headerFocus);
