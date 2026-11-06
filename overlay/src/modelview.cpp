@@ -1598,10 +1598,13 @@ void ModelViewRender(ID3D12GraphicsCommandList* list)
 	if (g_smokePipeline && g_formTimes[3] > 0.f)
 	{
 		const float cycle = g_formTimes[3];
-		const float t = fmodf(FormSeconds(), cycle);
+		// Since the last burst there's really been: the change back's smoke runs on into the next loop, but not into the
+		// first, as nothing changed back before it was shown
+		const float elapsed = FormSeconds();
 		float since = FLT_MAX;
 		for (const float start : { g_formTimes[0] - 0.35f, g_formTimes[0] + g_formTimes[1] + g_formTimes[2] - 0.35f })
-			since = std::min(since, fmodf(t - start + cycle * 2.f, cycle));
+			if (elapsed >= start)
+				since = std::min(since, fmodf(elapsed - start, cycle));
 		if (since < 4.f)
 		{
 			Constants smoke = c;
