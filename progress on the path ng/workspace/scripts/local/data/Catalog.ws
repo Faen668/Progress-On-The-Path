@@ -304,6 +304,11 @@ statemachine class CPotP_Catalog
 	{
 		var tracked : CPotP_Entry = NewEntry(suffix, PotP_A_World, type_value, region_value, filter_value, 0);
 		tracked.pin_name = pin;
+		// With no name of our own, the pin's name on the game's map, as signposts have
+		if (StrLen(tracked.title) == 0 || StrBeginsWith(tracked.title, "#"))
+		{
+			tracked.title = PotP_CleanTitle(PotP_LocOrDefault(StrLower("map_location_" + NameToString(pin)), NameToString(pin)));
+		}
 	}
 
 	//---------------------------------------------------
