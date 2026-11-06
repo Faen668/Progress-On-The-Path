@@ -113,10 +113,15 @@ statemachine class CPotP_Catalog
 
 	//---------------------------------------------------
 
-	public function AddQuest(suffix: string, type_value: PotP_Preview_Entry_Type, region_value: PotP_Preview_Region, filter_value: PotP_Preview_Quest_Filter, journal_name: string)
+	// title_id: the quest's title in the game's own strings (its journal entry's title), when the game has it
+	public function AddQuest(suffix: string, type_value: PotP_Preview_Entry_Type, region_value: PotP_Preview_Region, filter_value: PotP_Preview_Quest_Filter, journal_name: string, optional title_id: int)
 	{
 		var tracked : CPotP_Entry = NewEntry(suffix, PotP_A_Quest, type_value, region_value, filter_value, 0);
 		tracked.entry_name = journal_name;
+		if (title_id > 0)
+		{
+			tracked.title = GetLocStringById(title_id);
+		}
 	}
 
 	//---------------------------------------------------
@@ -288,7 +293,18 @@ statemachine class CPotP_Catalog
 
 	public function AddItem(suffix: string, type_value: PotP_Preview_Entry_Type, filter_value: PotP_Preview_Items_Filter, sub_filter_value: PotP_Preview_Items_Underlying_Filter, base_item: name, optional variation_1: name, optional variation_2: name, optional variation_3: name, optional variation_4: name)
 	{
-		var tracked : CPotP_Entry = NewEntry(suffix, PotP_A_Items, type_value, PotP_R_NA, filter_value, sub_filter_value);
+		var tracked	: CPotP_Entry = NewEntry(suffix, PotP_A_Items, type_value, PotP_R_NA, filter_value, sub_filter_value);
+		var game	: string;
+
+		// With no title of our own, the item's name in the game's own strings
+		if (StrLen(tracked.title) == 0 || StrBeginsWith(tracked.title, "#"))
+		{
+			game = PotP_CleanTitle(GetLocStringByKeyExt(theGame.GetDefinitionsManager().GetItemLocalisationKeyName(base_item)));
+			if (StrLen(game) > 0 && !StrBeginsWith(game, "#"))
+			{
+				tracked.title = game;
+			}
+		}
 
 		tracked.SetItem(base_item);
 		tracked.AddVariation(variation_1);
