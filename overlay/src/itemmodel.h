@@ -127,7 +127,12 @@ inline constexpr const char* kModelCreature = "creature:";
 bool LoadCreature(const std::string& templatePath, ItemModel& out);
 // Roach wearing a piece of horse gear: "roach:" and the gear's template name, after "creature:"
 inline constexpr const char* kModelRoach = "roach:";
-inline bool IsHorseGear(const std::string& templateName) { return templateName.find("_hd__") != std::string::npos; }
+// The game's names it with _hd__; a mod's comes with its kind in front (horse_saddle:, horse_bag:, horse_blinder:)
+inline bool IsHorseGear(const std::string& templateName)
+{
+	return templateName.find("_hd__") != std::string::npos || templateName.rfind("horse_saddle:", 0) == 0
+		|| templateName.rfind("horse_bag:", 0) == 0 || templateName.rfind("horse_blinder:", 0) == 0;
+}
 
 // The stances he can stand in, in order. One is worked out for the card in a moment, on a loading thread.
 int AnimationCount();

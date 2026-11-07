@@ -227,7 +227,10 @@ function PotPOverlay_ExportGear() : string
 // art if that's switched on. The menu treats a leader as having no type, and gives a neutral card the banner of the deck in use.
 function PotPOverlay_ItemFields(tracked: CPotP_Entry) : string
 {
-	var upgrade : string;
+	var dm			: CDefinitionsManagerAccessor = theGame.GetDefinitionsManager();
+	var upgrade		: string;
+	var template_name	: string;
+	var kind		: name;
 
 	if (tracked.category != PotP_A_Items || tracked.item_name == '')
 	{
@@ -240,7 +243,15 @@ function PotPOverlay_ItemFields(tracked: CPotP_Entry) : string
 	{
 		upgrade = "||||" + tracked.upgrade_group + "~" + IntToString(tracked.upgrade_tier) + "~" + IntToString(tracked.upgrade_tiers);
 	}
-	return "|||||||" + PotPOverlay_Clean(StrReplaceAll(theGame.GetDefinitionsManager().GetItemEquipTemplate(tracked.item_name), StrChar(92), "/")) + upgrade;
+	// Horse gear the game names with _hd__ is known by that; a mod's, such as Sezon Burz's, by its kind before the name
+	// (horse_saddle:...), so the overlay puts it on Roach, a saddle in place of hers
+	template_name = dm.GetItemEquipTemplate(tracked.item_name);
+	kind = dm.GetItemCategory(tracked.item_name);
+	if (StrFindFirst(template_name, "_hd__") < 0 && (kind == 'horse_saddle' || kind == 'horse_bag' || kind == 'horse_blinder'))
+	{
+		template_name = NameToString(kind) + ":" + template_name;
+	}
+	return "|||||||" + PotPOverlay_Clean(StrReplaceAll(template_name, StrChar(92), "/")) + upgrade;
 }
 
 // The paragraphs the game's bestiary shows (CR4GlossaryBestiaryMenu.GetDescription): those the journal has reached, in

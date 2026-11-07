@@ -28,6 +28,12 @@ function PotP_UsingCosWiecej() : bool
 	return StrLen(GetLocStringById(2115152003)) > 0;
 }
 
+//https://www.nexusmods.com/witcher3/mods/14573 - Verified 07.11.26
+function PotP_UsingSezonBurz() : bool
+{
+	return theGame.GetDLCManager().IsDLCAvailable('dlc_sezonburz');
+}
+
 //https://www.nexusmods.com/witcher3/mods/7858 - Verified 09.10.26
 function PotP_UsingCutThroatRazor() : bool
 {
@@ -133,12 +139,6 @@ function PotP_UsingAWitcherCanHideAnother() : bool
 function PotP_UsingW3EE() : bool
 {
 	return theGame.GetDLCManager().IsDLCAvailable('reduxw3ee_dlc');
-}
-
-//https://www.nexusmods.com/witcher3/mods/2818
-function PotP_UsingSezonBurz() : bool
-{
-	return StrLen(GetLocStringById(2112771001)) > 0;
 }
 
 //https://www.nexusmods.com/witcher3/mods/3983

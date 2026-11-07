@@ -679,6 +679,13 @@ function PotP_DefineItems_15(catalog: CPotP_Catalog)
 		catalog.AddItem("_05", PotP_E_ModAdded, PotP_I_Sezon, PotP_U_Silve, 'Sezon Burz Silver Sword', 'Sezon Burz Silver Sword NGP');
 		catalog.AddItem("_06", PotP_E_ModAdded, PotP_I_Sezon, PotP_U_Steel, 'Sezon Burz Steel Sword', 'Sezon Burz Steel Sword NGP');
 		catalog.AddItem("_07", PotP_E_ModAdded, PotP_I_Sezon, PotP_U_Cross, 'Sezon Burz Crossbow 1', 'Sezon Burz Crossbow 2', 'Sezon Burz Crossbow 3');
+		// The Remastered port's horse gear (dlc_sezonburz)
+		catalog.AddItem("_08", PotP_E_ModAdded, PotP_I_Sezon, PotP_U_Horse, 'Sezon Burz Saddle');
+		catalog.AddItem("_09", PotP_E_ModAdded, PotP_I_Sezon, PotP_U_Horse, 'Sezon Burz Armored Saddle');
+		catalog.AddItem("_10", PotP_E_ModAdded, PotP_I_Sezon, PotP_U_Horse, 'Sezon Burz Bags');
+		catalog.AddItem("_11", PotP_E_ModAdded, PotP_I_Sezon, PotP_U_Horse, 'Sezon Burz Expedition Bags');
+		catalog.AddItem("_12", PotP_E_ModAdded, PotP_I_Sezon, PotP_U_Horse, 'Sezon Burz Hidden Blinders');
+		catalog.AddItem("_13", PotP_E_ModAdded, PotP_I_Sezon, PotP_U_Horse, 'Sezon Burz Armored Blinders');
 		catalog.EndSection();
 	}
 }

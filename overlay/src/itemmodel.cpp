@@ -5423,10 +5423,19 @@ bool LoadCreature(const std::string& asked, ItemModel& out)
 
 // Roach, as the game dresses her (horseManager.ws): her look, Horse Hair 0, the universal reins and the apex tail, and the
 // plain saddle, with the piece asked about in its kind's place
-static bool LoadRoach(const std::string& item, ItemModel& out)
+static bool LoadRoach(const std::string& asked, ItemModel& out)
 {
+	// A mod's gear comes with its kind in front (IsHorseGear)
+	std::string item = asked;
+	bool saddle = false;
+	const size_t colon = item.find(':');
+	if (colon != std::string::npos)
+	{
+		saddle = item.compare(0, colon, "horse_saddle") == 0;
+		item = item.substr(colon + 1);
+	}
 	const std::string lower = Lower(item);
-	const bool saddle = lower.rfind("s_", 0) == 0;
+	saddle = saddle || lower.rfind("s_", 0) == 0;
 	std::vector<std::string> wearing = { "horse_hair_0", "horse_universal_reins", "tail_brown_skinned" };
 	if (!saddle)
 		wearing.push_back("s_01_hd__saddle_pled");
