@@ -4690,6 +4690,17 @@ namespace
 					y += 16.f;
 				}
 			}
+			// The card's own text, as printed on it: a quote, or a special card's rule when it isn't said above already
+			const std::string own = CleanGameText(e.description);
+			const bool said = std::any_of(stats.abilities.begin(), stats.abilities.end(), [&](const auto& a) { return a.second == own; });
+			if (!own.empty() && !said)
+			{
+				y += stats.abilities.empty() ? 10.f : -6.f;
+				FadeLineH(x, x + width, y, kGoldDim);
+				y += 16.f;
+				Text(kSerif, 28, x, y, kDim, own.c_str(), width);
+				y += WrappedHeight(kSerif, 28, own.c_str(), width) + 8.f;
+			}
 		}
 		y += 14.f;
 		MissableCallout(e, x, width, y);

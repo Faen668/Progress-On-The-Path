@@ -842,7 +842,13 @@ function PotPOverlay_CardStats(tracked: CPotP_Entry) : string
 			case 43: key = "ldr_weather_resistant"; break;
 			case 44: key = "ldr_graveyard_shuffle"; break;
 			}
-			abilities += PotPOverlay_CardAbility(key);
+			// As the deck builder's tooltip shows a leader (CardTooltip in deck_builder.redswf): "Leader Ability" over what
+			// its effect does, with no title of its own. The leaders' _title strings aren't used by the game, and most
+			// name another leader.
+			if (key != "" && PotPOverlay_GwentText("gwint_card_tooltip_" + key) != "")
+			{
+				abilities += "||" + PotPOverlay_Clean(PotPOverlay_GwentText("gwint_card_tooltip_" + key));
+			}
 		}
 	}
 	else
@@ -902,13 +908,9 @@ function PotPOverlay_CardStats(tracked: CPotP_Entry) : string
 			switch (effect)
 			{
 			case 31:
-				// Muster, unless it brings one card of its own: Roach, or Cerys's shield maidens
+				// Muster; Cerys's, card 502, summons her shield maidens (as the deck builder's tooltip has it)
 				key = "summon_clones";
-				if (card.summonFlags.Contains('roach'))
-				{
-					key = "summon_roach";
-				}
-				else if (card.summonFlags.Size() > 0 && StrBeginsWith(NameToString(card.summonFlags[0]), "clan_drummond_shieldmaiden") && !StrBeginsWith(NameToString(card.cardName), "clan_drummond_shieldmaiden"))
+				if (gwent.GetIndex(card) == 502)
 				{
 					key = "summon_sm";
 				}
@@ -918,7 +920,14 @@ function PotPOverlay_CardStats(tracked: CPotP_Entry) : string
 			case 35: key = "same_type_morale"; break;
 			case 32: key = "improve_neightbours"; break;
 			case 27: key = "horn"; break;
-			case 29: key = "scorch"; break;
+			case 29:
+				// The Clan Dimun Pirate's, card 524, has the game's own text for a unit's Scorch
+				key = "scorch";
+				if (gwent.GetIndex(card) == 524)
+				{
+					key = "scorch_creature";
+				}
+				break;
 			case 41: key = "mushroom"; break;
 			case 42: key = "morph"; break;
 			case 40: key = "suicide_summon"; break;

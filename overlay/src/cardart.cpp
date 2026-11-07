@@ -232,6 +232,9 @@ namespace
 		}
 	}
 
+	// The pictures a shape's outline brings in partway through, as new styles (agile cards' bow): further down
+	void LaterBitmapFills(const Gfx& g, int tag, size_t p, size_t firstStyles, std::vector<Fill>& fills);
+
 	void ReadShape(Gfx& g, int tag, size_t p)
 	{
 		const uint8_t* d = g.d;
@@ -263,6 +266,7 @@ namespace
 			if (bitmap != 0xFFFF)
 				fills.push_back(fill);
 		}
+		LaterBitmapFills(g, tag, p, static_cast<size_t>(count), fills);
 		g.shapes[id] = std::move(fills);
 	}
 
@@ -1454,6 +1458,15 @@ namespace
 
 	std::map<std::string, GameTexture> g_pins;
 	std::atomic<bool> g_pinsReady{ false };
+
+	void LaterBitmapFills(const Gfx& g, int tag, size_t p, size_t firstStyles, std::vector<Fill>& fills)
+	{
+		VShape s;
+		ReadVShape(g, tag, p, s);
+		for (size_t i = firstStyles; i < s.fills.size(); ++i)
+			if (s.fills[i].kind >= 0x40 && s.fills[i].kind <= 0x43 && s.fills[i].bitmap >= 0 && s.fills[i].bitmap != 0xFFFF)
+				fills.push_back(Fill{ static_cast<uint16_t>(s.fills[i].bitmap), s.fills[i].m });
+	}
 
 	bool DrawCardShape(const Gfx& g, int shape, const Matrix& m, GameTexture& out, float box[4])
 	{
