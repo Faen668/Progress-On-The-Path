@@ -541,7 +541,11 @@ function PotP_DefineItems_42(catalog: CPotP_Catalog)
 	catalog.AddItem("_04", PotP_E_Primary, PotP_I_Horse, PotP_U_Horse, 'Fire Horse Saddle');
 	catalog.AddItem("_05", PotP_E_Primary_DLC1, PotP_I_Horse, PotP_U_Horse, 'Horse Saddle 5');
 	catalog.AddItem("_06", PotP_E_Primary_DLC1, PotP_I_Horse, PotP_U_Horse, 'Horse Saddle 6');
-	catalog.AddItem("_07", PotP_E_Primary_DLC1, PotP_I_Horse, PotP_U_Horse, 'Devil Saddle');
+	// O'Dimm's reward if he takes Olgierd: reward q605_mirror_finale_demon_horse, in the temple meeting's peace branch
+	catalog.AddItem("_07", PotP_E_Missable_DLC1, PotP_I_Horse, PotP_U_Horse, 'Devil Saddle');
+	catalog.SetMissableReason("PotP_MissableTip_DevilSaddle", "q605_mirror_won");
+	// Quest blocks in q605_finale (ep1)
+	catalog.AddEventMissedBlock("e8d4f1ab-789a-4fcf-9013-e499654c2891", "q605_mirror_game");   // SceneBlock, the temple meeting: O'Dimm's game
 	catalog.AddItem("_08", PotP_E_Primary_DLC2, PotP_I_Horse, PotP_U_Horse, 'Toussaint saddle');
 	catalog.AddItem("_09", PotP_E_Primary_DLC2, PotP_I_Horse, PotP_U_Horse, 'Toussaint saddle 2');
 	catalog.AddItem("_10", PotP_E_Primary_DLC2, PotP_I_Horse, PotP_U_Horse, 'Toussaint saddle 3');

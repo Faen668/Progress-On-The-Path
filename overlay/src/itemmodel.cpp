@@ -4904,7 +4904,43 @@ namespace
 	}
 }
 
-static bool LoadOneCreature(const std::string& asked, ItemModel& out)
+// More templates' meshes on a creature, as Roach wears her gear: skinned to her rig, so they're put in before it's matched
+static void AddWorn(ItemModel& out, const std::vector<std::string>& templates)
+{
+	for (const std::string& name : templates)
+	{
+		ItemModel piece;
+		piece.keepSkin = true;
+		if (!LoadItemModel(name, piece))
+		{
+			Log("item models: %s: %s", name.c_str(), piece.problem.c_str());
+			continue;
+		}
+		const int bonesBefore = static_cast<int>(out.meshBones.size()), clothsBefore = static_cast<int>(out.cloths.size());
+		for (ModelPart& p : piece.parts)
+		{
+			if (p.meshBones >= 0)
+				p.meshBones += bonesBefore;
+			if (p.cloth >= 0)
+				p.cloth += clothsBefore;
+			out.parts.push_back(std::move(p));
+		}
+		for (MeshBones& b : piece.meshBones)
+			out.meshBones.push_back(std::move(b));
+		for (auto& c : piece.cloths)
+			out.cloths.push_back(std::move(c));
+		for (const std::string& d : piece.dyngs)
+			if (std::find(out.dyngs.begin(), out.dyngs.end(), d) == out.dyngs.end())
+				out.dyngs.push_back(d);
+		for (int k = 0; k < 3; ++k)
+		{
+			out.boundsMin[k] = std::min(out.boundsMin[k], piece.boundsMin[k]);
+			out.boundsMax[k] = std::max(out.boundsMax[k], piece.boundsMax[k]);
+		}
+	}
+}
+
+static bool LoadOneCreature(const std::string& asked, ItemModel& out, const char* lookAsked = nullptr, const std::vector<std::string>* wearing = nullptr, const char* motionFrom = nullptr)
 {
 	if (!g_ready)
 	{
@@ -4925,6 +4961,10 @@ static bool LoadOneCreature(const std::string& asked, ItemModel& out)
 		{ "\\mh207_wraith.w2ent", "wraith_02" },   // the Penitent, hooded in red; a plain wraith has the first
 	};
 	std::vector<const Entity::Look*> order;
+	if (lookAsked)
+		for (const Entity::Look& l : entity->looks)
+			if (_stricmp(l.name.c_str(), lookAsked) == 0)
+				order.push_back(&l);
 	for (const auto& o : kLooks)
 		if (o.path[0] && templatePath.find(o.path) != std::string::npos)
 			for (const Entity::Look& l : entity->looks)
@@ -4966,6 +5006,8 @@ static bool LoadOneCreature(const std::string& asked, ItemModel& out)
 	}
 	if (!read)
 		return false;
+	if (wearing)
+		AddWorn(out, *wearing);
 	// A part with no texture at all is a layer the game draws over it in some way of its own (the toad's): left out, as
 	// it would otherwise cover it in plain grey. So is one textured to be unseen (the siren's second hair, which its human
 	// look shows): that texture isn't in the game, and it would be drawn black.
@@ -4986,9 +5028,18 @@ static bool LoadOneCreature(const std::string& asked, ItemModel& out)
 	CreatureMotion motion;
 	std::set<std::string> seen;
 	FindMotion(templatePath, motion, seen, 0);
+	if (motionFrom)
+		FindMotion(motionFrom, motion, seen, 0);
 	if (look)
 		for (const std::string& part : look->templates)
 			FindMotion(part, motion, seen, 1);
+	// What it wears can bring dangles of its own: a mane, a tail
+	if (wearing)
+		for (const std::string& name : *wearing)
+		{
+			const auto named = g_templates.find(Lower(name));
+			FindMotion(named != g_templates.end() ? named->second : Lower(name), motion, seen, 1);
+		}
 	// Its rig: of those its components have, the one that names the most of its meshes' bones. A monster's template can
 	// also hold a human's, for a form it takes.
 	std::set<std::string> meshBones;
@@ -5370,8 +5421,26 @@ bool LoadCreature(const std::string& asked, ItemModel& out)
 	return true;
 }
 
+// Roach, as the game dresses her (horseManager.ws): her look, Horse Hair 0, the universal reins and the apex tail, and the
+// plain saddle, with the piece asked about in its kind's place
+static bool LoadRoach(const std::string& item, ItemModel& out)
+{
+	const std::string lower = Lower(item);
+	const bool saddle = lower.rfind("s_", 0) == 0;
+	std::vector<std::string> wearing = { "horse_hair_0", "horse_universal_reins", "tail_brown_skinned" };
+	if (!saddle)
+		wearing.push_back("s_01_hd__saddle_pled");
+	wearing.push_back(item);
+	// Her own template's looks are compiled into it, so her body comes from the template her default look brings in, and
+	// her rig and idles from her own
+	return LoadOneCreature("characters\\models\\animals\\horse\\draft\\b_01_hd__brown_harness.w2ent", out, nullptr, &wearing,
+		"characters\\npc_entities\\animals\\horse\\player_horse.w2ent");
+}
+
 static bool LoadCreatureAnew(const std::string& asked, ItemModel& out)
 {
+	if (asked.compare(0, strlen(kModelRoach), kModelRoach) == 0)
+		return LoadRoach(asked.substr(strlen(kModelRoach)), out);
 	// monster+human: shown as the human first, turning into the monster and back
 	const size_t plus = asked.find('+');
 	if (plus == std::string::npos)

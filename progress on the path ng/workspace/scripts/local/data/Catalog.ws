@@ -203,7 +203,18 @@ statemachine class CPotP_Catalog
 		AddQuestBlock(PotP_QB_Missed, guid, output, "");
 	}
 
+	// For an entry built elsewhere, as the relic weapons are, rather than the one added just before
+	public function AddMissedBlockFor(tracked: CPotP_Entry, guid: string, output: string)
+	{
+		AddQuestBlockFor(tracked, PotP_QB_Missed, guid, output, "");
+	}
+
 	private function AddQuestBlock(kind: EPotP_QuestBlockKind, guid: string, output: string, location: string)
+	{
+		AddQuestBlockFor(pending[pending.Size() - 1], kind, guid, output, location);
+	}
+
+	private function AddQuestBlockFor(tracked: CPotP_Entry, kind: EPotP_QuestBlockKind, guid: string, output: string, location: string)
 	{
 		var block : SPotP_QuestBlock;
 
@@ -211,7 +222,7 @@ statemachine class CPotP_Catalog
 		block.output = output;
 		block.kind = kind;
 		block.location = location;
-		block.tracked = pending[pending.Size() - 1];
+		block.tracked = tracked;
 		quest_blocks.PushBack(block);
 	}
 
@@ -320,8 +331,11 @@ statemachine class CPotP_Catalog
 	// game sets, and PotP's own for the quest blocks that miss it as they happen (AddEventMissedBlock)
 	public function SetMissableReason(tip_key: string, optional missed_fact: string)
 	{
-		var tracked : CPotP_Entry = pending[pending.Size() - 1];
+		SetMissableReasonFor(pending[pending.Size() - 1], tip_key, missed_fact);
+	}
 
+	public function SetMissableReasonFor(tracked: CPotP_Entry, tip_key: string, optional missed_fact: string)
+	{
 		tracked.missable_tip = tip_key;
 		if (missed_fact != "")
 		{

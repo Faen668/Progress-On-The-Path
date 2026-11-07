@@ -628,7 +628,8 @@
 2116568584||PotP_Preview_Missable_30|Before meeting O'Dimm at the Alchemy Inn during 'Whatsoever a Man Soweth' (Hearts of Stone)
 2116568585||PotP_Preview_Missable_31|Before finishing 'Now or Never'
 2116568586||potp_missable_warning_title|Point of No Return Ahead
-2116568587||potp_missable_warning_body|You are playing '[QUEST]', which contains a point of no return:<br/><font color="#9D75BF">[CUTOFF]</font><br/><br/>Once you pass it, these quests can no longer be completed:<br/><br/>[LIST]<br/>The Missable tab lists every missable quest and what closes it off.
+2116569388||potp_missable_warning_lead|'[QUEST]' leads past this point. Once you're through it, these can no longer be completed:
+2116569389||potp_missable_warning_foot|The Missable tab lists every missable quest and what closes it off.
 2116568588||potp_missable_journal_title|Missable Quest - [KIND]
 2116568589||potp_missable_journal_now|Its point of no return is in the quest you are playing now. Finish this first!
 2116568590||potp_missable_journal_missed|Missed: this quest can no longer be completed.
@@ -733,6 +734,11 @@
 2116569387||PotP_MissableTip_KaerTroldePlaceOfPower|In the tunnels under Kaer Trolde, only on Cerys's side in 'King's Gambit': follow her into the wine cellar, and when the fire trap goes off, escape through the tunnel past it. Side with Hjalmar, stay out of it, or leave the tunnels without using it, and you can't get back.
 2116569386||PotP_MissableTip_SpiralPlaceOfPower|Only in the Spiral during 'Through Time and Space'. Once the quest takes you back out, you can't return.
 2116569381||PotP_MissableTip_Tiegr|In Gaetan's stash after 'Where the Cat and Wolf Play...'. It's lost if you kill Gaetan, or if you take too long to reach his hideout and bandits loot it first.
+2116569390||PotP_MissableTip_Iris|Olgierd gives you his sabre to thank you at the end of Hearts of Stone. You only get it if you play O'Dimm's game and win back Olgierd's soul. If you let O'Dimm take Olgierd, you won't get it.
+2116569391||PotP_MissableTip_DevilSaddle|O'Dimm gives you this saddle at the end of Hearts of Stone if you let him take Olgierd's soul. If you play O'Dimm's game to save Olgierd instead, you won't get it.
+2116569392||PotP_MissableTip_DeathFromAbove|Crach an Craite gives you this at the end of 'King's Gambit', once you've helped Cerys or Hjalmar find out who was behind the berserker attack. If you refuse to take part in the investigation, you won't get it.
+2116569393||PotP_MissableTip_HjalmarSword|Hjalmar gives you his sword if you beat him in the fistfight he challenges you to at the feast in 'King's Gambit'. If you lose the fight or don't take up his challenge, you won't get it.
+2116569394||PotP_MissableTip_RoseOfShaerrawed|Found in Kaer Morhen's armory during 'The Battle of Kaer Morhen'. At the council before the battle, choose to clear out the armory to get it. If you choose to repair the wall instead, you won't get it.
 2116568671||PotP_NotificationLine_ShadesOfIron| Shades of Iron Item(DYNAMC_REPLACE)
 2116568672||PotP_NotificationLine_Sites| Abandoned Site(DYNAMC_REPLACE)
 2116568673||PotP_NotificationLine_AbandonedSite|Updated Abandoned Site: 
@@ -1459,4 +1465,4 @@
 2116569384||potp_ov_card_details|Card
 ;overlay-text-end
 ;
-; Next id: 2116569388
+; Next id: 2116569395

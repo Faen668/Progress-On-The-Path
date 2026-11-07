@@ -125,6 +125,9 @@ bool LoadItemOnGeralt(const std::string& templates, int animation, ItemModel& ou
 // "creature:", for the model viewer.
 inline constexpr const char* kModelCreature = "creature:";
 bool LoadCreature(const std::string& templatePath, ItemModel& out);
+// Roach wearing a piece of horse gear: "roach:" and the gear's template name, after "creature:"
+inline constexpr const char* kModelRoach = "roach:";
+inline bool IsHorseGear(const std::string& templateName) { return templateName.find("_hd__") != std::string::npos; }
 
 // The stances he can stand in, in order. One is worked out for the card in a moment, on a loading thread.
 int AnimationCount();

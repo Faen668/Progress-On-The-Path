@@ -61,7 +61,59 @@ class CPotP_DynamicItems
 			catalog.AddPrepared(tracked);
 		}
 
+		// After the loop, so an item that came in as a variation is found too
+		for (Idx = 0; Idx < group_entries.Size(); Idx += 1)
+		{
+			SetRelicMissable(catalog, group_entries[Idx]);
+		}
+
 		catalog.EndSection();
+	}
+
+	//---------------------------------------------------
+	// The relics a choice can lose for good, each checked in the quest files: its reward, the choice that skips it,
+	// the fact the game sets for old saves, and the vanilla blocks that miss it as it happens.
+
+	private function SetRelicMissable(catalog: CPotP_Catalog, tracked: CPotP_Entry)
+	{
+		if (tracked.variations.Contains('Olgierd Sabre'))
+		{
+			// Iris: reward q605_olgierd_finale_reward, only after O'Dimm's game. No fact on the peace path.
+			MakeMissable(catalog, tracked, "PotP_MissableTip_Iris", "");
+			// Quest blocks in q605_finale (ep1)
+			catalog.AddMissedBlockFor(tracked, "e8d4f1ab-789a-4fcf-9013-e499654c2891", "q605_mirror_peace");   // SceneBlock, the temple meeting: O'Dimm takes Olgierd
+		}
+		else if (tracked.variations.Contains('Crossbow q206'))
+		{
+			// Death From Above: reward q206_06_crachs_final_reward, only after a side is taken
+			MakeMissable(catalog, tracked, "PotP_MissableTip_DeathFromAbove", "q206_no_for_investigation");
+			// Quest blocks in q206_berserkers
+			catalog.AddMissedBlockFor(tracked, "3e6b280f-88a1-4153-8936-29c0816508aa", "True");   // Condition "q206_no_for_investigation"
+		}
+		else if (tracked.variations.Contains('Hjalmar_Short_Steel_Sword'))
+		{
+			// Hjalmar's sword: reward q206_01_won_fistfight, on the fistfight scene's WonOut only. No fact when it's lost.
+			MakeMissable(catalog, tracked, "PotP_MissableTip_HjalmarSword", "");
+			// Quest blocks in q206_berserkers
+			catalog.AddMissedBlockFor(tracked, "39a967f5-24d7-4484-82c4-d9e93bbca228", "Gave Sword");       // SceneBlock, after losing the fistfight
+			catalog.AddMissedBlockFor(tracked, "39a967f5-24d7-4484-82c4-d9e93bbca228", "Paid for Sword");
+			catalog.AddMissedBlockFor(tracked, "60b383af-01c1-4d58-9fff-8d5d9fe19097", "False");            // Condition: Hjalmar's challenge not taken
+		}
+		else if (tracked.variations.Contains('Roseofaelirenn'))
+		{
+			// Rose of Shaerrawed: reward q403_new_gear, the council's armory choice. The choice is inside the council scene,
+			// so its fact only.
+			MakeMissable(catalog, tracked, "PotP_MissableTip_RoseOfShaerrawed", "q403_fix_wall");
+		}
+	}
+
+	//---------------------------------------------------
+
+	private function MakeMissable(catalog: CPotP_Catalog, tracked: CPotP_Entry, tip_key: string, missed_fact: string)
+	{
+		tracked.entry_type = PotP_E_Missable;
+		tracked.is_missable = true;
+		catalog.SetMissableReasonFor(tracked, tip_key, missed_fact);
 	}
 
 	//---------------------------------------------------

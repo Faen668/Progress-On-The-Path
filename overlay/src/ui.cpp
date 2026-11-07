@@ -4172,7 +4172,8 @@ namespace
 		}
 		if (showModel)
 		{
-			DrawModelPanel(*e, mx0, mx1, y, bottom - 30, e->itemTemplate);
+			// Horse gear on Roach, as it's worn
+			DrawModelPanel(*e, mx0, mx1, y, bottom - 30, IsHorseGear(e->itemTemplate) ? std::string(kModelCreature) + kModelRoach + e->itemTemplate : e->itemTemplate);
 			return;
 		}
 
@@ -5160,7 +5161,7 @@ namespace
 	// Notifications
 	// ------------------------------------------------------------------------------------------
 
-	struct PopupLine { int group = 0; bool complete = false, inProgress = false; std::string icon, text; };
+	struct PopupLine { int group = 0; bool complete = false, inProgress = false; std::string icon, text, uuid; };
 	struct PopupMessage
 	{
 		std::string herald;   // the banner, and what for: event, update, install, ngplus, content, achievement
@@ -5172,6 +5173,7 @@ namespace
 		// A message or a warning from the scripts, rather than a list of what changed
 		int kind = 0;   // 0 what changed, 1 a message, 2 a warning
 		std::string title;
+		std::string cutoff, lead, foot;   // a missable warning's: its point of no return, what's being played, the line under its list
 		struct Paragraph { std::string text; ImU32 colour = 0; };   // an empty one's a gap
 		std::vector<Paragraph> body;
 	};
@@ -5295,6 +5297,16 @@ namespace
 					m.body = ParseMessageBody(below);
 				}
 			}
+			// A missable warning: W|title|point of no return|what's being played|the line under the list, and an L line for
+			// each quest it closes off
+			else if (f[0] == "W" && f.size() >= 5)
+			{
+				m.kind = 2;
+				m.title = CleanGameText(f[1]);
+				m.cutoff = CleanGameText(f[2]);
+				m.lead = CleanGameText(f[3]);
+				m.foot = CleanGameText(f[4]);
+			}
 			else if (f[0] == "P" && f.size() >= 7)
 			{
 				m.kind = atoi(f[1].c_str()) == 2 ? 2 : 1;
@@ -5322,6 +5334,8 @@ namespace
 				l.inProgress = f[2] == "2";
 				l.icon = f[3];
 				l.text = CleanGameText(f[4]);
+				if (f.size() >= 6)
+					l.uuid = f[5];
 				m.lines.push_back(std::move(l));
 			}
 			else if (f[0] == "M" && f.size() >= 2)
@@ -6690,9 +6704,216 @@ namespace
 		}
 	}
 
+	bool RevealedMissable(const std::string& uuid);
+
+	// Text in lines of no more than a width, each centred on cx; returns the height it took
+	float CentredLines(Face font, int size, float cx, float y, float width, ImU32 colour, const std::string& text, bool draw = true)
+	{
+		ImFont* f = FontOf(font, size);
+		const float lineH = WrappedHeight(font, size, "H", 100000.f);
+		const char* s = text.c_str();
+		const char* const end = s + text.size();
+		float h = 0.f;
+		while (s < end)
+		{
+			const char* next = f->CalcWordWrapPositionA(static_cast<float>(size) / f->FontSize, s, end, width);
+			if (next == s)
+				++next;
+			std::string piece(s, next);
+			while (!piece.empty() && (piece.back() == ' ' || piece.back() == '\n'))
+				piece.pop_back();
+			if (draw)
+				Text(font, size, cx - Measure(font, size, piece.c_str()).x * 0.5f, y + h, colour, piece.c_str());
+			h += lineH;
+			s = next;
+			while (s < end && (*s == ' ' || *s == '\n'))
+				++s;
+		}
+		return h;
+	}
+
+	// A point of no return, in the herald's banner: across the screen over the paused game, a red medallion on its top
+	// line, the point itself as its headline, and the quests it closes off listed as the notifications list things, their
+	// names hidden as the spoiler settings say
+	void DrawWarningBanner()
+	{
+		const ImGuiIO& io = ImGui::GetIO();
+		const float k = g_k;
+		const PopupMessage& m = *g_warning;
+		const Settings& st = GetSettings();
+		g_mouse = ImVec2(io.MousePos.x * g_mouseScale.x / k, io.MousePos.y * g_mouseScale.y / k);
+		g_warningT += g_dt;
+		const float appear = std::min(1.f, g_warningT * 6.f);
+		dl->AddRectFilled(ImVec2(0, 0), io.DisplaySize, Rgb(0, 0, 0, static_cast<int>(170.f * appear)));
+
+		dl->PushClipRect(ImVec2(-10000, -10000), ImVec2(20000, 20000), false);
+		const int firstVertex = dl->VtxBuffer.Size;
+		const int firstCommand = dl->CmdBuffer.Size - 1;
+		const float screenW = io.DisplaySize.x / k, screenH = io.DisplaySize.y / k;
+		const float w = screenW, cx = w * 0.5f;
+		const float textW = std::min(1240.f, w - 160.f);
+		const ImU32 ember = Rgb(214, 84, 56), kicker = Rgb(236, 128, 98), head = Rgb(250, 242, 220), questInk = Rgb(222, 166, 72);
+
+		// What each line of the list says: a quest not started keeps its name to itself while the spoilers are hidden
+		std::vector<std::string> names;
+		for (const PopupLine& line : m.lines)
+			names.push_back(!line.inProgress && !st.revealUnstarted && !RevealedMissable(line.uuid) ? std::string(Tx(T_missable_quest)) : line.text);
+		// Two columns once there are more than a few, if they fit side by side
+		float widest = 0.f;
+		for (const std::string& n : names)
+			widest = std::max(widest, Measure(kSerif, 28, n.c_str()).x);
+		constexpr float kIconW = 40.f, kRingW = 34.f;   // the pin before a name, the ring after one under way
+		const float rowW = std::min(widest + kIconW + kRingW + 16.f, textW * 0.5f - 30.f);
+		const int columns = names.size() > 6 && rowW * 2.f + 60.f <= textW ? 2 : 1;
+		const int rows = (static_cast<int>(names.size()) + columns - 1) / columns;
+		constexpr float kRowH = 42.f;
+
+		// The heights: the medallion and kicker, the headline, the lead, the list, the foot and the way on
+		const float bandTop = 70.f;
+		const float headSizeF = Measure(kTitle, 40, m.cutoff.c_str()).x <= textW ? 40.f : 32.f;
+		const int headSize = static_cast<int>(headSizeF);
+		const float headH = CentredLines(kTitle, headSize, cx, 0.f, textW, head, m.cutoff, false);
+		const float leadH = m.lead.empty() ? 0.f : CentredLines(kSerif, 28, cx, 0.f, textW, kText, m.lead, false);
+		const float footH = m.foot.empty() ? 0.f : CentredLines(kSerif, 24, cx, 0.f, textW, kDim, m.foot, false);
+		const float fixedH = 92.f + headH + 18.f + leadH + 26.f + 26.f + footH + 30.f + 42.f + 34.f;
+		const float listFull = rows * kRowH;
+		// A long list scrolls rather than taking the screen: the banner stays a banner
+		const float listH = std::max(kRowH, std::min({ listFull, screenH - 60.f - fixedH, std::max(kRowH * 4.f, screenH * 0.42f) }));
+		const float h = fixedH + listH;
+		const float top = std::max(20.f, (screenH - h) * 0.42f);
+		const float y0 = top + bandTop;
+
+		// The herald's ground, faded out to the sides and edges, and its lines, in the warning's ember
+		const float bh = h;
+		Field(91000 + static_cast<int>(bh) * 10 + static_cast<int>(w) * 100000, ImVec2(0, y0), ImVec2(w, y0 + bh), 14.f, [=](float px, float py)
+		{
+			const float dx = (px - w * 0.5f) / (w * 0.5f), dy = (py - bh * 0.5f) / (bh * 0.5f);   // in its own space
+			const float across = std::clamp((1.f - std::fabs(dx)) / 0.3f, 0.f, 1.f);
+			const float down = std::clamp((1.f - std::fabs(dy)) / 0.08f, 0.f, 1.f);
+			const int a = static_cast<int>(242.f * across * down);
+			const float big = Fbm(px * 0.0035f + 3.f, py * 0.0035f, 4);
+			const float grain = Fbm(px * 0.07f, py * 0.07f, 2);
+			const float value = (9.f + big * 26.f + (grain - 0.5f) * 7.f) * (0.7f + 0.3f * across);
+			return Rgb(static_cast<int>(value * 1.06f), static_cast<int>(value * 0.86f), static_cast<int>(value * 0.74f), a);
+		});
+		FadeLineH(w * 0.12f, w * 0.88f, y0, ember, 1.8f);
+		FadeLineH(w * 0.12f, w * 0.88f, y0 + bh, ember, 1.8f);
+
+		// The medallion on the top line, with the warning's sign
+		const ImVec2 c(cx, y0 + 2.f);
+		SoftGlow(c, 70.f, Alpha(ember, 0.35f));
+		dl->AddCircleFilled(c, 40.f, Rgb(12, 8, 6), 40);
+		dl->AddCircle(c, 40.f, ember, 40, 2.5f);
+		const ImVec2 tri[3] = { { c.x, c.y - 22.f }, { c.x + 23.f, c.y + 17.f }, { c.x - 23.f, c.y + 17.f } };
+		dl->AddConvexPolyFilled(tri, 3, ember);
+		TextCentre(kSans, 24, c.x, c.y - 9.f, Rgb(255, 240, 220), "!");
+
+		float y = y0 + 54.f;
+		TextCentre(kTitle, 22, cx, y, kicker, Upper(m.title).c_str());
+		y += 38.f;
+		y += CentredLines(kTitle, headSize, cx, y, textW, head, m.cutoff) + 18.f;
+		if (!m.lead.empty())
+			y += CentredLines(kSerif, 28, cx, y, textW, kText, m.lead);
+		y += 26.f;
+
+		// The list, as the notifications list things: each its quest pin and name, a ring if it's under way. A long one scrolls.
+		const float scrollMax = std::max(0.f, listFull - listH);
+		if (g_navDown) g_warningScroll += kRowH * 2.f;
+		if (g_navUp) g_warningScroll -= kRowH * 2.f;
+		g_warningScroll -= g_wheel * kRowH * 2.f;
+		g_warningScroll -= g_pad.rightY * g_dt * 1000.f;
+		g_warningScroll = std::clamp(g_warningScroll, 0.f, scrollMax);
+		const float listW = columns * rowW + (columns - 1) * 60.f;
+		const float listX = cx - listW * 0.5f;
+		dl->PushClipRect(ImVec2(listX - 40.f, y - 2.f), ImVec2(listX + listW + 40.f, y + listH + 2.f), true);
+		for (size_t i = 0; i < names.size(); ++i)
+		{
+			const int col = columns == 2 ? static_cast<int>(i) / rows : 0, row = columns == 2 ? static_cast<int>(i) % rows : static_cast<int>(i);
+			const float rx = listX + col * (rowW + 60.f), ry = y + row * kRowH - g_warningScroll;
+			if (ry + kRowH < y - 2.f || ry > y + listH)
+				continue;
+			const PopupLine& line = m.lines[i];
+			const bool hidden = names[i] != line.text;
+			if (!line.icon.empty())
+				PopupIcon(line.icon, ImVec2(rx + 13.f, ry + 19.f));
+			TextFit(kSerif, 28, rx + kIconW, ry + 2.f, hidden ? kDim : questInk, names[i], rowW - kIconW - kRingW);
+			if (line.inProgress)
+			{
+				const float after = rx + kIconW + std::min(Measure(kSerif, 28, names[i].c_str()).x, rowW - kIconW - kRingW) + 10.f;
+				dl->AddCircle(ImVec2(after + 8, ry + 19), 7, kAmber, 20, 2.f);
+				dl->AddCircleFilled(ImVec2(after + 8, ry + 19), 3, kAmber);
+			}
+		}
+		dl->PopClipRect();
+		if (scrollMax > 0.f)
+		{
+			const float tx = listX + listW + 30.f;
+			dl->AddRectFilled(ImVec2(tx, y), ImVec2(tx + 5, y + listH), Rgb(24, 20, 14, 220));
+			const float thumbH = std::max(40.f, listH * listH / listFull);
+			const float thumbY = y + (listH - thumbH) * (g_warningScroll / scrollMax);
+			dl->AddRectFilled(ImVec2(tx, thumbY), ImVec2(tx + 5, thumbY + thumbH), kGold);
+		}
+		y += listH + 26.f;
+		FadeLineH(cx - textW * 0.3f, cx + textW * 0.3f, y - 12.f, Alpha(kGold, 0.6f), 1.f);
+		if (!m.foot.empty())
+			y += CentredLines(kSerif, 24, cx, y, textW, kDim, m.foot);
+		y += 30.f;
+
+		// The one way on
+		const float capH = 42.f;
+		const char* const label = Tx(T_understood);
+		const float labelW = Measure(kSerif, 30, label).x;
+		const char* const keyName = Tx(T_key_enter);
+		const float capW = g_padPrompts ? PadGlyph(0.f, y, capH, kPadA, false, PadStyleNow()) : KeyCap(0.f, y, capH, keyName, false, false);
+		const float startX = cx - (capW + 12.f + labelW) * 0.5f;
+		const ImVec2 ha(startX, y), hb(startX + capW + 12.f + labelW, y + capH);
+		const bool hot = g_mouse.x >= ha.x && g_mouse.x < hb.x && g_mouse.y >= ha.y && g_mouse.y < hb.y;
+		if (g_padPrompts)
+			PadGlyph(startX, y, capH, kPadA, true, PadStyleNow());
+		else
+			KeyCap(startX, y, capH, keyName, true, hot);
+		Text(kSerif, 30, startX + capW + 12.f, y + 2, hot ? Rgb(255, 232, 180) : Rgb(232, 196, 128), label);
+		DrawCursor();
+		dl->PopClipRect();
+
+		// It comes down a little as it fades in, as the herald does
+		const float drop = (1.f - appear) * 22.f;
+		for (int i = firstVertex; i < dl->VtxBuffer.Size; ++i)
+		{
+			ImDrawVert& v = dl->VtxBuffer[i];
+			v.pos.x *= k;
+			v.pos.y = (v.pos.y - drop) * k;
+			if (appear < 1.f)
+				v.col = Alpha(v.col, appear);
+		}
+		for (int i = std::max(0, firstCommand); i < dl->CmdBuffer.Size; ++i)
+		{
+			ImVec4& clip = dl->CmdBuffer[i].ClipRect;
+			if (clip.x < 0.f)
+				clip = ImVec4(0.f, 0.f, io.DisplaySize.x, io.DisplaySize.y);
+			else
+				clip = ImVec4(clip.x * k, (clip.y - drop) * k, clip.z * k, (clip.w - drop) * k);
+		}
+
+		// Not straight away, so a button already being pressed doesn't skip it unread
+		const bool accepted = g_warningDismissed || ImGui::IsKeyPressed(ImGuiKey_Enter, false) || ImGui::IsKeyPressed(ImGuiKey_Space, false) || g_pad.Pressed(kPadA) || g_pad.Pressed(kPadB) || (hot && g_clicked);
+		g_warningDismissed = false;
+		if (accepted && g_warningT > 0.5f)
+		{
+			g_warning.reset();
+			g_warningUp = false;
+			SetMenuOpen(false);
+		}
+	}
+
 	// A warning the player has to see: on its own over the paused game, with the window itself not opened behind it
 	void DrawWarning()
 	{
+		if (!g_warning->cutoff.empty())
+		{
+			DrawWarningBanner();
+			return;
+		}
 		const ImGuiIO& io = ImGui::GetIO();
 		const float k = g_k;
 		const PopupMessage& m = *g_warning;

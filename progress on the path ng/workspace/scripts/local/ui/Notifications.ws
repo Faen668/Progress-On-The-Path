@@ -355,23 +355,30 @@ class CPotP_Notifications
 
 	//---------------------------------------------------
 
+	// For the overlay's banner, in parts: W|title|point of no return|what's being played|the line under the list, then
+	// L|0|state|icon|title|uuid for each quest it closes off (state 2: under way). The overlay hides the names of those not
+	// started, as its spoiler settings say.
 	public function ShowMissableWarning(group: CPotP_Section, outstanding: array<CPotP_Entry>)
 	{
-		var list	: string;
 		var body	: string;
+		var lead	: string;
+		var progress	: string;
 		var Idx		: int;
 
+		lead = StrReplace(GetLocStringByKeyExt("potp_missable_warning_lead"), "[QUEST]", group.cutoff.title);
+		body = "W|" + PotPOverlay_Clean(GetLocStringByKeyExt("potp_missable_warning_title")) + "|" + PotPOverlay_Clean(GetLocStringByKeyExt(group.header))
+			+ "|" + PotPOverlay_Clean(lead) + "|" + PotPOverlay_Clean(GetLocStringByKeyExt("potp_missable_warning_foot"));
 		for (Idx = 0; Idx < outstanding.Size(); Idx += 1)
 		{
-			list += "<font color='#D79D3A'>" + outstanding[Idx].title + "</font><br/>";
+			progress = "0";
+			if (outstanding[Idx].status == PotP_S_InProgress)
+			{
+				progress = "2";
+			}
+			body += "\nL|0|" + progress + "|" + GetIcon(outstanding[Idx]) + "|" + PotPOverlay_Clean(outstanding[Idx].title) + "|" + outstanding[Idx].uuid;
 		}
 
-		body = GetLocStringByKeyExt("potp_missable_warning_body");
-		body = StrReplace(body, "[QUEST]", group.cutoff.title);
-		body = StrReplace(body, "[CUTOFF]", GetLocStringByKeyExt(group.header));
-		body = StrReplace(body, "[LIST]", list);
-
-		master.popup.ShowWarning(GetLocStringByKeyExt("potp_missable_warning_title"), body, "PotP_MissableWarning_" + group.header);
+		master.popup.ShowWarning("", body, "PotP_MissableWarning_" + group.header);
 	}
 
 	//---------------------------------------------------

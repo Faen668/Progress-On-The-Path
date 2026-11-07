@@ -7,6 +7,7 @@
 //   The body keeps its <br/> and <font color> tags.
 // The special ones, an event unlocked or the mod updated, get the overlay's banner:
 //   H|what|seconds|headline|below   what: event, update, install, ngplus, content
+// A missable warning comes ready made for the overlay (Notifications.ShowMissableWarning): W|..., with no title.
 
 struct PotP_PopupMessage
 {
@@ -131,7 +132,11 @@ state Showing in CPotP_Popup
 			}
 
 			main = PotP_Get();
-			if (main && StrLen(message.herald) > 0)
+			if (main && message.is_warning && message.title == "" && StrBeginsWith(message.body, "W|"))
+			{
+				main.notifications.QueueForOverlay(message.body);
+			}
+			else if (main && StrLen(message.herald) > 0)
 			{
 				main.notifications.QueueForOverlay("H|" + message.herald + "|10|" + PotPOverlay_Clean(message.title) + "|" + PotPOverlay_Clean(message.body));
 			}
