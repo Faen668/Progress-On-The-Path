@@ -269,6 +269,21 @@ statemachine class CPotP_Catalog
 
 	//---------------------------------------------------
 
+	// Another fact that says the entry added just before is missed, for an item lost more than one way: after_fact set,
+	// unless unless_fact is too
+	public function AddMissedFact(after_fact: string, optional unless_fact: string)
+	{
+		AddMissedFactFor(pending[pending.Size() - 1], after_fact, unless_fact);
+	}
+
+	public function AddMissedFactFor(tracked: CPotP_Entry, after_fact: string, optional unless_fact: string)
+	{
+		tracked.more_missed_after.PushBack(after_fact);
+		tracked.more_missed_unless.PushBack(unless_fact);
+	}
+
+	//---------------------------------------------------
+
 	public function AddAlsoMissedFact(fact_name: string)
 	{
 		pending[pending.Size() - 1].also_missed_fact = fact_name;

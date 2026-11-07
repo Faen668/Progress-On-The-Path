@@ -2529,32 +2529,10 @@ namespace
 
 	struct BookArt { unsigned long long texture = 0; float w = 1.f, h = 1.f; };
 
-	// A shape drawn here, as the game's are: solid, with its details cut out. x and y from -1 to 1, y down.
-	float DrawnShape(int book, float x, float y)
+	// The settings cog, drawn here as the game's are: solid, with its details cut out. x and y from -1 to 1, y down.
+	float DrawnShape(float x, float y)
 	{
 		const auto box = [](float px, float py, float hw, float hh) { return std::fabs(px) <= hw && std::fabs(py) <= hh; };
-		if (book == kBookMissable)
-		{
-			// An hourglass: its caps, the posts at its sides, the glass's outline and the sand run into its lower half
-			if (box(x, y + 0.86f, 0.62f, 0.08f) || box(x, y - 0.86f, 0.62f, 0.08f))
-				return 1.f;
-			if (box(x + 0.5f, y, 0.045f, 0.8f) || box(x - 0.5f, y, 0.045f, 0.8f))
-				return 1.f;
-			const float ay = std::fabs(y);
-			if (ay > 0.78f)
-				return 0.f;
-			const float half = 0.06f + 0.3f * std::pow(ay / 0.78f, 0.85f);   // the glass's half width at this height
-			const float ax = std::fabs(x);
-			if (ax <= half && ax >= half - 0.07f)
-				return 1.f;   // its wall
-			if (ax < half - 0.07f && y > 0.32f)
-				return 1.f;   // the sand that's fallen
-			if (ax < half - 0.07f && y < -0.5f && y > -0.72f)
-				return 1.f;   // what's left above
-			if (ax < 0.022f && y > -0.05f && y < 0.32f)
-				return 1.f;   // the trickle between
-			return 0.f;
-		}
 		// A cog: a toothed wheel with a hub, and a ring cut between them
 		const float r = std::sqrt(x * x + y * y), angle = std::atan2(y, x);
 		constexpr int kTeeth = 8;
@@ -2697,7 +2675,7 @@ namespace
 			have = true;
 			break;
 		}
-		if (!have && (book == kBookMissable || book == kTabSettings))
+		if (!have && book == kTabSettings)
 		{
 			// Drawn here, four samples a pixel for smooth edges
 			for (uint32_t y = 0; y < kSize; ++y)
@@ -2707,7 +2685,7 @@ namespace
 					for (int s = 0; s < 4; ++s)
 					{
 						const float px = (x + 0.25f + 0.5f * (s & 1)) / kSize * 2.f - 1.f, py = (y + 0.25f + 0.5f * (s >> 1)) / kSize * 2.f - 1.f;
-						sum += DrawnShape(book, px * 1.1f, py * 1.1f);
+						sum += DrawnShape(px * 1.1f, py * 1.1f);
 					}
 					shape[static_cast<size_t>(y) * kSize + x] = sum * 0.25f;
 				}

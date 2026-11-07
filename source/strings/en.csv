@@ -739,6 +739,14 @@
 2116569392||PotP_MissableTip_DeathFromAbove|Crach an Craite gives you this at the end of 'King's Gambit', once you've helped Cerys or Hjalmar find out who was behind the berserker attack. If you refuse to take part in the investigation, you won't get it.
 2116569393||PotP_MissableTip_HjalmarSword|Hjalmar gives you his sword if you beat him in the fistfight he challenges you to at the feast in 'King's Gambit'. If you lose the fight or don't take up his challenge, you won't get it.
 2116569394||PotP_MissableTip_RoseOfShaerrawed|Found in Kaer Morhen's armory during 'The Battle of Kaer Morhen'. At the council before the battle, choose to clear out the armory to get it. If you choose to repair the wall instead, you won't get it.
+2116569395||PotP_MissableTip_WintersBlade|Crach an Craite gives you this at Kaer Trolde in 'Brothers in Arms: Skellige' when you ask him for help against the Wild Hunt. If you take the portal to the Isle of Mists without asking him, you won't get it.
+2116569396||PotP_MissableTip_HenGaidthArmour|Found in a chest in the Unseen Elder's cave during 'The Night of Long Fangs'. You only go there if you tell Regis you'll find the Unseen Elder. If you choose to go after Syanna instead, you won't get it. The cave is sealed once you've spoken with the Unseen Elder, so open the chest before then.
+2116569397||PotP_MissableTip_HenGaidthSword|Found in a chest just inside the Unseen Elder's cave during 'The Night of Long Fangs'. You only go there if you tell Regis you'll find the Unseen Elder. If you choose to go after Syanna instead, you won't get it. The cave is sealed once you've spoken with the Unseen Elder, so open the chest before then.
+2116569398||PotP_MissableTip_Cantata|Lies beside a dead mage deep in the Unseen Elder's cave during 'The Night of Long Fangs'. You only go there if you tell Regis you'll find the Unseen Elder. If you choose to go after Syanna instead, you won't get it. The cave is sealed once you've spoken with the Unseen Elder, so take it before then.
+2116569399||PotP_MissableTip_Vitis|Lies beside a dead knight in the Land of a Thousand Fables during 'Beyond Hill and Dale...'. You only go there if you choose to go after Syanna rather than the Unseen Elder in 'The Night of Long Fangs'. You can't return once you leave the land, so take it before then.
+2116569400||PotP_MissableTip_Blave|At the start of the Gwent tournament in Beauclair, you can wager your silver sword against your first opponent's sword. Accept and win that first match to get it. If you decline, don't have a silver sword with you, or lose that match, you won't get it.
+2116569401||PotP_MissableTip_TourneySaddle|You get Sir Geralt of Rivia's saddle or Sir Ravix of Fourhorn's saddle, by the name you registered under, for winning the horse race at the tournament in 'The Warble of a Smitten Knight'. If you lose the race, or don't finish the tournament before 'The Night of Long Fangs' begins, you won't get it.
+2116569402||option_PotP_TrackingGroup_HorseGear_Saddles_14|Tourney saddle
 2116568671||PotP_NotificationLine_ShadesOfIron| Shades of Iron Item(DYNAMC_REPLACE)
 2116568672||PotP_NotificationLine_Sites| Abandoned Site(DYNAMC_REPLACE)
 2116568673||PotP_NotificationLine_AbandonedSite|Updated Abandoned Site: 
@@ -1465,4 +1473,4 @@
 2116569384||potp_ov_card_details|Card
 ;overlay-text-end
 ;
-; Next id: 2116569395
+; Next id: 2116569403

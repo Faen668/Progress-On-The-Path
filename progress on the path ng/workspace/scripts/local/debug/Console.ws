@@ -265,3 +265,56 @@ exec function pt_herald_all()
 	PotP_ConsoleHerald("ngplus");
 	PotP_ConsoleHerald("content");
 }
+
+//---------------------------------------------------
+// The Point of No Return warning, for testing its look: a short list (the Ice Giant's two quests), a long one (the
+// Isle of Mists), or any missable group by its number, as in PotP_Preview_Missable_10. Every quest in the group is
+// listed, done or not, and it shows each time.
+
+exec function pt_warning_light()
+{
+	PotP_ConsoleWarning(7);
+}
+
+exec function pt_warning_heavy()
+{
+	PotP_ConsoleWarning(10);
+}
+
+exec function pt_warning(group_number: int)
+{
+	PotP_ConsoleWarning(group_number);
+}
+
+function PotP_ConsoleWarning(group_number: int)
+{
+	var main	: CPotP_Main = PotP_ConsoleMain();
+	var header	: string;
+	var Idx		: int;
+
+	if (!main)
+	{
+		return;
+	}
+
+	header = "PotP_Preview_Missable_" + IntToString(group_number);
+	if (group_number < 10)
+	{
+		header = "PotP_Preview_Missable_0" + IntToString(group_number);
+	}
+
+	for (Idx = 0; Idx < main.catalog.missable_sections.Size(); Idx += 1)
+	{
+		if (main.catalog.missable_sections[Idx].header == header)
+		{
+			if (!main.catalog.missable_sections[Idx].cutoff)
+			{
+				GetWitcherPlayer().DisplayHudMessage("PotP: " + header + " has no point of no return to warn about");
+				return;
+			}
+			main.notifications.TestMissableWarning(main.catalog.missable_sections[Idx]);
+			return;
+		}
+	}
+	GetWitcherPlayer().DisplayHudMessage("PotP: no missable group " + header);
+}

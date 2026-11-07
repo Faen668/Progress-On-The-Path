@@ -105,6 +105,48 @@ class CPotP_DynamicItems
 			// so its fact only.
 			MakeMissable(catalog, tracked, "PotP_MissableTip_RoseOfShaerrawed", "q403_fix_wall");
 		}
+		else if (tracked.variations.Contains('q402 Skellige sword 3'))
+		{
+			// Winter's Blade: reward q402_1_optional_crach_sword, when Geralt asks Crach for help in q402. Its only source.
+			MakeMissable(catalog, tracked, "PotP_MissableTip_WintersBlade", "q402_escort_completed");
+			// Quest blocks in q402_ciri
+			catalog.AddMissedBlockFor(tracked, "7c784b02-5eea-4373-bcc4-9f89574a27e7", "Out");   // FactsDBChanging "q402_escort_completed", leaving for the Isle of Mists
+		}
+		else if (tracked.variations.Contains('q704 vampire steel sword'))
+		{
+			// The Hen Gaidth sword: in a chest just inside the Unseen Elder's cave (q704_gravity_cave\loot.w2l)
+			MakeMissable(catalog, tracked, "PotP_MissableTip_HenGaidthSword", "");
+			PotP_SetCaveMissable(catalog, tracked, "PotP_MissableTip_HenGaidthSword");
+		}
+		else if (tracked.variations.Contains('q704 vampire silver sword'))
+		{
+			// Cantata: beside a dead mage deep in the Unseen Elder's cave (q704_gravity_caveocus_clues\q704_mage_explorer.w2l)
+			MakeMissable(catalog, tracked, "PotP_MissableTip_Cantata", "");
+			PotP_SetCaveMissable(catalog, tracked, "PotP_MissableTip_Cantata");
+		}
+		else if (tracked.variations.Contains('Unique steel sword'))
+		{
+			// Vitis: by a dead knight in the Land of a Thousand Fables (fairy_tale\monsters\knight_loot\loot.w2l), only on the
+			// Syanna route, and there's no way back in once it's left
+			MakeMissable(catalog, tracked, "PotP_MissableTip_Vitis", "q704_fairy_tale_done");
+			catalog.AddMissedFactFor(tracked, "q704_gravity_cave_done");
+			// Quest blocks in q704_02_fairy_tale and q704_03_monster_hunt (bob)
+			catalog.AddMissedBlockFor(tracked, "595c5a7b-6d66-4bf5-b87c-321f553ff838", "Out");               // LayersHider "background, hide ft": the land is gone
+			catalog.AddMissedBlockFor(tracked, "476251b9-80da-490b-ac93-7dec2b8b2645", "OriginalBoat");      // SceneBlock, Regis: the Unseen Elder
+			catalog.AddMissedBlockFor(tracked, "476251b9-80da-490b-ac93-7dec2b8b2645", "OriginalGameplay");
+			catalog.AddMissedBlockFor(tracked, "e640b3c2-6ac1-472f-bfd6-dad788cdb2be", "OriginalBoat");      // the same, by its other input
+			catalog.AddMissedBlockFor(tracked, "e640b3c2-6ac1-472f-bfd6-dad788cdb2be", "OriginalGameplay");
+		}
+		else if (tracked.variations.Contains('Gwent steel sword 1'))
+		{
+			// Blave: reward cg700_wager_sword, for wagering the silver sword before the Gwent tournament's first match and
+			// winning that match. Missed once the tournament starts without the wager, or the wagered match is lost.
+			MakeMissable(catalog, tracked, "PotP_MissableTip_Blave", "");
+			catalog.AddMissedFactFor(tracked, "cg700_tournament_started", "cg700_wager_sword");
+			catalog.AddMissedFactFor(tracked, "cg700_geralt_lost_sword");
+			// Quest blocks in cg700_card_game (bob)
+			catalog.AddMissedBlockFor(tracked, "fdd813a4-c7e0-4d66-812c-2839f84d1d8a", "Failure");   // GraphMinigame, the first match lost
+		}
 	}
 
 	//---------------------------------------------------

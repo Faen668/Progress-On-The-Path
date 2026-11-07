@@ -37,6 +37,8 @@ class CPotP_Entry
 	var missed_fact		: string;
 	var missed_unless	: string;		// not missed after all if this fact is set
 	var also_missed_fact	: string;	// missed if this is set, whatever else
+	var more_missed_after	: array<string>;	// more ways to be missed: each fact, unless its partner in more_missed_unless is set
+	var more_missed_unless	: array<string>;
 	var outcome_facts	: array<string>;	// a journal quest that completes either way: only one of these makes it done
 	var unlock_facts	: array<string>;	// an event that opens when all of these are set
 

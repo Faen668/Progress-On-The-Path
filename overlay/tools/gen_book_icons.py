@@ -20,6 +20,7 @@ ICONS = [
     ("kBookBestiary", "common/panel_common.swf", 31),      # the glossary's bestiary
     ("kTabAchievements", "common/panel_common.swf", 569),  # a crown and coins
     ("kTabKills", "hud/hud_enemyfocus.swf", 59),           # a skull and a dagger
+    ("kBookMissable", "worldmap/panel_worldmap.swf", 284, True),  # a signpost, a fork in the path; cropped, as it sits small in its picture
 ]
 
 
@@ -46,6 +47,16 @@ def bitmaps(path):
     return found
 
 
+def cropped(alpha, width, height, margin=1):
+    """The picture cut down to its shape, with a pixel of space around it"""
+    rows = [y for y in range(height) if any(alpha[y * width + x] > 8 for x in range(width))]
+    cols = [x for x in range(width) if any(alpha[y * width + x] > 8 for y in range(height))]
+    x0, x1 = max(0, cols[0] - margin), min(width - 1, cols[-1] + margin)
+    y0, y1 = max(0, rows[0] - margin), min(height - 1, rows[-1] + margin)
+    out = bytes(alpha[y * width + x] for y in range(y0, y1 + 1) for x in range(x0, x1 + 1))
+    return out, x1 - x0 + 1, y1 - y0 + 1
+
+
 def main():
     root = os.path.join(sys.argv[1], "gameplay", "gui_new", "swf")
     out = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "src", "book_icons.inc")
@@ -55,11 +66,13 @@ def main():
         "// The shapes (alpha) of The Witcher 3's own menu icons, (c) CD PROJEKT RED: one per book that the game has one for.",
         "// BOOK_ICON(book, width, height, alpha bytes row by row)",
     ]
-    for book, menu, character in ICONS:
+    for book, menu, character, *crop in ICONS:
         if menu not in files:
             files[menu] = bitmaps(os.path.join(root, menu))
         width, height, argb = files[menu][character]
         alpha = bytes(argb[i] for i in range(0, width * height * 4, 4))
+        if crop and crop[0]:
+            alpha, width, height = cropped(alpha, width, height)
         body = ",".join(str(a) for a in alpha)
         lines.append("BOOK_ICON(%s, %d, %d, {%s})" % (book, width, height, body))
         print("%s: %s #%d, %dx%d" % (book, menu, character, width, height))

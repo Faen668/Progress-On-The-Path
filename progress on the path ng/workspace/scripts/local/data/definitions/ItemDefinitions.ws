@@ -80,13 +80,38 @@ function PotP_DefineItems_02(catalog: CPotP_Catalog)
 
 function PotP_DefineItems_03(catalog: CPotP_Catalog)
 {
+	var tracked : CPotP_Entry;
+
+	// In three chests in the Unseen Elder's cave (q704_gravity_cave\loot.w2l), only on that route of 'The Night of Long Fangs'
 	catalog.BeginSection(PotP_Book_Items, "PotP_Preview_GearS_3", PotP_A_Items, "PotP_TrackingGroup_GearSets_HenGaidth");
-	catalog.AddItem("_01", PotP_E_Primary, PotP_I_Gears, PotP_U_Armor, 'q704_vampire_armor');
-	catalog.AddItem("_02", PotP_E_Primary, PotP_I_Gears, PotP_U_Boots, 'q704_vampire_boots');
-	catalog.AddItem("_03", PotP_E_Primary, PotP_I_Gears, PotP_U_Glove, 'q704_vampire_gloves');
-	catalog.AddItem("_04", PotP_E_Primary, PotP_I_Gears, PotP_U_Head, 'q704_vampire_mask');
-	catalog.AddItem("_05", PotP_E_Primary, PotP_I_Gears, PotP_U_Pants, 'q704_vampire_pants');
+	tracked = catalog.AddItem("_01", PotP_E_Missable, PotP_I_Gears, PotP_U_Armor, 'q704_vampire_armor');
+	PotP_SetCaveMissable(catalog, tracked, "PotP_MissableTip_HenGaidthArmour");
+	tracked = catalog.AddItem("_02", PotP_E_Missable, PotP_I_Gears, PotP_U_Boots, 'q704_vampire_boots');
+	PotP_SetCaveMissable(catalog, tracked, "PotP_MissableTip_HenGaidthArmour");
+	tracked = catalog.AddItem("_03", PotP_E_Missable, PotP_I_Gears, PotP_U_Glove, 'q704_vampire_gloves');
+	PotP_SetCaveMissable(catalog, tracked, "PotP_MissableTip_HenGaidthArmour");
+	tracked = catalog.AddItem("_04", PotP_E_Missable, PotP_I_Gears, PotP_U_Head, 'q704_vampire_mask');
+	PotP_SetCaveMissable(catalog, tracked, "PotP_MissableTip_HenGaidthArmour");
+	tracked = catalog.AddItem("_05", PotP_E_Missable, PotP_I_Gears, PotP_U_Pants, 'q704_vampire_pants');
+	PotP_SetCaveMissable(catalog, tracked, "PotP_MissableTip_HenGaidthArmour");
 	catalog.EndSection();
+}
+
+//---------------------------------------------------
+// Something in the Unseen Elder's cave: missed by choosing Syanna instead, or by leaving the cave without it, when it's
+// sealed. The Syanna choice is Regis's question in q704_06_regis_info_inject (Monster Hunt); the Damien route reaches the
+// fairy tale without it. q704_fairy_tale_started is set on both Syanna routes and never on the cave's.
+
+function PotP_SetCaveMissable(catalog: CPotP_Catalog, tracked: CPotP_Entry, tip_key: string)
+{
+	catalog.SetMissableReasonFor(tracked, tip_key, "q704_fairy_tale_started");
+	catalog.AddMissedFactFor(tracked, "q704_gravity_cave_done");
+	// Quest blocks in q704_03_monster_hunt, q704_02_fairy_tale and q704_04_vampire_cave (bob)
+	catalog.AddMissedBlockFor(tracked, "476251b9-80da-490b-ac93-7dec2b8b2645", "SyannaShortcut");   // SceneBlock, Regis: find Syanna
+	catalog.AddMissedBlockFor(tracked, "e640b3c2-6ac1-472f-bfd6-dad788cdb2be", "SyannaShortcut");   // the same, by its other input
+	catalog.AddMissedBlockFor(tracked, "6654101a-5344-4970-abbd-3a23378d3826", "Out");              // FactsDBChanging "q704_fairy_tale_started +1"
+	catalog.AddMissedBlockFor(tracked, "5dfcecbd-f858-4f9d-a14d-9afe4da34698", "End");              // SceneBlock, the Unseen Elder: the cave is sealed after
+	catalog.AddMissedBlockFor(tracked, "5dfcecbd-f858-4f9d-a14d-9afe4da34698", "Shortcut");
 }
 
 //---------------------------------------------------
@@ -552,8 +577,15 @@ function PotP_DefineItems_42(catalog: CPotP_Catalog)
 	catalog.AddItem("_11", PotP_E_Primary_DLC2, PotP_I_Horse, PotP_U_Horse, 'Toussaint saddle 4');
 	catalog.AddItem("_12", PotP_E_Primary_DLC2, PotP_I_Horse, PotP_U_Horse, 'Toussaint saddle 5');
 	catalog.AddItem("_13", PotP_E_Primary_DLC2, PotP_I_Horse, PotP_U_Horse, 'Toussaint saddle 6');
-	catalog.AddItem("_14", PotP_E_Primary_DLC2, PotP_I_Horse, PotP_U_Horse, 'Tourney Geralt Saddle');
-	catalog.AddItem("_15", PotP_E_Primary_DLC2, PotP_I_Horse, PotP_U_Horse, 'Tourney Ravix Saddle');
+	// The tourney's prize for winning the horse race in sq701: Geralt's or Ravix's, by the name he registered under, so one entry.
+	// Missed by losing the race (no retry), or the tournament failing when 'The Night of Long Fangs' starts.
+	catalog.AddItem("_14", PotP_E_Missable_DLC2, PotP_I_Horse, PotP_U_Horse, 'Tourney Geralt Saddle', 'Tourney Ravix Saddle');
+	catalog.SetMissableReason("PotP_MissableTip_TourneySaddle");
+	catalog.AddMissedFact("sq701_vivienne_speach", "sq701_race_won");   // the party after the race, not won
+	catalog.AddMissedFact("q704_done", "sq701_race_won");               // the tournament failed before it
+	// Quest blocks in sq701_tournament (bob)
+	catalog.AddEventMissedBlock("ce630d48-887d-4f44-aa28-517dcfbc0643", "Out");   // PhaseBlock "Cleanup", after a lost race
+	catalog.AddEventMissedBlock("0d31fd1b-da32-4ff8-8a0d-019963117003", "Out");   // CutControl, the tournament fails (it's had already if won)
 	catalog.EndSection();
 
 	catalog.BeginSection(PotP_Book_Items, "PotP_Preview_Horse_3", PotP_A_Items, "PotP_TrackingGroup_HorseGear_Saddlebags");

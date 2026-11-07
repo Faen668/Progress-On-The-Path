@@ -125,9 +125,19 @@ class CPotP_StatusResolver
 
 	private function IsMissedByFacts(tracked: CPotP_Entry) : bool
 	{
+		var Idx : int;
+
 		if (tracked.also_missed_fact != "" && FactsQuerySum(tracked.also_missed_fact) > 0)
 		{
 			return true;
+		}
+		for (Idx = 0; Idx < tracked.more_missed_after.Size(); Idx += 1)
+		{
+			if (FactsQuerySum(tracked.more_missed_after[Idx]) > 0
+				&& (tracked.more_missed_unless[Idx] == "" || FactsQuerySum(tracked.more_missed_unless[Idx]) == 0))
+			{
+				return true;
+			}
 		}
 		return tracked.missed_fact != "" && FactsQuerySum(tracked.missed_fact) > 0
 			&& (tracked.missed_unless == "" || FactsQuerySum(tracked.missed_unless) == 0);

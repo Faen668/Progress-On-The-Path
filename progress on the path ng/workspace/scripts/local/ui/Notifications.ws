@@ -360,6 +360,17 @@ class CPotP_Notifications
 	// started, as its spoiler settings say.
 	public function ShowMissableWarning(group: CPotP_Section, outstanding: array<CPotP_Entry>)
 	{
+		master.popup.ShowWarning("", BuildMissableWarning(group, outstanding), "PotP_MissableWarning_" + group.header);
+	}
+
+	// For the console: the group's whole list, shown every time it's asked for
+	public function TestMissableWarning(group: CPotP_Section)
+	{
+		master.popup.Show("", BuildMissableWarning(group, group.entries), "", false, 0, true);
+	}
+
+	private function BuildMissableWarning(group: CPotP_Section, outstanding: array<CPotP_Entry>) : string
+	{
 		var body	: string;
 		var lead	: string;
 		var progress	: string;
@@ -377,8 +388,7 @@ class CPotP_Notifications
 			}
 			body += "\nL|0|" + progress + "|" + GetIcon(outstanding[Idx]) + "|" + PotPOverlay_Clean(outstanding[Idx].title) + "|" + outstanding[Idx].uuid;
 		}
-
-		master.popup.ShowWarning("", body, "PotP_MissableWarning_" + group.header);
+		return body;
 	}
 
 	//---------------------------------------------------
