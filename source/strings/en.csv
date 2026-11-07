@@ -747,6 +747,7 @@
 2116569400||PotP_MissableTip_Blave|At the start of the Gwent tournament in Beauclair, you can wager your silver sword against your first opponent's sword. Accept and win that first match to get it. If you decline, don't have a silver sword with you, or lose that match, you won't get it.
 2116569401||PotP_MissableTip_TourneySaddle|You get Sir Geralt of Rivia's saddle or Sir Ravix of Fourhorn's saddle, by the name you registered under, for winning the horse race at the tournament in 'The Warble of a Smitten Knight'. If you lose the race, or don't finish the tournament before 'The Night of Long Fangs' begins, you won't get it.
 2116569402||option_PotP_TrackingGroup_HorseGear_Saddles_14|Tourney saddle
+2116569403||PotP_RelicTitle_TourneySword|Tourney sword
 2116568671||PotP_NotificationLine_ShadesOfIron| Shades of Iron Item(DYNAMC_REPLACE)
 2116568672||PotP_NotificationLine_Sites| Abandoned Site(DYNAMC_REPLACE)
 2116568673||PotP_NotificationLine_AbandonedSite|Updated Abandoned Site: 
@@ -1473,4 +1474,4 @@
 2116569384||potp_ov_card_details|Card
 ;overlay-text-end
 ;
-; Next id: 2116569403
+; Next id: 2116569404

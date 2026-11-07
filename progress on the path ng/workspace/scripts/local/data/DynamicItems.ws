@@ -18,7 +18,7 @@ class CPotP_DynamicItems
 		var group_entries	: array<CPotP_Entry>;
 		var tracked			: CPotP_Entry;
 		var item			: name;
-		var title			: string;
+		var title, group	: string;
 		var Idx, Gdx		: int;
 
 		candidates = defs.GetItemsWithTag(item_tag);
@@ -34,7 +34,7 @@ class CPotP_DynamicItems
 			}
 			seen.PushBack(item);
 
-			if (GetItemQuality(defs, item) != relic_quality || catalog.IsItemRegistered(item))
+			if (!IsRelic(defs, item) || catalog.IsItemRegistered(item))
 			{
 				continue;
 			}
@@ -45,18 +45,36 @@ class CPotP_DynamicItems
 				title = NameToString(item);
 			}
 
-			Gdx = group_titles.FindFirst(title);
+			// Items that are one prize, whichever the game gives, share an entry under a name of their own
+			group = SharedGroup(item);
+			if (group != "")
+			{
+				title = PotP_LocOrDefault("PotP_RelicTitle_" + group, title);
+			}
+			else
+			{
+				group = title;
+			}
+
+			Gdx = group_titles.FindFirst(group);
 			if (Gdx != -1)
 			{
 				group_entries[Gdx].AddVariation(item);
 				continue;
 			}
 
-			tracked = (new CPotP_Entry in catalog).Init(uuid_prefix + PotP_SanitizeUuid(title), PotP_A_Items, PotP_E_Primary, PotP_R_NA, filter_value, sub_filter_value);
+			if (group != title)
+			{
+				tracked = (new CPotP_Entry in catalog).Init(uuid_prefix + group, PotP_A_Items, PotP_E_Primary, PotP_R_NA, filter_value, sub_filter_value);
+			}
+			else
+			{
+				tracked = (new CPotP_Entry in catalog).Init(uuid_prefix + PotP_SanitizeUuid(title), PotP_A_Items, PotP_E_Primary, PotP_R_NA, filter_value, sub_filter_value);
+			}
 			tracked.title = title;
 			tracked.SetItem(item);
 
-			group_titles.PushBack(title);
+			group_titles.PushBack(group);
 			group_entries.PushBack(tracked);
 			catalog.AddPrepared(tracked);
 		}
@@ -68,6 +86,66 @@ class CPotP_DynamicItems
 		}
 
 		catalog.EndSection();
+	}
+
+	//---------------------------------------------------
+	// A relic: quality 4. Some weapons only a reward can give, and only with a mod such as The Essential Weapon Rework
+	// (Eredin's sword, Ciri's two): without one the game keeps them for the NPCs, so they're listed only when a reward of
+	// the game's gives them, and Ciri's are quality 5 with that mod.
+
+	private function IsRelic(defs: CDefinitionsManagerAccessor, item: name) : bool
+	{
+		var rewards	: array<name>;
+		var quality	: int = GetItemQuality(defs, item);
+
+		switch (item)
+		{
+		case 'Eredin Sword':
+			rewards.PushBack('q501_eredin_killed');
+			break;
+		case 'Swallow Sword':
+		case 'q505 crafted sword':
+			rewards.PushBack('q503_2_ding_dong_witch_is_dead');
+			rewards.PushBack('q505_1_meet_emhyr');
+			rewards.PushBack('q505_2_killed_monster');
+			break;
+		default:
+			return quality == relic_quality;
+		}
+		return (quality == relic_quality || quality == relic_quality + 1) && AnyRewardGives(rewards, item);
+	}
+
+	private function AnyRewardGives(rewards: array<name>, item: name) : bool
+	{
+		var given		: SReward;
+		var Idx, Jdx	: int;
+
+		for (Idx = 0; Idx < rewards.Size(); Idx += 1)
+		{
+			if (!theGame.GetReward(rewards[Idx], given))
+			{
+				continue;
+			}
+			for (Jdx = 0; Jdx < given.items.Size(); Jdx += 1)
+			{
+				if (given.items[Jdx].item == item)
+				{
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	// The tourney's sword (with The Essential Weapon Rework, a relic): Gregoire gives Geralt's or Ravix's, by the name he
+	// registered under in sq701 (sq701_18_gregoire), so one entry with both
+	private function SharedGroup(item: name) : string
+	{
+		if (item == 'sq701 Geralt of Rivia sword' || item == 'sq701 Ravix of Fourhorn sword')
+		{
+			return "TourneySword";
+		}
+		return "";
 	}
 
 	//---------------------------------------------------
