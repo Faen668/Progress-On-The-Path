@@ -262,7 +262,13 @@ class CPotP_StatusResolver
 			return game_status;
 
 		case PotP_A_Gwent:
-			return Done(IsCardCollected(tracked));
+			// A card a choice or a closing game can lose, as the Passiflora leaders: missed by its facts until it's had
+			game_status = Done(IsCardCollected(tracked));
+			if (game_status == PotP_S_Available && IsMissedByFacts(tracked))
+			{
+				return PotP_S_Missed;
+			}
+			return game_status;
 
 		case PotP_A_Bestiary:
 			return Done(KnownCreatureOf(tracked));

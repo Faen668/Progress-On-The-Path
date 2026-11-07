@@ -82,13 +82,13 @@ class CPotP_QuestListener extends CNQH_Listener
 			case PotP_QB_Missed:
 				// An item's or a place's, such as Tiegr's or the Spiral's: its own fact. An item's looked at again now, a place's
 				// by the pin check.
-				if (block.tracked.category == PotP_A_Items || block.tracked.category == PotP_A_World)
+				if (block.tracked.category == PotP_A_Items || block.tracked.category == PotP_A_Gwent || block.tracked.category == PotP_A_World)
 				{
 					if (block.tracked.also_missed_fact != "")
 					{
 						FactsSet(block.tracked.also_missed_fact, 1);
 					}
-					if (block.tracked.category == PotP_A_Items)
+					if (block.tracked.category == PotP_A_Items || block.tracked.category == PotP_A_Gwent)
 					{
 						PotP_Get().tracker.QueueItem(block.tracked.item_name);
 					}

@@ -91,6 +91,7 @@ class CPotP_DynamicItems
 	//---------------------------------------------------
 	// A relic: quality 4. Some the game never gives: Eredin's sword and Ciri's two only a mod such as The Essential Weapon
 	// Rework makes rewards (and Ciri's are quality 5 with it), and Bleidd was cut, its reward q403_03_new_gear never given.
+	// Hav'caaren's one reward is Eredin's death, which that mod gives his own sword for instead.
 	// They're listed only when a reward of the game's gives them, or once Geralt has had one (the console, another mod),
 	// which the inventory listener remembers (PotP_HiddenRelicHad).
 
@@ -106,6 +107,8 @@ class CPotP_DynamicItems
 		switch (item)
 		{
 		case 'Eredin Sword':
+		case 'Havcaaren':
+			// Hav'caaren's only source is Eredin's death too; The Essential Weapon Rework gives his sword in its place
 			rewards.PushBack('q501_eredin_killed');
 			break;
 		case 'Swallow Sword':
@@ -207,7 +210,7 @@ class CPotP_DynamicItems
 		}
 		else if (tracked.variations.Contains('q704 vampire silver sword'))
 		{
-			// Cantata: beside a dead mage deep in the Unseen Elder's cave (q704_gravity_caveocus_clues\q704_mage_explorer.w2l)
+			// Cantata: beside a dead mage deep in the Unseen Elder's cave (q704_gravity_caveFocus_clues\q704_mage_explorer.w2l)
 			MakeMissable(catalog, tracked, "PotP_MissableTip_Cantata", "");
 			PotP_SetCaveMissable(catalog, tracked, "PotP_MissableTip_Cantata");
 		}
@@ -236,7 +239,7 @@ class CPotP_DynamicItems
 		}
 		else if (tracked.variations.Contains('Unique silver sword'))
 		{
-			// Gesheft, the relic: in the giant's bonfire in the Land of a Thousand Fables (fairy_tale\giantireonfire.w2l),
+			// Gesheft, the relic: in the giant's bonfire in the Land of a Thousand Fables (fairy_tale\giantFireBonfire.w2l),
 			// its only place, so lost as Vitis is. The crafted Gesheft (Serpent Silver Sword 3) is another item.
 			MakeMissable(catalog, tracked, "PotP_MissableTip_Gesheft", "q704_fairy_tale_done");
 			catalog.AddMissedFactFor(tracked, "q704_gravity_cave_done");
@@ -417,6 +420,10 @@ class CPotP_DynamicItems
 			item = GetCanonicalItem(group_entries[Idx]);
 			group_entries[Idx].item_name = item;
 			group_entries[Idx].uuid = "PotP_Gwent_" + PotP_SanitizeUuid(NameToString(item));
+			if (group_entries[Idx].is_missable)
+			{
+				SetCardMissable(catalog, group_entries[Idx]);
+			}
 		}
 
 		AddFactionSection(catalog, group_entries, PotP_I_Monst, "PotP_Preview_Gwent_1");
@@ -483,17 +490,119 @@ class CPotP_DynamicItems
 
 	//---------------------------------------------------
 
+	// The cards a choice or a closing game can lose for good, each checked in the quest files (research doc, Gwent pass).
+	// Not missable after all, though guides say so: Fringilla, Isengrim and Natalis ('The Great Escape' puts any missing on
+	// the witch hunter officer), Iorveth ('Shock Therapy' can't fail), Dijkstra, Esterad, Draug, Triss, Emhyr silver and
+	// the others with a fallback (a locker, a stash, a failsafe merchant).
 	private function GetMissableCards(out cards: array<name>)
 	{
 		cards.PushBack('gwint_card_eredin_gold');
 		cards.PushBack('gwint_card_emhyr_gold');
 		cards.PushBack('gwint_card_foltest_gold');
 		cards.PushBack('gwint_card_francesca_gold');
-		cards.PushBack('gwint_card_natalis');
+		cards.PushBack('gwint_card_geralt');
+		cards.PushBack('gwint_card_milva');
 		cards.PushBack('gwint_card_dandelion');
-		cards.PushBack('gwint_card_iorveth');
-		cards.PushBack('gwint_card_isengrim');
-		cards.PushBack('gwint_card_fringilla');
+		cards.PushBack('gwint_card_nekker');
+		// Without Blood and Wine its other source (Margot's stash in 'Rest in Peace') isn't there
+		if (!theGame.GetDLCManager().IsEP2Available())
+		{
+			cards.PushBack('gwint_card_bruxa');
+		}
+	}
+
+	//---------------------------------------------------
+	// Why each can be missed, and the facts and vanilla blocks that say it has been
+
+	private function SetCardMissable(catalog: CPotP_Catalog, tracked: CPotP_Entry)
+	{
+		switch (tracked.item_name)
+		{
+		case 'gwint_card_foltest_gold':
+			// The Passiflora tournament in 'High Stakes' (sq306_maverick): single elimination, played once
+			catalog.SetMissableReasonFor(tracked, "PotP_MissableTip_Card_Foltest", "");
+			catalog.AddMissedFactFor(tracked, "sq306_completed", "sq306_defeated_bernard");
+			SetPassifloraBlocks(catalog, tracked, 1);
+			break;
+		case 'gwint_card_emhyr_gold':
+			catalog.SetMissableReasonFor(tracked, "PotP_MissableTip_Card_Emhyr", "");
+			catalog.AddMissedFactFor(tracked, "sq306_completed", "sq306_defeated_sacha");
+			SetPassifloraBlocks(catalog, tracked, 2);
+			break;
+		case 'gwint_card_francesca_gold':
+			catalog.SetMissableReasonFor(tracked, "PotP_MissableTip_Card_Francesca", "");
+			catalog.AddMissedFactFor(tracked, "sq306_completed", "sq306_defeated_finneas");
+			SetPassifloraBlocks(catalog, tracked, 3);
+			break;
+		case 'gwint_card_eredin_gold':
+			catalog.SetMissableReasonFor(tracked, "PotP_MissableTip_Card_Eredin", "");
+			catalog.AddMissedFactFor(tracked, "sq306_completed", "sq306_defeated_tybalt");
+			SetPassifloraBlocks(catalog, tracked, 4);
+			break;
+		case 'gwint_card_geralt':
+			// Thaler plays only once 'A Deadly Plot' (sq315) is done, and it fails at the Isle of Mists. His death later
+			// leaves the card in a locker (cg100_talar_card_locker).
+			catalog.SetMissableReasonFor(tracked, "PotP_MissableTip_Card_Geralt", "");
+			catalog.AddMissedFactFor(tracked, "q402_escort_completed", "sq315_fdb_quest_complete");
+			// Quest blocks in sq315_talar
+			catalog.AddMissedBlockFor(tracked, "043764b7-716f-43f0-81f7-789d8cc91e68", "Out");   // Journal: 'A Deadly Plot' failed
+			break;
+		case 'gwint_card_milva':
+			catalog.SetMissableReasonFor(tracked, "PotP_MissableTip_Card_Milva", "");
+			SetMasqueradeMissed(catalog, tracked);
+			break;
+		case 'gwint_card_bruxa':
+			catalog.SetMissableReasonFor(tracked, "PotP_MissableTip_Card_Bruxa", "");
+			SetMasqueradeMissed(catalog, tracked);
+			break;
+		case 'gwint_card_dandelion':
+			catalog.SetMissableReasonFor(tracked, "PotP_MissableTip_Card_Dandelion", "");
+			SetMasqueradeMissed(catalog, tracked);
+			break;
+		case 'gwint_card_nekker':
+			// Only in Hammond's inventory ('Following the Thread', sq106_killbill): despawned when the quest fails at
+			// q401_gotten_uma, or once you leave after killing him
+			catalog.SetMissableReasonFor(tracked, "PotP_MissableTip_Card_Nekker", "");
+			catalog.AddMissedFactFor(tracked, "q401_gotten_uma", "sq106_hammond_slayed");
+			// Quest blocks in sq106_killbill
+			catalog.AddMissedBlockFor(tracked, "7a03ecd6-43f4-4baf-a941-9a4481baa1af", "Out");   // StoryPhaseSetter "despawn all", the quest failed
+			catalog.AddMissedBlockFor(tracked, "fbfd4c1f-1022-486b-ae4b-925d3ae4e697", "Out");   // StoryPhaseSetter, Hammond despawned after the kill
+			break;
+		}
+	}
+
+	// The masquerade in 'A Matter of Life and Death' (sq301_dawn_estate): one card master, three games in turn, which end
+	// at the fountain scene, on leaving the party, or with the quest failing before it
+	private function SetMasqueradeMissed(catalog: CPotP_Catalog, tracked: CPotP_Entry)
+	{
+		catalog.AddMissedFactFor(tracked, "sq301_scenes_stop");
+		catalog.AddMissedFactFor(tracked, "sq301_failed");
+		catalog.AddMissedBlockFor(tracked, "09a0ab3d-9aeb-4e75-9749-737c30fefc4a", "Out");   // FactsDBChanging "sq301_scenes_stop"
+		catalog.AddMissedBlockFor(tracked, "7c3e7d12-bc70-457d-925a-29e62666e354", "Out");   // FactsDBChanging "sq301_failed", left the party
+		catalog.AddMissedBlockFor(tracked, "2dff0e4a-0966-4101-8be2-6ded58b0cefb", "Out");   // FactsDBChanging "sq301_failed", before it (sq301_triss)
+	}
+
+	// The Passiflora rounds (sq306_maverick): a loss in this round or any before it, or leaving Passiflora, ends the run
+	private function SetPassifloraBlocks(catalog: CPotP_Catalog, tracked: CPotP_Entry, round: int)
+	{
+		catalog.AddMissedBlockFor(tracked, "409ea758-1258-482f-83fc-0f8b9c49b3e5", "Fail");       // PhaseBlock "Leaving Passiflora"
+		catalog.AddMissedBlockFor(tracked, "105c9022-5836-40c0-99c8-fdd5ae2fefe6", "Lose");       // Scene, lost to Bernard
+		if (round >= 2)
+		{
+			catalog.AddMissedBlockFor(tracked, "feba4ab5-6301-41d5-9c64-2c7a1c16aa9e", "GiveUp");   // Scene, lost to Sacha
+			catalog.AddMissedBlockFor(tracked, "feba4ab5-6301-41d5-9c64-2c7a1c16aa9e", "SitOut");
+		}
+		if (round >= 3)
+		{
+			catalog.AddMissedBlockFor(tracked, "95f37e06-fec5-4694-9939-a02521188a6b", "GiveUp");   // Scene, lost to Finneas
+			catalog.AddMissedBlockFor(tracked, "95f37e06-fec5-4694-9939-a02521188a6b", "SitOut");
+			catalog.AddMissedBlockFor(tracked, "95f37e06-fec5-4694-9939-a02521188a6b", "Lost_to_Finneas_out");
+		}
+		if (round >= 4)
+		{
+			catalog.AddMissedBlockFor(tracked, "a5835f55-6dca-484e-a7e9-45baa14d3569", "Failure");  // GraphMinigame, lost to Tybalt
+			catalog.AddMissedBlockFor(tracked, "97b223c6-30fe-4988-88eb-c2a26d6223c7", "Lose");     // InteractionDialog, lost to Tybalt
+		}
 	}
 
 	//---------------------------------------------------
@@ -553,7 +662,7 @@ class CPotP_DynamicItems
 
 function PotP_IsHiddenRelic(item: name) : bool
 {
-	return item == 'Eredin Sword' || item == 'Swallow Sword' || item == 'q505 crafted sword' || item == 'WitcherSilverWolf';
+	return item == 'Eredin Sword' || item == 'Havcaaren' || item == 'Swallow Sword' || item == 'q505 crafted sword' || item == 'WitcherSilverWolf';
 }
 
 function PotP_HiddenRelicFact(item: name) : string

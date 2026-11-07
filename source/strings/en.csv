@@ -752,6 +752,15 @@
 2116569405||PotP_MissableTip_Mourner|A scavenger by the bridge near Midcotts in Velen offers to sell you this sword. Buy it, or take it from him by force, before you leave: if you turn him down and go, he's gone a few hours later and the sword with him.
 2116569406||PotP_MissableTip_OfieriCrossbow|In a chest in the Borsodi vault during the heist in 'Open Sesame!'. You can't get back into the vault once the heist is over, so take it while you're there.
 2116569407||PotP_MissableTip_TourneySword|Gregoire gives you this when you win the tournament in 'The Warble of a Smitten Knight': Sir Geralt of Rivia's sword or Sir Ravix of Fourhorn's, by the name you registered under. If you don't finish the tournament before 'The Night of Long Fangs' begins, you won't get it.
+2116569408||PotP_MissableTip_Card_Foltest|Win your first game in the Passiflora Gwent tournament in 'High Stakes', against Bernard Tulle. The tournament is played once and you're out after one loss: lose that game, or leave Passiflora while it's running, and you won't get it.
+2116569409||PotP_MissableTip_Card_Emhyr|Win your second game in the Passiflora Gwent tournament in 'High Stakes', against Sasha. The tournament is played once and you're out after one loss: lose that game or any before it, or leave Passiflora while it's running, and you won't get it.
+2116569410||PotP_MissableTip_Card_Francesca|Win your third game in the Passiflora Gwent tournament in 'High Stakes', against Finneas. The tournament is played once and you're out after one loss: lose that game or any before it, or leave Passiflora while it's running, and you won't get it.
+2116569411||PotP_MissableTip_Card_Eredin|Win the final of the Passiflora Gwent tournament in 'High Stakes', against Count Tybalt. The tournament is played once and you're out after one loss: lose that game or any before it, or leave Passiflora while it's running, and you won't get it.
+2116569412||PotP_MissableTip_Card_Geralt|Thaler plays you for this card once you've finished 'A Deadly Plot'. If he dies later in 'Reason of State', you can loot it from his card locker. If you don't finish 'A Deadly Plot' before 'The Isle of Mists', you won't get it.
+2116569413||PotP_MissableTip_Card_Milva|At the masquerade in 'A Matter of Life and Death', the card master plays you three games in turn. Winning the first gives you Milva. Once you follow Triss to the fountain, or leave the estate during the party, the games end and you won't get it.
+2116569414||PotP_MissableTip_Card_Bruxa|At the masquerade in 'A Matter of Life and Death', the card master plays you three games in turn. Winning the second gives you this card. Once you follow Triss to the fountain, or leave the estate during the party, the games end and you won't get it.
+2116569415||PotP_MissableTip_Card_Dandelion|At the masquerade in 'A Matter of Life and Death', the card master plays you three games in turn. Winning the third gives you Dandelion. Once you follow Triss to the fountain, or leave the estate during the party, the games end and you won't get it.
+2116569416||PotP_MissableTip_Card_Nekker|Hammond carries this card in 'Following the Thread': loot it from his body after you kill him. If the quest fails before you reach him, or you leave without looting him, you won't get it.
 2116568671||PotP_NotificationLine_ShadesOfIron| Shades of Iron Item(DYNAMC_REPLACE)
 2116568672||PotP_NotificationLine_Sites| Abandoned Site(DYNAMC_REPLACE)
 2116568673||PotP_NotificationLine_AbandonedSite|Updated Abandoned Site: 
@@ -1478,4 +1487,4 @@
 2116569384||potp_ov_card_details|Card
 ;overlay-text-end
 ;
-; Next id: 2116569408
+; Next id: 2116569417
