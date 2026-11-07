@@ -22,6 +22,7 @@
 #include "gameicons.h"
 #include "log.h"
 #include "overlay.h"
+#include "resources.h"
 
 namespace
 {
@@ -62,26 +63,27 @@ namespace
 		}
 	}
 
-	uint32_t U32(const std::vector<char>& data, size_t at)
+	uint32_t U32(std::string_view data, size_t at)
 	{
 		uint32_t value;
 		memcpy(&value, data.data() + at, 4);
 		return value;
 	}
 
-	std::wstring PackPath(const std::wstring& gameFolder)
+	// The pack is built into the .asi. The test program can point at a file of its own instead.
+	std::string_view PackBytes()
 	{
 #ifdef POTP_OVERLAY_TEST
 		wchar_t path[MAX_PATH] = L"";
 		if (GetEnvironmentVariableW(L"POTP_OVERLAY_ACHIEVEMENTS", path, MAX_PATH) > 0)
-			return path;
+		{
+			static std::vector<char> file;
+			std::ifstream stream(std::filesystem::path(path), std::ios::binary);
+			file.assign(std::istreambuf_iterator<char>(stream), std::istreambuf_iterator<char>());
+			return { file.data(), file.size() };
+		}
 #endif
-		// The usual folder, else PotP's folder under whatever name it was given for its load order
-		const std::wstring usual = gameFolder + L"\\mods\\modProgressOnThePathNG\\achievements.dat";
-		if (GetFileAttributesW(usual.c_str()) != INVALID_FILE_ATTRIBUTES)
-			return usual;
-		const std::wstring mod = ModFolder();
-		return mod.empty() ? usual : mod + L"\\achievements.dat";
+		return EmbeddedFile(POTP_RES_ACHIEVEMENTS);
 	}
 
 	// The store's language names, for the languages the window's fonts can show. The rest read in English.
@@ -469,21 +471,19 @@ namespace
 	}
 }
 
-void LoadAchievementPack(const std::wstring& gameFolder)
+void LoadAchievementPack()
 {
-	const std::wstring path = PackPath(gameFolder);
-	std::ifstream file(std::filesystem::path(path), std::ios::binary);
-	std::vector<char> data((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
+	const std::string_view data = PackBytes();
 	constexpr size_t kHeader = 36;
 	if (data.size() < kHeader || memcmp(data.data(), "POTPACH1", 8) != 0)
 	{
-		Log("achievements: can't read %ls", path.c_str());
+		Log("achievements: the built-in pack is missing");
 		return;
 	}
 	const uint32_t textSize = U32(data, 8), textPacked = U32(data, 12), width = U32(data, 16), height = U32(data, 20), iconsPacked = U32(data, 24), cell = U32(data, 28), columns = U32(data, 32);
 	if (data.size() < kHeader + static_cast<size_t>(textPacked) + iconsPacked || cell == 0 || columns == 0)
 	{
-		Log("achievements: %ls is cut short", path.c_str());
+		Log("achievements: the built-in pack is cut short");
 		return;
 	}
 	std::string text(textSize, '\0');
@@ -498,7 +498,7 @@ void LoadAchievementPack(const std::wstring& gameFolder)
 	if (!InflateGameData(bytes + kHeader, textPacked, reinterpret_cast<uint8_t*>(text.data()), text.size())
 		|| !InflateGameData(bytes + kHeader + textPacked, iconsPacked, pixels.pixels.data(), pixels.pixels.size()))
 	{
-		Log("achievements: can't unpack %ls", path.c_str());
+		Log("achievements: can't unpack the built-in pack");
 		return;
 	}
 

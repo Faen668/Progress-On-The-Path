@@ -36,8 +36,8 @@ struct AchievementList
 	bool fromGame = false;   // the game's scripts answered
 };
 
-// Reads PotP's achievements.dat, in mods\modProgressOnThePathNG or its folder under another name: on a thread of its own
-void LoadAchievementPack(const std::wstring& gameFolder);
+// Reads the achievement pack (achievements.dat, built into the .asi): on a thread of its own
+void LoadAchievementPack();
 
 // On the game's tick, with what PotPOverlay_Achievements returned. answered: the script exists and ran.
 void AchievementsTick(const std::string& fromScript, bool answered);

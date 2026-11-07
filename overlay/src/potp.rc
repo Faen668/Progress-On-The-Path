@@ -1,0 +1,7 @@
+// The overlay's achievement data and fonts, built into PotpOverlay.asi so nothing else has to ship beside it
+#include "resources.h"
+
+POTP_RES_ACHIEVEMENTS   RCDATA  "../data/achievements.dat"
+POTP_RES_FONT_SANS      RCDATA  "../fonts/AlegreyaSans-Regular.ttf"
+POTP_RES_FONT_SERIF     RCDATA  "../fonts/EBGaramond.ttf"
+POTP_RES_FONT_TITLE     RCDATA  "../fonts/Cinzel.ttf"

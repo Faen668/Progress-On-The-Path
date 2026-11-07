@@ -118,39 +118,20 @@ std::wstring GameFolder()
 	return found;
 }
 
-std::wstring ModFolder()
+std::string_view EmbeddedFile(int id)
 {
-	static const std::wstring found = []
+	// The resource's bytes stay mapped as long as the .asi is loaded: read-only, never freed
+	HMODULE self = nullptr;
+	GetModuleHandleExW(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS | GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT, reinterpret_cast<LPCWSTR>(&EmbeddedFile), &self);
+	const HRSRC found = FindResourceW(self, MAKEINTRESOURCEW(id), MAKEINTRESOURCEW(10));   // RT_RCDATA
+	const HGLOBAL loaded = found ? LoadResource(self, found) : nullptr;
+	const void* bytes = loaded ? LockResource(loaded) : nullptr;
+	if (!bytes)
 	{
-		const std::wstring mods = GameFolder() + L"\\mods\\";
-		const auto isPotP = [&](const std::wstring& name)
-		{
-			return GetFileAttributesW((mods + name + L"\\achievements.dat").c_str()) != INVALID_FILE_ATTRIBUTES
-				&& GetFileAttributesW((mods + name + L"\\fonts\\Cinzel.ttf").c_str()) != INVALID_FILE_ATTRIBUTES;
-		};
-		std::wstring name = isPotP(L"modProgressOnThePathNG") ? L"modProgressOnThePathNG" : L"";
-		if (name.empty())
-		{
-			WIN32_FIND_DATAW item;
-			const HANDLE find = FindFirstFileW((mods + L"*").c_str(), &item);
-			if (find != INVALID_HANDLE_VALUE)
-			{
-				do
-				{
-					if ((item.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) && item.cFileName[0] != L'.' && isPotP(item.cFileName))
-					{
-						name = item.cFileName;
-						break;
-					}
-				} while (FindNextFileW(find, &item));
-				FindClose(find);
-			}
-		}
-		const std::string narrow(name.begin(), name.end());
-		Log("PotP's mod folder: %s", name.empty() ? "not found" : narrow.c_str());
-		return name.empty() ? std::wstring() : mods + name;
-	}();
-	return found;
+		Log("built-in file %d is missing", id);
+		return {};
+	}
+	return { static_cast<const char*>(bytes), SizeofResource(self, found) };
 }
 
 static DWORD WINAPI StartThread(void*)
@@ -168,7 +149,7 @@ static DWORD WINAPI StartThread(void*)
 		BuildGameIconIndex(folder);
 		BuildCardArt(folder);
 		BuildMapPins(folder);
-		LoadAchievementPack(folder);
+		LoadAchievementPack();
 		LoadCustomAchievementPacks(folder);
 		BuildModelIndex(folder);
 		return 0;

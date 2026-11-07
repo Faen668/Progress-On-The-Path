@@ -27,6 +27,7 @@
 #include "modelview.h"
 #include "overlay.h"
 #include "pad.h"
+#include "resources.h"
 #include <thread>
 #include <ctime>
 #include "itemmodel.h"
@@ -8844,20 +8845,17 @@ bool UiBackOut()
 
 void UiLoadFonts(float scale)
 {
-	// PotP's fonts, in its mod folder whatever it's called. The test program sets its own folder.
-	char folder[MAX_PATH * 3] = "";
+	// PotP's fonts, built into the .asi. The test program can point at a folder of its own instead.
+	std::string folder;
 #ifdef POTP_OVERLAY_TEST
 	wchar_t overrideFolder[MAX_PATH];
 	if (GetEnvironmentVariableW(L"POTP_OVERLAY_FONTS", overrideFolder, MAX_PATH) > 0)
 	{
-		WideCharToMultiByte(CP_UTF8, 0, overrideFolder, -1, folder, sizeof(folder), nullptr, nullptr);
+		char narrow[MAX_PATH * 3] = "";
+		WideCharToMultiByte(CP_UTF8, 0, overrideFolder, -1, narrow, sizeof(narrow), nullptr, nullptr);
+		folder = narrow;
 	}
-	else
 #endif
-	{
-		const std::wstring path = ModFolder() + L"\\fonts";
-		WideCharToMultiByte(CP_UTF8, 0, path.c_str(), -1, folder, sizeof(folder), nullptr, nullptr);
-	}
 
 	ImGuiIO& io = ImGui::GetIO();
 	io.Fonts->TexDesiredWidth = 4096;
@@ -8874,44 +8872,65 @@ void UiLoadFonts(float scale)
 		builder.BuildRanges(&ranges);
 	}
 
-	const std::string garamond = std::string(folder) + "\\EBGaramond.ttf";
-	const auto load = [&](Face face, const char* file, std::initializer_list<int> sizes, float weight, bool mergeGaramond)
+	// Each face's bytes, from the .asi or the test's folder. ImGui reads them when it builds the atlas, later, and
+	// never frees them: the .asi's stay mapped, and the test's are kept here for good.
+	static std::map<std::string, std::string> fromFolder;
+	const auto bytes = [&](int resource, const char* file) -> std::string_view
 	{
-		const std::string path = std::string(folder) + "\\" + file;
-		const bool exists = GetFileAttributesA(path.c_str()) != INVALID_FILE_ATTRIBUTES;
+		if (folder.empty())
+			return EmbeddedFile(resource);
+		auto [kept, added] = fromFolder.try_emplace(folder + "\\" + file);
+		if (added)
+		{
+			std::FILE* stream = nullptr;
+			if (fopen_s(&stream, kept->first.c_str(), "rb") == 0 && stream)
+			{
+				char chunk[65536];
+				for (size_t read; (read = fread(chunk, 1, sizeof(chunk), stream)) > 0;)
+					kept->second.append(chunk, read);
+				fclose(stream);
+			}
+		}
+		return kept->second;
+	};
+	const std::string_view garamond = bytes(POTP_RES_FONT_SERIF, "EBGaramond.ttf");
+	const auto load = [&](Face face, std::string_view data, const char* name, std::initializer_list<int> sizes, float weight, bool mergeGaramond)
+	{
 		for (int size : sizes)
 		{
 			ImFont* font = nullptr;
 			const float pixels = std::max(6.f, static_cast<float>(size) * scale);
-			if (exists)
+			if (!data.empty())
 			{
 				ImFontConfig config;
+				config.FontDataOwnedByAtlas = false;
 				config.OversampleH = 2;
 				config.OversampleV = 1;
 				config.RasterizerMultiply = weight;
-				font = io.Fonts->AddFontFromFileTTF(path.c_str(), pixels, &config, ranges.Data);
+				font = io.Fonts->AddFontFromMemoryTTF(const_cast<char*>(data.data()), static_cast<int>(data.size()), pixels, &config, ranges.Data);
 				// Cinzel has no Cyrillic: the letters it lacks come from Garamond
-				if (font && mergeGaramond)
+				if (font && mergeGaramond && !garamond.empty())
 				{
 					ImFontConfig merge;
+					merge.FontDataOwnedByAtlas = false;
 					merge.MergeMode = true;
 					merge.OversampleH = 2;
 					merge.OversampleV = 1;
 					merge.RasterizerMultiply = weight;
-					io.Fonts->AddFontFromFileTTF(garamond.c_str(), pixels, &merge, ranges.Data);
+					io.Fonts->AddFontFromMemoryTTF(const_cast<char*>(garamond.data()), static_cast<int>(garamond.size()), pixels, &merge, ranges.Data);
 				}
 			}
 			if (!font)
 			{
-				Log("font %s not found, using the built-in one", path.c_str());
+				Log("font %s not found, using the built-in one", name);
 				font = io.Fonts->AddFontDefault();
 			}
 			g_fonts[{ face, size }] = font;
 		}
 	};
-	load(kSans, "AlegreyaSans-Regular.ttf", { 22, 24, 26 }, 1.1f, false);
-	load(kSerif, "EBGaramond.ttf", { 28, 30, 32, 34, 48, 64, 72 }, 1.3f, false);
-	load(kTitle, "Cinzel.ttf", { 20, 22, 24, 28, 32, 48, 64 }, 1.15f, true);
+	load(kSans, bytes(POTP_RES_FONT_SANS, "AlegreyaSans-Regular.ttf"), "Alegreya Sans", { 22, 24, 26 }, 1.1f, false);
+	load(kSerif, garamond, "EB Garamond", { 28, 30, 32, 34, 48, 64, 72 }, 1.3f, false);
+	load(kTitle, bytes(POTP_RES_FONT_TITLE, "Cinzel.ttf"), "Cinzel", { 20, 22, 24, 28, 32, 48, 64 }, 1.15f, true);
 }
 
 // The tour's wardrobe steps have it open. It's shut again after them, if it was the tour that opened it.
