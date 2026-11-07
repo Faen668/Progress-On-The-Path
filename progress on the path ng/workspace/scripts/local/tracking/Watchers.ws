@@ -32,6 +32,12 @@ class CPotP_InventoryListener extends IInventoryScriptedListener
 		{
 			master.tracker.QueueItem(item);
 		}
+		else if (PotP_IsHiddenRelic(item) && FactsQuerySum(PotP_HiddenRelicFact(item)) == 0)
+		{
+			// A relic the game never gives, had after all: from now on it's listed (and counted as had)
+			FactsSet(PotP_HiddenRelicFact(item), 1);
+			master.catalog.Rebuild();
+		}
 		return true;
 	}
 }

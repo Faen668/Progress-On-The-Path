@@ -89,15 +89,20 @@ class CPotP_DynamicItems
 	}
 
 	//---------------------------------------------------
-	// A relic: quality 4. Some weapons only a reward can give, and only with a mod such as The Essential Weapon Rework
-	// (Eredin's sword, Ciri's two): without one the game keeps them for the NPCs, so they're listed only when a reward of
-	// the game's gives them, and Ciri's are quality 5 with that mod.
+	// A relic: quality 4. Some the game never gives: Eredin's sword and Ciri's two only a mod such as The Essential Weapon
+	// Rework makes rewards (and Ciri's are quality 5 with it), and Bleidd was cut, its reward q403_03_new_gear never given.
+	// They're listed only when a reward of the game's gives them, or once Geralt has had one (the console, another mod),
+	// which the inventory listener remembers (PotP_HiddenRelicHad).
 
 	private function IsRelic(defs: CDefinitionsManagerAccessor, item: name) : bool
 	{
 		var rewards	: array<name>;
 		var quality	: int = GetItemQuality(defs, item);
 
+		if (!PotP_IsHiddenRelic(item))
+		{
+			return quality == relic_quality;
+		}
 		switch (item)
 		{
 		case 'Eredin Sword':
@@ -109,10 +114,8 @@ class CPotP_DynamicItems
 			rewards.PushBack('q505_1_meet_emhyr');
 			rewards.PushBack('q505_2_killed_monster');
 			break;
-		default:
-			return quality == relic_quality;
 		}
-		return (quality == relic_quality || quality == relic_quality + 1) && AnyRewardGives(rewards, item);
+		return (quality == relic_quality || quality == relic_quality + 1) && (AnyRewardGives(rewards, item) || PotP_HiddenRelicHad(item));
 	}
 
 	private function AnyRewardGives(rewards: array<name>, item: name) : bool
@@ -192,9 +195,15 @@ class CPotP_DynamicItems
 		}
 		else if (tracked.variations.Contains('q704 vampire steel sword'))
 		{
-			// The Hen Gaidth sword: in a chest just inside the Unseen Elder's cave (q704_gravity_cave\loot.w2l)
+			// The Hen Gaidth sword: in a chest just inside the Unseen Elder's cave (q704_gravity_cave\loot.w2l), before the
+			// cave's kill trigger, so on the Syanna route too with Orianna's key (q704_05_return_to_diva, then
+			// q704_orianas_part_done). Missed by the fairy tale starting without it (Orianna is gone then), or the cave sealed.
 			MakeMissable(catalog, tracked, "PotP_MissableTip_HenGaidthSword", "");
-			PotP_SetCaveMissable(catalog, tracked, "PotP_MissableTip_HenGaidthSword");
+			catalog.AddMissedFactFor(tracked, "q704_fairy_tale_started", "q704_orianas_part_done");
+			catalog.AddMissedFactFor(tracked, "q704_gravity_cave_done");
+			// Quest blocks in q704_04_vampire_cave (bob)
+			catalog.AddMissedBlockFor(tracked, "5dfcecbd-f858-4f9d-a14d-9afe4da34698", "End");        // SceneBlock, the Unseen Elder: the cave is sealed after
+			catalog.AddMissedBlockFor(tracked, "5dfcecbd-f858-4f9d-a14d-9afe4da34698", "Shortcut");
 		}
 		else if (tracked.variations.Contains('q704 vampire silver sword'))
 		{
@@ -214,6 +223,45 @@ class CPotP_DynamicItems
 			catalog.AddMissedBlockFor(tracked, "476251b9-80da-490b-ac93-7dec2b8b2645", "OriginalGameplay");
 			catalog.AddMissedBlockFor(tracked, "e640b3c2-6ac1-472f-bfd6-dad788cdb2be", "OriginalBoat");      // the same, by its other input
 			catalog.AddMissedBlockFor(tracked, "e640b3c2-6ac1-472f-bfd6-dad788cdb2be", "OriginalGameplay");
+		}
+		else if (tracked.variations.Contains('sq701 Geralt of Rivia sword') || tracked.variations.Contains('sq701 Ravix of Fourhorn sword'))
+		{
+			// The tourney sword (a relic with The Essential Weapon Rework): Gregoire's, at the ceremony after the arena's
+			// final fight (sq701_18_gregoire), which can't be lost. Missed only if the tournament fails first, when 'The
+			// Night of Long Fangs' starts.
+			MakeMissable(catalog, tracked, "PotP_MissableTip_TourneySword", "");
+			catalog.AddMissedFactFor(tracked, "q704_done", "sq701_won_tournament");
+			// Quest blocks in sq701_tournament (bob)
+			catalog.AddMissedBlockFor(tracked, "0d31fd1b-da32-4ff8-8a0d-019963117003", "Out");   // CutControl, the tournament fails
+		}
+		else if (tracked.variations.Contains('Unique silver sword'))
+		{
+			// Gesheft, the relic: in the giant's bonfire in the Land of a Thousand Fables (fairy_tale\giantireonfire.w2l),
+			// its only place, so lost as Vitis is. The crafted Gesheft (Serpent Silver Sword 3) is another item.
+			MakeMissable(catalog, tracked, "PotP_MissableTip_Gesheft", "q704_fairy_tale_done");
+			catalog.AddMissedFactFor(tracked, "q704_gravity_cave_done");
+			// Quest blocks in q704_02_fairy_tale and q704_03_monster_hunt (bob)
+			catalog.AddMissedBlockFor(tracked, "595c5a7b-6d66-4bf5-b87c-321f553ff838", "Out");               // LayersHider "background, hide ft": the land is gone
+			catalog.AddMissedBlockFor(tracked, "476251b9-80da-490b-ac93-7dec2b8b2645", "OriginalBoat");      // SceneBlock, Regis: the Unseen Elder
+			catalog.AddMissedBlockFor(tracked, "476251b9-80da-490b-ac93-7dec2b8b2645", "OriginalGameplay");
+			catalog.AddMissedBlockFor(tracked, "e640b3c2-6ac1-472f-bfd6-dad788cdb2be", "OriginalBoat");      // the same, by its other input
+			catalog.AddMissedBlockFor(tracked, "e640b3c2-6ac1-472f-bfd6-dad788cdb2be", "OriginalGameplay");
+		}
+		else if (tracked.variations.Contains('Mourner'))
+		{
+			// Mourner: reward mq1037_enc_01_sword, the scavenger at the Midcotts bridge sells it (or it's on him if he's
+			// attacked). Turn him down and leave, and after six hours everyone there is despawned. No chest rolls it.
+			MakeMissable(catalog, tracked, "PotP_MissableTip_Mourner", "");
+			// Quest blocks in mq1037_deadly_crossing
+			catalog.AddMissedBlockFor(tracked, "062ba391-543b-42a1-b320-9fd5aa4fe4c4", "Out");   // StoryPhaseSetter "despawn everyone"
+		}
+		else if (tracked.variations.Contains('Ofir Crossbow R'))
+		{
+			// The Ofieri crossbow: in a chest in the Borsodi vault (ep1 locations\q603\loot.w2l), reached only during the
+			// heist; the auction house is locked and the tunnel walled up after it.
+			MakeMissable(catalog, tracked, "PotP_MissableTip_OfieriCrossbow", "q603_done");
+			// Quest blocks in q603_bank (ep1)
+			catalog.AddMissedBlockFor(tracked, "d4bd54d1-e507-48bb-accd-9a04ebfed6ff", "Out");   // FactsDBChanging "q603_done +1"
 		}
 		else if (tracked.variations.Contains('Gwent steel sword 1'))
 		{
@@ -498,4 +546,22 @@ class CPotP_DynamicItems
 		default:			return PotP_R_NA;
 		}
 	}
+}
+
+//---------------------------------------------------
+// The relics the game never gives (CPotP_DynamicItems.IsRelic), and whether Geralt has had one
+
+function PotP_IsHiddenRelic(item: name) : bool
+{
+	return item == 'Eredin Sword' || item == 'Swallow Sword' || item == 'q505 crafted sword' || item == 'WitcherSilverWolf';
+}
+
+function PotP_HiddenRelicFact(item: name) : string
+{
+	return "PotP_HadRelic_" + StrReplaceAll(NameToString(item), " ", "_");
+}
+
+function PotP_HiddenRelicHad(item: name) : bool
+{
+	return FactsQuerySum(PotP_HiddenRelicFact(item)) > 0 || thePlayer.GetInventory().HasItem(item);
 }

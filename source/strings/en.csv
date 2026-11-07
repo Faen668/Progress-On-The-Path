@@ -741,13 +741,17 @@
 2116569394||PotP_MissableTip_RoseOfShaerrawed|Found in Kaer Morhen's armory during 'The Battle of Kaer Morhen'. At the council before the battle, choose to clear out the armory to get it. If you choose to repair the wall instead, you won't get it.
 2116569395||PotP_MissableTip_WintersBlade|Crach an Craite gives you this at Kaer Trolde in 'Brothers in Arms: Skellige' when you ask him for help against the Wild Hunt. If you take the portal to the Isle of Mists without asking him, you won't get it.
 2116569396||PotP_MissableTip_HenGaidthArmour|Found in a chest in the Unseen Elder's cave during 'The Night of Long Fangs'. You only go there if you tell Regis you'll find the Unseen Elder. If you choose to go after Syanna instead, you won't get it. The cave is sealed once you've spoken with the Unseen Elder, so open the chest before then.
-2116569397||PotP_MissableTip_HenGaidthSword|Found in a chest just inside the Unseen Elder's cave during 'The Night of Long Fangs'. You only go there if you tell Regis you'll find the Unseen Elder. If you choose to go after Syanna instead, you won't get it. The cave is sealed once you've spoken with the Unseen Elder, so open the chest before then.
+2116569397||PotP_MissableTip_HenGaidthSword|Found in a chest just inside the Unseen Elder's cave during 'The Night of Long Fangs'. If you go to the Unseen Elder, open it on your way in: the cave is sealed once you've spoken with him. If you go after Syanna instead, you can still open the cave with the key Orianna gives you in 'Blood Simple', so finish that quest first. Without the key, you won't get it.
 2116569398||PotP_MissableTip_Cantata|Lies beside a dead mage deep in the Unseen Elder's cave during 'The Night of Long Fangs'. You only go there if you tell Regis you'll find the Unseen Elder. If you choose to go after Syanna instead, you won't get it. The cave is sealed once you've spoken with the Unseen Elder, so take it before then.
 2116569399||PotP_MissableTip_Vitis|Lies beside a dead knight in the Land of a Thousand Fables during 'Beyond Hill and Dale...'. You only go there if you choose to go after Syanna rather than the Unseen Elder in 'The Night of Long Fangs'. You can't return once you leave the land, so take it before then.
 2116569400||PotP_MissableTip_Blave|At the start of the Gwent tournament in Beauclair, you can wager your silver sword against your first opponent's sword. Accept and win that first match to get it. If you decline, don't have a silver sword with you, or lose that match, you won't get it.
 2116569401||PotP_MissableTip_TourneySaddle|You get Sir Geralt of Rivia's saddle or Sir Ravix of Fourhorn's saddle, by the name you registered under, for winning the horse race at the tournament in 'The Warble of a Smitten Knight'. If you lose the race, or don't finish the tournament before 'The Night of Long Fangs' begins, you won't get it.
 2116569402||option_PotP_TrackingGroup_HorseGear_Saddles_14|Tourney saddle
 2116569403||PotP_RelicTitle_TourneySword|Tourney sword
+2116569404||PotP_MissableTip_Gesheft|Lies in the giant's bonfire in the Land of a Thousand Fables during 'Beyond Hill and Dale...'. You only go there if you choose to go after Syanna rather than the Unseen Elder in 'The Night of Long Fangs'. You can't return once you leave the land, so take it before then.
+2116569405||PotP_MissableTip_Mourner|A scavenger by the bridge near Midcotts in Velen offers to sell you this sword. Buy it, or take it from him by force, before you leave: if you turn him down and go, he's gone a few hours later and the sword with him.
+2116569406||PotP_MissableTip_OfieriCrossbow|In a chest in the Borsodi vault during the heist in 'Open Sesame!'. You can't get back into the vault once the heist is over, so take it while you're there.
+2116569407||PotP_MissableTip_TourneySword|Gregoire gives you this when you win the tournament in 'The Warble of a Smitten Knight': Sir Geralt of Rivia's sword or Sir Ravix of Fourhorn's, by the name you registered under. If you don't finish the tournament before 'The Night of Long Fangs' begins, you won't get it.
 2116568671||PotP_NotificationLine_ShadesOfIron| Shades of Iron Item(DYNAMC_REPLACE)
 2116568672||PotP_NotificationLine_Sites| Abandoned Site(DYNAMC_REPLACE)
 2116568673||PotP_NotificationLine_AbandonedSite|Updated Abandoned Site: 
@@ -1474,4 +1478,4 @@
 2116569384||potp_ov_card_details|Card
 ;overlay-text-end
 ;
-; Next id: 2116569404
+; Next id: 2116569408
