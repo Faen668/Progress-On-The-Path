@@ -14,6 +14,14 @@ function PotP_DefineItems(catalog: CPotP_Catalog)
 	PotP_DefineItems_08(catalog);
 	PotP_DefineItems_09(catalog);
 	PotP_DefineItems_10(catalog);
+	PotP_DefineItems_35(catalog);
+	PotP_DefineItems_36(catalog);
+	PotP_DefineItems_37(catalog);
+	PotP_DefineItems_38(catalog);
+	PotP_DefineItems_39(catalog);
+	PotP_DefineItems_40(catalog);
+	PotP_DefineItems_41(catalog);
+	PotP_DefineItems_42(catalog);
 	PotP_DefineItems_11(catalog);
 	PotP_DefineItems_12(catalog);
 	PotP_DefineItems_13(catalog);
@@ -163,8 +171,397 @@ function PotP_DefineItems_10(catalog: CPotP_Catalog)
 	catalog.AddItem("_02", PotP_E_Primary, PotP_I_Gears, PotP_U_Boots, 'White Tiger Boots');
 	catalog.AddItem("_03", PotP_E_Primary, PotP_I_Gears, PotP_U_Glove, 'White Tiger Gloves');
 	catalog.AddItem("_04", PotP_E_Primary, PotP_I_Gears, PotP_U_Pants, 'White Tiger Pants');
+	// The Vixen swords are this set's, though their names don't say so
+	catalog.AddItem("_05", PotP_E_Primary, PotP_I_Gears, PotP_U_Steel, 'Steel Vixen');
+	catalog.AddItem("_06", PotP_E_Primary, PotP_I_Gears, PotP_U_Silve, 'Silver Vixen');
 	catalog.EndSection();
 }
+
+//---------------------------------------------------
+
+function PotP_DefineItems_35(catalog: CPotP_Catalog)
+{
+	var tracked : CPotP_Entry;
+
+	catalog.BeginSection(PotP_Book_Items, "PotP_Preview_Witch_1", PotP_A_Items, "PotP_TrackingGroup_WitcherGear_Feline");
+	tracked = catalog.AddItem("_01", PotP_E_Primary, PotP_I_Witch, PotP_U_Armor, 'Lynx Armor');
+	tracked.SetUpgrade("armor", 0, 5);
+	tracked = catalog.AddItem("_02", PotP_E_Primary, PotP_I_Witch, PotP_U_Armor, 'Lynx Armor 1');
+	tracked.SetUpgrade("armor", 1, 5);
+	tracked = catalog.AddItem("_03", PotP_E_Primary, PotP_I_Witch, PotP_U_Armor, 'Lynx Armor 2');
+	tracked.SetUpgrade("armor", 2, 5);
+	tracked = catalog.AddItem("_04", PotP_E_Primary, PotP_I_Witch, PotP_U_Armor, 'Lynx Armor 3');
+	tracked.SetUpgrade("armor", 3, 5);
+	tracked = catalog.AddItem("_05", PotP_E_Primary_DLC2, PotP_I_Witch, PotP_U_Armor, 'Lynx Armor 4');
+	tracked.SetUpgrade("armor", 4, 5);
+	tracked = catalog.AddItem("_06", PotP_E_Primary, PotP_I_Witch, PotP_U_Boots, 'Lynx Boots 1');
+	tracked.SetUpgrade("boots", 0, 5);
+	tracked = catalog.AddItem("_07", PotP_E_Primary, PotP_I_Witch, PotP_U_Boots, 'Lynx Boots 2');
+	tracked.SetUpgrade("boots", 1, 5);
+	tracked = catalog.AddItem("_08", PotP_E_Primary, PotP_I_Witch, PotP_U_Boots, 'Lynx Boots 3');
+	tracked.SetUpgrade("boots", 2, 5);
+	tracked = catalog.AddItem("_09", PotP_E_Primary, PotP_I_Witch, PotP_U_Boots, 'Lynx Boots 4');
+	tracked.SetUpgrade("boots", 3, 5);
+	tracked = catalog.AddItem("_10", PotP_E_Primary_DLC2, PotP_I_Witch, PotP_U_Boots, 'Lynx Boots 5');
+	tracked.SetUpgrade("boots", 4, 5);
+	tracked = catalog.AddItem("_11", PotP_E_Primary, PotP_I_Witch, PotP_U_Glove, 'Lynx Gloves 1');
+	tracked.SetUpgrade("gloves", 0, 5);
+	tracked = catalog.AddItem("_12", PotP_E_Primary, PotP_I_Witch, PotP_U_Glove, 'Lynx Gloves 2');
+	tracked.SetUpgrade("gloves", 1, 5);
+	tracked = catalog.AddItem("_13", PotP_E_Primary, PotP_I_Witch, PotP_U_Glove, 'Lynx Gloves 3');
+	tracked.SetUpgrade("gloves", 2, 5);
+	tracked = catalog.AddItem("_14", PotP_E_Primary, PotP_I_Witch, PotP_U_Glove, 'Lynx Gloves 4');
+	tracked.SetUpgrade("gloves", 3, 5);
+	tracked = catalog.AddItem("_15", PotP_E_Primary_DLC2, PotP_I_Witch, PotP_U_Glove, 'Lynx Gloves 5');
+	tracked.SetUpgrade("gloves", 4, 5);
+	tracked = catalog.AddItem("_16", PotP_E_Primary, PotP_I_Witch, PotP_U_Pants, 'Lynx Pants 1');
+	tracked.SetUpgrade("pants", 0, 5);
+	tracked = catalog.AddItem("_17", PotP_E_Primary, PotP_I_Witch, PotP_U_Pants, 'Lynx Pants 2');
+	tracked.SetUpgrade("pants", 1, 5);
+	tracked = catalog.AddItem("_18", PotP_E_Primary, PotP_I_Witch, PotP_U_Pants, 'Lynx Pants 3');
+	tracked.SetUpgrade("pants", 2, 5);
+	tracked = catalog.AddItem("_19", PotP_E_Primary, PotP_I_Witch, PotP_U_Pants, 'Lynx Pants 4');
+	tracked.SetUpgrade("pants", 3, 5);
+	tracked = catalog.AddItem("_20", PotP_E_Primary_DLC2, PotP_I_Witch, PotP_U_Pants, 'Lynx Pants 5');
+	tracked.SetUpgrade("pants", 4, 5);
+	tracked = catalog.AddItem("_21", PotP_E_Primary, PotP_I_Witch, PotP_U_Steel, 'Lynx School steel sword');
+	tracked.SetUpgrade("steel", 0, 5);
+	tracked = catalog.AddItem("_22", PotP_E_Primary, PotP_I_Witch, PotP_U_Steel, 'Lynx School steel sword 1');
+	tracked.SetUpgrade("steel", 1, 5);
+	tracked = catalog.AddItem("_23", PotP_E_Primary, PotP_I_Witch, PotP_U_Steel, 'Lynx School steel sword 2');
+	tracked.SetUpgrade("steel", 2, 5);
+	tracked = catalog.AddItem("_24", PotP_E_Primary, PotP_I_Witch, PotP_U_Steel, 'Lynx School steel sword 3');
+	tracked.SetUpgrade("steel", 3, 5);
+	tracked = catalog.AddItem("_25", PotP_E_Primary_DLC2, PotP_I_Witch, PotP_U_Steel, 'Lynx School steel sword 4');
+	tracked.SetUpgrade("steel", 4, 5);
+	tracked = catalog.AddItem("_26", PotP_E_Primary, PotP_I_Witch, PotP_U_Silve, 'Lynx School silver sword');
+	tracked.SetUpgrade("silver", 0, 5);
+	tracked = catalog.AddItem("_27", PotP_E_Primary, PotP_I_Witch, PotP_U_Silve, 'Lynx School silver sword 1');
+	tracked.SetUpgrade("silver", 1, 5);
+	tracked = catalog.AddItem("_28", PotP_E_Primary, PotP_I_Witch, PotP_U_Silve, 'Lynx School silver sword 2');
+	tracked.SetUpgrade("silver", 2, 5);
+	tracked = catalog.AddItem("_29", PotP_E_Primary, PotP_I_Witch, PotP_U_Silve, 'Lynx School silver sword 3');
+	tracked.SetUpgrade("silver", 3, 5);
+	tracked = catalog.AddItem("_30", PotP_E_Primary_DLC2, PotP_I_Witch, PotP_U_Silve, 'Lynx School silver sword 4');
+	tracked.SetUpgrade("silver", 4, 5);
+	catalog.AddItem("_31", PotP_E_Primary, PotP_I_Witch, PotP_U_Cross, 'Lynx School Crossbow');
+	// Gaetan's sword, from the stash in 'Where the Cat and Wolf Play...'. Missed if he's killed, or if bandits loot the stash
+	// first: the quest's own fact for the one, and its blocks for both as they happen.
+	tracked = catalog.AddItem("_32", PotP_E_Missable, PotP_I_Witch, PotP_U_Steel, 'mq1058_cat_school_sword');
+	tracked.missable_tip = "PotP_MissableTip_Tiegr";
+	tracked.missed_fact = "mq1058_lynx_witcher_killed";
+	tracked.also_missed_fact = "PotP_ItemMissed_Tiegr";
+	// Quest blocks in mq1058_lynx_witcher (dlc15)
+	catalog.AddEventMissedBlock("8dca1782-16d3-4553-ad39-372a8f357ed8", "Out");   // FactsDBChanging "mq1058_lynx_witcher_killed +1"
+	catalog.AddEventMissedBlock("43d2a813-7666-4878-86d8-5cb62ab7ce4e", "Out");   // LayersHider "Show looted hideout", in "Secret Stash Looted"
+	catalog.EndSection();
+}
+
+//---------------------------------------------------
+
+function PotP_DefineItems_36(catalog: CPotP_Catalog)
+{
+	var tracked : CPotP_Entry;
+
+	catalog.BeginSection(PotP_Book_Items, "PotP_Preview_Witch_2", PotP_A_Items, "PotP_TrackingGroup_WitcherGear_Griffin");
+	tracked = catalog.AddItem("_01", PotP_E_Primary, PotP_I_Witch, PotP_U_Armor, 'Gryphon Armor');
+	tracked.SetUpgrade("armor", 0, 5);
+	tracked = catalog.AddItem("_02", PotP_E_Primary, PotP_I_Witch, PotP_U_Armor, 'Gryphon Armor 1');
+	tracked.SetUpgrade("armor", 1, 5);
+	tracked = catalog.AddItem("_03", PotP_E_Primary, PotP_I_Witch, PotP_U_Armor, 'Gryphon Armor 2');
+	tracked.SetUpgrade("armor", 2, 5);
+	tracked = catalog.AddItem("_04", PotP_E_Primary, PotP_I_Witch, PotP_U_Armor, 'Gryphon Armor 3');
+	tracked.SetUpgrade("armor", 3, 5);
+	tracked = catalog.AddItem("_05", PotP_E_Primary_DLC2, PotP_I_Witch, PotP_U_Armor, 'Gryphon Armor 4');
+	tracked.SetUpgrade("armor", 4, 5);
+	tracked = catalog.AddItem("_06", PotP_E_Primary, PotP_I_Witch, PotP_U_Boots, 'Gryphon Boots 1');
+	tracked.SetUpgrade("boots", 0, 5);
+	tracked = catalog.AddItem("_07", PotP_E_Primary, PotP_I_Witch, PotP_U_Boots, 'Gryphon Boots 2');
+	tracked.SetUpgrade("boots", 1, 5);
+	tracked = catalog.AddItem("_08", PotP_E_Primary, PotP_I_Witch, PotP_U_Boots, 'Gryphon Boots 3');
+	tracked.SetUpgrade("boots", 2, 5);
+	tracked = catalog.AddItem("_09", PotP_E_Primary, PotP_I_Witch, PotP_U_Boots, 'Gryphon Boots 4');
+	tracked.SetUpgrade("boots", 3, 5);
+	tracked = catalog.AddItem("_10", PotP_E_Primary_DLC2, PotP_I_Witch, PotP_U_Boots, 'Gryphon Boots 5');
+	tracked.SetUpgrade("boots", 4, 5);
+	tracked = catalog.AddItem("_11", PotP_E_Primary, PotP_I_Witch, PotP_U_Glove, 'Gryphon Gloves 1');
+	tracked.SetUpgrade("gloves", 0, 5);
+	tracked = catalog.AddItem("_12", PotP_E_Primary, PotP_I_Witch, PotP_U_Glove, 'Gryphon Gloves 2');
+	tracked.SetUpgrade("gloves", 1, 5);
+	tracked = catalog.AddItem("_13", PotP_E_Primary, PotP_I_Witch, PotP_U_Glove, 'Gryphon Gloves 3');
+	tracked.SetUpgrade("gloves", 2, 5);
+	tracked = catalog.AddItem("_14", PotP_E_Primary, PotP_I_Witch, PotP_U_Glove, 'Gryphon Gloves 4');
+	tracked.SetUpgrade("gloves", 3, 5);
+	tracked = catalog.AddItem("_15", PotP_E_Primary_DLC2, PotP_I_Witch, PotP_U_Glove, 'Gryphon Gloves 5');
+	tracked.SetUpgrade("gloves", 4, 5);
+	tracked = catalog.AddItem("_16", PotP_E_Primary, PotP_I_Witch, PotP_U_Pants, 'Gryphon Pants 1');
+	tracked.SetUpgrade("pants", 0, 5);
+	tracked = catalog.AddItem("_17", PotP_E_Primary, PotP_I_Witch, PotP_U_Pants, 'Gryphon Pants 2');
+	tracked.SetUpgrade("pants", 1, 5);
+	tracked = catalog.AddItem("_18", PotP_E_Primary, PotP_I_Witch, PotP_U_Pants, 'Gryphon Pants 3');
+	tracked.SetUpgrade("pants", 2, 5);
+	tracked = catalog.AddItem("_19", PotP_E_Primary, PotP_I_Witch, PotP_U_Pants, 'Gryphon Pants 4');
+	tracked.SetUpgrade("pants", 3, 5);
+	tracked = catalog.AddItem("_20", PotP_E_Primary_DLC2, PotP_I_Witch, PotP_U_Pants, 'Gryphon Pants 5');
+	tracked.SetUpgrade("pants", 4, 5);
+	tracked = catalog.AddItem("_21", PotP_E_Primary, PotP_I_Witch, PotP_U_Steel, 'Gryphon School steel sword');
+	tracked.SetUpgrade("steel", 0, 5);
+	tracked = catalog.AddItem("_22", PotP_E_Primary, PotP_I_Witch, PotP_U_Steel, 'Gryphon School steel sword 1');
+	tracked.SetUpgrade("steel", 1, 5);
+	tracked = catalog.AddItem("_23", PotP_E_Primary, PotP_I_Witch, PotP_U_Steel, 'Gryphon School steel sword 2');
+	tracked.SetUpgrade("steel", 2, 5);
+	tracked = catalog.AddItem("_24", PotP_E_Primary, PotP_I_Witch, PotP_U_Steel, 'Gryphon School steel sword 3');
+	tracked.SetUpgrade("steel", 3, 5);
+	tracked = catalog.AddItem("_25", PotP_E_Primary_DLC2, PotP_I_Witch, PotP_U_Steel, 'Gryphon School steel sword 4');
+	tracked.SetUpgrade("steel", 4, 5);
+	tracked = catalog.AddItem("_26", PotP_E_Primary, PotP_I_Witch, PotP_U_Silve, 'Gryphon School silver sword');
+	tracked.SetUpgrade("silver", 0, 5);
+	tracked = catalog.AddItem("_27", PotP_E_Primary, PotP_I_Witch, PotP_U_Silve, 'Gryphon School silver sword 1');
+	tracked.SetUpgrade("silver", 1, 5);
+	tracked = catalog.AddItem("_28", PotP_E_Primary, PotP_I_Witch, PotP_U_Silve, 'Gryphon School silver sword 2');
+	tracked.SetUpgrade("silver", 2, 5);
+	tracked = catalog.AddItem("_29", PotP_E_Primary, PotP_I_Witch, PotP_U_Silve, 'Gryphon School silver sword 3');
+	tracked.SetUpgrade("silver", 3, 5);
+	tracked = catalog.AddItem("_30", PotP_E_Primary_DLC2, PotP_I_Witch, PotP_U_Silve, 'Gryphon School silver sword 4');
+	tracked.SetUpgrade("silver", 4, 5);
+	catalog.EndSection();
+}
+
+//---------------------------------------------------
+
+function PotP_DefineItems_37(catalog: CPotP_Catalog)
+{
+	var tracked : CPotP_Entry;
+
+	catalog.BeginSection(PotP_Book_Items, "PotP_Preview_Witch_3", PotP_A_Items, "PotP_TrackingGroup_WitcherGear_Ursine");
+	tracked = catalog.AddItem("_01", PotP_E_Primary, PotP_I_Witch, PotP_U_Armor, 'Bear Armor');
+	tracked.SetUpgrade("armor", 0, 5);
+	tracked = catalog.AddItem("_02", PotP_E_Primary, PotP_I_Witch, PotP_U_Armor, 'Bear Armor 1');
+	tracked.SetUpgrade("armor", 1, 5);
+	tracked = catalog.AddItem("_03", PotP_E_Primary, PotP_I_Witch, PotP_U_Armor, 'Bear Armor 2');
+	tracked.SetUpgrade("armor", 2, 5);
+	tracked = catalog.AddItem("_04", PotP_E_Primary, PotP_I_Witch, PotP_U_Armor, 'Bear Armor 3');
+	tracked.SetUpgrade("armor", 3, 5);
+	tracked = catalog.AddItem("_05", PotP_E_Primary_DLC2, PotP_I_Witch, PotP_U_Armor, 'Bear Armor 4');
+	tracked.SetUpgrade("armor", 4, 5);
+	tracked = catalog.AddItem("_06", PotP_E_Primary, PotP_I_Witch, PotP_U_Boots, 'Bear Boots 1');
+	tracked.SetUpgrade("boots", 0, 5);
+	tracked = catalog.AddItem("_07", PotP_E_Primary, PotP_I_Witch, PotP_U_Boots, 'Bear Boots 2');
+	tracked.SetUpgrade("boots", 1, 5);
+	tracked = catalog.AddItem("_08", PotP_E_Primary, PotP_I_Witch, PotP_U_Boots, 'Bear Boots 3');
+	tracked.SetUpgrade("boots", 2, 5);
+	tracked = catalog.AddItem("_09", PotP_E_Primary, PotP_I_Witch, PotP_U_Boots, 'Bear Boots 4');
+	tracked.SetUpgrade("boots", 3, 5);
+	tracked = catalog.AddItem("_10", PotP_E_Primary_DLC2, PotP_I_Witch, PotP_U_Boots, 'Bear Boots 5');
+	tracked.SetUpgrade("boots", 4, 5);
+	tracked = catalog.AddItem("_11", PotP_E_Primary, PotP_I_Witch, PotP_U_Glove, 'Bear Gloves 1');
+	tracked.SetUpgrade("gloves", 0, 5);
+	tracked = catalog.AddItem("_12", PotP_E_Primary, PotP_I_Witch, PotP_U_Glove, 'Bear Gloves 2');
+	tracked.SetUpgrade("gloves", 1, 5);
+	tracked = catalog.AddItem("_13", PotP_E_Primary, PotP_I_Witch, PotP_U_Glove, 'Bear Gloves 3');
+	tracked.SetUpgrade("gloves", 2, 5);
+	tracked = catalog.AddItem("_14", PotP_E_Primary, PotP_I_Witch, PotP_U_Glove, 'Bear Gloves 4');
+	tracked.SetUpgrade("gloves", 3, 5);
+	tracked = catalog.AddItem("_15", PotP_E_Primary_DLC2, PotP_I_Witch, PotP_U_Glove, 'Bear Gloves 5');
+	tracked.SetUpgrade("gloves", 4, 5);
+	tracked = catalog.AddItem("_16", PotP_E_Primary, PotP_I_Witch, PotP_U_Pants, 'Bear Pants 1');
+	tracked.SetUpgrade("pants", 0, 5);
+	tracked = catalog.AddItem("_17", PotP_E_Primary, PotP_I_Witch, PotP_U_Pants, 'Bear Pants 2');
+	tracked.SetUpgrade("pants", 1, 5);
+	tracked = catalog.AddItem("_18", PotP_E_Primary, PotP_I_Witch, PotP_U_Pants, 'Bear Pants 3');
+	tracked.SetUpgrade("pants", 2, 5);
+	tracked = catalog.AddItem("_19", PotP_E_Primary, PotP_I_Witch, PotP_U_Pants, 'Bear Pants 4');
+	tracked.SetUpgrade("pants", 3, 5);
+	tracked = catalog.AddItem("_20", PotP_E_Primary_DLC2, PotP_I_Witch, PotP_U_Pants, 'Bear Pants 5');
+	tracked.SetUpgrade("pants", 4, 5);
+	tracked = catalog.AddItem("_21", PotP_E_Primary, PotP_I_Witch, PotP_U_Steel, 'Bear School steel sword');
+	tracked.SetUpgrade("steel", 0, 5);
+	tracked = catalog.AddItem("_22", PotP_E_Primary, PotP_I_Witch, PotP_U_Steel, 'Bear School steel sword 1');
+	tracked.SetUpgrade("steel", 1, 5);
+	tracked = catalog.AddItem("_23", PotP_E_Primary, PotP_I_Witch, PotP_U_Steel, 'Bear School steel sword 2');
+	tracked.SetUpgrade("steel", 2, 5);
+	tracked = catalog.AddItem("_24", PotP_E_Primary, PotP_I_Witch, PotP_U_Steel, 'Bear School steel sword 3');
+	tracked.SetUpgrade("steel", 3, 5);
+	tracked = catalog.AddItem("_25", PotP_E_Primary_DLC2, PotP_I_Witch, PotP_U_Steel, 'Bear School steel sword 4');
+	tracked.SetUpgrade("steel", 4, 5);
+	tracked = catalog.AddItem("_26", PotP_E_Primary, PotP_I_Witch, PotP_U_Silve, 'Bear School silver sword');
+	tracked.SetUpgrade("silver", 0, 5);
+	tracked = catalog.AddItem("_27", PotP_E_Primary, PotP_I_Witch, PotP_U_Silve, 'Bear School silver sword 1');
+	tracked.SetUpgrade("silver", 1, 5);
+	tracked = catalog.AddItem("_28", PotP_E_Primary, PotP_I_Witch, PotP_U_Silve, 'Bear School silver sword 2');
+	tracked.SetUpgrade("silver", 2, 5);
+	tracked = catalog.AddItem("_29", PotP_E_Primary, PotP_I_Witch, PotP_U_Silve, 'Bear School silver sword 3');
+	tracked.SetUpgrade("silver", 3, 5);
+	tracked = catalog.AddItem("_30", PotP_E_Primary_DLC2, PotP_I_Witch, PotP_U_Silve, 'Bear School silver sword 4');
+	tracked.SetUpgrade("silver", 4, 5);
+	catalog.AddItem("_31", PotP_E_Primary, PotP_I_Witch, PotP_U_Cross, 'Bear School Crossbow');
+	catalog.EndSection();
+}
+
+//---------------------------------------------------
+
+function PotP_DefineItems_38(catalog: CPotP_Catalog)
+{
+	var tracked : CPotP_Entry;
+
+	catalog.BeginSection(PotP_Book_Items, "PotP_Preview_Witch_4", PotP_A_Items, "PotP_TrackingGroup_WitcherGear_Wolven");
+	tracked = catalog.AddItem("_01", PotP_E_Primary, PotP_I_Witch, PotP_U_Armor, 'Wolf Armor', 'NGP Wolf Armor');
+	tracked.SetUpgrade("armor", 0, 5);
+	tracked = catalog.AddItem("_02", PotP_E_Primary, PotP_I_Witch, PotP_U_Armor, 'Wolf Armor 1', 'NGP Wolf Armor 1');
+	tracked.SetUpgrade("armor", 1, 5);
+	tracked = catalog.AddItem("_03", PotP_E_Primary, PotP_I_Witch, PotP_U_Armor, 'Wolf Armor 2', 'NGP Wolf Armor 2');
+	tracked.SetUpgrade("armor", 2, 5);
+	tracked = catalog.AddItem("_04", PotP_E_Primary, PotP_I_Witch, PotP_U_Armor, 'Wolf Armor 3', 'NGP Wolf Armor 3');
+	tracked.SetUpgrade("armor", 3, 5);
+	tracked = catalog.AddItem("_05", PotP_E_Primary_DLC2, PotP_I_Witch, PotP_U_Armor, 'Wolf Armor 4');
+	tracked.SetUpgrade("armor", 4, 5);
+	tracked = catalog.AddItem("_06", PotP_E_Primary, PotP_I_Witch, PotP_U_Boots, 'Wolf Boots 1', 'NGP Wolf Boots 1');
+	tracked.SetUpgrade("boots", 0, 5);
+	tracked = catalog.AddItem("_07", PotP_E_Primary, PotP_I_Witch, PotP_U_Boots, 'Wolf Boots 2', 'NGP Wolf Boots 2');
+	tracked.SetUpgrade("boots", 1, 5);
+	tracked = catalog.AddItem("_08", PotP_E_Primary, PotP_I_Witch, PotP_U_Boots, 'Wolf Boots 3', 'NGP Wolf Boots 3');
+	tracked.SetUpgrade("boots", 2, 5);
+	tracked = catalog.AddItem("_09", PotP_E_Primary, PotP_I_Witch, PotP_U_Boots, 'Wolf Boots 4', 'NGP Wolf Boots 4');
+	tracked.SetUpgrade("boots", 3, 5);
+	tracked = catalog.AddItem("_10", PotP_E_Primary_DLC2, PotP_I_Witch, PotP_U_Boots, 'Wolf Boots 5');
+	tracked.SetUpgrade("boots", 4, 5);
+	tracked = catalog.AddItem("_11", PotP_E_Primary, PotP_I_Witch, PotP_U_Glove, 'Wolf Gloves 1', 'NGP Wolf Gloves 1');
+	tracked.SetUpgrade("gloves", 0, 5);
+	tracked = catalog.AddItem("_12", PotP_E_Primary, PotP_I_Witch, PotP_U_Glove, 'Wolf Gloves 2', 'NGP Wolf Gloves 2');
+	tracked.SetUpgrade("gloves", 1, 5);
+	tracked = catalog.AddItem("_13", PotP_E_Primary, PotP_I_Witch, PotP_U_Glove, 'Wolf Gloves 3', 'NGP Wolf Gloves 3');
+	tracked.SetUpgrade("gloves", 2, 5);
+	tracked = catalog.AddItem("_14", PotP_E_Primary, PotP_I_Witch, PotP_U_Glove, 'Wolf Gloves 4', 'NGP Wolf Gloves 4');
+	tracked.SetUpgrade("gloves", 3, 5);
+	tracked = catalog.AddItem("_15", PotP_E_Primary_DLC2, PotP_I_Witch, PotP_U_Glove, 'Wolf Gloves 5');
+	tracked.SetUpgrade("gloves", 4, 5);
+	tracked = catalog.AddItem("_16", PotP_E_Primary, PotP_I_Witch, PotP_U_Pants, 'Wolf Pants 1', 'NGP Wolf Pants 1');
+	tracked.SetUpgrade("pants", 0, 5);
+	tracked = catalog.AddItem("_17", PotP_E_Primary, PotP_I_Witch, PotP_U_Pants, 'Wolf Pants 2', 'NGP Wolf Pants 2');
+	tracked.SetUpgrade("pants", 1, 5);
+	tracked = catalog.AddItem("_18", PotP_E_Primary, PotP_I_Witch, PotP_U_Pants, 'Wolf Pants 3', 'NGP Wolf Pants 3');
+	tracked.SetUpgrade("pants", 2, 5);
+	tracked = catalog.AddItem("_19", PotP_E_Primary, PotP_I_Witch, PotP_U_Pants, 'Wolf Pants 4', 'NGP Wolf Pants 4');
+	tracked.SetUpgrade("pants", 3, 5);
+	tracked = catalog.AddItem("_20", PotP_E_Primary_DLC2, PotP_I_Witch, PotP_U_Pants, 'Wolf Pants 5');
+	tracked.SetUpgrade("pants", 4, 5);
+	tracked = catalog.AddItem("_21", PotP_E_Primary, PotP_I_Witch, PotP_U_Steel, 'Wolf School steel sword', 'NGP Wolf School steel sword');
+	tracked.SetUpgrade("steel", 0, 5);
+	tracked = catalog.AddItem("_22", PotP_E_Primary, PotP_I_Witch, PotP_U_Steel, 'Wolf School steel sword 1', 'NGP Wolf School steel sword 1');
+	tracked.SetUpgrade("steel", 1, 5);
+	tracked = catalog.AddItem("_23", PotP_E_Primary, PotP_I_Witch, PotP_U_Steel, 'Wolf School steel sword 2', 'NGP Wolf School steel sword 2');
+	tracked.SetUpgrade("steel", 2, 5);
+	tracked = catalog.AddItem("_24", PotP_E_Primary, PotP_I_Witch, PotP_U_Steel, 'Wolf School steel sword 3', 'NGP Wolf School steel sword 3');
+	tracked.SetUpgrade("steel", 3, 5);
+	tracked = catalog.AddItem("_25", PotP_E_Primary_DLC2, PotP_I_Witch, PotP_U_Steel, 'Wolf School steel sword 4');
+	tracked.SetUpgrade("steel", 4, 5);
+	tracked = catalog.AddItem("_26", PotP_E_Primary, PotP_I_Witch, PotP_U_Silve, 'Wolf School silver sword', 'NGP Wolf School silver sword');
+	tracked.SetUpgrade("silver", 0, 5);
+	tracked = catalog.AddItem("_27", PotP_E_Primary, PotP_I_Witch, PotP_U_Silve, 'Wolf School silver sword 1', 'NGP Wolf School silver sword 1');
+	tracked.SetUpgrade("silver", 1, 5);
+	tracked = catalog.AddItem("_28", PotP_E_Primary, PotP_I_Witch, PotP_U_Silve, 'Wolf School silver sword 2', 'NGP Wolf School silver sword 2');
+	tracked.SetUpgrade("silver", 2, 5);
+	tracked = catalog.AddItem("_29", PotP_E_Primary, PotP_I_Witch, PotP_U_Silve, 'Wolf School silver sword 3', 'NGP Wolf School silver sword 3');
+	tracked.SetUpgrade("silver", 3, 5);
+	tracked = catalog.AddItem("_30", PotP_E_Primary_DLC2, PotP_I_Witch, PotP_U_Silve, 'Wolf School silver sword 4');
+	tracked.SetUpgrade("silver", 4, 5);
+	catalog.EndSection();
+}
+
+//---------------------------------------------------
+
+function PotP_DefineItems_39(catalog: CPotP_Catalog)
+{
+	var tracked : CPotP_Entry;
+
+	catalog.BeginSection(PotP_Book_Items, "PotP_Preview_Witch_5", PotP_A_Items, "PotP_TrackingGroup_WitcherGear_Manticore");
+	catalog.AddItem("_01", PotP_E_Primary_DLC2, PotP_I_Witch, PotP_U_Armor, 'Red Wolf Armor 1', 'Red Wolf Armor 2');
+	catalog.AddItem("_02", PotP_E_Primary_DLC2, PotP_I_Witch, PotP_U_Boots, 'Red Wolf Boots 1', 'Red Wolf Boots 2');
+	catalog.AddItem("_03", PotP_E_Primary_DLC2, PotP_I_Witch, PotP_U_Glove, 'Red Wolf Gloves 1', 'Red Wolf Gloves 2');
+	catalog.AddItem("_04", PotP_E_Primary_DLC2, PotP_I_Witch, PotP_U_Pants, 'Red Wolf Pants 1', 'Red Wolf Pants 2');
+	catalog.AddItem("_05", PotP_E_Primary_DLC2, PotP_I_Witch, PotP_U_Steel, 'Red Wolf School steel sword 1', 'Red Wolf School steel sword 2');
+	catalog.AddItem("_06", PotP_E_Primary_DLC2, PotP_I_Witch, PotP_U_Silve, 'Red Wolf School silver sword 1', 'Red Wolf School silver sword 2');
+	catalog.EndSection();
+}
+
+//---------------------------------------------------
+
+function PotP_DefineItems_40(catalog: CPotP_Catalog)
+{
+	var tracked : CPotP_Entry;
+
+	catalog.BeginSection(PotP_Book_Items, "PotP_Preview_Witch_6", PotP_A_Items, "PotP_TrackingGroup_WitcherGear_Viper");
+	catalog.AddItem("_01", PotP_E_Primary_DLC1, PotP_I_Witch, PotP_U_Armor, 'EP1 Witcher Armor');
+	catalog.AddItem("_02", PotP_E_Primary_DLC1, PotP_I_Witch, PotP_U_Boots, 'EP1 Witcher Boots');
+	catalog.AddItem("_03", PotP_E_Primary_DLC1, PotP_I_Witch, PotP_U_Glove, 'EP1 Witcher Gloves');
+	catalog.AddItem("_04", PotP_E_Primary_DLC1, PotP_I_Witch, PotP_U_Pants, 'EP1 Witcher Pants');
+	catalog.AddItem("_05", PotP_E_Primary, PotP_I_Witch, PotP_U_Steel, 'Viper School steel sword');
+	catalog.AddItem("_06", PotP_E_Primary, PotP_I_Witch, PotP_U_Silve, 'Viper School silver sword');
+	catalog.EndSection();
+}
+
+//---------------------------------------------------
+
+function PotP_DefineItems_41(catalog: CPotP_Catalog)
+{
+	var tracked : CPotP_Entry;
+
+	catalog.BeginSection(PotP_Book_Items, "PotP_Preview_GearS_B", PotP_A_Items, "PotP_TrackingGroup_GearSets_ScarletCrest");
+	catalog.AddItem("_01", PotP_E_Primary, PotP_I_Gears, PotP_U_Armor, 'Scarlet Crest Armor');
+	catalog.AddItem("_02", PotP_E_Primary, PotP_I_Gears, PotP_U_Boots, 'Scarlet Crest Boots');
+	catalog.AddItem("_03", PotP_E_Primary, PotP_I_Gears, PotP_U_Glove, 'Scarlet Crest Gauntlets');
+	catalog.AddItem("_04", PotP_E_Primary, PotP_I_Gears, PotP_U_Pants, 'Scarlet Crest Trousers');
+	catalog.EndSection();
+}
+
+//---------------------------------------------------
+
+function PotP_DefineItems_42(catalog: CPotP_Catalog)
+{
+	var tracked : CPotP_Entry;
+
+	catalog.BeginSection(PotP_Book_Items, "PotP_Preview_Horse_1", PotP_A_Items, "PotP_TrackingGroup_HorseGear_Blinders");
+	catalog.AddItem("_01", PotP_E_Primary, PotP_I_Horse, PotP_U_Horse, 'DLC1 Temerian HorseBlinders');
+	catalog.AddItem("_02", PotP_E_Primary, PotP_I_Horse, PotP_U_Horse, 'DLC5 Nilfgaardian HorseBlinders');
+	catalog.AddItem("_03", PotP_E_Primary, PotP_I_Horse, PotP_U_Horse, 'DLC14 Skellige HorseBlinders');
+	catalog.AddItem("_04", PotP_E_Primary, PotP_I_Horse, PotP_U_Horse, 'Fire Horse Blinders');
+	catalog.AddItem("_05", PotP_E_Primary_DLC1, PotP_I_Horse, PotP_U_Horse, 'Ofir Horse Blinders');
+	catalog.AddItem("_06", PotP_E_Primary_DLC2, PotP_I_Horse, PotP_U_Horse, 'Toussaint horse blinders');
+	catalog.AddItem("_07", PotP_E_Primary_DLC2, PotP_I_Horse, PotP_U_Horse, 'Toussaint horse blinders 2');
+	catalog.AddItem("_08", PotP_E_Primary_DLC2, PotP_I_Horse, PotP_U_Horse, 'Toussaint horse blinders 3');
+	catalog.AddItem("_09", PotP_E_Primary_DLC2, PotP_I_Horse, PotP_U_Horse, 'Toussaint horse blinders 4');
+	catalog.AddItem("_10", PotP_E_Primary_DLC2, PotP_I_Horse, PotP_U_Horse, 'Toussaint horse blinders 5');
+	catalog.AddItem("_11", PotP_E_Primary_DLC2, PotP_I_Horse, PotP_U_Horse, 'Toussaint horse blinders 6');
+	catalog.EndSection();
+
+	catalog.BeginSection(PotP_Book_Items, "PotP_Preview_Horse_2", PotP_A_Items, "PotP_TrackingGroup_HorseGear_Saddles");
+	catalog.AddItem("_01", PotP_E_Primary, PotP_I_Horse, PotP_U_Horse, 'DLC1 Temerian HorseSaddle');
+	catalog.AddItem("_02", PotP_E_Primary, PotP_I_Horse, PotP_U_Horse, 'DLC5 Nilfgaardian HorseSaddle');
+	catalog.AddItem("_03", PotP_E_Primary, PotP_I_Horse, PotP_U_Horse, 'DLC14 Skellige HorseSaddle');
+	catalog.AddItem("_04", PotP_E_Primary, PotP_I_Horse, PotP_U_Horse, 'Fire Horse Saddle');
+	catalog.AddItem("_05", PotP_E_Primary_DLC1, PotP_I_Horse, PotP_U_Horse, 'Horse Saddle 5');
+	catalog.AddItem("_06", PotP_E_Primary_DLC1, PotP_I_Horse, PotP_U_Horse, 'Horse Saddle 6');
+	catalog.AddItem("_07", PotP_E_Primary_DLC1, PotP_I_Horse, PotP_U_Horse, 'Devil Saddle');
+	catalog.AddItem("_08", PotP_E_Primary_DLC2, PotP_I_Horse, PotP_U_Horse, 'Toussaint saddle');
+	catalog.AddItem("_09", PotP_E_Primary_DLC2, PotP_I_Horse, PotP_U_Horse, 'Toussaint saddle 2');
+	catalog.AddItem("_10", PotP_E_Primary_DLC2, PotP_I_Horse, PotP_U_Horse, 'Toussaint saddle 3');
+	catalog.AddItem("_11", PotP_E_Primary_DLC2, PotP_I_Horse, PotP_U_Horse, 'Toussaint saddle 4');
+	catalog.AddItem("_12", PotP_E_Primary_DLC2, PotP_I_Horse, PotP_U_Horse, 'Toussaint saddle 5');
+	catalog.AddItem("_13", PotP_E_Primary_DLC2, PotP_I_Horse, PotP_U_Horse, 'Toussaint saddle 6');
+	catalog.AddItem("_14", PotP_E_Primary_DLC2, PotP_I_Horse, PotP_U_Horse, 'Tourney Geralt Saddle');
+	catalog.AddItem("_15", PotP_E_Primary_DLC2, PotP_I_Horse, PotP_U_Horse, 'Tourney Ravix Saddle');
+	catalog.EndSection();
+
+	catalog.BeginSection(PotP_Book_Items, "PotP_Preview_Horse_3", PotP_A_Items, "PotP_TrackingGroup_HorseGear_Saddlebags");
+	catalog.AddItem("_01", PotP_E_Primary, PotP_I_Horse, PotP_U_Horse, 'DLC1 Temerian HorseBag');
+	catalog.AddItem("_02", PotP_E_Primary, PotP_I_Horse, PotP_U_Horse, 'DLC5 Nilfgaardian HorseBag');
+	catalog.AddItem("_03", PotP_E_Primary, PotP_I_Horse, PotP_U_Horse, 'DLC14 Skellige HorseBag');
+	catalog.AddItem("_04", PotP_E_Primary, PotP_I_Horse, PotP_U_Horse, 'Fire Horse Saddlebags');
+	catalog.AddItem("_05", PotP_E_Primary_DLC1, PotP_I_Horse, PotP_U_Horse, 'Ofir Horse Bag');
+	catalog.AddItem("_06", PotP_E_Primary_DLC2, PotP_I_Horse, PotP_U_Horse, 'Toussaint horsebag');
+	catalog.EndSection();
+}
+
 
 //---------------------------------------------------
 

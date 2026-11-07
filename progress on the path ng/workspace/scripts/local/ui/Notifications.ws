@@ -585,6 +585,8 @@ class CPotP_Notifications
 		case PotP_I_Wiecej:	return GetLocStringByKeyExt("PotP_NotificationLine_CosWiecej");
 		case PotP_I_Sezon:	return GetLocStringByKeyExt("PotP_NotificationLine_SezonBurz");
 		case PotP_I_W3eer:	return GetLocStringByKeyExt("PotP_NotificationLine_W3EE");
+		case PotP_I_Witch:	return GetLocStringByKeyExt("PotP_NotificationLine_WitcherGear");
+		case PotP_I_Horse:	return GetLocStringByKeyExt("PotP_NotificationLine_HorseGear");
 		default:			return "";
 		}
 	}

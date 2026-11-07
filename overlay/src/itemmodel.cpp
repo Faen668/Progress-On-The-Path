@@ -2499,6 +2499,19 @@ namespace
 	}
 }
 
+// Set while a piece is loaded to dress Geralt: then all of it is drawn, as the game draws it on him
+static thread_local bool t_dressingGeralt = false;
+
+// The body part a Geralt mesh or cloth is for, by its file's name: g_01_mg__... gloves, t_ torso, l_ legs, s_ shoes
+static char PiecePart(const std::string& path)
+{
+	const size_t slash = path.find_last_of("\\/");
+	const std::string file = Lower(path.substr(slash == std::string::npos ? 0 : slash + 1));
+	if (file.size() > 4 && strchr("gtls", file[0]) && file[1] == '_' && isdigit(static_cast<unsigned char>(file[2])) && isdigit(static_cast<unsigned char>(file[3])))
+		return file[0];
+	return 0;
+}
+
 bool LoadItemModel(const std::string& templateName, ItemModel& out)
 {
 	if (!g_ready)
@@ -2586,10 +2599,21 @@ bool LoadItemModel(const std::string& templateName, ItemModel& out)
 
 	std::map<std::string, std::shared_ptr<Red>> materials;
 	std::vector<std::pair<std::string, M4>> done;
+	// Shown on its own, a piece leaves out cloth made for another part of him: the Viper gauntlets bring the armour's
+	// cord, which has nothing to hang from without him
+	std::string ownParts;
+	if (!t_dressingGeralt)
+		for (const Component& c : components)
+			if (!c.mesh.empty() && !c.shadow && !Ends(Lower(c.mesh), ".redcloth"))
+				if (const char part = PiecePart(c.mesh); part && ownParts.find(part) == std::string::npos)
+					ownParts += part;
 	for (const Component& c : components)
 	{
 		if (c.mesh.empty() || c.shadow)
 			continue;
+		if (!ownParts.empty() && Ends(Lower(c.mesh), ".redcloth"))
+			if (const char part = PiecePart(c.mesh); part && ownParts.find(part) == std::string::npos)
+				continue;
 		// A crossbow on his back hangs half turned from how it's kept: found by matching the game's own look
 		// Cloth is skinned to the rig wherever its component was put: the Hoods mod's Avallach hood is moved up 1.4 m and
 		// modelled at head height, so the move would count his height twice
@@ -4539,7 +4563,10 @@ bool LoadItemOnGeralt(const std::string& asked, int animation, ItemModel& out)
 		ItemModel piece;
 		piece.keepSkin = true;
 		piece.halfTurned = worn.hungOn == "crossbow_back";
-		if (!LoadItemModel(worn.name, piece))
+		t_dressingGeralt = true;
+		const bool loadedPiece = LoadItemModel(worn.name, piece);
+		t_dressingGeralt = false;
+		if (!loadedPiece)
 		{
 			Log("item models: dressing Geralt, %s", piece.problem.c_str());
 			continue;

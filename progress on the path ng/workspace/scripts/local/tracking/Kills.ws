@@ -1,4 +1,4 @@
-//---------------------------------------------------
+﻿//---------------------------------------------------
 //-- Kills ------------------------------------------
 //---------------------------------------------------
 // What the player has killed, by name: Geralt, and Ciri in her parts. It lives in the save, so loading an older save takes the counts back with it.

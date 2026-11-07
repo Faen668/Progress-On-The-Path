@@ -316,6 +316,22 @@ statemachine class CPotP_Catalog
 	// The place added just before has a second name for its pin: counted under either, and the pin finder
 	// treats both as tracked. As text, for names a script can't write, such as the engine's MISSING_NAME_ ones:
 	// it's found among the map's pins, and does nothing if no pin has it.
+	// Why the last entry can be missed (a string key for the overlay's callout), and the facts that say it has been: one the
+	// game sets, and PotP's own for the quest blocks that miss it as they happen (AddEventMissedBlock)
+	public function SetMissableReason(tip_key: string, optional missed_fact: string)
+	{
+		var tracked : CPotP_Entry = pending[pending.Size() - 1];
+
+		tracked.missable_tip = tip_key;
+		if (missed_fact != "")
+		{
+			tracked.missed_fact = missed_fact;
+		}
+		tracked.also_missed_fact = "PotP_Missed_" + tracked.uuid;
+	}
+
+	//---------------------------------------------------
+
 	public function AddWorldAltPin(pin_text: string)
 	{
 		var tracked : CPotP_Entry = pending[pending.Size() - 1];
@@ -326,7 +342,7 @@ statemachine class CPotP_Catalog
 
 	//---------------------------------------------------
 
-	public function AddItem(suffix: string, type_value: PotP_Preview_Entry_Type, filter_value: PotP_Preview_Items_Filter, sub_filter_value: PotP_Preview_Items_Underlying_Filter, base_item: name, optional variation_1: name, optional variation_2: name, optional variation_3: name, optional variation_4: name)
+	public function AddItem(suffix: string, type_value: PotP_Preview_Entry_Type, filter_value: PotP_Preview_Items_Filter, sub_filter_value: PotP_Preview_Items_Underlying_Filter, base_item: name, optional variation_1: name, optional variation_2: name, optional variation_3: name, optional variation_4: name) : CPotP_Entry
 	{
 		var tracked	: CPotP_Entry = NewEntry(suffix, PotP_A_Items, type_value, PotP_R_NA, filter_value, sub_filter_value);
 		var game	: string;
@@ -348,6 +364,7 @@ statemachine class CPotP_Catalog
 		tracked.AddVariation(variation_2);
 		tracked.AddVariation(variation_3);
 		tracked.AddVariation(variation_4);
+		return tracked;
 	}
 
 	//---------------------------------------------------

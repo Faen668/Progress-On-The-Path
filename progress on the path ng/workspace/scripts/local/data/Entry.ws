@@ -45,6 +45,9 @@ class CPotP_Entry
 
 	var item_name		: name;
 	var variations		: array<name>;
+	var upgrade_group	: string;	// a piece of witcher gear: its tiers share this, and the overlay shows them as one row
+	var upgrade_tier	: int;		// from 0, the plain piece
+	var upgrade_tiers	: int;		// how many tiers the piece has
 	var card_names		: array<name>;
 	var card_type		: PotP_Preview_CardType;
 
@@ -82,6 +85,16 @@ class CPotP_Entry
 		item_name = base_item;
 		variations.Clear();
 		variations.PushBack(base_item);
+		return this;
+	}
+
+	//---------------------------------------------------
+
+	public function SetUpgrade(group: string, tier: int, count: int) : CPotP_Entry
+	{
+		upgrade_group = group;
+		upgrade_tier = tier;
+		upgrade_tiers = count;
 		return this;
 	}
 

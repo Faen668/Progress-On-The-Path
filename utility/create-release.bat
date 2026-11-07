@@ -23,10 +23,9 @@ XCOPY "%modpath%\progress on the path ng\workspace\scripts\local" "%modpath%\rel
 ::Copy over the encoded strings.
 XCOPY "%modpath%\source\strings\" "%modpath%\release\mods\mod%modname%\content\" /e /s /y
 
-::Copy over the overlay: the .asi and its loader beside the game, its fonts, data and licences in the mod.
+::Copy over the overlay: the .asi beside the game, its fonts, data and licences in the mod. Ultimate ASI Loader is a Nexus requirement, not shipped.
 mkdir "%modpath%\release\bin\x64_dx12\"
 copy /y "%modpath%\overlay\build\Release\PotpOverlay.asi" "%modpath%\release\bin\x64_dx12\"
-copy /y "%modpath%\overlay\extern\ultimate-asi-loader\dinput8.dll" "%modpath%\release\bin\x64_dx12\"
 mkdir "%modpath%\release\mods\mod%modname%\fonts\"
 XCOPY "%modpath%\overlay\fonts" "%modpath%\release\mods\mod%modname%\fonts\" /e /s /y
 copy /y "%modpath%\overlay\data\achievements.dat" "%modpath%\release\mods\mod%modname%\"

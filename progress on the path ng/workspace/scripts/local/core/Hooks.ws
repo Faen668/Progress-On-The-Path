@@ -1,4 +1,4 @@
-//---------------------------------------------------
+﻿//---------------------------------------------------
 //-- Hooks ------------------------------------------
 //---------------------------------------------------
 // For other mods to wrap with @wrapMethod. Each does what PotP does by itself, so nothing changes unless one is wrapped.

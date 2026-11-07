@@ -1,4 +1,4 @@
-//---------------------------------------------------
+﻿//---------------------------------------------------
 //-- Quest Titles -----------------------------------
 //---------------------------------------------------
 // Every quest the game's journals have, the game's own, its DLC's and every installed mod's, by its base name, with its

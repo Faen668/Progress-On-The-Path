@@ -78,6 +78,14 @@ void LoadSettings()
 	s.hideMissable = ReadInt(ini, "HideMissable", d.hideMissable) != 0;
 	s.revealUndiscovered = ReadInt(ini, "RevealUndiscovered", d.revealUndiscovered) != 0;
 	s.revealHiddenAchievements = ReadInt(ini, "RevealHiddenAchievements", d.revealHiddenAchievements) != 0;
+	s.revealUncollected = ReadInt(ini, "RevealUncollected", d.revealUncollected) != 0;
+	s.revealUnstarted = ReadInt(ini, "RevealUnstarted", d.revealUnstarted) != 0;
+	{
+		static char revealed[32768];
+		revealed[0] = 0;
+		GetPrivateProfileStringA("Overlay", "RevealedMissables", "", revealed, sizeof(revealed), ini.c_str());
+		s.revealedMissables = revealed;
+	}
 	s.radialKey = ReadInt(ini, "RadialKey", d.radialKey);
 	s.popupX = static_cast<float>(ReadInt(ini, "PopupX", static_cast<int>(d.popupX * 1000.f))) / 1000.f;
 	s.popupY = static_cast<float>(ReadInt(ini, "PopupY", static_cast<int>(d.popupY * 1000.f))) / 1000.f;
@@ -129,6 +137,9 @@ void SaveSettings()
 	WriteInt(ini, "HideMissable", s.hideMissable);
 	WriteInt(ini, "RevealUndiscovered", s.revealUndiscovered);
 	WriteInt(ini, "RevealHiddenAchievements", s.revealHiddenAchievements);
+	WriteInt(ini, "RevealUncollected", s.revealUncollected);
+	WriteInt(ini, "RevealUnstarted", s.revealUnstarted);
+	WritePrivateProfileStringA("Overlay", "RevealedMissables", s.revealedMissables.c_str(), ini.c_str());
 	WriteInt(ini, "RadialKey", s.radialKey);
 	WriteInt(ini, "PopupX", static_cast<int>(s.popupX * 1000.f));
 	WriteInt(ini, "PopupY", static_cast<int>(s.popupY * 1000.f));

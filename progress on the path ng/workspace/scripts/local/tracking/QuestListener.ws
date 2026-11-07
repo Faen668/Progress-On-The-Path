@@ -1,4 +1,4 @@
-//---------------------------------------------------
+﻿//---------------------------------------------------
 //-- Quest Listener ---------------------------------
 //---------------------------------------------------
 // PotP hears the game's own quest blocks through Native Quest Hook, instead of adding script blocks to quest files.
@@ -80,7 +80,23 @@ class CPotP_QuestListener extends CNQH_Listener
 				PotP_DoUnlockEvent(block.tracked.uuid, block.location, block.tracked.entry_name);
 				break;
 			case PotP_QB_Missed:
-				PotP_DoMissEvent(block.tracked.entry_name);
+				// An item's or a place's, such as Tiegr's or the Spiral's: its own fact. An item's looked at again now, a place's
+				// by the pin check.
+				if (block.tracked.category == PotP_A_Items || block.tracked.category == PotP_A_World)
+				{
+					if (block.tracked.also_missed_fact != "")
+					{
+						FactsSet(block.tracked.also_missed_fact, 1);
+					}
+					if (block.tracked.category == PotP_A_Items)
+					{
+						PotP_Get().tracker.QueueItem(block.tracked.item_name);
+					}
+				}
+				else
+				{
+					PotP_DoMissEvent(block.tracked.entry_name);
+				}
 				break;
 			}
 		}

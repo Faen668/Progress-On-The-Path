@@ -507,6 +507,10 @@ namespace
 		{ T_tab_settings_caps, T_tab_settings, 5 },
 	};
 	const TextId kKinds[3] = { T_part_0, T_part_1, T_part_2 };
+	// The Items tab's groups, in order, each with its stripe. In the list they come after the Missable tab's three.
+	enum ItemPart { kPartWeapons, kPartArmour, kPartWitcher, kPartHorse, kPartTrophies, kPartMods, kItemPartCount };
+	const TextId kItemParts[kItemPartCount] = { T_items_part_weapons, T_items_part_armour, T_items_part_witcher, T_items_part_horse, T_items_part_trophies, T_items_part_mods };
+	constexpr int kItemPartBase = 10;   // a row's part from here on is an Items group
 	void BookSign(int book, ImVec2 c, float r, ImU32 col, float t, bool shadow = true);   // the book's sign, as a shaded picture
 	struct BookArt;
 	const BookArt* BookPicture(int book);   // null where there's no picture of it, or not yet
@@ -1059,6 +1063,8 @@ namespace
 
 	bool EntryShown(const Entry& e)
 	{
+		if (e.upgradeHidden)
+			return false;
 		const Settings& st = GetSettings();
 		if (st.hideCompleted && e.status == kCompleted)
 			return false;
@@ -1113,6 +1119,18 @@ namespace
 	// Colour for a section's stripe: the game's quest log colours its kinds
 	ImU32 StripeFor(const Section& s)
 	{
+		if (s.book == kBookItems && s.part >= 0)
+		{
+			switch (s.part)
+			{
+			case kPartWeapons: return Rgb(176, 72, 52);
+			case kPartArmour: return Rgb(60, 120, 170);
+			case kPartWitcher: return Rgb(54, 146, 70);
+			case kPartHorse: return Rgb(196, 128, 44);
+			case kPartTrophies: return Rgb(124, 92, 172);
+			default: return Rgb(120, 116, 104);
+			}
+		}
 		if (s.book == kBookMissable)
 			return s.state == 1 ? kRed : s.kind == 0 ? kOrange : s.kind == 1 ? Rgb(150, 110, 190) : Rgb(190, 90, 90);
 		if (s.book == kBookQuest && !s.entries.empty())
@@ -1132,8 +1150,44 @@ namespace
 		return Rgb(150, 116, 50);
 	}
 
+	// Witcher gear's tiers on its row, right to left from `right`: green for each owned, the last a little larger
+	constexpr float kTierStep = 22.f;
+	float TierDiamondsWidth(const Entry& e)
+	{
+		return e.upgradeOwned.empty() ? 0.f : e.upgradeOwned.size() * kTierStep + 8.f;
+	}
+
+	void TierDiamonds(const Entry& e, ImVec2 right)
+	{
+		const int count = static_cast<int>(e.upgradeOwned.size());
+		for (int i = 0; i < count; ++i)
+		{
+			const ImVec2 c(right.x - (count - 1 - i) * kTierStep, right.y);
+			const float r = i == count - 1 ? 8.5f : 7.f;
+			if (e.upgradeOwned[i])
+			{
+				SoftGlow(c, 14, Alpha(kGreen, 0.25f));
+				Diamond(c, r, kGreen, true);
+			}
+			else
+				Diamond(c, r, kGoldDim, false);
+		}
+	}
+
 	void Marker(const Entry& e, ImVec2 m)
 	{
+		// A piece of witcher gear part-way through its tiers shows as under way
+		if (!e.upgradeOwned.empty())
+		{
+			const int owned = static_cast<int>(std::count(e.upgradeOwned.begin(), e.upgradeOwned.end(), 1));
+			if (owned > 0 && owned < static_cast<int>(e.upgradeOwned.size()))
+			{
+				SoftGlow(m, 24, Alpha(kAmber, 0.3f));
+				dl->AddCircle(m, 14, kAmber, 24, 2.5f);
+				dl->AddCircleFilled(m, 6, kAmber);
+				return;
+			}
+		}
 		switch (e.status)
 		{
 		case kCompleted:
@@ -1163,6 +1217,29 @@ namespace
 		return g_book != kBookMissable && (e.flags & kFlagMissable) && !e.Done() && e.status != kMissed;
 	}
 
+	void MissableBadge(ImVec2 m);
+
+	// Why an entry can be missed, in a dark red box with a red edge: a place's, under its status, and a card's, under its
+	// details. Its height, drawn or not.
+	float MissableCallout(const Entry& e, float x, float width, float y, bool draw = true)
+	{
+		if (!(e.flags & kFlagMissable) || e.tip.empty() || e.Done() || e.status == kMissed || e.masked)
+			return 0.f;
+		const float pad = 14.f, textW = width - pad * 2.f - 4.f;
+		const float h = 16.f + 30.f + WrappedHeight(kSerif, 28, e.tip.c_str(), textW) + 14.f;
+		if (draw)
+		{
+			const ImVec2 a(x, y), b(x + width, y + h);
+			dl->AddRectFilledMultiColor(a, b, Rgb(70, 24, 16, 235), Rgb(36, 20, 14, 225), Rgb(36, 20, 14, 225), Rgb(70, 24, 16, 235));
+			dl->AddRect(a, b, Rgb(106, 42, 30), 0.f, 0, 1.f);
+			dl->AddRectFilled(a, ImVec2(a.x + 4.f, b.y), Rgb(196, 82, 58));
+			MissableBadge(ImVec2(a.x + pad + 16.f, a.y + 28.f));
+			Text(kTitle, 20, a.x + pad + 38.f, a.y + 16.f, Rgb(226, 120, 92), Tx(T_can_be_missed));
+			Text(kSerif, 28, a.x + pad + 4.f, a.y + 46.f, kText, e.tip.c_str(), textW);
+		}
+		return h;
+	}
+
 	void MissableBadge(ImVec2 m)
 	{
 		const ImVec2 w[3] = { {m.x, m.y - 12}, {m.x + 12, m.y + 10}, {m.x - 12, m.y + 10} };
@@ -1188,8 +1265,26 @@ namespace
 	unsigned long long CardPortraitTexture(const std::string& picture);
 	unsigned long long ItemTileTexture(const std::string& iconPath);
 
+	// Witcher gear with some of its tiers owned and not all: under way, whatever its own tier's status
+	int UpgradeOwned(const Entry& e)
+	{
+		return static_cast<int>(std::count(e.upgradeOwned.begin(), e.upgradeOwned.end(), 1));
+	}
+
+	bool UpgradePartial(const Entry& e)
+	{
+		const int owned = UpgradeOwned(e);
+		return owned > 0 && owned < static_cast<int>(e.upgradeOwned.size());
+	}
+
 	const char* StatusText(const Entry& e)
 	{
+		if (UpgradePartial(e))
+		{
+			static std::string tiers;
+			tiers = TxFill(T_upgrade_tiers, std::to_string(UpgradeOwned(e)), std::to_string(e.upgradeOwned.size()));
+			return tiers.c_str();
+		}
 		switch (e.status)
 		{
 		case kCompleted: return g_book == kBookBestiary ? Tx(T_status_discovered) : Tx(T_status_completed);
@@ -1202,6 +1297,8 @@ namespace
 
 	ImU32 StatusColour(const Entry& e)
 	{
+		if (UpgradePartial(e))
+			return kAmber;
 		switch (e.status)
 		{
 		case kCompleted: return kGreen;
@@ -1963,9 +2060,11 @@ namespace
 			RowText t;
 			t.title = g_book == kBookBestiary && CreatureMasked(e) ? std::string(Tx(T_undiscovered_creature)) : e.title.empty() ? e.uuid : e.title;
 			t.sub = g_book == kTabAchievements ? e.tip : e.region > 0 && e.region < kRegionCount ? m.regions[e.region] : g_book == kBookGwent ? m.regions[0] : "";
+			if (!e.upgradeOwned.empty())
+				t.sub = e.upgradeNote;
 			if (e.flags & kFlagModAdded)
 				t.sub += (t.sub.empty() ? std::string() : std::string("  -  ")) + Tx(T_added_by_mod);
-			const float room = rowW - 110.f - (g_book == kBookGwent ? 58.f : 0.f) - (ShowsMissableBadge(e) ? 44.f : 0.f);
+			const float room = rowW - 110.f - (g_book == kBookGwent ? 58.f : 0.f) - (ShowsMissableBadge(e) ? 44.f : 0.f) - TierDiamondsWidth(e);
 			t.titleH = WrappedHeight(kSerif, 32, t.title.c_str(), room);
 			t.tip = g_book == kBookMissable && !e.tip.empty() && !e.Done() && e.status != kMissed;
 			float h = 3.f + t.titleH + (t.sub.empty() ? 0.f : 30.f);
@@ -2045,6 +2144,12 @@ namespace
 				lastPart = s.kind;
 				part = s.kind;
 				y += g_rows.empty() && urgent.empty() ? 50.f : 62.f;
+			}
+			else if (g_book == kBookItems && s.part >= 0 && kItemPartBase + s.part != lastPart)
+			{
+				lastPart = kItemPartBase + s.part;
+				part = lastPart;
+				y += g_rows.empty() ? 50.f : 62.f;
 			}
 			const float rowH = headerH(s);
 			g_rows.push_back({ si, -1, y, rowH, part });
@@ -2246,7 +2351,7 @@ namespace
 			const Section& s = m.sections[r.section];
 			if (r.part >= 0)
 			{
-				const std::string partName = Upper(Tx(kKinds[std::clamp(r.part, 0, 2)]));
+				const std::string partName = Upper(r.part >= kItemPartBase ? Tx(kItemParts[std::clamp(r.part - kItemPartBase, 0, kItemPartCount - 1)]) : Tx(kKinds[std::clamp(r.part, 0, 2)]));
 				Text(kTitle, 24, la.x + 6, ry - 46.f, kHead, partName.c_str());
 				FadeLineH(la.x, lb.x, ry - 12.f, kGold);
 			}
@@ -2337,11 +2442,12 @@ namespace
 				else
 					Marker(e, ImVec2(a.x + 44, a.y + 36));
 				const RowText t = rowText(e);
-				const ImU32 titleCol = e.Done() ? kDoneText : e.status == kMissed ? Rgb(180, 116, 100) : sel ? Rgb(255, 248, 230) : kText;
-				const float textRoom = b.x - a.x - 110.f - (g_book == kBookGwent ? 58.f : 0.f) - (ShowsMissableBadge(e) ? 44.f : 0.f);
+				const ImU32 titleCol = e.Done() && !UpgradePartial(e) ? kDoneText : e.status == kMissed ? Rgb(180, 116, 100) : sel ? Rgb(255, 248, 230) : kText;
+				const float textRoom = b.x - a.x - 110.f - (g_book == kBookGwent ? 58.f : 0.f) - (ShowsMissableBadge(e) ? 44.f : 0.f) - TierDiamondsWidth(e);
 				const float titleY = a.y + (t.sub.empty() && !t.tip ? 16.f : 3.f);
 				Text(kSerif, 32, a.x + 90, titleY, titleCol, t.title.c_str(), textRoom);
 				CardListMark(e, ImVec2(b.x - 40, a.y + 36));
+				TierDiamonds(e, ImVec2(b.x - 30.f, a.y + 36.f));
 				if (ShowsMissableBadge(e))
 					MissableBadge(ImVec2(e.picture.empty() ? b.x - 40.f : b.x - 88.f, a.y + 36.f));
 				float textY = titleY + t.titleH;
@@ -2752,7 +2858,7 @@ namespace
 		return g_enlargeSpent ? 0.f : std::clamp(g_enlargeHeld / kEnlargeHold, 0.f, 1.f);
 	}
 
-	enum HintAction { kActPrev, kActNext, kActMark, kActZoom, kActWardrobe, kActWardPrev, kActWardNext, kActWardWear, kActWardPin, kActWardSave, kActWardClear, kActWardStance, kActWardUntracked, kActWardEnlarge, kActWardSearch, kActAutoTurn, kActHide, kActRefresh, kActClose, kActNone };
+	enum HintAction { kActPrev, kActNext, kActMark, kActZoom, kActWardrobe, kActWardPrev, kActWardNext, kActWardWear, kActWardPin, kActWardSave, kActWardClear, kActWardStance, kActWardUntracked, kActWardEnlarge, kActWardSearch, kActAutoTurn, kActReveal, kActHide, kActRefresh, kActClose, kActNone };
 
 	struct Hint { unsigned pad; const char* key; std::string text; HintAction action; bool held = false; };   // held: done by holding it, with a bar filling under it
 
@@ -3958,7 +4064,8 @@ namespace
 		// Below the box it scrolls when there's more than fits, so nothing is left out
 		const bool scrolls = !showCard && !showModel;
 		const float viewTop = kTop + boxH + 18.f, viewBottom = bottom - 30.f;
-		if (g_detailFor != e->uuid)
+		// The scroll is this panel's only when it scrolls: beside a model, the item's stats panel has it
+		if (scrolls && g_detailFor != e->uuid)
 		{
 			g_detailFor = e->uuid;
 			g_detailScroll = 0.f;
@@ -3978,6 +4085,12 @@ namespace
 		Marker(*e, ImVec2(mx0 + 28, y + 21));
 		Text(kSerif, 34, mx0 + 66, y, StatusColour(*e), StatusText(*e));
 		y += 58;
+		if (g_book != kBookItems && g_book != kBookMissable && g_book != kBookGwent)
+		{
+			const float note = MissableCallout(*e, mx0 + 6, mx1 - mx0 - 12, y - 12.f);
+			if (note > 0.f)
+				y += note + 8.f;
+		}
 
 		// A missable entry: the warning, and what else goes with it
 		const Section* group = nullptr;
@@ -4038,9 +4151,26 @@ namespace
 			DrawCardPanel(*e, mx0, mx1, y, bottom - 30);
 			return;
 		}
+		// Witcher gear: each tier of the piece, owned or not
+		if (!e->upgradeOwned.empty() && section)
+		{
+			for (int tier = 0; tier < static_cast<int>(e->upgradeOwned.size()); ++tier)
+				for (const Entry& other : section->entries)
+					if (other.upgradeGroup == e->upgradeGroup && other.upgradeTier == tier)
+					{
+						const bool owned = e->upgradeOwned[tier] != 0;
+						if (owned)
+							Tick(ImVec2(mx0 + 28, y + 17), 11, kGreen, 3.f);
+						else
+							Diamond(ImVec2(mx0 + 28, y + 17), 8.f, kGoldDim, false);
+						Text(kSerif, 28, mx0 + 66, y, owned ? kText : kDim, other.title.c_str(), mx1 - mx0 - 76);
+						y += 36.f;
+						break;
+					}
+			y += 10.f;
+		}
 		if (showModel)
 		{
-			g_detailScrollMax = 0.f;
 			DrawModelPanel(*e, mx0, mx1, y, bottom - 30, e->itemTemplate);
 			return;
 		}
@@ -4054,7 +4184,7 @@ namespace
 		int shown = 0, elsewhere = 0;
 		for (const Entry& other : list->entries)
 		{
-			if (other.uuid == e->uuid || other.Done() || other.status == kMissed)
+			if (other.uuid == e->uuid || other.Done() || other.status == kMissed || other.upgradeHidden)
 				continue;
 			if (g_region != 0 && other.region != g_region)
 			{
@@ -4285,6 +4415,52 @@ namespace
 	std::string g_itemStatsWanted;
 	double g_itemStatsWantedAt = 0.0;
 
+	// A Gwent card's details, as the game's own card tooltip gives them, and every ability it has
+	struct CardStats
+	{
+		std::string factionLabel, faction, typeLabel, type, rowLabel, row, strengthLabel, strength, abilityLabel;
+		std::vector<std::pair<std::string, std::string>> abilities;   // name, what it does
+		int factionNumber = -1;
+	};
+	std::map<std::string, CardStats> g_cardStats;
+	std::set<std::string> g_cardStatsAsked;
+	std::string g_cardStatsWanted;
+	double g_cardStatsWantedAt = 0.0;
+
+	void ReceiveCardStats(const std::string& text)
+	{
+		std::vector<std::string> f;
+		for (size_t from = 0;;)
+		{
+			const size_t bar = text.find('|', from);
+			f.push_back(text.substr(from, bar == std::string::npos ? std::string::npos : bar - from));
+			if (bar == std::string::npos)
+				break;
+			from = bar + 1;
+		}
+		if (f.size() < 12)
+			return;
+		CardStats s;
+		s.factionLabel = CleanGameText(f[2]);
+		s.faction = CleanGameText(f[3]);
+		s.factionNumber = atoi(f[4].c_str());
+		s.typeLabel = CleanGameText(f[5]);
+		s.type = CleanGameText(f[6]);
+		s.rowLabel = CleanGameText(f[7]);
+		s.row = CleanGameText(f[8]);
+		s.strengthLabel = CleanGameText(f[9]);
+		s.strength = f[10];
+		s.abilityLabel = CleanGameText(f[11]);
+		for (size_t i = 12; i + 1 < f.size(); i += 2)
+		{
+			std::string name = CleanGameText(f[i]), text = CleanGameText(f[i + 1]);
+			if (!name.empty() || !text.empty())
+				s.abilities.emplace_back(std::move(name), std::move(text));
+		}
+		std::lock_guard lock(g_itemStatsLock);
+		g_cardStats[f[1]] = std::move(s);
+	}
+
 	void ReceiveItemStats(const std::string& text)
 	{
 		ItemStats stats;
@@ -4364,6 +4540,7 @@ namespace
 		if (!have)
 		{
 			Text(kSerif, 28, ra.x + 30, ra.y + 84, kDim, Tx(T_reading));
+			MissableCallout(e, ra.x + 30, rb.x - ra.x - 60, ra.y + 134);
 			return;
 		}
 
@@ -4420,6 +4597,8 @@ namespace
 				line(kSerif, 28, bonus.active ? Rgb(250, 242, 220) : kDim, bonus.text, 8.f);
 			}
 		}
+		y += 14.f;
+		y += MissableCallout(e, x, width, y);
 		dl->PopClipRect();
 		const float contentH = y + g_detailScroll - viewTop, viewH = viewBottom - viewTop;
 		g_detailScrollMax = std::max(0.f, contentH - viewH + 10.f);
@@ -4431,6 +4610,88 @@ namespace
 			const float thumbY = viewTop + (viewH - thumbH) * (g_detailScroll / g_detailScrollMax);
 			dl->AddRectFilled(ImVec2(tx, thumbY), ImVec2(tx + 5, thumbY + thumbH), kGold);
 		}
+	}
+
+	// A Gwent card's details in the right panel, in place of the regions: its faction, type, row, strength and ability, as
+	// the game's own tooltip has them, and why it can be missed
+	void DrawCardStats(const Entry& e, ImVec2 ra, ImVec2 rb)
+	{
+		InsetPanel(ra, rb);
+		PanelHeading(ra, rb.x, Tx(T_card_details));
+		CardStats stats;
+		bool have = false;
+		{
+			std::lock_guard lock(g_itemStatsLock);
+			const auto found = g_cardStats.find(e.uuid);
+			if (found != g_cardStats.end())
+			{
+				stats = found->second;
+				have = true;
+			}
+		}
+		const double now = ImGui::GetTime();
+		if (g_cardStatsWanted != e.uuid)
+		{
+			g_cardStatsWanted = e.uuid;
+			g_cardStatsWantedAt = now;
+		}
+		if (!have && now - g_cardStatsWantedAt > 0.15 && g_cardStatsAsked.insert(e.uuid).second)
+			RequestExec("potpoverlay_cardstats(" + e.uuid + ")", false);
+		const float x = ra.x + 30.f, width = rb.x - ra.x - 60.f;
+		float y = ra.y + 78.f;
+		if (!have)
+		{
+			Text(kSerif, 28, x, y + 6.f, kDim, Tx(T_reading));
+			y += 52.f;
+		}
+		else
+		{
+			// Label beside value, as the game's tooltip lays them out
+			const auto pair = [&](const std::string& label, const std::string& value, ImU32 colour)
+			{
+				if (label.empty() || value.empty())
+					return;
+				Text(kSans, 22, x, y + 6.f, kGold, Upper(label).c_str());
+				const float labelW = 210.f;
+				Text(kSerif, 30, x + labelW, y, colour, value.c_str(), width - labelW);
+				y += std::max(40.f, WrappedHeight(kSerif, 30, value.c_str(), width - labelW) + 8.f);
+			};
+			const ImU32 factionColour = stats.factionNumber == 0 ? Rgb(190, 186, 176) : stats.factionNumber == 1 ? Rgb(214, 96, 84)
+				: stats.factionNumber == 2 ? Rgb(222, 200, 110) : stats.factionNumber == 3 ? Rgb(120, 150, 220)
+				: stats.factionNumber == 4 ? Rgb(110, 190, 110) : stats.factionNumber == 5 ? Rgb(150, 170, 220) : kText;
+			pair(stats.factionLabel, stats.faction, factionColour);
+			pair(stats.typeLabel, stats.type, kText);
+			pair(stats.rowLabel, stats.row, kText);
+			pair(stats.strengthLabel, stats.strength, Rgb(250, 242, 220));
+			// Every ability, each its name over what it does; a special card's under no heading of its own
+			if (!stats.abilities.empty())
+			{
+				y += 10.f;
+				FadeLineH(x, x + width, y, kGoldDim);
+				y += 14.f;
+				if (!stats.abilityLabel.empty())
+				{
+					Text(kSans, 22, x, y, kGold, Upper(stats.abilityLabel).c_str());
+					y += 32.f;
+				}
+				for (const auto& [name, text] : stats.abilities)
+				{
+					if (!name.empty())
+					{
+						Text(kSerif, 32, x, y, kGoldHi, name.c_str(), width);
+						y += WrappedHeight(kSerif, 32, name.c_str(), width) + 4.f;
+					}
+					if (!text.empty())
+					{
+						Text(kSerif, 28, x, y, kText, text.c_str(), width);
+						y += WrappedHeight(kSerif, 28, text.c_str(), width);
+					}
+					y += 16.f;
+				}
+			}
+		}
+		y += 14.f;
+		MissableCallout(e, x, width, y);
 	}
 
 	void DrawSummary(const Model& m)
@@ -4497,9 +4758,14 @@ namespace
 			DrawCreatureNotes(*g_creatureShown, ra, rb);
 			return;
 		}
-		if (g_book == kBookItems && g_itemShown)
+		if (g_book == kBookItems && g_itemShown && !g_itemShown->masked)
 		{
 			DrawItemStats(*g_itemShown, ra, rb);
+			return;
+		}
+		if (g_book == kBookGwent && g_itemShown && !g_itemShown->masked)
+		{
+			DrawCardStats(*g_itemShown, ra, rb);
 			return;
 		}
 		InsetPanel(ra, rb);
@@ -4582,12 +4848,14 @@ namespace
 		const float m0 = 60.f, gap = 70.f;
 		const float colW = (kW - m0 * 2 - gap) * 0.5f;
 		const float x0 = m0, x1 = m0 + colW + gap;
-		// As tall as there's room for: each column has 10 rows, the left under three headings. When the window's
-		// short the hint below gives up some of its height first, as its text shrinks to fit.
-		constexpr float kRows = 10.f, kHeadings = 3.f;
+		// As tall as there's room for: the left column has 10 rows under three headings, the right 11 under two, and the
+		// rows are sized for whichever needs more. When the window's short the hint below gives up some of its height
+		// first, as its text shrinks to fit.
+		constexpr float kLeftRows = 10.f, kLeftHeadings = 3.f, kRightRows = 11.f, kRightHeadings = 2.f;
 		const float top = 240.f;
-		const float hintH = std::clamp(kH - 106.f - 12.f - top - 54.f * kHeadings - 16.f - 44.f * kRows, 64.f, 104.f);
-		const float rowH = std::clamp((kH - 106.f - hintH - 12.f - top - 54.f * kHeadings - 16.f) / kRows, 44.f, 62.f);
+		const float hintH = std::clamp(kH - 106.f - 12.f - top - 16.f - std::max(54.f * kLeftHeadings + 40.f * kLeftRows, 54.f * kRightHeadings + 40.f * kRightRows), 64.f, 104.f);
+		const float room = kH - 106.f - hintH - 12.f - top - 16.f - 8.f;   // and a little clear of the hint
+		const float rowH = std::clamp(std::min((room - 54.f * kLeftHeadings) / kLeftRows, (room - 54.f * kRightHeadings) / kRightRows), 40.f, 62.f);
 
 		const float slideW = colW * 0.40f;
 		const char* const kPrompts[3] = { Tx(T_prompts_automatic), Tx(T_prompts_keyboard), Tx(T_controller) };
@@ -4820,6 +5088,10 @@ namespace
 		toggle(x1, ry, { Tx(T_last_tab), Tx(T_last_tab_hint) }, st.openOnLastBook);
 		ry += rowH;
 		toggle(x1, ry, { Tx(T_show_undiscovered), Tx(T_show_undiscovered_hint) }, st.revealUndiscovered);
+		ry += rowH;
+		toggle(x1, ry, { Tx(T_show_uncollected), Tx(T_show_uncollected_hint) }, st.revealUncollected);
+		ry += rowH;
+		toggle(x1, ry, { Tx(T_show_unstarted), Tx(T_show_unstarted_hint) }, st.revealUnstarted);
 		ry += rowH;
 		toggle(x1, ry, { Tx(T_show_secret), Tx(T_show_secret_hint) }, st.revealHiddenAchievements);
 		ry += rowH;
@@ -7062,8 +7334,196 @@ namespace
 		MarkDirty();
 	}
 
-	void BuildWardLists(const Model& m)
+	std::shared_ptr<const Model> g_rawModel;   // the list as the game sent it, before the spoiler settings hide anything
+
+	// Whether a missable quest has been revealed one at a time, while unstarted quests are hidden
+	bool RevealedMissable(const std::string& uuid)
 	{
+		return ("|" + GetSettings().revealedMissables + "|").find("|" + uuid + "|") != std::string::npos;
+	}
+
+	// A missable quest that can be revealed, or hidden again, one at a time
+	bool CanReveal(const Entry& e)
+	{
+		return g_book == kBookMissable && !GetSettings().revealUnstarted
+			&& (e.masked || (RevealedMissable(e.uuid) && e.status == kAvailable && !e.gameDone));
+	}
+
+	void ToggleRevealed(const std::string& uuid)
+	{
+		std::string& all = GetSettings().revealedMissables;
+		std::vector<std::string> ids;
+		bool had = false;
+		for (size_t from = 0; from <= all.size();)
+		{
+			const size_t bar = std::min(all.find('|', from), all.size());
+			const std::string id = all.substr(from, bar - from);
+			if (id == uuid)
+				had = true;
+			else if (!id.empty())
+				ids.push_back(id);
+			from = bar + 1;
+		}
+		if (!had)
+			ids.push_back(uuid);
+		all.clear();
+		for (const std::string& id : ids)
+			all += (all.empty() ? "" : "|") + id;
+		MarkDirty();
+	}
+
+	// The list as the spoiler settings have it shown: what's hidden keeps its place, status and region, without its name,
+	// tips or model. A missable group with nothing showing hides its heading too, as many name what's to come, until its
+	// point of no return is under way. Made again only when the list or the settings change.
+	// Witcher gear: a piece's tiers are an entry each, counted each, and listed as one row, the best tier owned, with what
+	// it has and what's next
+	void MergeUpgrades(Model& m)
+	{
+		for (Section& s : m.sections)
+		{
+			std::map<std::string, std::vector<Entry*>> groups;
+			for (Entry& e : s.entries)
+				if (!e.upgradeGroup.empty() && e.upgradeTiers > 0 && e.upgradeTier >= 0 && e.upgradeTier < e.upgradeTiers)
+				{
+					std::vector<Entry*>& tiers = groups[e.upgradeGroup];
+					tiers.resize(std::max<size_t>(tiers.size(), e.upgradeTiers), nullptr);
+					tiers[e.upgradeTier] = &e;
+				}
+			for (auto& [group, tiers] : groups)
+			{
+				std::vector<char> owned(tiers.size(), 0);
+				int best = -1;
+				for (size_t t = 0; t < tiers.size(); ++t)
+					if (tiers[t] && tiers[t]->Done())
+					{
+						owned[t] = 1;
+						best = static_cast<int>(t);
+					}
+				Entry* shown = tiers[std::max(best, 0)];
+				if (!shown)
+					continue;
+				for (Entry* t : tiers)
+					if (t && t != shown)
+						t->upgradeHidden = true;
+				shown->upgradeOwned = owned;
+				// Next: the first tier above the best not owned yet, else any below it
+				const Entry* next = nullptr;
+				for (size_t t = best + 1; t < tiers.size() && !next; ++t)
+					if (tiers[t] && !owned[t])
+						next = tiers[t];
+				for (size_t t = 0; t < tiers.size() && !next; ++t)
+					if (tiers[t] && !owned[t] && tiers[t] != shown)
+						next = tiers[t];
+				shown->upgradeNote = best < 0 ? Tx(T_upgrade_none) : next ? TxFill(T_upgrade_next, next->title) : Tx(T_upgrade_all);
+			}
+		}
+	}
+
+	// The Items tab in groups: weapons, armour sets, witcher gear, horse gear, trophies and mods' items, each section named
+	// without what its group's heading already says, and in alphabetical order within its group
+	void GroupItems(Model& m)
+	{
+		const auto partOf = [](const Section& s)
+		{
+			const int filter = s.entries.empty() ? 0 : s.entries[0].filter;
+			switch (filter)
+			{
+			case 1: return kPartWeapons;
+			case 2: return kPartArmour;
+			case 9: return kPartWitcher;
+			case 10: return kPartHorse;
+			case 3: return kPartTrophies;
+			default: return kPartMods;
+			}
+		};
+		for (Section& s : m.sections)
+		{
+			if (s.book != kBookItems)
+				continue;
+			s.part = partOf(s);
+			// "Armor Set Pieces: Undvik Set" under Armor Sets is "Undvik Set"; a relic's or a mod's name keeps its prefix
+			if (s.part == kPartArmour || s.part == kPartWitcher || s.part == kPartHorse)
+			{
+				const size_t colon = s.header.find(": ");
+				if (colon != std::string::npos && colon + 2 < s.header.size())
+					s.header = s.header.substr(colon + 2);
+			}
+		}
+		const auto lower = [](std::string text)
+		{
+			for (char& c : text)
+				c = static_cast<char>(tolower(static_cast<unsigned char>(c)));
+			return text;
+		};
+		// Only the Items sections move, among the places they had
+		std::vector<size_t> places;
+		std::vector<Section> items;
+		for (size_t i = 0; i < m.sections.size(); ++i)
+			if (m.sections[i].book == kBookItems)
+			{
+				places.push_back(i);
+				items.push_back(std::move(m.sections[i]));
+			}
+		std::stable_sort(items.begin(), items.end(), [&](const Section& a, const Section& b)
+		{
+			return a.part != b.part ? a.part < b.part : lower(a.header) < lower(b.header);
+		});
+		for (size_t i = 0; i < places.size(); ++i)
+			m.sections[places[i]] = std::move(items[i]);
+	}
+
+	std::shared_ptr<const Model> Presented(const std::shared_ptr<const Model>& raw)
+	{
+		static std::weak_ptr<const Model> madeFrom;
+		static std::shared_ptr<const Model> made, before;   // the one before kept a while: last frame's pointers point into it
+		static std::string madeFor;
+		const Settings& st = GetSettings();
+		if (!raw)
+			return raw;
+
+		const std::string key = std::string(st.revealUncollected ? "1" : "0") + (st.revealUnstarted ? "1" : "0") + st.revealedMissables;
+		if (made && madeFor == key && madeFrom.lock() == raw)
+			return made;
+		auto copy = std::make_shared<Model>(*raw);
+		MergeUpgrades(*copy);
+		GroupItems(*copy);
+		for (Section& s : copy->sections)
+		{
+			bool anyShown = false;
+			for (Entry& e : s.entries)
+			{
+				const bool unfound = e.status == kAvailable && !e.gameDone;
+				const bool mask = unfound && (s.book == kBookItems ? !st.revealUncollected
+					: (s.book == kBookQuest || s.book == kBookMissable) && !st.revealUnstarted && !RevealedMissable(e.uuid));
+				if (!mask)
+				{
+					anyShown = true;
+					continue;
+				}
+				e.masked = true;
+				e.title = Tx(s.book == kBookItems ? T_uncollected_item : s.book == kBookMissable ? T_missable_quest : T_unstarted_quest);
+				if (!e.upgradeOwned.empty() && std::count(e.upgradeOwned.begin(), e.upgradeOwned.end(), 1) == 0)
+					e.upgradeNote.clear();
+				e.tip.clear();
+				e.description.clear();
+				e.itemTemplate.clear();
+			}
+			if (s.book == kBookMissable && !anyShown && s.state == 0 && !s.entries.empty())
+			{
+				s.header = Tx(s.kind == 1 ? T_hidden_choice : s.kind == 2 ? T_hidden_failable : T_hidden_cutoff);
+				s.cutoff.clear();
+			}
+		}
+		before = made;
+		made = copy;
+		madeFrom = raw;
+		madeFor = key;
+		return made;
+	}
+
+	void BuildWardLists(const Model& given)
+	{
+		const Model& m = g_rawModel ? *g_rawModel : given;
 		if (g_wardListsOf == &m && !g_wardExtrasFresh)
 			return;
 		if (!ModelIndexReady())
@@ -7238,6 +7698,8 @@ namespace
 				hints.push_back({ kPadR3, KeyLabel(kKeyZ), Tx(T_hold_to_enlarge), kActZoom, true });
 			if (canMark && ShowsModel(*e))
 				hints.push_back({ kPadA, KeyLabel(kKeyT), Tx(GetSettings().autoRotate ? T_auto_turn_on : T_auto_turn_off), kActAutoTurn });
+			if (canMark && CanReveal(*e))
+				hints.push_back({ kPadA, KeyLabel(kKeyT), Tx(e->masked ? T_reveal : T_hide_again), kActReveal });
 			if (g_book == kBookItems && state.model)
 				hints.push_back({ kPadL3, KeyLabel(kKeyG), Tx(T_ward_open), kActWardrobe });
 			if (g_book != kBookBestiary && g_detailScrollMax > 0.f)
@@ -7279,7 +7741,7 @@ namespace
 		float x = kW * 0.5f - (total - gap) * 0.5f;
 
 		bool wardrobe = false;
-		bool prev = false, next = false, mark = false, zoom = false, autoTurn = false, hide = false, refresh = false, close = false;
+		bool prev = false, next = false, mark = false, zoom = false, autoTurn = false, reveal = false, hide = false, refresh = false, close = false;
 		for (const Hint& h : hints)
 		{
 			const float gw = glyphsWidth(h);
@@ -7305,6 +7767,7 @@ namespace
 				case kActMark: mark = true; break;
 				case kActZoom: zoom = true; break;
 				case kActAutoTurn: autoTurn = true; break;
+				case kActReveal: reveal = true; break;
 				case kActWardrobe: wardrobe = true; break;
 				case kActWardWear: g_wardClick = kWardClickWear; break;
 				case kActWardPin: g_wardClick = kWardClickPin; break;
@@ -7336,6 +7799,7 @@ namespace
 				wardrobe = wardrobe || (g_book == kBookItems && state.model && (KeyHit(kKeyG) || g_pad.Pressed(kPadL3)));
 				// A on an entry: a header's A opens and closes it
 				autoTurn = autoTurn || (canMark && ShowsModel(*e) && (KeyHit(kKeyT) || g_pad.Pressed(kPadA)));
+				reveal = reveal || (canMark && CanReveal(*e) && (KeyHit(kKeyT) || g_pad.Pressed(kPadA)));
 				hide = hide || KeyHit(kKeyH) || g_pad.Pressed(kPadStart);
 				refresh = refresh || KeyHit(kKeyR) || g_pad.Pressed(kPadBack);
 			}
@@ -7347,6 +7811,8 @@ namespace
 			GetSettings().autoRotate = !GetSettings().autoRotate;
 			MarkDirty();
 		}
+		if (reveal && e)
+			ToggleRevealed(e->uuid);
 		if (wardrobe && state.model)
 			OpenWardrobe(*state.model, e);
 		if (prev)
@@ -8272,6 +8738,12 @@ void UiPushPopup(const std::string& text)
 		ReceiveItemStats(text);
 		return;
 	}
+	// K|...: a Gwent card's details
+	if (text.rfind("K|", 0) == 0)
+	{
+		ReceiveCardStats(text);
+		return;
+	}
 	PopupMessage message = ParsePopup(text);
 	std::lock_guard lock(g_popupMutex);
 	if (message.kind == 2)
@@ -8691,7 +9163,9 @@ void DrawUi()
 	const int firstVertex = dl->VtxBuffer.Size;
 	const int firstCommand = dl->CmdBuffer.Size - 1;
 
-	const BridgeState state = GetBridgeState();
+	BridgeState state = GetBridgeState();
+	g_rawModel = state.model;
+	state.model = Presented(state.model);
 	const Model* model = state.model.get();
 	SyncPages(model);
 

@@ -9,29 +9,39 @@ Shared Utils is used for the event map pins, so make sure it is installed and up
 to date.
 
 This mod also requires 'Native Quest Hook'.
-https://github.com/Faen668/NativeQuestHook/releases
+https://www.nexusmods.com/witcher3/mods/15527
 
 Native Quest Hook tells Progress on the Path when the game's random events start
 and finish. Without it, events are not tracked.
+
+This mod also requires 'Ultimate ASI Loader' (the winmm.dll version), by
+ThirteenAG, packaged for Nexus by voidom1.
+https://www.nexusmods.com/witcher3/mods/13671
+
+Ultimate ASI Loader loads 'PotpOverlay.asi' and 'NativeQuestHook.asi'. Without it,
+the mod's window doesn't open and events are not tracked.
 
 //--------------------------------------------------------
 //-------------------- Installation ----------------------
 //--------------------------------------------------------
 
-1. Copy the 'mods' and 'bin' folders into your Witcher 3 directory.
+1. Install Ultimate ASI Loader from the link above. It adds
+   'bin\x64_dx12\winmm.dll'.
+
+   Install only one ASI loader. If you have the 'dinput8.dll' that earlier
+   versions of Progress on the Path included, delete it from 'bin\x64_dx12'.
+
+2. Copy the 'mods' and 'bin' folders into your Witcher 3 directory.
    (The folder that contains 'bin', 'content' and 'mods'.)
 
-   This includes 'bin\x64_dx12\PotpOverlay.asi', which draws the mod's window, and
-   Ultimate ASI Loader's 'dinput8.dll', which loads it. If you already have a
-   'dinput8.dll' there from Ultimate ASI Loader, you can keep yours.
-
+   This includes 'bin\x64_dx12\PotpOverlay.asi', which draws the mod's window.
    The window needs the DirectX 12 version of the game.
 
-2. Install Native Quest Hook: unzip it into the same Witcher 3 directory. It adds
-   'bin\x64_dx12\NativeQuestHook.asi' and 'mods\modNativeQuestHook'. It doesn't
-   include 'dinput8.dll': the one from step 1 loads it.
+3. Install Native Quest Hook from the link above, into the same Witcher 3
+   directory. It adds
+   'bin\x64_dx12\NativeQuestHook.asi' and 'mods\modNativeQuestHook'.
 
-3. Load a save. That's it!
+4. Load a save. That's it!
 
 Progress on the Path's settings are all in the window's Settings tab, and are kept
 in 'bin\x64_dx12\potp_overlay.ini', so there is no need to edit any settings files.
@@ -141,8 +151,8 @@ pt_version()          : Shows the installed version.
 //--------------------------------------------------------
 
 The window doesn't open
-- Check that 'PotpOverlay.asi' and 'dinput8.dll' are in 'bin\x64_dx12', and that
-  you're running the DirectX 12 version of the game.
+- Check that 'PotpOverlay.asi' and Ultimate ASI Loader's 'winmm.dll' are in
+  'bin\x64_dx12', and that you're running the DirectX 12 version of the game.
 - 'bin\x64_dx12\potp_overlay.log' says what the overlay found when it started.
 
 Nothing is being tracked

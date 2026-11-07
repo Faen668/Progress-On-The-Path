@@ -295,6 +295,17 @@ bool ParseChunk(Model& model, const std::string& text)
 					e.creatureTemplate = f[19];
 					std::replace(e.creatureTemplate.begin(), e.creatureTemplate.end(), '/', '\\');
 				}
+				// A piece of witcher gear: group~tier~tiers
+				if (f.size() >= 21 && !f[20].empty())
+				{
+					const size_t a = f[20].find('~'), b = a == std::string::npos ? a : f[20].find('~', a + 1);
+					if (b != std::string::npos)
+					{
+						e.upgradeGroup = f[20].substr(0, a);
+						e.upgradeTier = Int(f[20].substr(a + 1, b - a - 1));
+						e.upgradeTiers = Int(f[20].substr(b + 1));
+					}
+				}
 				model.sections.back().entries.push_back(std::move(e));
 			}
 			break;

@@ -185,6 +185,10 @@ function PotP_DefineWorld_08(catalog: CPotP_Catalog)
 	catalog.AddWorld("_06", PotP_R_NO, PotP_I_Camps, PotP_E_Primary, 'ep1_poi23_mp');
 	catalog.AddWorld("_07", PotP_R_NO, PotP_I_Camps, PotP_E_Primary, 'ep1_poi09_mp');
 	catalog.AddWorld("_08", PotP_R_NO, PotP_I_Camps, PotP_E_Missable, 'ep1_poi_ofir_camp_mp');
+	// The Ofieri set up camp by their wreck only if they're left alive at the shore in 'Evil's Soft First Touches':
+	// killing all six and their mage there sets q601_fdb_ofir_soliders_killed (q601_escape), and ep1_persistant_content
+	// then never shows the camp
+	catalog.SetMissableReason("PotP_MissableTip_OfieriCamp", "q601_fdb_ofir_soliders_killed");
 	catalog.AddWorld("_09", PotP_R_NO, PotP_I_Camps, PotP_E_Primary, 'ep1_poi11_mp');
 	catalog.AddWorld("_10", PotP_R_NO, PotP_I_Camps, PotP_E_Primary, 'ep1_poi12_mp');
 	catalog.AddWorld("_11", PotP_R_NO, PotP_I_Camps, PotP_E_Primary, 'ep1_poi13_mp');
@@ -570,6 +574,13 @@ function PotP_DefineWorld_32(catalog: CPotP_Catalog)
 	catalog.AddWorld("_04", PotP_R_SK, PotP_I_Place, PotP_E_Primary, 'ard_skellig_pop_axii');
 	catalog.AddWorld("_05", PotP_R_SK, PotP_I_Place, PotP_E_Primary, 'ard_skellig_pop_aard');
 	catalog.AddWorld("_06", PotP_R_SK, PotP_I_Place, PotP_E_Missable, 'skl_pop_quen2_new');
+	// In the tunnels under Kaer Trolde, reached only on Cerys's side in 'King's Gambit': siding with Hjalmar, staying out
+	// of it, or escaping the cellar without using it (the tunnel door is then shut for good) misses it
+	catalog.SetMissableReason("PotP_MissableTip_KaerTroldePlaceOfPower", "q206_helping_hjalmar");
+	// Quest blocks in q206_berserkers and q206_cerys_path
+	catalog.AddEventMissedBlock("88962248-644c-42c3-93e2-4d4dfbdf4b71", "True");   // Condition "q206_helping_hjalmar"
+	catalog.AddEventMissedBlock("3e6b280f-88a1-4153-8936-29c0816508aa", "True");   // Condition "q206_no_for_investigation"
+	catalog.AddEventMissedBlock("f68ef09f-d576-478d-b497-96524d59f013", "Out");    // Script "Disable kt_old_tunnel_door", after the escape
 	catalog.AddWorld("_07", PotP_R_SK, PotP_I_Place, PotP_E_Primary, 'pop_quen_skellige_mp');
 	catalog.AddWorld("_08", PotP_R_SK, PotP_I_Place, PotP_E_Primary, 'skl_pop_yrden2_new');
 	catalog.AddWorld("_09", PotP_R_SK, PotP_I_Place, PotP_E_Primary, 'pop_yrden_mp_skellige');
@@ -605,6 +616,10 @@ function PotP_DefineWorld_35(catalog: CPotP_Catalog)
 	catalog.BeginSection(PotP_Book_World, "PotP_Preview_Place_7", PotP_A_World, "PotP_TrackingGroup_WorldMap_PlacesOfPower_TheSpiral");
 	catalog.AddWorld("_01", PotP_R_TS, PotP_I_Place, PotP_E_Missable, 'aard_gasforest');
 	catalog.AddWorldAltPin("MISSING_NAME_DC68A555-450512C2-0354139F-CDA274E2");   // vanilla's own name for it: Brothers In Arms renames it aard_gasforest
+	// Only in the Spiral, during 'Through Time and Space': lost once the quest takes Geralt back out
+	catalog.SetMissableReason("PotP_MissableTip_SpiralPlaceOfPower", "q311_completed");
+	// Quest blocks in q311_geels
+	catalog.AddEventMissedBlock("0f6c12a9-98fa-44d9-ac02-8a35bc50b5aa", "Out");   // ChangeWorld to q311_back_to_hideout, after the "Spiral" phase
 	catalog.EndSection();
 }
 

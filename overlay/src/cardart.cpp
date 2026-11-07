@@ -343,7 +343,13 @@ namespace
 					(*labelled)[name] = frames[at];
 	}
 
-	void Collect(const Gfx& g, const Display& display, const Matrix& outer, std::vector<CardPiece>& out, int level = 0)
+	// A shape drawn with outlines and colours rather than a picture, as Cow's ability is: drawn into a picture of its own
+	// (further down, with the map pins' drawing). Its place on the card in box: left, top, right, bottom.
+	bool DrawCardShape(const Gfx& g, int shape, const Matrix& m, GameTexture& out, float box[4]);
+
+	using VectorParts = std::vector<std::pair<int, Matrix>>;
+
+	void Collect(const Gfx& g, const Display& display, const Matrix& outer, std::vector<CardPiece>& out, int level = 0, VectorParts* vectors = nullptr)
 	{
 		if (level > 6)
 			return;
@@ -353,6 +359,11 @@ namespace
 			const auto shape = g.shapes.find(placed.character);
 			if (shape != g.shapes.end())
 			{
+				if (shape->second.empty() && vectors)
+				{
+					vectors->emplace_back(placed.character, m);
+					continue;
+				}
 				for (const Fill& fill : shape->second)
 				{
 					const auto sub = g.subs.find(fill.bitmap);
@@ -383,7 +394,7 @@ namespace
 			{
 				Display inner;
 				PlaySprite(g, sprite->second, nullptr, &inner);
-				Collect(g, inner, m, out, level + 1);
+				Collect(g, inner, m, out, level + 1, vectors);
 			}
 		}
 	}
@@ -543,7 +554,32 @@ namespace
 				for (const auto& [label, display] : frames)
 				{
 					std::vector<CardPiece> pieces;
-					Collect(g, display, at, pieces);
+					VectorParts vectors;
+					Collect(g, display, at, pieces, 0, &vectors);
+					for (const auto& [shape, m] : vectors)
+					{
+						GameTexture picture;
+						float box[4];
+						if (!DrawCardShape(g, shape, m, picture, box))
+							continue;
+						// Its own picture, not one of the menu's, so a key of its own below theirs
+						const int key = -2 - static_cast<int>(g_atlases.size());
+						CardPiece piece;
+						piece.atlas = key;
+						piece.u0 = 0.f;
+						piece.v0 = 0.f;
+						piece.u1 = static_cast<float>(picture.width);
+						piece.v1 = static_cast<float>(picture.height);
+						const float px[4] = { box[0], box[2], box[2], box[0] }, py[4] = { box[1], box[1], box[3], box[3] };
+						for (int i = 0; i < 4; ++i)
+						{
+							piece.x[i] = px[i];
+							piece.y[i] = py[i];
+						}
+						atlasSlots[key] = static_cast<int>(g_atlases.size());
+						g_atlases.push_back(std::move(picture));
+						pieces.push_back(piece);
+					}
 					g_frames[clip.clip][label] = std::move(pieces);
 				}
 			}
@@ -623,6 +659,12 @@ bool UnpackLz4(const uint8_t* in, size_t size, uint8_t* out, size_t room)
 // Out of its compression, into plain colours
 bool DecodeCardArt(const GameTexture& source, std::vector<uint8_t>& rgba)
 {
+	// One of ours, drawn from a shape: already plain colours
+	if (source.dxgiFormat == DXGI_FORMAT_R8G8B8A8_UNORM && source.pixels.size() >= static_cast<size_t>(source.width) * source.height * 4)
+	{
+		rgba.assign(source.pixels.begin(), source.pixels.begin() + static_cast<size_t>(source.width) * source.height * 4);
+		return true;
+	}
 	if ((source.dxgiFormat != DXGI_FORMAT_BC3_UNORM && source.dxgiFormat != DXGI_FORMAT_BC1_UNORM) || source.width == 0 || source.height == 0)
 		return false;
 	const bool alpha = source.dxgiFormat == DXGI_FORMAT_BC3_UNORM;
@@ -1412,6 +1454,149 @@ namespace
 
 	std::map<std::string, GameTexture> g_pins;
 	std::atomic<bool> g_pinsReady{ false };
+
+	bool DrawCardShape(const Gfx& g, int shape, const Matrix& m, GameTexture& out, float box[4])
+	{
+		const auto found = g.shapeAt.find(shape);
+		if (found == g.shapeAt.end())
+			return false;
+		VShape s;
+		if (!ReadVShape(g, found->second.first, found->second.second, s) || s.edges.empty())
+			return false;
+		float minX = FLT_MAX, minY = FLT_MAX, maxX = -FLT_MAX, maxY = -FLT_MAX;
+		for (const VEdge& e : s.edges)
+			for (int i = 0; i < 2; ++i)
+			{
+				const float x = i ? e.x1 : e.x0, y = i ? e.y1 : e.y0;
+				const float px = m.a * x + m.c * y + m.tx, py = m.b * x + m.d * y + m.ty;
+				minX = std::min(minX, px);
+				maxX = std::max(maxX, px);
+				minY = std::min(minY, py);
+				maxY = std::max(maxY, py);
+			}
+		// Room for outlines, and a pixel round it
+		float widest = 0.f;
+		for (const VLine& l : s.lines)
+			widest = std::max(widest, l.width);
+		const float pad = widest * std::sqrt(fabsf(m.a * m.d - m.b * m.c)) * 0.5f + 1.f;
+		minX -= pad;
+		minY -= pad;
+		maxX += pad;
+		maxY += pad;
+		if (minX >= maxX || minY >= maxY)
+			return false;
+
+		// Four pixels to a unit of the card, which is drawn up to about twice its size, each from four by four samples
+		constexpr float kPixels = 4.f;
+		constexpr int kSuper = 4;
+		const uint32_t size = static_cast<uint32_t>(std::ceil(std::max(maxX - minX, maxY - minY) * kPixels));
+		if (size == 0 || size > 1024)
+			return false;
+		const int big = static_cast<int>(size) * kSuper;
+		const float k = kPixels * kSuper;
+		const Affine place{ m.a * k, m.b * k, m.c * k, m.d * k, (m.tx - minX) * k, (m.ty - minY) * k };
+		const auto at = [&](float x, float y) { return std::make_pair(place.a * x + place.c * y + place.tx, place.b * x + place.d * y + place.ty); };
+		std::vector<float> canvas(static_cast<size_t>(big) * big * 4, 0.f);   // premultiplied
+		std::vector<uint8_t> mask;
+		std::vector<Seg> segs;
+		const auto paint = [&](const float c[4])
+		{
+			for (size_t i = 0; i < mask.size(); ++i)
+			{
+				if (!mask[i])
+					continue;
+				float* o = canvas.data() + i * 4;
+				for (int n = 0; n < 3; ++n)
+					o[n] = c[n] * c[3] + o[n] * (1.f - c[3]);
+				o[3] = c[3] + o[3] * (1.f - c[3]);
+			}
+		};
+		// Fills, in the order the shape lists them: plain colours only, as the card's shapes have
+		for (int f = 0; f < static_cast<int>(s.fills.size()); ++f)
+		{
+			if (s.fills[f].kind != 0)
+				continue;
+			segs.clear();
+			for (const VEdge& e : s.edges)
+			{
+				const auto [ax, ay] = at(e.x0, e.y0);
+				const auto [bx, by] = at(e.x1, e.y1);
+				if (e.fill1 == f)
+					segs.push_back(Seg{ ax, ay, bx, by });
+				if (e.fill0 == f)
+					segs.push_back(Seg{ bx, by, ax, ay });
+			}
+			if (segs.empty())
+				continue;
+			Cover(segs, big, mask);
+			paint(s.fills[f].colour);
+		}
+		// Outlines, as the pins' are drawn
+		const float scale = std::sqrt(fabsf(place.a * place.d - place.b * place.c));
+		for (int l = 0; l < static_cast<int>(s.lines.size()); ++l)
+		{
+			segs.clear();
+			const float half = std::max(s.lines[l].width * scale, static_cast<float>(kSuper)) * 0.5f;
+			for (const VEdge& e : s.edges)
+			{
+				if (e.line != l)
+					continue;
+				const auto [ax, ay] = at(e.x0, e.y0);
+				const auto [bx, by] = at(e.x1, e.y1);
+				const float dx = bx - ax, dy = by - ay, len = std::sqrt(dx * dx + dy * dy);
+				if (len > 1e-4f)
+				{
+					const float nx = -dy / len * half, ny = dx / len * half;
+					const float qx[4] = { ax + nx, bx + nx, bx - nx, ax - nx }, qy[4] = { ay + ny, by + ny, by - ny, ay - ny };
+					const float area = (qx[1] - qx[0]) * (qy[2] - qy[0]) - (qx[2] - qx[0]) * (qy[1] - qy[0]);
+					for (int i = 0; i < 4; ++i)
+					{
+						const int a = area >= 0 ? i : 3 - i, b = area >= 0 ? (i + 1) % 4 : (6 - i) % 4;
+						segs.push_back(Seg{ qx[a], qy[a], qx[b], qy[b] });
+					}
+				}
+				constexpr int kSides = 10;
+				for (int i = 0; i < kSides; ++i)
+				{
+					const float a0 = i * 2.f * kPiF / kSides, a1 = (i + 1) * 2.f * kPiF / kSides;
+					segs.push_back(Seg{ bx + cosf(a0) * half, by + sinf(a0) * half, bx + cosf(a1) * half, by + sinf(a1) * half });
+				}
+			}
+			if (segs.empty())
+				continue;
+			Cover(segs, big, mask);
+			paint(s.lines[l].fill.colour);
+		}
+
+		out = GameTexture{};
+		out.dxgiFormat = DXGI_FORMAT_R8G8B8A8_UNORM;
+		out.width = out.height = size;
+		out.rowBytes = size * 4;
+		out.rows = size;
+		out.pixels.assign(static_cast<size_t>(size) * size * 4, 0);
+		for (uint32_t y = 0; y < size; ++y)
+			for (uint32_t x = 0; x < size; ++x)
+			{
+				float sum[4] = {};
+				for (int j = 0; j < kSuper; ++j)
+					for (int i = 0; i < kSuper; ++i)
+					{
+						const float* c = canvas.data() + ((static_cast<size_t>(y) * kSuper + j) * big + x * kSuper + i) * 4;
+						for (int n = 0; n < 4; ++n)
+							sum[n] += c[n];
+					}
+				uint8_t* o = out.pixels.data() + (static_cast<size_t>(y) * size + x) * 4;
+				const float a = sum[3] / (kSuper * kSuper);
+				for (int n = 0; n < 3; ++n)
+					o[n] = static_cast<uint8_t>(std::clamp(a > 0.f ? sum[n] / sum[3] : 0.f, 0.f, 1.f) * 255.f + 0.5f);
+				o[3] = static_cast<uint8_t>(std::clamp(a, 0.f, 1.f) * 255.f + 0.5f);
+			}
+		box[0] = minX;
+		box[1] = minY;
+		box[2] = minX + size / kPixels;
+		box[3] = minY + size / kPixels;
+		return true;
+	}
 }
 
 void BuildMapPins(const std::wstring& game)

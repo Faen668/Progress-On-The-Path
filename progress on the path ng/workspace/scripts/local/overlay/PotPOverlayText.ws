@@ -576,6 +576,30 @@ function PotPOverlay_TextKeys_3(out keys: array<string>)
 	keys.PushBack("kill_sum_generic_one");
 	keys.PushBack("kill_sum_total");
 	keys.PushBack("kill_sum_total_one");
+	keys.PushBack("show_uncollected");
+	keys.PushBack("show_uncollected_hint");
+	keys.PushBack("show_unstarted");
+	keys.PushBack("show_unstarted_hint");
+	keys.PushBack("uncollected_item");
+	keys.PushBack("unstarted_quest");
+	keys.PushBack("missable_quest");
+	keys.PushBack("hidden_cutoff");
+	keys.PushBack("hidden_choice");
+	keys.PushBack("hidden_failable");
+	keys.PushBack("reveal");
+	keys.PushBack("hide_again");
+	keys.PushBack("upgrade_next");
+	keys.PushBack("upgrade_all");
+	keys.PushBack("upgrade_none");
+	keys.PushBack("upgrade_tiers");
+	keys.PushBack("items_part_weapons");
+	keys.PushBack("items_part_armour");
+	keys.PushBack("items_part_witcher");
+	keys.PushBack("items_part_horse");
+	keys.PushBack("items_part_trophies");
+	keys.PushBack("items_part_mods");
+	keys.PushBack("can_be_missed");
+	keys.PushBack("card_details");
 }
 
 function PotPOverlay_ExportText() : string

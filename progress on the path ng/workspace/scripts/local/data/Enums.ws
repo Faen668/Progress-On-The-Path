@@ -69,6 +69,8 @@ enum PotP_Preview_Items_Filter
 	PotP_I_Shade	= 6,
 	PotP_I_W3eer	= 7,
 	PotP_I_Wiecej	= 8,
+	PotP_I_Witch	= 9,	// witcher school gear
+	PotP_I_Horse	= 10,	// named horse gear
 }
 
 enum PotP_Preview_Items_Underlying_Filter
@@ -82,6 +84,7 @@ enum PotP_Preview_Items_Underlying_Filter
 	PotP_U_Silve	= 7,
 	PotP_U_Cross	= 8,
 	PotP_U_Troph	= 9,
+	PotP_U_Horse	= 10,
 }
 
 enum PotP_Preview_World_Filter

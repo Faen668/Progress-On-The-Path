@@ -138,6 +138,16 @@
 2116568119||PotP_Preview_GearS_8|<br/>[ICON_PATH]<font color="#9D75BF">Armor Set Pieces: Tesham Mutna Set [COUNTS]<br/></font>
 2116568120||PotP_Preview_GearS_9|<br/>[ICON_PATH]<font color="#9D75BF">Armor Set Pieces: Undvik Set [COUNTS]<br/></font>
 2116568121||PotP_Preview_GearS_A|<br/>[ICON_PATH]<font color="#9D75BF">Armor Set Pieces: White Tiger Set [COUNTS]<br/></font>
+2116569359||PotP_Preview_GearS_B|<br/>[ICON_PATH]<font color="#9D75BF">Armor Set Pieces: Scarlet Crest Set [COUNTS]<br/></font>
+2116569360||PotP_Preview_Witch_1|<br/>[ICON_PATH]<font color="#9D75BF">Witcher Gear: Feline School [COUNTS]<br/></font>
+2116569361||PotP_Preview_Witch_2|<br/>[ICON_PATH]<font color="#9D75BF">Witcher Gear: Griffin School [COUNTS]<br/></font>
+2116569362||PotP_Preview_Witch_3|<br/>[ICON_PATH]<font color="#9D75BF">Witcher Gear: Ursine School [COUNTS]<br/></font>
+2116569363||PotP_Preview_Witch_4|<br/>[ICON_PATH]<font color="#9D75BF">Witcher Gear: Wolven School [COUNTS]<br/></font>
+2116569364||PotP_Preview_Witch_5|<br/>[ICON_PATH]<font color="#9D75BF">Witcher Gear: Manticore School [COUNTS]<br/></font>
+2116569365||PotP_Preview_Witch_6|<br/>[ICON_PATH]<font color="#9D75BF">Witcher Gear: Viper School [COUNTS]<br/></font>
+2116569366||PotP_Preview_Horse_1|<br/>[ICON_PATH]<font color="#9D75BF">Horse Gear: Blinders [COUNTS]<br/></font>
+2116569379||PotP_Preview_Horse_2|<br/>[ICON_PATH]<font color="#9D75BF">Horse Gear: Saddles [COUNTS]<br/></font>
+2116569380||PotP_Preview_Horse_3|<br/>[ICON_PATH]<font color="#9D75BF">Horse Gear: Saddlebags [COUNTS]<br/></font>
 2116568122||PotP_Preview_Relic_1|<br/>[ICON_PATH]<font color="#9D75BF">Relics: Silver Swords [COUNTS]<br/></font>
 2116568123||PotP_Preview_Relic_2|<br/>[ICON_PATH]<font color="#9D75BF">Relics: Steel Swords [COUNTS]<br/></font>
 2116568124||PotP_Preview_Relic_3|<br/>[ICON_PATH]<font color="#9D75BF">Relics: Crossbows [COUNTS]<br/></font>
@@ -717,6 +727,12 @@
 2116568668||PotP_NotificationLine_SezonBurz| Sezon Burz Item(DYNAMC_REPLACE)
 2116568669||PotP_NotificationLine_CosWiecej| "Coś Więcej" Item(DYNAMC_REPLACE)
 2116568670||PotP_NotificationLine_W3EE| W3EE Item(DYNAMC_REPLACE)
+2116569367||PotP_NotificationLine_WitcherGear| Witcher Gear(DYNAMC_REPLACE)
+2116569368||PotP_NotificationLine_HorseGear| Horse Gear(DYNAMC_REPLACE)
+2116569385||PotP_MissableTip_OfieriCamp|The Ofieri make camp here after 'Evil's Soft First Touches' only if you leave them alive by their wrecked ship. Kill all six soldiers and their mage there, and the camp never appears.
+2116569387||PotP_MissableTip_KaerTroldePlaceOfPower|In the tunnels under Kaer Trolde, only on Cerys's side in 'King's Gambit': follow her into the wine cellar, and when the fire trap goes off, escape through the tunnel past it. Side with Hjalmar, stay out of it, or leave the tunnels without using it, and you can't get back.
+2116569386||PotP_MissableTip_SpiralPlaceOfPower|Only in the Spiral during 'Through Time and Space'. Once the quest takes you back out, you can't return.
+2116569381||PotP_MissableTip_Tiegr|In Gaetan's stash after 'Where the Cat and Wolf Play...'. It's lost if you kill Gaetan, or if you take too long to reach his hideout and bandits loot it first.
 2116568671||PotP_NotificationLine_ShadesOfIron| Shades of Iron Item(DYNAMC_REPLACE)
 2116568672||PotP_NotificationLine_Sites| Abandoned Site(DYNAMC_REPLACE)
 2116568673||PotP_NotificationLine_AbandonedSite|Updated Abandoned Site: 
@@ -843,6 +859,7 @@
 2116568779||potp_ov_area_5|Toussaint
 2116568780||potp_ov_area_6|Kaer Morhen
 2116568781||potp_ov_area_7|Vizima
+2116569383||potp_ov_area_8|The Spiral
 ;
 ;---------------------------------------------------
 ;-- The overlay's own text
@@ -1416,6 +1433,30 @@
 2116569344||potp_ov_kill_sum_generic_one|[1] kind slain.
 2116569345||potp_ov_kill_sum_total|[1] kills in all.
 2116569346||potp_ov_kill_sum_total_one|[1] kill in all.
+2116569347||potp_ov_show_uncollected|Show Uncollected Items
+2116569348||potp_ov_show_uncollected_hint|Shows the names, stats and models of items you haven't found yet. Off, each shows as an Uncollected Item until you have it.
+2116569349||potp_ov_show_unstarted|Show Unstarted Quests
+2116569350||potp_ov_show_unstarted_hint|Shows the names and tips of quests you haven't started. Off, each shows as an Unstarted Quest, and the Missable tab still warns you, keeping its counts and regions: reveal one there to see it.
+2116569351||potp_ov_uncollected_item|Uncollected Item
+2116569352||potp_ov_unstarted_quest|Unstarted Quest
+2116569353||potp_ov_missable_quest|Missable Quest
+2116569354||potp_ov_hidden_cutoff|Before a quest you haven't reached yet
+2116569355||potp_ov_hidden_choice|Only after a choice you haven't made yet
+2116569356||potp_ov_hidden_failable|Can fail or disappear if it's left too long
+2116569357||potp_ov_reveal|Reveal
+2116569358||potp_ov_hide_again|Hide Again
+2116569369||potp_ov_upgrade_next|Next: [1]
+2116569370||potp_ov_upgrade_all|Every tier owned
+2116569371||potp_ov_upgrade_none|None owned yet
+2116569372||potp_ov_upgrade_tiers|[1] of [2] tiers owned
+2116569373||potp_ov_items_part_weapons|Weapons
+2116569374||potp_ov_items_part_armour|Armor Sets
+2116569375||potp_ov_items_part_witcher|Witcher Gear Sets
+2116569376||potp_ov_items_part_horse|Horse Gear
+2116569377||potp_ov_items_part_trophies|Trophies
+2116569378||potp_ov_items_part_mods|Added by Mods
+2116569382||potp_ov_can_be_missed|Can Be Missed
+2116569384||potp_ov_card_details|Card
 ;overlay-text-end
 ;
-; Next id: 2116569347
+; Next id: 2116569388

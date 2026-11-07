@@ -18,6 +18,13 @@ struct Entry
 	int status = kAvailable, region = 0, filter = 0, flags = 0;
 	int manual = 0;   // set by hand: 0 no, 1 ignored, 2 completed, 3 missed
 	bool gameDone = false;   // the game itself counts it as done
+	bool masked = false;     // shown without its name and the rest, as the spoiler settings ask
+	// Witcher gear: each tier of a piece is its own entry, and the piece shows as one row, the best tier owned
+	std::string upgradeGroup;   // what its tiers share, within the section
+	int upgradeTier = -1, upgradeTiers = 0;
+	bool upgradeHidden = false;         // another tier of the piece shows for it
+	std::vector<char> upgradeOwned;     // the row's: each tier, owned or not
+	std::string upgradeNote;            // and what's next, under its name
 	std::string picture, description;   // a Gwent card's, as the game's menus name its picture
 	int power = -1, faction = 0, cardType = 0;
 	bool neutral = false;   // a neutral card: faction is the deck it's drawn in
@@ -36,6 +43,7 @@ struct Section
 	std::string header;
 	std::string cutoff;   // a missable group's: the quest that closes it
 	std::string pin;      // a World Map group's: the map's pin for its kind of place
+	int part = -1;        // an Items section's group in the list: weapons, armour sets and so on (kItemParts)
 	std::vector<Entry> entries;
 };
 

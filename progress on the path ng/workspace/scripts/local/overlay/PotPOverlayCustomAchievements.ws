@@ -1,4 +1,4 @@
-// Achievements that mods add, from a potp_achievements.xml in their mod folder. The overlay reads the files and
+﻿// Achievements that mods add, from a potp_achievements.xml in their mod folder. The overlay reads the files and
 // decides what's unlocked (customach.cpp). This only does what it can't:
 //   - it's told once what to look at: potpach_begin, a potpach_probe for each thing, a potpach_define for each
 //     achievement with a potpach_reward for each part of its reward, then potpach_end

@@ -234,10 +234,22 @@ class CPotP_StatusResolver
 			return game_status;
 
 		case PotP_A_World:
-			return Done(IsPinCleared(tracked));
+			// A place the game can close for good, as the Spiral's: missed by its facts until it's cleared
+			game_status = Done(IsPinCleared(tracked));
+			if (game_status == PotP_S_Available && IsMissedByFacts(tracked))
+			{
+				return PotP_S_Missed;
+			}
+			return game_status;
 
 		case PotP_A_Items:
-			return Done(IsItemCollected(tracked));
+			// An item the game can take away for good, as Tiegr: missed by its facts until it's had
+			game_status = Done(IsItemCollected(tracked));
+			if (game_status == PotP_S_Available && IsMissedByFacts(tracked))
+			{
+				return PotP_S_Missed;
+			}
+			return game_status;
 
 		case PotP_A_Gwent:
 			return Done(IsCardCollected(tracked));

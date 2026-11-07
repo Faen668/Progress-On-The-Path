@@ -24,8 +24,11 @@ struct Settings
 	bool hideCompleted = false;
 	bool hideIgnored = false;
 	bool hideMissable = false;
-	bool revealUndiscovered = false;   // show bestiary entries before they're in the game's bestiary
-	bool revealHiddenAchievements = false;   // show the stores' secret ones before they're unlocked
+	bool revealUndiscovered = true;    // show bestiary entries before they're in the game's bestiary: everything shows until the player hides it
+	bool revealHiddenAchievements = true;    // show the stores' secret ones before they're unlocked
+	bool revealUncollected = true;   // items not found yet show their names, stats and models
+	bool revealUnstarted = true;     // quests not started yet show their names and tips
+	std::string revealedMissables;   // missable quests shown anyway while unstarted ones are hidden: their uuids, split by |
 	unsigned openKey = 0x72;       // F3
 	unsigned updateKey = 0x65;     // Numpad 5: runs a full update
 	float popupX = 0.f, popupY = 1.f;   // where the notification sits, 0 to 1 across the room there is: bottom left, as the game's

@@ -227,12 +227,20 @@ function PotPOverlay_ExportGear() : string
 // art if that's switched on. The menu treats a leader as having no type, and gives a neutral card the banner of the deck in use.
 function PotPOverlay_ItemFields(tracked: CPotP_Entry) : string
 {
+	var upgrade : string;
+
 	if (tracked.category != PotP_A_Items || tracked.item_name == '')
 	{
 		return "";
 	}
-	// A path, whose backslashes could read as the \n between lines (a folder starting with n)
-	return "|||||||" + PotPOverlay_Clean(StrReplaceAll(theGame.GetDefinitionsManager().GetItemEquipTemplate(tracked.item_name), StrChar(92), "/"));
+	// A path, whose backslashes could read as the \n between lines (a folder starting with n). A piece of witcher gear adds,
+	// four fields on, its upgrade: group~tier~tiers, so the overlay shows its tiers as one row.
+	upgrade = "";
+	if (tracked.upgrade_group != "")
+	{
+		upgrade = "||||" + tracked.upgrade_group + "~" + IntToString(tracked.upgrade_tier) + "~" + IntToString(tracked.upgrade_tiers);
+	}
+	return "|||||||" + PotPOverlay_Clean(StrReplaceAll(theGame.GetDefinitionsManager().GetItemEquipTemplate(tracked.item_name), StrChar(92), "/")) + upgrade;
 }
 
 // The paragraphs the game's bestiary shows (CR4GlossaryBestiaryMenu.GetDescription): those the journal has reached, in
@@ -763,6 +771,278 @@ function PotPOverlay_ItemSetLines(witcher: W3PlayerWitcher, item_name: name) : s
 	}
 	return result;
 }
+
+// What the game says about a card, with its own strings: faction, type, row and strength, as the deck builder's tooltips
+// have them, then every ability it has. Abilities go by the card's effect numbers (as PotPOverlay_CardFields sends them,
+// in the order of the Gwent menus' own list), not the scripts' effect names, which no longer line up with the engine's.
+// A leader's ability is its effect too (gwint_card_tooltip_ldr_...), not its description, which is its quote.
+// K|uuid|faction label|faction|faction number|type label|type|row label|row|strength label|strength|abilities label
+//   then a title and a text for each ability
+function PotPOverlay_CardStats(tracked: CPotP_Entry) : string
+{
+	var gwent		: CR4GwintManager = theGame.GetGwintManager();
+	var card		: SCardDefinition;
+	var faction		: string;
+	var kind		: string;
+	var row			: string;
+	var strength	: string;
+	var label		: string;
+	var abilities	: string;
+	var key			: string;
+	var flags		: int;
+	var effect		: int;
+	var Idx			: int;
+	var leader		: bool;
+
+	if (tracked.card_names.Size() == 0 || !gwent.GetGwentCard(tracked.card_names[0], card))
+	{
+		return "";
+	}
+	switch (card.faction)
+	{
+	case GwintFaction_Neutral:		faction = "gwint_faction_name_neutral"; break;
+	case GwintFaction_NoMansLand:	faction = "gwint_faction_name_no_mans_land"; break;
+	case GwintFaction_Nilfgaard:	faction = "gwint_faction_name_nilfgaard"; break;
+	case GwintFaction_NothernKingdom:	faction = "gwint_faction_name_northern_kingdom"; break;
+	case GwintFaction_Scoiatael:	faction = "gwint_faction_name_scoiatael"; break;
+	case GwintFaction_Skellige:		faction = "gwint_faction_name_skellige"; break;
+	}
+
+	flags = card.typeFlags;
+	leader = gwent.IsKingCard(card);
+	if (leader)
+	{
+		kind = GetLocStringByKeyExt("gwint_tooltip_card_type_leader");
+		label = GetLocStringByKeyExt("gwint_leader_ability");
+		for (Idx = 0; Idx < card.effectFlags.Size(); Idx += 1)
+		{
+			key = "";
+			switch ((int)card.effectFlags[Idx])
+			{
+			case 7: key = "ldr_melee_scorch"; break;
+			case 8: key = "ldr_eleventh_card"; break;
+			case 9: key = "ldr_clear_weather"; break;
+			case 10: key = "ldr_pick_weather"; break;
+			case 11: key = "ldr_pick_rain"; break;
+			case 12: key = "ldr_pick_fog"; break;
+			case 13: key = "ldr_pick_frost"; break;
+			case 14: key = "ldr_view_enemy"; break;
+			case 15: key = "ldr_resurect"; break;
+			case 16: key = "ldr_resurect_enemy"; break;
+			case 17: key = "ldr_bin_pick"; break;
+			case 18: key = "ldr_melee_horn"; break;
+			case 19: key = "ldr_range_horn"; break;
+			case 20: key = "ldr_siege_horn"; break;
+			case 21: key = "ldr_siege_scorch"; break;
+			case 22: key = "ldr_counter_king"; break;
+			case 36: key = "ldr_agile_reposition"; break;
+			case 37: key = "ldr_random_ressurect"; break;
+			case 38: key = "ldr_double_spy"; break;
+			case 39: key = "ldr_ranged_scorch"; break;
+			case 43: key = "ldr_weather_resistant"; break;
+			case 44: key = "ldr_graveyard_shuffle"; break;
+			}
+			abilities += PotPOverlay_CardAbility(key);
+		}
+	}
+	else
+	{
+		if ((flags & GwintType_Creature) == GwintType_Creature)
+		{
+			if ((flags & GwintType_Hero) == GwintType_Hero)
+			{
+				kind = GetLocStringByKeyExt("gwint_card_tooltip_hero_title");
+			}
+			else
+			{
+				kind = GetLocStringByKeyExt("gwint_tooltip_card_type_creature");
+			}
+			if ((flags & GwintType_Melee) == GwintType_Melee)
+			{
+				row = StrReplaceAll(GetLocStringByKeyExt("gwint_tutorial_unit_range_close"), "<br>", "");
+				if ((flags & GwintType_Ranged) == GwintType_Ranged)
+				{
+					row += ", " + StrReplaceAll(GetLocStringByKeyExt("gwint_tutorial_unit_range_long"), "<br>", "");
+				}
+			}
+			else if ((flags & GwintType_Ranged) == GwintType_Ranged)
+			{
+				row = StrReplaceAll(GetLocStringByKeyExt("gwint_tutorial_unit_range_long"), "<br>", "");
+			}
+			else if ((flags & GwintType_Siege) == GwintType_Siege)
+			{
+				row = StrReplaceAll(GetLocStringByKeyExt("gwint_tutorial_unit_range_siege"), "<br>", "");
+			}
+			strength = IntToString(card.power);
+			label = GetLocStringByKeyExt("gwint_tut_unitcardspecialability_title");
+
+			// What the unit is, before what it does: a hero, and one that can go in either row
+			if ((flags & GwintType_Hero) == GwintType_Hero)
+			{
+				abilities += PotPOverlay_CardAbility("hero");
+			}
+			if ((flags & GwintType_Ranged) == GwintType_Ranged && (flags & GwintType_Melee) == GwintType_Melee)
+			{
+				abilities += PotPOverlay_CardAbility("agile");
+			}
+		}
+		else
+		{
+			kind = GetLocStringByKeyExt("gwint_tooltip_card_type_special");
+			if ((flags & GwintType_Weather) == GwintType_Weather)
+			{
+				kind += ", " + GetLocStringByKeyExt("gwint_tooltip_card_type_weather");
+			}
+		}
+
+		for (Idx = 0; Idx < card.effectFlags.Size(); Idx += 1)
+		{
+			key = "";
+			effect = (int)card.effectFlags[Idx];
+			switch (effect)
+			{
+			case 31:
+				// Muster, unless it brings one card of its own: Roach, or Cerys's shield maidens
+				key = "summon_clones";
+				if (card.summonFlags.Contains('roach'))
+				{
+					key = "summon_roach";
+				}
+				else if (card.summonFlags.Size() > 0 && StrBeginsWith(NameToString(card.summonFlags[0]), "clan_drummond_shieldmaiden") && !StrBeginsWith(NameToString(card.cardName), "clan_drummond_shieldmaiden"))
+				{
+					key = "summon_sm";
+				}
+				break;
+			case 33: key = "nurse"; break;
+			case 34: key = "spy"; break;
+			case 35: key = "same_type_morale"; break;
+			case 32: key = "improve_neightbours"; break;
+			case 27: key = "horn"; break;
+			case 29: key = "scorch"; break;
+			case 41: key = "mushroom"; break;
+			case 42: key = "morph"; break;
+			case 40: key = "suicide_summon"; break;
+			case 26: key = "dummy"; break;
+			case 30: key = "clearsky"; break;
+			case 9: key = "clearsky"; break;
+			case 23: key = "frost"; break;
+			case 24:
+				key = "fog";
+				if (PotPOverlay_HasEffect(card, 25))
+				{
+					key = "skel_rain";
+				}
+				break;
+			case 25:
+				if (!PotPOverlay_HasEffect(card, 24))
+				{
+					key = "rain";
+				}
+				break;
+			// A unit's own Scorch, for its row: Villentretenmerth, the Toad, Schirru
+			case 7: key = "scorch_melee"; break;
+			case 39: key = "scorch_ranged"; break;
+			case 21: key = "scorch_siege"; break;
+			}
+			if (key == "scorch_melee" || key == "scorch_ranged" || key == "scorch_siege")
+			{
+				abilities += PotPOverlay_CardScorch(key);
+			}
+			else
+			{
+				abilities += PotPOverlay_CardAbility(key);
+			}
+		}
+	}
+	return "K|" + tracked.uuid
+		+ "|" + PotPOverlay_Clean(GetLocStringByKeyExt("gwint_tooltip_faction_header")) + "|" + PotPOverlay_Clean(GetLocStringByKeyExt(faction)) + "|" + IntToString((int)card.faction)
+		+ "|" + PotPOverlay_Clean(GetLocStringByKeyExt("gwint_tooltip_card_type")) + "|" + PotPOverlay_Clean(kind)
+		+ "|" + PotPOverlay_Clean(GetLocStringByKeyExt("gwint_tut_unitcardrange_title")) + "|" + PotPOverlay_Clean(row)
+		+ "|" + PotPOverlay_Clean(GetLocStringByKeyExt("gwint_tut_unitcardstrength_title")) + "|" + strength
+		+ "|" + PotPOverlay_Clean(label) + abilities;
+}
+
+// Whether a card has an effect, by its number
+function PotPOverlay_HasEffect(card: SCardDefinition, effect: int) : bool
+{
+	var Idx : int;
+
+	for (Idx = 0; Idx < card.effectFlags.Size(); Idx += 1)
+	{
+		if ((int)card.effectFlags[Idx] == effect)
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
+// One ability, as |title|text, from the game's gwint_card_tooltip_<key> strings; nothing if it has none
+function PotPOverlay_CardAbility(key: string) : string
+{
+	var title	: string;
+	var text	: string;
+
+	if (key == "")
+	{
+		return "";
+	}
+	title = PotPOverlay_GwentText("gwint_card_tooltip_" + key + "_title");
+	text = PotPOverlay_GwentText("gwint_card_tooltip_" + key);
+	if (title == "" && text == "")
+	{
+		return "";
+	}
+	return "|" + PotPOverlay_Clean(title) + "|" + PotPOverlay_Clean(text);
+}
+
+// A unit's own Scorch, for its row, as the game's strings for those cards have it
+function PotPOverlay_CardScorch(key: string) : string
+{
+	var text : string;
+
+	switch (key)
+	{
+	case "scorch_melee":	text = PotPOverlay_GwentText("gwint_card_villen_melee_scorch"); break;
+	case "scorch_ranged":	text = PotPOverlay_GwentText("gwint_card_ranged_scorch"); break;
+	default:				text = PotPOverlay_GwentText("gwint_card_siege_scorch"); break;
+	}
+	if (text == "")
+	{
+		text = PotPOverlay_GwentText("gwint_card_tooltip_scorch_creature");
+	}
+	return "|" + PotPOverlay_Clean(PotPOverlay_GwentText("gwint_card_tooltip_scorch_title")) + "|" + PotPOverlay_Clean(text);
+}
+
+// A Gwent string, or nothing if the game has none by that key
+function PotPOverlay_GwentText(key: string) : string
+{
+	var text : string = GetLocStringByKeyExt(key);
+
+	if (text == "" || StrBeginsWith(text, "#") || text == key)
+	{
+		return "";
+	}
+	return text;
+}
+
+exec function potpoverlay_cardstats(uuid_value: string)
+{
+	var main	: CPotP_Main = PotPOverlay_Main();
+	var tracked	: CPotP_Entry;
+
+	if (!main)
+	{
+		return;
+	}
+	tracked = main.catalog.FindByUuid(uuid_value);
+	if (tracked && tracked.category == PotP_A_Gwent)
+	{
+		main.notifications.QueueForOverlay(PotPOverlay_CardStats(tracked));
+	}
+}
+
+//---------------------------------------------------
 
 exec function potpoverlay_itemstats(uuid_value: string)
 {
