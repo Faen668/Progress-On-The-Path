@@ -890,6 +890,16 @@
 2116569383||potp_ov_area_8|The Spiral
 ;
 ;---------------------------------------------------
+;-- Reward swords
+;-- Pathfinder (steel) and Navigator (silver): their names and descriptions, as the item XML's localisation keys
+;-- (dlc/potp/data/gameplay/items/potp_reward_swords.xml).
+;---------------------------------------------------
+2116569417||potp_item_name_pathfinder|Pathfinder
+2116569418||potp_item_desc_pathfinder|A blackened steel blade with a gold compass rose at its guard, made for one who has walked every road. It keeps pace with whoever bears it.
+2116569419||potp_item_name_navigator|Navigator
+2116569420||potp_item_desc_navigator|A silver blade set with the north star and a sapphire, made for one who has followed every path to its end. It grows with whoever bears it.
+;
+;---------------------------------------------------
 ;-- The overlay's own text
 ;-- One line per string, potp_ov_<name>, used in the overlay as Tx(T_<name>). utility/gen-overlay-text.py makes the
 ;-- overlay's table and the scripts' list from this block: run it, or build the overlay, after changing it.
@@ -1487,4 +1497,4 @@
 2116569384||potp_ov_card_details|Card
 ;overlay-text-end
 ;
-; Next id: 2116569417
+; Next id: 2116569421

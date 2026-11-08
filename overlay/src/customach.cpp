@@ -739,6 +739,24 @@ namespace
 		return out.empty() ? "_20" : out;   // an empty argument would shift the rest
 	}
 
+	// An item's name as an exec line's name argument: bare when it's only letters, digits and _, else in single quotes,
+	// as the console takes additem('Lynx School steel sword 4'). Bare, a name with a space was cut at the space, so
+	// the scripts got an item that doesn't exist and the reward wasn't given.
+	std::string ItemArgument(const std::string& item)
+	{
+		if (item.empty())
+			return "None";
+		bool plain = true;
+		std::string quoted;
+		for (unsigned char c : item)
+		{
+			plain &= (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9') || c == '_';
+			if (c != '\'' && c >= 0x20)
+				quoted += static_cast<char>(c);
+		}
+		return plain ? item : "'" + quoted + "'";
+	}
+
 	std::vector<std::string> g_queue;   // exec lines still to send
 	size_t g_queueAt = 0;
 	ULONGLONG g_nextAnswer = 0, g_queuedAt = 0;
@@ -765,12 +783,12 @@ namespace
 		g_queueAt = 0;
 		g_queue.push_back("potpach_begin(" + std::to_string(g_generation) + ")");
 		for (const Probe& p : g_probes)
-			g_queue.push_back("potpach_probe(" + std::string(1, p.kind) + ", " + Encode(p.key) + ", " + (p.item.empty() ? std::string("None") : p.item) + ")");
+			g_queue.push_back("potpach_probe(" + std::string(1, p.kind) + ", " + Encode(p.key) + ", " + ItemArgument(p.item) + ")");
 		for (const CustomAch& a : g_achievements)
 		{
 			g_queue.push_back("potpach_define(" + Encode("potp_ach." + a.full) + ", " + Encode(a.retroactive ? std::string() : "potp_achseen." + a.full) + ")");
 			for (const Reward& r : a.rewards)
-				g_queue.push_back("potpach_reward(" + std::to_string(r.kind) + ", " + std::to_string(r.amount) + ", " + (r.item.empty() ? std::string("None") : r.item) + ")");
+				g_queue.push_back("potpach_reward(" + std::to_string(r.kind) + ", " + std::to_string(r.amount) + ", " + ItemArgument(r.item) + ")");
 		}
 		std::vector<Localised*> keyed = KeyedTexts();
 		for (const Localised* text : keyed)

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Progress on the Path's own achievement pack, shipped with the mod as mods\modProgressOnThePathNG\potp_achievements.xml
+  (utility/create-release.bat copies it there). The format is the one any mod's pack uses.
+  Both swords are White Orchard rewards, so they can be had before Velen; PotP keeps them at Geralt's level after
+  (scripts/local/rewards/RewardSwords.ws).
+-->
+<potpAchievements schemaVersion="1" id="potp">
+  <about>
+    <title>Progress on the Path</title>
+    <author>Faen90</author>
+    <version>8.0</version>
+    <minPotP>8.0</minPotP>
+  </about>
+
+  <!-- Every map location in White Orchard: each category's completion as PotP tracks it, so mod-added places count.
+       Not stashes: PotP tracks them only with dlcExtraStashes installed, and an empty section never counts as done. -->
+  <achievement id="pathfinder" icon="builtin:compass" ring="gold">
+    <title>Pathfinder</title>
+    <description>Find every place on White Orchard's map: its signposts, Places of Power, camps, treasures, nests and abandoned sites.</description>
+    <unlock>
+      <all>
+        <potpSection id="PotP_TrackingGroup_WorldMap_Signposts_WhiteOrchard" label="Signposts"/>
+        <potpSection id="PotP_TrackingGroup_WorldMap_PlacesOfPower_WhiteOrchard" label="Places of Power"/>
+        <potpSection id="PotP_TrackingGroup_WorldMap_BanditCamp_WhiteOrchard" label="Bandit camps"/>
+        <potpSection id="PotP_TrackingGroup_WorldMap_GuardedTreasure_WhiteOrchard" label="Guarded treasure"/>
+        <potpSection id="PotP_TrackingGroup_WorldMap_MonsterNests_WhiteOrchard" label="Monster nests"/>
+        <potpSection id="PotP_TrackingGroup_WorldMap_AbandonedSites_WhiteOrchard" label="Abandoned sites"/>
+      </all>
+    </unlock>
+    <progress conditions="true"/>
+    <reward>
+      <item name="PotP Pathfinder"/>
+      <crowns amount="150"/>
+      <experience amount="100"/>
+    </reward>
+  </achievement>
+
+  <!-- Every White Orchard quest but Faithful Friend, the epilogue only the Empress ending brings -->
+  <achievement id="navigator" icon="builtin:star" ring="gold">
+    <title>Navigator</title>
+    <description>Follow every quest in White Orchard to its end: the prologue, its side quests, the contract and the treasure hunts.</description>
+    <unlock>
+      <all>
+        <potpSection id="PotP_TrackingGroup_MainQuests_Prologue" label="Main quests: Prologue"/>
+        <potpEntry uuid="PotP_TrackingGroup_SideQuests_WhiteOrchard_01" label="A Frying Pan, Spick and Span"/>
+        <potpEntry uuid="PotP_TrackingGroup_SideQuests_WhiteOrchard_03" label="Missing in Action"/>
+        <potpEntry uuid="PotP_TrackingGroup_SideQuests_WhiteOrchard_04" label="On Death's Bed"/>
+        <potpEntry uuid="PotP_TrackingGroup_SideQuests_WhiteOrchard_05" label="Precious Cargo"/>
+        <potpEntry uuid="PotP_TrackingGroup_SideQuests_WhiteOrchard_06" label="Twisted Firestarter"/>
+        <potpSection id="PotP_TrackingGroup_ContractQuests_WhiteOrchard" label="Contract: Devil by the Well"/>
+        <potpSection id="PotP_TrackingGroup_TreasureHuntQuests_WhiteOrchard" label="Treasure hunts"/>
+      </all>
+    </unlock>
+    <progress conditions="true"/>
+    <reward>
+      <item name="PotP Navigator"/>
+      <crowns amount="150"/>
+      <experience amount="100"/>
+    </reward>
+  </achievement>
+</potpAchievements>

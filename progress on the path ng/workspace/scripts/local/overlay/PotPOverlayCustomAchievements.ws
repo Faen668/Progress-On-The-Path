@@ -490,6 +490,8 @@ function PotPAch_Give(prize: CPotPAch_Reward)
 			return;
 		}
 		witcher.GetInventory().AddAnItem(prize.item, prize.amount);
+		// PotP's own reward swords come in at Geralt's level, not the one below that the game builds them at
+		PotP_ScaleRewardSwords();
 		break;
 	case 2:
 		witcher.AddPoints(EExperiencePoint, prize.amount, true);

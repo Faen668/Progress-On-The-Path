@@ -318,3 +318,18 @@ function PotP_ConsoleWarning(group_number: int)
 	}
 	GetWitcherPlayer().DisplayHudMessage("PotP: no missable group " + header);
 }
+
+//---------------------------------------------------
+// The reward swords, for testing: gives Pathfinder and Navigator at Geralt's level, even if they've been given.
+
+exec function pt_reward_swords()
+{
+	PotP_GiveRewardSwords(true);
+	GetWitcherPlayer().DisplayHudMessage("PotP: Pathfinder and Navigator given at level " + GetWitcherPlayer().GetLevel());
+}
+
+// Scales them again, as on a load or level up.
+exec function pt_scale_reward_swords()
+{
+	PotP_ScaleRewardSwords();
+}

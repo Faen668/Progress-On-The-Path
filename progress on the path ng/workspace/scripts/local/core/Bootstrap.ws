@@ -16,6 +16,9 @@ var potp_main : CPotP_Main;
 		potp_main = new CPotP_Main in this;
 	}
 	potp_main.Start();
+
+	// The reward swords, kept at Geralt's level (rewards/RewardSwords.ws)
+	PotP_ScaleRewardSwords();
 }
 
 //---------------------------------------------------

@@ -170,3 +170,9 @@ function PotP_UsingCiriSoleMemento() : bool
 {
 	return theGame.GetDLCManager().IsDLCAvailable('dlc_solememento');
 }
+
+// The Essential Weapon Rework (modEssentialWeaponRework): its own string for Eredin's sword
+function PotP_UsingEssentialWeaponRework() : bool
+{
+	return StrLen(GetLocStringById(2115104001)) > 0;
+}

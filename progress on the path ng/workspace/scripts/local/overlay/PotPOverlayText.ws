@@ -1,4 +1,4 @@
-// Made by utility/gen-overlay-text.py from source/strings/en.csv. Change it there.
+﻿// Made by utility/gen-overlay-text.py from source/strings/en.csv. Change it there.
 // The overlay's own text, in the language the game is in. What comes back empty stays in English.
 
 function PotPOverlay_TextKeys_1(out keys: array<string>)

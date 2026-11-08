@@ -1,0 +1,184 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<redxml>
+<definitions>
+
+<!-- Progress on the Path's reward swords: Pathfinder (steel) and Navigator (silver). Relics in the vanilla pattern:
+     Autogen, so the game builds their damage for Geralt's level when they're given (AutogenForceLevel: exactly, no
+     random spread), then PotP's scripts keep them at his level (scripts/local/rewards/RewardSwords.ws). -->
+<abilities>
+
+	<ability name="PotP_Pathfinder_Stats">
+		<weight							type="base"	min="3.9"				/>
+		<quality						type="add"	min="4"		max="4"		/>
+		<SilverDamage					type="base"	min="1"					/>
+		<critical_hit_chance			type="add"	min="0.04"	max="0.06"	/>
+		<critical_hit_damage_bonus		type="add"	min="0.10"	max="0.15"	/>
+		<spell_power_aard				type="mult"	min="0.05"	max="0.08"	/>
+		<desc_bleedingchance_mult		type="add"	min="0.08"				/>
+		<buff_apply_chance				type="add"	min="0.08"				/>
+		<BleedingEffect					is_ability="true"					/>
+	</ability>
+
+	<ability name="PotP_Navigator_Stats">
+		<weight							type="base"	min="3.4"				/>
+		<quality						type="add"	min="4"		max="4"		/>
+		<SlashingDamage					type="base"	min="1"					/>
+		<spell_power_quen				type="mult"	min="0.05"	max="0.08"	/>
+		<spell_power_yrden				type="mult"	min="0.05"	max="0.08"	/>
+		<critical_hit_damage_bonus		type="add"	min="0.10"	max="0.15"	/>
+		<nonhuman_exp_bonus_when_fatal	type="add"	min="0.02"	max="0.03"	/>
+		<desc_freezingchance_mult		type="add"	min="0.06"				/>
+		<buff_apply_chance				type="add"	min="0.06"				/>
+		<SlowdownFrostEffect			is_ability="true"					/>
+	</ability>
+
+	<!-- Growth: one of these per level above 1 (to level 50), added and taken away by PotP's scaler as Geralt levels, so
+	     the perks keep pace as the damage does. The vanilla ones reach about a vanilla Grandmaster witcher sword at
+	     level 40 (its +11% crit chance, bleeding and Sign intensity); the EWR ones, used when The Essential Weapon
+	     Rework is installed, about its Grandmaster swords (+45% attack power, +50% Sign intensity, +75% crit damage). -->
+	<ability name="PotP_Pathfinder_Growth">
+		<critical_hit_chance			type="add"	min="0.0016"			/>
+		<critical_hit_damage_bonus		type="add"	min="0.0035"			/>
+		<spell_power_aard				type="mult"	min="0.0037"			/>
+		<desc_bleedingchance_mult		type="add"	min="0.001"				/>
+		<buff_apply_chance				type="add"	min="0.001"				/>
+	</ability>
+
+	<ability name="PotP_Pathfinder_Growth_EWR">
+		<attack_power					type="mult"	min="0.0105"			/>
+		<critical_hit_chance			type="add"	min="0.0022"			/>
+		<critical_hit_damage_bonus		type="add"	min="0.016"				/>
+		<spell_power_aard				type="mult"	min="0.0115"			/>
+		<desc_bleedingchance_mult		type="add"	min="0.003"				/>
+		<buff_apply_chance				type="add"	min="0.003"				/>
+	</ability>
+
+	<ability name="PotP_Navigator_Growth">
+		<spell_power_quen				type="mult"	min="0.0037"			/>
+		<spell_power_yrden				type="mult"	min="0.0037"			/>
+		<critical_hit_damage_bonus		type="add"	min="0.0035"			/>
+		<nonhuman_exp_bonus_when_fatal	type="add"	min="0.002"				/>
+		<desc_freezingchance_mult		type="add"	min="0.0015"			/>
+		<buff_apply_chance				type="add"	min="0.0015"			/>
+	</ability>
+
+	<ability name="PotP_Navigator_Growth_EWR">
+		<attack_power					type="mult"	min="0.0105"			/>
+		<spell_power_quen				type="mult"	min="0.0115"			/>
+		<spell_power_yrden				type="mult"	min="0.0115"			/>
+		<critical_hit_damage_bonus		type="add"	min="0.016"				/>
+		<nonhuman_exp_bonus_when_fatal	type="add"	min="0.0056"			/>
+		<desc_freezingchance_mult		type="add"	min="0.0036"			/>
+		<buff_apply_chance				type="add"	min="0.0036"			/>
+	</ability>
+
+</abilities>
+
+<items>
+
+	<item
+		name							="PotP Pathfinder"
+		category						="steelsword"
+		price							="420"
+		initial_durability				="100"
+		max_durability					="100"
+		enhancement_slots				="3"
+		stackable						="1"
+		grid_size						="2"
+		equip_template					="potp_pathfinder"
+		equip_slot						="steel_sword_back_slot"
+		hold_slot						="r_weapon"
+		weapon							="true"
+		lethal							="true"
+		ability_mode					="OnHold"
+		hand							="right"
+		sound_identification			="long steel"
+		draw_event						="DrawWeapon"
+		draw_act						="draw_steel_sword_back_act"
+		draw_deact						="draw_steel_sword_back_deact"
+		holster_event					="HolsterWeapon"
+		holster_act						="holster_steel_sword_back_act"
+		holster_deact					="holster_steel_sword_back_deact"
+		localisation_key_name			="potp_item_name_pathfinder"
+		localisation_key_description	="potp_item_desc_pathfinder"
+		icon_path						="icons/inventory/weapons/potp_pathfinder_64x128.png"
+	>
+		<tags>							Autogen, AutogenForceLevel, PlayerSteelWeapon, Weapon, sword1h, 1handedWeapon, mod_weapon, mod_legendary
+		</tags>
+		<base_abilities>				<a>PotP_Pathfinder_Stats</a>
+		</base_abilities>
+		<recycling_parts>				<parts count="1">Leather squares</parts>
+										<parts count="2">Dark steel ingot</parts>
+										<parts count="1">Amber dust</parts>
+		</recycling_parts>
+		<anim_actions>
+			<action name="draw" event="DrawWeapon" act="draw_steel_sword_back_act" deact="draw_steel_sword_back_deact"></action>
+			<action name="holster" event="HolsterWeapon" act="holster_steel_sword_back_act" deact="holster_steel_sword_back_deact"></action>
+			<action name="attack" event="attack_steel_sword_back" act="attack_steel_sword_back_act" deact="attack_steel_sword_back_deact"></action>
+		</anim_actions>
+		<anim_switches>
+			<anim_switch category="silversword" equip_slot="silver_sword_back_slot" event="silver_to_steel" switch_act="silver_to_steel_act" switch_deact="silver_to_steel_deact"></anim_switch>
+		</anim_switches>
+		<player_override><bound_items>	<item>PotP Pathfinder scabbard</item>
+		</bound_items></player_override>
+	</item>
+
+	<item
+		name							="PotP Navigator"
+		category						="silversword"
+		price							="470"
+		initial_durability				="100"
+		max_durability					="100"
+		enhancement_slots				="3"
+		stackable						="1"
+		grid_size						="2"
+		equip_template					="potp_navigator"
+		equip_slot						="silver_sword_back_slot"
+		hold_slot						="r_weapon"
+		weapon							="true"
+		lethal							="true"
+		ability_mode					="OnHold"
+		hand							="right"
+		sound_identification			="long steel"
+		draw_event						="DrawWeapon"
+		draw_act						="draw_steel_sword_back_act"
+		draw_deact						="draw_steel_sword_back_deact"
+		holster_event					="HolsterWeapon"
+		holster_act						="holster_steel_sword_back_act"
+		holster_deact					="holster_steel_sword_back_deact"
+		localisation_key_name			="potp_item_name_navigator"
+		localisation_key_description	="potp_item_desc_navigator"
+		icon_path						="icons/inventory/weapons/potp_navigator_64x128.png"
+	>
+		<tags>							Autogen, AutogenForceLevel, PlayerSilverWeapon, Weapon, sword1h, 1handedWeapon, mod_weapon, mod_legendary
+		</tags>
+		<base_abilities>				<a>PotP_Navigator_Stats</a>
+		</base_abilities>
+		<recycling_parts>				<parts count="1">Leather</parts>
+										<parts count="3">Silver ingot</parts>
+										<parts count="1">Sapphire dust</parts>
+		</recycling_parts>
+		<anim_actions>
+			<action name="draw" event="DrawWeapon" act="draw_steel_sword_back_act" deact="draw_steel_sword_back_deact"></action>
+			<action name="holster" event="HolsterWeapon" act="holster_steel_sword_back_act" deact="holster_steel_sword_back_deact"></action>
+			<action name="attack" event="attack_steel_sword_back" act="attack_steel_sword_back_act" deact="attack_steel_sword_back_deact"></action>
+		</anim_actions>
+		<anim_switches>
+			<anim_switch category="steelsword" equip_slot="silver_sword_back_slot" event="silver_to_steel" switch_act="silver_to_steel_act" switch_deact="silver_to_steel_deact"></anim_switch>
+			<anim_switch category="steelsword" equip_slot="steel_sword_back_slot" event="steel_to_silver" switch_act="steel_to_silver_act" switch_deact="steel_to_silver_deact"></anim_switch>
+		</anim_switches>
+		<player_override><bound_items>	<item>PotP Navigator scabbard</item>
+		</bound_items></player_override>
+	</item>
+
+	<item name="PotP Pathfinder scabbard" category="steel_scabbards" equip_template="potp_pathfinder_scabbard" attachment_type="skinning">
+		<tags>NoShow,NoDrop,EncumbranceOff</tags><base_abilities></base_abilities>
+	</item>
+	<item name="PotP Navigator scabbard" category="silver_scabbards" equip_template="potp_navigator_scabbard" attachment_type="skinning">
+		<tags>NoShow,NoDrop,EncumbranceOff</tags><base_abilities></base_abilities>
+	</item>
+
+</items>
+
+</definitions>
+</redxml>
