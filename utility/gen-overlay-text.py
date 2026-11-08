@@ -19,14 +19,16 @@ WS = os.path.join(TOP, 'progress on the path ng', 'workspace', 'scripts', 'local
 PREFIX = 'potp_ov_'
 
 
-def write_if_changed(path, text):
+def write_if_changed(path, text, bom=False):
+    # bom: the scripts keep the UTF-8 BOM REDkit gives them, which the game needs; read with it stripped to compare
+    encoding = 'utf-8-sig' if bom else 'utf-8'
     try:
         with open(path, encoding='utf-8', newline='') as f:
-            if f.read() == text:
+            if f.read() == ('﻿' if bom else '') + text:
                 return
     except FileNotFoundError:
         pass
-    with open(path, 'w', encoding='utf-8', newline='') as f:
+    with open(path, 'w', encoding=encoding, newline='') as f:
         f.write(text)
     print('wrote', os.path.relpath(path, TOP))
 
@@ -74,7 +76,7 @@ def main():
     ws += '\t\ttext = GetLocStringByKeyExt("' + PREFIX + '" + keys[Idx]);\n'
     ws += '\t\tif (text != "" && !StrStartsWith(text, "#"))\n\t\t{\n'
     ws += '\t\t\tresult += "\\nT|" + keys[Idx] + "|" + PotPOverlay_Clean(text);\n\t\t}\n\t}\n\treturn result;\n}\n'
-    write_if_changed(WS, ws)
+    write_if_changed(WS, ws, bom=True)
 
 
 main()

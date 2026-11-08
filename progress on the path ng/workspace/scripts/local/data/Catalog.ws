@@ -27,6 +27,7 @@ statemachine class CPotP_Catalog
 	var missable_tips		: array<string>;
 	var quest_blocks		: array<SPotP_QuestBlock>;   // vanilla blocks that move events on, heard through Native Quest Hook
 	var event_kills			: array<SPotP_EventKill>;    // deaths that finish events, for events without quest blocks
+	var events_near			: array<CPotP_Entry>;      // events begun by coming near their pin (AddEventOpenedNear)
 
 	var current_section		: CPotP_Section;
 	var pending				: array<CPotP_Entry>;
@@ -73,6 +74,7 @@ statemachine class CPotP_Catalog
 		missable_tips.Clear();
 		quest_blocks.Clear();
 		event_kills.Clear();
+		events_near.Clear();
 		pending.Clear();
 		current_section = NULL;
 
@@ -263,6 +265,29 @@ statemachine class CPotP_Catalog
 		quest_blocks.PushBack(block);
 		tracked.lore_outcomes.PushBack(paid);
 		tracked.lore_outcomes.PushBack(unpaid);
+	}
+
+	// The vanilla block that shows Geralt has come upon the event added just before, as BIA's "met" facts are set:
+	// its opening shows from then on. Events stay not started until they're done, so this is what begins their story.
+	public function AddEventOpened(guid: string, output: string)
+	{
+		var block : SPotP_QuestBlock;
+
+		block.guid = StrLower(guid);
+		block.output = output;
+		block.kind = PotP_QB_Opened;
+		block.tracked = pending[pending.Size() - 1];
+		quest_blocks.PushBack(block);
+	}
+
+	// For an event with no quest block to tell he's come upon it, as Call of the Wild's encounter has none: begun
+	// once he's within this many metres of its pin, in its region, in its hours
+	public function AddEventOpenedNear(radius: float)
+	{
+		var tracked : CPotP_Entry = pending[pending.Size() - 1];
+
+		tracked.opened_radius = radius;
+		events_near.PushBack(tracked);
 	}
 
 	// What came of an event that's done by a kill, not a quest block: told once it counts as done

@@ -36,6 +36,7 @@ class CPotP_Entry
 	var lore_title		: int;		// an event's journal title in Brothers In Arms' Events, whose journal tells its story
 	var lore_outcomes	: array<int>;	// the BIA string ids of what can come of an event, in the order they're told
 	var lore_done		: int;			// what came of it once it's done, when no quest block tells it apart
+	var opened_radius	: float;		// begun once he's this close to its pin, in its hours, where no quest block tells
 
 	var missed_fact		: string;
 	var missed_unless	: string;		// not missed after all if this fact is set

@@ -4206,14 +4206,16 @@ namespace
 		{
 			std::vector<std::string> lore;
 			const float textW = mx1 - mx0 - 24;
-			// Not started, or never taken up: the journal has nothing yet, and its first page would give the quest away
-			const bool have = e->status != kAvailable && QuestLore(*e, lore);
-			if (e->status == kAvailable || (have && lore.empty()))
+			// Not started, or never taken up: the journal has nothing yet, and its first page would give the quest away.
+			// Asked even when it says not started, as random events do until they're done: the scripts know if he's come
+			// upon one. While the answer's on its way, a not started one shows nothing rather than the reading line.
+			const bool have = QuestLore(*e, lore);
+			if (have && lore.empty())
 			{
 				Text(kSerif, 30, mx0 + 12, y, kDim, Tx(T_lore_not_started), textW);
 				y += WrappedHeight(kSerif, 30, Tx(T_lore_not_started), textW) + 22.f;
 			}
-			else if (!have)
+			else if (!have && e->status != kAvailable)
 			{
 				Text(kSerif, 28, mx0 + 12, y, kDim, Tx(T_reading));
 				y += 52.f;

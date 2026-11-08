@@ -12,6 +12,7 @@ enum EPotP_QuestBlockKind
 	PotP_QB_Missed	= 3,
 	PotP_QB_Outcome	= 4,
 	PotP_QB_OutcomePaid	= 5,
+	PotP_QB_Opened	= 6,
 }
 
 struct SPotP_QuestBlock
@@ -131,6 +132,15 @@ class CPotP_QuestListener extends CNQH_Listener
 				HearPaid(block);
 				continue;
 			}
+			if (block.kind == PotP_QB_Opened)
+			{
+				if (!FactsDoesExist(PotP_OpenedFact(block.tracked)))
+				{
+					FactsAdd(PotP_OpenedFact(block.tracked), 1);
+					PotP_Log("Opened " + block.tracked.entry_name, 'QuestHook');
+				}
+				continue;
+			}
 
 			PotP_Log("Block " + guid + " fired " + fired + ": " + block.kind + " for " + block.tracked.entry_name, 'QuestHook');
 			switch (block.kind)
@@ -207,6 +217,11 @@ function PotP_KeepOutcome(paragraph: int, tracked: CPotP_Entry)
 		FactsAdd(PotP_OutcomeFact(paragraph), 1);
 		PotP_Log("Outcome " + paragraph + " for " + tracked.entry_name, 'QuestHook');
 	}
+}
+
+function PotP_OpenedFact(tracked: CPotP_Entry) : string
+{
+	return "potp_opened_" + tracked.uuid;
 }
 
 function PotP_OutcomeFact(paragraph: int) : string

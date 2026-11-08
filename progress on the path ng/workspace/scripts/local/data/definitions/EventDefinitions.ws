@@ -18,6 +18,7 @@ function PotP_DefineEvents_01(catalog: CPotP_Catalog)
 	//-- At the Mercy of Strangers -------------------------
 	catalog.AddEvent("_01", PotP_E_Primary, PotP_R_VE, true, "no_mans_land", "PotP_Event_AtTheMercyOfStrangers_1_NG", Vector(641.454102, 533.142456));
 	catalog.AddEventLore(74880073);
+	catalog.AddEventOpened("64eacdcf-6084-4248-8aa1-14d5574025e0", "None");                                    // from BIA's "met" fact: Geralt has come upon it
 	catalog.AddEventOutcome("4f6a4f44-3e1a-40f4-bd24-ebb2b16f1232", "None", 74880075);                // PauseCondition, from BIA's mq1036_deserter_ignored
 	catalog.AddEventOutcome("4b435b43-30c2-40d8-9eae-08df8d1b7df9", "Help", 74880076);                // InteractionDialog, from BIA's mq1036_deserter_helped
 	catalog.AddEventFacts("mq1036_deserter_helped", "mq1036_deserter_ignored", "mq1036_quest_done");
@@ -28,6 +29,8 @@ function PotP_DefineEvents_01(catalog: CPotP_Catalog)
 	//-- Caravan Attack ------------------------------------
 	catalog.AddEvent("_02", PotP_E_Primary, PotP_R_VE, true, "no_mans_land", "PotP_Event_CaravanAttack_NG_1", Vector(1311.539551, 404.800537));
 	catalog.AddEventLore(74880016);
+	catalog.AddEventOpened("68ba607a-5c74-4912-8281-25449889b484", "mq1011_merchant_01");                      // from BIA's "met" fact: Geralt has come upon it
+	catalog.AddEventOpened("68ba607a-5c74-4912-8281-25449889b484", "mq1011_merchant_02");                      // from BIA's "met" fact: Geralt has come upon it
 	catalog.AddEventOutcome("d57df9c6-3484-4d7e-a9de-41fa2c893afd", "False", 74880018);               // Condition, from BIA's mq1011_merchants_helped
 	catalog.AddEventOutcome("1eede45f-daf7-4882-80c4-19cfd17a0c57", "None", 74880019);                // PauseCondition, from BIA's mq1011_merchants_ignored
 	catalog.AddEventOutcome("d57df9c6-3484-4d7e-a9de-41fa2c893afd", "True", 74880020);                // Condition, from BIA's mq1011_everyone_dead
@@ -51,6 +54,7 @@ function PotP_DefineEvents_01(catalog: CPotP_Catalog)
 	//-- The Troll Bridge Crossing -------------------------
 	catalog.AddEvent("_03", PotP_E_Primary, PotP_R_VE, true, "no_mans_land", "PotP_Event_DeadlyCrossing_3_NG", Vector(-29.826519, -101.255219));
 	catalog.AddEventLore(74880098);
+	catalog.AddEventOpened("4ad83091-1663-46d9-b489-883156f70e34", "None");                                    // from BIA's "met" fact: Geralt has come upon it
 	catalog.AddEventOutcomePaid("8e9b189d-5855-4c9c-849e-bd92228c62d9", "pay", 74880101, 74880102);   // Scene: paid the toll, or the Axii Sign
 	catalog.AddEventOutcome("8e9b189d-5855-4c9c-849e-bd92228c62d9", "don't pay", 74880100);           // Scene, from BIA's mq1037_3_bandits_killed
 	catalog.AddEventFacts("mq1037_3_bandits_killed", "mq1037_lower_bridge", "mq1037_3_bandits_axii", "mq1037_3_bandits_pay", "mq1037_3_quest_done");
@@ -61,6 +65,7 @@ function PotP_DefineEvents_01(catalog: CPotP_Catalog)
 	//-- The Crossing of Lindenvale ------------------------
 	catalog.AddEvent("_04", PotP_E_Primary, PotP_R_VE, false, "no_mans_land", "PotP_Event_DeadlyCrossing_1_NG", Vector(794.722107, 266.272644));
 	catalog.AddEventLore(74880082);
+	catalog.AddEventOpened("5f7a95ca-65f9-4296-8716-3ab1afd495d7", "None");                                    // from BIA's "met" fact: Geralt has come upon it
 	catalog.AddEventOutcome("fe28418c-a02f-4257-adcf-a989a547f042", "buy", 74880084);                 // InteractionDialog, from BIA's mq1037_1_bought_sword
 	catalog.AddEventOutcome("9ed3d89e-b2e1-4954-836d-b8178bfa33f0", "Out", 74880087);                 // LayersHider, from BIA's mq1037_1_ignored
 	catalog.AddEventOutcome("fe28418c-a02f-4257-adcf-a989a547f042", "don't buy", 74880088);           // InteractionDialog, from BIA's mq1037_1_no_deal
@@ -77,6 +82,7 @@ function PotP_DefineEvents_01(catalog: CPotP_Catalog)
 	//-- A Most Deadly Crossing ----------------------------
 	catalog.AddEvent("_05", PotP_E_Primary, PotP_R_VE, true, "no_mans_land", "PotP_Event_DeadlyCrossing_2_NG", Vector(1087.826294, -295.390381));
 	catalog.AddEventLore(74880092);
+	catalog.AddEventOpened("807fb6c5-1f0b-4b33-854a-3413a14a12d7", "None");                                    // from BIA's "met" fact: Geralt has come upon it
 	catalog.AddEventOutcome("14ea332c-9f81-4e47-8c95-2706688eb2b5", "Out", 74880094);                 // Script, from BIA's mq1037_2_bandits_killed
 	catalog.AddEventOutcome("eab1e223-94a8-4bdb-bb98-153910f7ed6d", "Out", 74880095);                 // Script, from BIA's mq1037_2_bandits_ignored
 	catalog.AddEventFacts("mq1037_2_bandits_ignored", "mq1037_2_bandits_killed", "mq1037_2_quest_done");
@@ -86,6 +92,7 @@ function PotP_DefineEvents_01(catalog: CPotP_Catalog)
 	//-- Face Me if You Dare! ------------------------------
 	catalog.AddEvent("_06", PotP_E_Primary, PotP_R_VE, true, "no_mans_land", "PotP_Event_FaceMeIfYouDare_1_NG", Vector(213.855240, -32.358776));
 	catalog.AddEventLore(74880054);
+	catalog.AddEventOpened("217cb17e-a6f1-4211-b448-7c726ddbc4d7", "None");                                    // from BIA's "met" fact: Geralt has come upon it
 	catalog.AddEventOutcome("19bca412-af37-4fbd-b740-e810734a7093", "Out", 74880056);                 // Reward, from BIA's mq1033_1st_encounter_done
 	catalog.AddEventFacts("mq1033_1st_encounter_done", "mq1033_quest_done");
 	// Quest blocks in mq1033_face_me_if_you_dare
@@ -94,6 +101,7 @@ function PotP_DefineEvents_01(catalog: CPotP_Catalog)
 	//-- Harassing a Troll ---------------------------------
 	catalog.AddEvent("_07", PotP_E_Primary, PotP_R_VE, true, "no_mans_land", "PotP_Event_HarassingATroll_NG", Vector(138.532272, 811.463623));
 	catalog.AddEventLore(74880001);
+	catalog.AddEventOpened("ce0f83ff-7e9c-4d35-9408-937b0a743b96", "Out");                                     // from BIA's "met" fact: Geralt has come upon it
 	catalog.AddEventOutcome("e1748759-44ea-41c2-8f38-090e1185fb3f", "Ignored", 74880005);   // Phase "Approach": left the troll to it
 	catalog.AddEventOutcome("687825eb-19d9-4759-831e-088ac39bb5fe", "Out", 74880004);                 // Reward, from BIA's mq1006_helped
 	catalog.AddEventOutcome("6c445bd9-9f00-49a9-8afd-79a8df027711", "Out", 74880004);                 // Reward, from BIA's mq1006_helped
@@ -107,6 +115,7 @@ function PotP_DefineEvents_01(catalog: CPotP_Catalog)
 	//-- Highway Robbery -----------------------------------
 	catalog.AddEvent("_08", PotP_E_Primary, PotP_R_VE, true, "no_mans_land", "PotP_Event_HighwayRobbery_NG", Vector(300.595459, -135.326324));
 	catalog.AddEventLore(74880130);
+	catalog.AddEventOpened("c8c60f9a-2553-4a67-85ff-04ae02c72242", "None");                                    // from BIA's "met" fact: Geralt has come upon it
 	catalog.AddEventOutcome("446c30e5-5055-4ded-a3b6-7c55c0eb14d7", "Out", 74880132);                 // And, from BIA's mq1044_bandits_killed
 	catalog.AddEventFacts("mq1044_bandits_killed", "mq1044_quest_done");
 	// Quest blocks in mq1044_highway_robbery
@@ -115,6 +124,7 @@ function PotP_DefineEvents_01(catalog: CPotP_Catalog)
 	//-- Highwayman's Cache --------------------------------
 	catalog.AddEvent("_09", PotP_E_Primary, PotP_R_VE, true, "no_mans_land", "PotP_Event_HighwaymansCache_NG", Vector(519.180176, -212.923065));
 	catalog.AddEventLore(74880124);
+	catalog.AddEventOpened("6045863b-a016-4651-bbc5-e723d1c2fc11", "None");                                    // from BIA's "met" fact: Geralt has come upon it
 	catalog.AddEventOutcome("e7e2d7d4-f58e-45c0-a7b4-bf2119d2afe7", "None", 74880126);                // PauseCondition, from BIA's mq1043_bandits_killed
 	catalog.AddEventOutcome("5271c7e9-60a1-46c6-abe5-19c72da33730", "peace", 74880127);               // Scene, from BIA's mq1043_peaceful
 	catalog.AddEventFacts("mq1043_bandits_killed", "mq1043_completed", "mq1043_peaceful", "mq1043_quest_done");
@@ -125,6 +135,7 @@ function PotP_DefineEvents_01(catalog: CPotP_Catalog)
 	//-- Heatherton Looters --------------------------------
 	catalog.AddEvent("_10", PotP_E_Primary, PotP_R_VE, true, "no_mans_land", "PotP_Event_LootersHeatherton_NG", Vector(151.509430, 508.062775));
 	catalog.AddEventLore(74880025);
+	catalog.AddEventOpened("925f38a1-2379-4c8a-b010-6460be00bcf5", "None");                                    // from BIA's "met" fact: Geralt has come upon it
 	catalog.AddEventOutcome("14ef9fe4-0dd2-471a-ac1d-be735e98e4fe", "Out", 74880027);                 // Reward, from BIA's mq1014_looters_1_killed
 	catalog.AddEventOutcome("1ecb9b14-1416-4f5d-9872-13f879bba316", "Out_Calm", 74880028);            // Phase, from BIA's mq1014_looters_1_ignored
 	catalog.AddEventOutcome("ebe3e8ca-b3df-4842-9986-926ec78226eb", "Out", 74880028);                 // LayersHider, from BIA's mq1014_looters_1_ignored
@@ -137,6 +148,7 @@ function PotP_DefineEvents_01(catalog: CPotP_Catalog)
 	//-- Codgers' Quarry Looters ---------------------------
 	catalog.AddEvent("_11", PotP_E_Primary, PotP_R_VE, true, "no_mans_land", "PotP_Event_LootersCodgersQuarry_NG", Vector(1221.132690, 831.181274));
 	catalog.AddEventLore(74880037);
+	catalog.AddEventOpened("535b7110-568f-4c47-8119-5b9e5c16d6cf", "None");                                    // from BIA's "met" fact: Geralt has come upon it
 	catalog.AddEventOutcome("1c9be2c8-2de7-4f1d-925b-c7925b5ab841", "Out", 74880040);                 // StoryPhaseSetter, from BIA's mq1014_looters_3_ignored
 	catalog.AddEventOutcome("255781ec-5366-48e1-b74c-48268e2ee304", "Out", 74880040);                 // LayersHider, from BIA's mq1014_looters_3_ignored
 	catalog.AddEventOutcome("49a30edc-f8c6-4631-8755-02cc34d2561a", "Out", 74880041);                 // Phase, from BIA's mq1014_looters_3_killed
@@ -153,6 +165,7 @@ function PotP_DefineEvents_01(catalog: CPotP_Catalog)
 	//-- Toderas Looters -----------------------------------
 	catalog.AddEvent("_12", PotP_E_Primary, PotP_R_VE, true, "no_mans_land", "PotP_Event_LootersToderas_NG", Vector(1720.736694, 67.942719));
 	catalog.AddEventLore(74880031);
+	catalog.AddEventOpened("79ededae-2cd4-4614-99e6-a521768c6ea4", "None");                                    // from BIA's "met" fact: Geralt has come upon it
 	catalog.AddEventOutcome("24127b5f-eba8-4a28-b803-31a4d01aedad", "Out", 74880033);                 // Reward, from BIA's mq1014_looters_2_killed
 	catalog.AddEventOutcome("f26d543a-bb40-4027-b117-7193caa1e89e", "None", 74880034);                // PauseCondition, from BIA's mq1014_looters_2_ignored
 	catalog.AddEventFacts("mq1014_enc_02_geralt_killed_bandits", "mq1014_looters_2_ignored", "mq1014_looters_2_killed", "mq1014_2_quest_done");
@@ -163,6 +176,7 @@ function PotP_DefineEvents_01(catalog: CPotP_Catalog)
 	//-- Man's Best Friend ---------------------------------
 	catalog.AddEvent("_13", PotP_E_Primary, PotP_R_VE, true, "no_mans_land", "PotP_Event_MansBestFriend_NG", Vector(643.049805, 799.665344));
 	catalog.AddEventLore(74880105);
+	catalog.AddEventOpened("f4d2fcee-f558-4dfe-ba3a-7e48317f3c41", "None");                                    // from BIA's "met" fact: Geralt has come upon it
 	catalog.AddEventOutcome("be22f386-b385-4611-9c8a-71fe532688ed", "NoItem", 74880107);              // Scene, from BIA's mq1038_no_item
 	catalog.AddEventOutcome("be22f386-b385-4611-9c8a-71fe532688ed", "GiveItem", 74880108);            // Scene, from BIA's mq1038_give_item
 	catalog.AddEventOutcome("a397982b-7a74-44dc-b763-7ad97156f1fb", "Out", 74880109);                 // Script, from BIA's mq1038_ignored
@@ -182,6 +196,7 @@ function PotP_DefineEvents_02(catalog: CPotP_Catalog)
 	//-- A Warm Welcome ------------------------------------
 	catalog.AddEvent("_01", PotP_E_Primary, PotP_R_NO, true, "no_mans_land", "PotP_Event_AWarmWelcome_NG", Vector(1347.046143, 1591.817261));
 	catalog.AddEventLore(74880046);
+	catalog.AddEventOpened("5b7a1fde-2140-4fa8-9f9c-583cb9bda6b8", "None");                                    // from BIA's "met" fact: Geralt has come upon it
 	catalog.AddEventOutcome("6c6c84a2-4a55-467b-a0ab-8a4c9557fad5", "Not_Liberate", 74880048);        // Scene, from BIA's mq1026_refugees_ignored
 	catalog.AddEventOutcome("ab6150be-23df-4fe1-ba0d-95aefea18463", "Out", 74880048);                 // StoryPhaseSetter, from BIA's mq1026_refugees_ignored
 	catalog.AddEventOutcome("7579ad82-1b51-41e0-97db-da1c7aa26fd3", "Out", 74880049);                 // Reward, from BIA's mq1026_guards_killed
@@ -208,6 +223,7 @@ function PotP_DefineEvents_02(catalog: CPotP_Catalog)
 	//-- Drunken Rabble ------------------------------------
 	catalog.AddEvent("_03", PotP_E_Primary, PotP_R_NO, true, "no_mans_land", "PotP_Event_DrunkenRabble_NG", Vector(543.444885, 1839.808228));
 	catalog.AddEventLore(74880008);
+	catalog.AddEventOpened("27e9af27-bc4a-4c58-987f-4ca1dc38ee86", "Out");                                     // from BIA's "met" fact: Geralt has come upon it
 	catalog.AddEventOutcome("a4ee6146-6665-41d1-a336-0754f1e8abcc", "Out", 74880010);                 // Checkpoint, from BIA's mq1007_drunks_axii
 	catalog.AddEventOutcome("59267aaf-e087-4d63-b8ce-03023710c2a1", "Out", 74880011);                 // Checkpoint, from BIA's mq1007_drunks_pay
 	catalog.AddEventOutcome("1892ffab-a4ba-4c51-887f-db4e082811a9", "Success", 74880012);             // GraphMinigame, from BIA's mq1007_fistfight_won
@@ -244,6 +260,7 @@ function PotP_DefineEvents_02(catalog: CPotP_Catalog)
 	//-- Karmic Justice ------------------------------------
 	catalog.AddEvent("_06", PotP_E_Primary, PotP_R_NO, true, "no_mans_land", "PotP_Event_KarmicJustice_NG", Vector(862.002502, 1831.773438), 21, 4); //Night only, 21:00 - 04:00
 	catalog.AddEventLore(74880066);
+	catalog.AddEventOpened("f3697d89-8ff8-46fb-b4bb-1b6bd9d678d6", "Out");                                     // from BIA's "met" fact: Geralt has come upon it
 	catalog.AddEventOutcome("7e521823-a1bf-4416-a7ac-2b00802baf4c", "None", 74880068);                // PauseCondition, from BIA's mq1035_merchant_ignored
 	catalog.AddEventOutcome("ecf91264-73d6-4a22-8aa4-b08a01935ea4", "Out", 74880068);                 // Script, from BIA's mq1035_merchant_ignored
 	catalog.AddEventOutcome("18627fd7-b234-467a-a2e8-68f885622724", "True", 74880069);                // Condition, from BIA's mq1035_elves_killed_merchant_alive
@@ -258,6 +275,7 @@ function PotP_DefineEvents_02(catalog: CPotP_Catalog)
 	//-- Never Trust Children ------------------------------
 	catalog.AddEvent("_07", PotP_E_Primary, PotP_R_NO, true, "no_mans_land", "PotP_Event_NeverTrustChildren_NG", Vector(765.527771, 1932.638062));
 	catalog.AddEventLore(74880135);
+	catalog.AddEventOpened("5b7f4dcc-1c2f-4a94-99a4-471bbd1480cc", "None");                                    // from BIA's "met" fact: Geralt has come upon it
 	catalog.AddEventOutcome("13c619de-d409-4370-ad05-eefaa31907c0", "Out", 74880137);                 // Phase, from BIA's mq3001_bandits_killed
 	catalog.AddEventOutcome("63c481df-0195-440e-9b21-9b03598357a4", "Out", 74880138);                 // Script, from BIA's mq3001_ignored
 	catalog.AddEventFacts("mq3001_bandits_killed", "mq3001_ignored", "mq3001_quest_done");
@@ -268,6 +286,7 @@ function PotP_DefineEvents_02(catalog: CPotP_Catalog)
 	//-- Dye Pit Racists -----------------------------------
 	catalog.AddEvent("_08", PotP_E_Primary, PotP_R_NO, false, "no_mans_land", "PotP_Event_RacistsOfNovigradFC_NG", Vector(858.879944, 1819.517700));
 	catalog.AddEventLore(74880152);
+	catalog.AddEventOpened("a6a70646-a9ef-4169-b159-ff40e2f6f899", "None");                                    // from BIA's "met" fact: Geralt has come upon it
 	catalog.AddEventOutcome("1e30873a-6c89-4928-b224-dd5f5655a6e9", "Out", 74880154);                 // Phase, from BIA's mq3007_1_elves_ignored
 	catalog.AddEventOutcome("fa28f827-1fe5-4f89-beb3-65733e51d6eb", "Output_ignore", 74880154);       // Scene, from BIA's mq3007_1_elves_ignored
 	catalog.AddEventOutcome("6b44f517-e297-4fc0-9d3e-df8d24610404", "Out", 74880155);                 // And, from BIA's mq3007_1_racists_killed
@@ -282,6 +301,7 @@ function PotP_DefineEvents_02(catalog: CPotP_Catalog)
 	//-- The Racists of Novigrad ---------------------------
 	catalog.AddEvent("_09", PotP_E_Primary, PotP_R_NO, true, "no_mans_land", "PotP_Event_RacistsOfNovigradHS_NG", Vector(553.651428, 1677.662231));
 	catalog.AddEventLore(74880158);
+	catalog.AddEventOpened("878a5324-19c2-48b5-95d5-788f6d812e62", "None");                                    // from BIA's "met" fact: Geralt has come upon it
 	catalog.AddEventOutcome("5dc47beb-1415-4185-85c6-a2d96be040e5", "Output", 74880160);              // Scene, from BIA's mq3007_2_elf_ignored
 	catalog.AddEventOutcome("5966e2bf-43ab-43f7-aaf7-60367cb52b3a", "End", 74880161);                 // InteractionDialog, from BIA's mq3007_2_elf_helped
 	catalog.AddEventFacts("mq3007_2_elf_helped", "mq3007_2_elf_ignored", "mq3007_2_quest_done");
@@ -293,6 +313,7 @@ function PotP_DefineEvents_02(catalog: CPotP_Catalog)
 	//-- Strangers in the Night ----------------------------
 	catalog.AddEvent("_10", PotP_E_Primary, PotP_R_NO, true, "no_mans_land", "PotP_Event_StrangersInTheNight_NG", Vector(1370.983887, 1507.835815));
 	catalog.AddEventLore(74880112);
+	catalog.AddEventOpened("5a7051d6-7388-4145-a7da-54153a70d5c9", "None");                                    // from BIA's "met" fact: Geralt has come upon it
 	catalog.AddEventOutcome("f8c09db9-fcc9-45ea-9676-0a51c5d965dd", "None", 74880114);                // PauseCondition, from BIA's mq1041_ignored
 	catalog.AddEventOutcome("266447b7-0434-4ba5-bf25-25dcb4635484", "Out", 74880115);                 // And, from BIA's mq1041_fight_all_done
 	catalog.AddEventOutcome("cc6f2925-52be-4f8f-a706-edbff3238907", "FightAll", 74880115);            // InteractionDialog, from BIA's mq1041_fight_all
@@ -314,6 +335,7 @@ function PotP_DefineEvents_02(catalog: CPotP_Catalog)
 	//-- Strumpet in Distress ------------------------------
 	catalog.AddEvent("_11", PotP_E_Primary, PotP_R_NO, true, "no_mans_land", "PotP_Event_StrumpetInDistress_NG", Vector(411.762390, 1672.084839));
 	catalog.AddEventLore(74880163);
+	catalog.AddEventOpened("51629327-4d59-4836-b423-222bb7d11850", "None");                                    // from BIA's "met" fact: Geralt has come upon it
 	catalog.AddEventOutcome("4d59d5dc-afdc-495a-98c1-a8493fa5286d", "None", 74880165);                // PauseCondition, from BIA's mq3008_prostitute_ignored
 	catalog.AddEventOutcome("f0d56469-3578-4c55-8b83-a55aad4f7c94", "Omitted", 74880165);             // InteractionDialog, from BIA's mq3008_prostitute_ignored
 	catalog.AddEventOutcome("f0d56469-3578-4c55-8b83-a55aad4f7c94", "Regular", 74880166);             // InteractionDialog, from BIA's mq3008_prostitute_regular
@@ -328,6 +350,7 @@ function PotP_DefineEvents_02(catalog: CPotP_Catalog)
 	//-- Suspicious Shakedown ------------------------------
 	catalog.AddEvent("_12", PotP_E_Primary, PotP_R_NO, false, "no_mans_land", "PotP_Event_SuspiciousShakedown_NG", Vector(739.579529, 1761.638062));
 	catalog.AddEventLore(74880142);
+	catalog.AddEventOpened("f5944700-30e6-4f92-9dd7-5e2bfb3a2237", "None");                                    // from BIA's "met" fact: Geralt has come upon it
 	catalog.AddEventOutcome("cc233d88-e773-4499-a029-9e5a75c027f4", "None", 74880144);                // PauseCondition, from BIA's mq3004_merchant_ignored
 	catalog.AddEventOutcome("d891d355-9e2f-498a-84f1-9ce21e6870e1", "Out", 74880144);                 // Script, from BIA's mq3004_merchant_ignored
 	catalog.AddEventOutcome("5dd50aa4-b311-4f36-849b-f733bde15376", "BlockShop", 74880145);           // InteractionDialog, from BIA's mq3004_merchant_left
@@ -346,6 +369,7 @@ function PotP_DefineEvents_02(catalog: CPotP_Catalog)
 	//-- The Flame of Hatred -------------------------------
 	catalog.AddEvent("_13", PotP_E_Primary, PotP_R_NO, true, "no_mans_land", "PotP_Event_TheFlameOfHatred_NG_1", Vector(714.057678, 1861.176392));
 	catalog.AddEventLore(74880182);
+	catalog.AddEventOpened("80997907-9610-4f57-80d2-9044844b8000", "None");                                    // from BIA's "met" fact: Geralt has come upon it
 	catalog.AddEventOutcome("9d69f066-d211-403d-bc6a-8ffb3cc4447b", "Output Ignore", 74880184);       // InteractionDialog, from BIA's mq3023_priest_ignore
 	catalog.AddEventOutcome("9d69f066-d211-403d-bc6a-8ffb3cc4447b", "Output Threaten", 74880185);     // InteractionDialog, from BIA's mq3023_priest_threaten
 	catalog.AddEventOutcome("9d69f066-d211-403d-bc6a-8ffb3cc4447b", "Output defend", 74880186);       // InteractionDialog, from BIA's mq3023_priest_defend
@@ -370,6 +394,7 @@ function PotP_DefineEvents_02(catalog: CPotP_Catalog)
 	//-- The Most Truest of Basilisks ----------------------
 	catalog.AddEvent("_14", PotP_E_Primary, PotP_R_NO, true, "no_mans_land", "PotP_Event_TheMostTruestOfBasilisks_NG", Vector(1911.729736, 1141.309082));
 	catalog.AddEventLore(74880176);
+	catalog.AddEventOpened("e3317dde-51be-4abd-9243-82ffe0b2603d", "None");                                    // from BIA's "met" fact: Geralt has come upon it
 	catalog.AddEventOutcome("882a8ee3-7157-4bc2-b664-d20e2ab29dd2", "wyvern_captive", 74880178);      // InteractionDialog, from BIA's mq3015_wyvern_captive
 	catalog.AddEventOutcome("882a8ee3-7157-4bc2-b664-d20e2ab29dd2", "free_wyvern", 74880179);         // InteractionDialog, from BIA's mq3015_wyvern_killed
 	catalog.AddEventFacts("mq3015_encounter_ignored", "mq3015_wyvern_captive", "mq3015_wyvern_killed", "mq3015_quest_done");
@@ -420,6 +445,7 @@ function PotP_DefineEvents_02(catalog: CPotP_Catalog)
 	//-- Witch Hunter Raids --------------------------------
 	catalog.AddEvent("_16", PotP_E_Primary, PotP_R_NO, false, "no_mans_land", "PotP_Event_WitchHunterRaids_NG", Vector(580.663086, 1569.924316));
 	catalog.AddEventLore(74880169);
+	catalog.AddEventOpened("763bba24-ab57-4229-96a0-7449a91dc15d", "None");                                    // from BIA's "met" fact: Geralt has come upon it
 	catalog.AddEventOutcome("42a7d441-011f-4c34-827d-bb1309a9bdc2", "out no fight", 74880171);        // Scene, from BIA's mq3009_no_fight
 	catalog.AddEventOutcome("bddd21cf-d919-47b6-8e0f-d3e83cece58e", "Out", 74880172);                 // And, from BIA's mq3009_wh_killed
 	catalog.AddEventOutcome("e09a99ef-11b9-44dd-afb3-88c2de023c1d", "Out", 74880173);                 // Phase, from BIA's mq3009_fail
@@ -435,6 +461,8 @@ function PotP_DefineEvents_02(catalog: CPotP_Catalog)
 
 	//-- The Mage at the Stake -----------------------------
 	catalog.AddEvent("_20", PotP_E_Primary, PotP_R_NO, false, "no_mans_land", "PotP_Event_MageAtTheStake_NG", Vector(658.567261, 1663.454590));
+	catalog.AddEventOpened("11784906-3319-4db0-949f-2f9a2ac842cb", "True");   // Condition: he's within earshot of the mage screaming
+	catalog.AddEventOpened("eb679b1c-98cb-45da-9ce4-17cafe5a2c28", "None");   // PauseCondition: or walks into it
 	catalog.AddEventFacts("q309_ungrtf_mage_to_triss");
 	// Quest blocks in q309_witch_hunters_control
 	catalog.AddEventMissedBlock("ef16c5d1-a2b2-4ce4-8739-7c0c85afa7be", "Left");                                         // Phase "Fight wh"
@@ -457,6 +485,7 @@ function PotP_DefineEvents_03(catalog: CPotP_Catalog)
 	catalog.AddEvent("_01", PotP_E_Primary, PotP_R_SK, true, "skellige", "PotP_Event_CallOfTheWild_NG", Vector(-526.447571, -340.631042), 21, 5); //Night only, the werewolf spawns 21:00 - 05:00
 	catalog.AddEventLore(74880242);
 	catalog.AddEventDoneOutcome(74880244);   // done by the kill: the ulfhedinn slain
+	catalog.AddEventOpenedNear(50);           // its encounter has no quest blocks: begun on coming near where it howls, at night
 	catalog.AddEventFacts("mq2052_quest_done");
 	catalog.AddEventJournal('dlcevents_mq2052_call_of_the_wild');
 	catalog.AddEventKill("werewolf_lvl3__lycan", 'encounter_aard_skellig_02');   // the lycan in Ard Skellig's encounter: in place of PotP's change to its encounter.w2l
@@ -464,6 +493,7 @@ function PotP_DefineEvents_03(catalog: CPotP_Catalog)
 	//-- Farting Trolls ------------------------------------
 	catalog.AddEvent("_02", PotP_E_Primary, PotP_R_SK, true, "skellige", "PotP_Event_FartingTrolls_NG", Vector(-283.890625, -769.414673));
 	catalog.AddEventLore(74880237);
+	catalog.AddEventOpened("ec760392-f9b3-4e11-87f2-457b618a9a6e", "Out");                                     // from BIA's "met" fact: Geralt has come upon it
 	catalog.AddEventOutcome("1b29cecc-414c-4621-967b-36d5d6169796", "None", 74880239);                // PauseCondition, from BIA's mq2050_trolls_killed
 	catalog.AddEventFacts("mq2050_trolls_killed", "mq2050_quest_done");
 	// Quest blocks in mq2050_farting_trolls
@@ -472,6 +502,7 @@ function PotP_DefineEvents_03(catalog: CPotP_Catalog)
 	//-- Siren's Call --------------------------------------
 	catalog.AddEvent("_03", PotP_E_Primary, PotP_R_SK, true, "skellige", "PotP_Event_SirensCall_NG", Vector(-409.181061, -202.543701));
 	catalog.AddEventLore(74880226);
+	catalog.AddEventOpened("8ae71ced-e6fe-423d-8bdf-caec5c269144", "Out");                                     // from BIA's "met" fact: Geralt has come upon it
 	catalog.AddEventOutcome("8f723e2a-6a34-4282-983a-d0d0122748ff", "None", 74880228);                // PauseCondition, from BIA's mq2021_shepherd_dead
 	catalog.AddEventOutcome("b5d37bf8-9f71-4427-bb1a-170ecc95eee4", "Output", 74880229);              // Scene, from BIA's mq2021_shepherd_saved
 	catalog.AddEventFacts("mq2021_shepherd_dead", "mq2021_shepherd_saved", "mq2021_quest_done");
@@ -482,6 +513,7 @@ function PotP_DefineEvents_03(catalog: CPotP_Catalog)
 	//-- Sweet Bait ----------------------------------------
 	catalog.AddEvent("_04", PotP_E_Primary, PotP_R_SK, true, "skellige", "PotP_Event_SweetBait_NG", Vector(-443.542175, -307.774261));
 	catalog.AddEventLore(74880214);
+	catalog.AddEventOpened("ed1994e2-a5a5-4892-82e9-3ab1e3d8e81f", "Out");                                     // from BIA's "met" fact: Geralt has come upon it
 	catalog.AddEventOutcome("875b76bd-e9f1-4933-98f4-34bb0c3c6cff", "None", 74880216);                // PauseCondition, from BIA's mq2016_bandits_killed
 	catalog.AddEventOutcome("3c67cbb8-a3ad-4a62-a026-e07e4cb3b9b0", "None", 74880217);                // PauseCondition, from BIA's mq2016_ignored
 	catalog.AddEventFacts("mq2016_bandits_killed", "mq2016_ignored", "mq2016_quest_done");
@@ -502,6 +534,7 @@ function PotP_DefineEvents_03(catalog: CPotP_Catalog)
 	//-- Woe is Me -----------------------------------------
 	catalog.AddEvent("_06", PotP_E_Primary, PotP_R_SK, true, "skellige", "PotP_Event_WoeIsMe_NG", Vector(552.972961, -411.028778));
 	catalog.AddEventLore(74880221);
+	catalog.AddEventOpened("a35f7b46-2dc2-425b-b02c-9932f9219a17", "Progress");                                // from BIA's "met" fact: Geralt has come upon it
 	catalog.AddEventOutcome("da978c53-2414-4936-bacf-fed18efb619c", "Output_fight", 74880222);          // InteractionDialog: he stopped and talked
 	catalog.AddEventOutcome("5da63078-35c2-44ee-908e-1ddfc4ef36c0", "Out", 74880223, 74880222);   // Phase "Simple Attack", after talking
 	catalog.AddEventOutcome("5da63078-35c2-44ee-908e-1ddfc4ef36c0", "Out", 74880250);             // or riding on
@@ -534,6 +567,7 @@ function PotP_DefineEvents_04(catalog: CPotP_Catalog)
 	//-- Trail of Echoes -----------------------------------
 	catalog.AddEvent("_01", PotP_E_Primary, PotP_R_KM, true, "kaer_morhen", "PotP_Event_TrailOfEchoes_NG", Vector(-327.778656, 175.190674));
 	catalog.AddEventLore(74880246);
+	catalog.AddEventOpened("feca4cef-6ae0-4027-8e0c-54c7ef3b1784", "Out");                                     // from BIA's "met" fact: Geralt has come upon it
 	catalog.AddEventOutcome("2708e7e3-1e5c-41f6-b67b-9934c76976fd", "Out", 74880248);                 // Reward, from BIA's mq4001_end_quest
 	catalog.AddEventFacts("mq4001_end_quest", "mq4001_quest_done");
 	// Quest blocks in mq4001_trail

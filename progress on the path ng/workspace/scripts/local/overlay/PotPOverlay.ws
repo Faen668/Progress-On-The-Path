@@ -1133,14 +1133,21 @@ function PotPOverlay_EventLore(tracked: CPotP_Entry) : string
 
 	if (tracked.lore_title > 0)
 	{
-		text = PotPOverlay_QuestLore(PotPOverlay_LoreJournal(tracked, tracked.lore_title));
+		// Only when it has something to tell: with BIA's Events turned off, its journal quests are still there, empty
+		text = PotPOverlay_QuestLore(PotPOverlay_LoreJournal(tracked, tracked.lore_title), true);
 		if (text != "")
 		{
 			return text;
 		}
 	}
-	text = PotPOverlay_EventText("potp_lore_" + tracked.uuid);
 	outcomes = PotPOverlay_EventOutcomes(tracked);
+	// Not come upon yet: nothing, and the overlay says so in its own words. Events stay not started until done, so
+	// begun is the met block heard, an outcome, being under way (a later stage unlocked) or done.
+	if (outcomes == "" && !tracked.IsDone() && tracked.status != PotP_S_InProgress && !FactsDoesExist(PotP_OpenedFact(tracked)))
+	{
+		return "";
+	}
+	text = PotPOverlay_EventText("potp_lore_" + tracked.uuid);
 	// Some stages' openings are the start of what came of them: then the whole of it, not the start twice
 	if (text != "" && outcomes != "" && StrBeginsWith(outcomes, "|" + text))
 	{
@@ -1224,7 +1231,7 @@ function PotPOverlay_LoreJournal(tracked: CPotP_Entry, title_id: int) : CJournal
 
 // The journal menu's GetDescription: the description entries it has reached, in their order, or the game's own line
 // for a quest it has with none yet. Nothing for a quest the journal doesn't have yet: the overlay says so in its own words.
-function PotPOverlay_QuestLore(journal_quest: CJournalQuest) : string
+function PotPOverlay_QuestLore(journal_quest: CJournalQuest, optional only_told: bool) : string
 {
 	var journal		: CWitcherJournalManager = theGame.GetJournalManager();
 	var description_group	: CJournalQuestDescriptionGroup;
@@ -1287,7 +1294,7 @@ function PotPOverlay_QuestLore(journal_quest: CJournalQuest) : string
 			text += "|" + PotPOverlay_Clean(paragraph);
 		}
 	}
-	if (text == "")
+	if (text == "" && !only_told)
 	{
 		text = "|" + PotPOverlay_Clean(GetLocStringByKeyExt("panel_journal_quest_empty_description"));
 	}

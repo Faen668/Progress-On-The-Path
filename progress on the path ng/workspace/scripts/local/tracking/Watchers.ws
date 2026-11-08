@@ -110,6 +110,49 @@ statemachine class CPotP_WorldWatcher
 
 	//---------------------------------------------------
 
+	// Events begun by coming near their pin: their story's opening shows from then on
+	public function CheckEventsNear()
+	{
+		var events	: array<CPotP_Entry> = master.catalog.events_near;
+		var area	: name = theGame.GetCommonMapManager().GetCurrentArea();
+		var hour	: int = GameTimeHours(theGame.GetGameTime());
+		var tracked	: CPotP_Entry;
+		var in_hours	: bool;
+		var Idx		: int;
+
+		if (!thePlayer)
+		{
+			return;
+		}
+		for (Idx = 0; Idx < events.Size(); Idx += 1)
+		{
+			tracked = events[Idx];
+			if (tracked.IsDone() || FactsDoesExist(PotP_OpenedFact(tracked)) || !IsInArea(tracked.region, area) || area == '')
+			{
+				continue;
+			}
+			in_hours = true;
+			if (tracked.from_hour != tracked.to_hour)
+			{
+				if (tracked.from_hour < tracked.to_hour)
+				{
+					in_hours = hour >= tracked.from_hour && hour < tracked.to_hour;
+				}
+				else
+				{
+					in_hours = hour >= tracked.from_hour || hour < tracked.to_hour;
+				}
+			}
+			if (in_hours && VecDistance2D(thePlayer.GetWorldPosition(), tracked.position) <= tracked.opened_radius)
+			{
+				FactsAdd(PotP_OpenedFact(tracked), 1);
+				PotP_Log("Opened " + tracked.entry_name + ": near its pin", 'QuestHook');
+			}
+		}
+	}
+
+	//---------------------------------------------------
+
 	private function IsInArea(region_value: PotP_Preview_Region, area: name) : bool
 	{
 		switch (area)
@@ -183,6 +226,7 @@ state Watching in CPotP_WorldWatcher
 			if (parent.master.catalog.is_ready)
 			{
 				parent.master.map_pins.Tick();
+				parent.CheckEventsNear();
 			}
 
 			if (tick % parent.check_interval != 0 || !parent.master.catalog.is_ready || !parent.master.tracker.IsInState('Idle') || PotP_IsPlayerBusy() || PotP_IsMenuOpen())
