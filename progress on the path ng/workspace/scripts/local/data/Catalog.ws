@@ -226,6 +226,61 @@ statemachine class CPotP_Catalog
 		quest_blocks.PushBack(block);
 	}
 
+	// What came of the event added just before: its paragraph (a BIA string id, potp_outcome_<id> in en.csv), told once
+	// this vanilla block finishes through this output. requires: only if that paragraph came first, as when the same
+	// block ends a fight whatever led to it. Traced from where Brothers In Arms' own phases set the fact for each.
+	public function AddEventOutcome(guid: string, output: string, paragraph: int, optional requires: int)
+	{
+		var tracked : CPotP_Entry = pending[pending.Size() - 1];
+		var block : SPotP_QuestBlock;
+
+		block.guid = StrLower(guid);
+		block.output = output;
+		block.kind = PotP_QB_Outcome;
+		block.paragraph = paragraph;
+		block.requires = requires;
+		block.tracked = tracked;
+		quest_blocks.PushBack(block);
+		if (!tracked.lore_outcomes.Contains(paragraph))
+		{
+			tracked.lore_outcomes.PushBack(paragraph);
+		}
+	}
+
+	// Paying or the Axii Sign, where a scene ends through the same output either way: told apart by whether he has
+	// fewer crowns than when the scene started (its pay choice takes them)
+	public function AddEventOutcomePaid(guid: string, output: string, paid: int, unpaid: int)
+	{
+		var tracked : CPotP_Entry = pending[pending.Size() - 1];
+		var block : SPotP_QuestBlock;
+
+		block.guid = StrLower(guid);
+		block.output = output;
+		block.kind = PotP_QB_OutcomePaid;
+		block.paragraph = paid;
+		block.unpaid = unpaid;
+		block.tracked = tracked;
+		quest_blocks.PushBack(block);
+		tracked.lore_outcomes.PushBack(paid);
+		tracked.lore_outcomes.PushBack(unpaid);
+	}
+
+	// What came of an event that's done by a kill, not a quest block: told once it counts as done
+	public function AddEventDoneOutcome(paragraph: int)
+	{
+		pending[pending.Size() - 1].lore_done = paragraph;
+	}
+
+	//---------------------------------------------------
+
+	// The event added just before: its title in Brothers In Arms' Events (mersey's, its own journal quests for the
+	// random events). With that installed its journal tells the story, choices and all; without it, PotP's own copy of
+	// the opening, potp_lore_<uuid> in en.csv, given with mersey's permission.
+	public function AddEventLore(title_id: int)
+	{
+		pending[pending.Size() - 1].lore_title = title_id;
+	}
+
 	//---------------------------------------------------
 
 	public function AddEventFacts(optional fact_1: string, optional fact_2: string, optional fact_3: string, optional fact_4: string, optional fact_5: string, optional fact_6: string, optional fact_7: string, optional fact_8: string)

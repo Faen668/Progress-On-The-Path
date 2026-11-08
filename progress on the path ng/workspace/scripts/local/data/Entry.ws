@@ -33,6 +33,9 @@ class CPotP_Entry
 
 	var fallback_facts	: array<string>;
 	var fallback_journal	: name;
+	var lore_title		: int;		// an event's journal title in Brothers In Arms' Events, whose journal tells its story
+	var lore_outcomes	: array<int>;	// the BIA string ids of what can come of an event, in the order they're told
+	var lore_done		: int;			// what came of it once it's done, when no quest block tells it apart
 
 	var missed_fact		: string;
 	var missed_unless	: string;		// not missed after all if this fact is set

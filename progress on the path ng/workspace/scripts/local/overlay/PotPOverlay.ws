@@ -1102,7 +1102,8 @@ exec function potpoverlay_itemstats(uuid_value: string)
 
 //---------------------------------------------------
 
-// A quest's story so far, as the journal's own quest page shows it: J|uuid|then a paragraph a field
+// A quest's or random event's story so far, as the journal's own quest page shows it: J|uuid|then a paragraph a field.
+// A lone - for an event with no story to tell.
 exec function potpoverlay_questlore(uuid_value: string)
 {
 	var main	: CPotP_Main = PotPOverlay_Main();
@@ -1115,17 +1116,117 @@ exec function potpoverlay_questlore(uuid_value: string)
 	tracked = main.catalog.FindByUuid(uuid_value);
 	if (tracked && tracked.category == PotP_A_Quest)
 	{
-		main.notifications.QueueForOverlay("J|" + uuid_value + PotPOverlay_QuestLore(tracked));
+		main.notifications.QueueForOverlay("J|" + uuid_value + PotPOverlay_QuestLore(PotPOverlay_LoreJournal(tracked, 0)));
+	}
+	else if (tracked && tracked.category == PotP_A_Event)
+	{
+		main.notifications.QueueForOverlay("J|" + uuid_value + PotPOverlay_EventLore(tracked));
 	}
 }
 
+// A random event's: Brothers In Arms' Events' journal for it when that's installed and has it, as it has every choice
+// in it, or else the opening PotP keeps for it (data/definitions/EventDefinitions.ws, AddEventLore)
+function PotPOverlay_EventLore(tracked: CPotP_Entry) : string
+{
+	var text		: string;
+	var outcomes	: string;
+
+	if (tracked.lore_title > 0)
+	{
+		text = PotPOverlay_QuestLore(PotPOverlay_LoreJournal(tracked, tracked.lore_title));
+		if (text != "")
+		{
+			return text;
+		}
+	}
+	text = PotPOverlay_EventText("potp_lore_" + tracked.uuid);
+	outcomes = PotPOverlay_EventOutcomes(tracked);
+	// Some stages' openings are the start of what came of them: then the whole of it, not the start twice
+	if (text != "" && outcomes != "" && StrBeginsWith(outcomes, "|" + text))
+	{
+		text = "";
+	}
+	if (text != "")
+	{
+		text = "|" + text;
+	}
+	text += outcomes;
+	if (text == "")
+	{
+		return "|-";
+	}
+	return text;
+}
+
+// What came of it, as far as PotP heard (tracking/QuestListener.ws, AddEventOutcome): each paragraph, in the order told
+function PotPOverlay_EventOutcomes(tracked: CPotP_Entry) : string
+{
+	var told	: array<int>;
+	var text	: string;
+	var Idx		: int;
+
+	told = tracked.lore_outcomes;
+	ArraySortInts(told);
+	for (Idx = 0; Idx < told.Size(); Idx += 1)
+	{
+		if (FactsDoesExist(PotP_OutcomeFact(told[Idx])))
+		{
+			text += "|" + PotPOverlay_EventText("potp_outcome_" + told[Idx]);
+		}
+	}
+	if (tracked.lore_done > 0 && tracked.IsDone())
+	{
+		text += "|" + PotPOverlay_EventText("potp_outcome_" + tracked.lore_done);
+	}
+	return text;
+}
+
+function PotPOverlay_EventText(key: string) : string
+{
+	var text : string = GetLocStringByKeyExt(key);
+
+	if (text == "" || StrBeginsWith(text, "#"))
+	{
+		return "";
+	}
+	return PotPOverlay_Clean(text);
+}
+
+// The journal's quest for an entry: a quest by its name, or with title_id, the one with that title
+function PotPOverlay_LoreJournal(tracked: CPotP_Entry, title_id: int) : CJournalQuest
+{
+	var quests	: array<CJournalBase>;
+	var quest_entry	: CJournalQuest;
+	var Idx		: int;
+
+	theGame.GetJournalManager().GetActivatedOfType('CJournalQuest', quests);
+	for (Idx = 0; Idx < quests.Size(); Idx += 1)
+	{
+		quest_entry = (CJournalQuest)quests[Idx];
+		if (!quest_entry)
+		{
+			continue;
+		}
+		if (title_id > 0)
+		{
+			if (quest_entry.GetTitleStringId() == title_id)
+			{
+				return quest_entry;
+			}
+		}
+		else if (quests[Idx].baseName == tracked.entry_name || (tracked.alt_entry_name != "" && quests[Idx].baseName == tracked.alt_entry_name))
+		{
+			return quest_entry;
+		}
+	}
+	return NULL;
+}
+
 // The journal menu's GetDescription: the description entries it has reached, in their order, or the game's own line
-// for a quest it has with none yet. Nothing for a quest the journal doesn't have yet.
-function PotPOverlay_QuestLore(tracked: CPotP_Entry) : string
+// for a quest it has with none yet. Nothing for a quest the journal doesn't have yet: the overlay says so in its own words.
+function PotPOverlay_QuestLore(journal_quest: CJournalQuest) : string
 {
 	var journal		: CWitcherJournalManager = theGame.GetJournalManager();
-	var quests		: array<CJournalBase>;
-	var journal_quest	: CJournalQuest;
 	var description_group	: CJournalQuestDescriptionGroup;
 	var description	: CJournalQuestDescriptionEntry;
 	var found		: array<CJournalQuestDescriptionEntry>;
@@ -1134,17 +1235,6 @@ function PotPOverlay_QuestLore(tracked: CPotP_Entry) : string
 	var Idx			: int;
 	var Jdx			: int;
 
-	journal.GetActivatedOfType('CJournalQuest', quests);
-	for (Idx = 0; Idx < quests.Size(); Idx += 1)
-	{
-		if (quests[Idx].baseName == tracked.entry_name || (tracked.alt_entry_name != "" && quests[Idx].baseName == tracked.alt_entry_name))
-		{
-			journal_quest = (CJournalQuest)quests[Idx];
-			break;
-		}
-	}
-
-	// None until he's taken it up: the overlay says so in its own words
 	if (!journal_quest)
 	{
 		return "";

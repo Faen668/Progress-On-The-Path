@@ -10,6 +10,8 @@ enum EPotP_QuestBlockKind
 	PotP_QB_Done	= 1,
 	PotP_QB_Unlock	= 2,
 	PotP_QB_Missed	= 3,
+	PotP_QB_Outcome	= 4,
+	PotP_QB_OutcomePaid	= 5,
 }
 
 struct SPotP_QuestBlock
@@ -19,6 +21,9 @@ struct SPotP_QuestBlock
 	var kind		: EPotP_QuestBlockKind;
 	var location	: string;   // for an unlock: the place the notification names
 	var tracked		: CPotP_Entry;
+	var paragraph	: int;      // for an outcome: what came of the event, a BIA string id
+	var requires	: int;      // and the paragraph that has to have come first, or 0
+	var unpaid		: int;      // for a paid outcome: the paragraph when he didn't pay
 }
 
 struct SPotP_EventKill
@@ -33,6 +38,8 @@ struct SPotP_EventKill
 class CPotP_QuestListener extends CNQH_Listener
 {
 	private var catalog : CPotP_Catalog;
+	private var crowns_guids	: array<string>;	// scenes with a paid outcome that have started, and his crowns then
+	private var crowns_then		: array<int>;
 
 	public function Init(source: CPotP_Catalog) : CPotP_QuestListener
 	{
@@ -51,6 +58,51 @@ class CPotP_QuestListener extends CNQH_Listener
 		return this;
 	}
 
+	public function OnBlockActivated(guid : string)
+	{
+		var Idx : int;
+		var Jdx : int;
+
+		for (Idx = 0; Idx < catalog.quest_blocks.Size(); Idx += 1)
+		{
+			if (catalog.quest_blocks[Idx].kind == PotP_QB_OutcomePaid && catalog.quest_blocks[Idx].guid == guid && GetWitcherPlayer())
+			{
+				Jdx = crowns_guids.FindFirst(guid);
+				if (Jdx < 0)
+				{
+					crowns_guids.PushBack(guid);
+					crowns_then.PushBack(GetWitcherPlayer().GetMoney());
+				}
+				else
+				{
+					crowns_then[Jdx] = GetWitcherPlayer().GetMoney();
+				}
+				return;
+			}
+		}
+	}
+
+	// Paid, or not: only if the scene was seen starting, or there's nothing to compare
+	private function HearPaid(block: SPotP_QuestBlock)
+	{
+		var Idx : int = crowns_guids.FindFirst(block.guid);
+
+		if (Idx < 0 || !GetWitcherPlayer())
+		{
+			return;
+		}
+		if (GetWitcherPlayer().GetMoney() < crowns_then[Idx])
+		{
+			PotP_KeepOutcome(block.paragraph, block.tracked);
+		}
+		else
+		{
+			PotP_KeepOutcome(block.unpaid, block.tracked);
+		}
+		crowns_guids.Erase(Idx);
+		crowns_then.Erase(Idx);
+	}
+
 	public function OnBlockFinished(guid : string, output : name)
 	{
 		var block	: SPotP_QuestBlock;
@@ -67,6 +119,16 @@ class CPotP_QuestListener extends CNQH_Listener
 			block = catalog.quest_blocks[Idx];
 			if (block.guid != guid || block.output != fired)
 			{
+				continue;
+			}
+			if (block.kind == PotP_QB_Outcome)
+			{
+				PotP_HearEventOutcome(block, guid, fired);
+				continue;
+			}
+			if (block.kind == PotP_QB_OutcomePaid)
+			{
+				HearPaid(block);
 				continue;
 			}
 
@@ -101,6 +163,55 @@ class CPotP_QuestListener extends CNQH_Listener
 			}
 		}
 	}
+}
+
+//---------------------------------------------------
+
+// An event's outcome heard: its paragraph kept for this save. Where one block ends the event however it came about, the
+// paragraph whose earlier one was told wins over the one that needs none.
+function PotP_HearEventOutcome(heard: SPotP_QuestBlock, guid: string, fired: string)
+{
+	var blocks		: array<SPotP_QuestBlock> = PotP_Get().catalog.quest_blocks;
+	var chosen		: int;
+	var Idx			: int;
+
+	chosen = heard.paragraph;
+	for (Idx = 0; Idx < blocks.Size(); Idx += 1)
+	{
+		if (blocks[Idx].kind != PotP_QB_Outcome || blocks[Idx].guid != guid || blocks[Idx].output != fired || blocks[Idx].tracked != heard.tracked)
+		{
+			continue;
+		}
+		if (blocks[Idx].requires > 0 && FactsDoesExist(PotP_OutcomeFact(blocks[Idx].requires)))
+		{
+			chosen = blocks[Idx].paragraph;
+			break;
+		}
+		if (blocks[Idx].requires == 0)
+		{
+			chosen = blocks[Idx].paragraph;
+		}
+	}
+	// Each block sharing this one is heard in turn: only the chosen one keeps its paragraph
+	if (heard.paragraph != chosen)
+	{
+		return;
+	}
+	PotP_KeepOutcome(chosen, heard.tracked);
+}
+
+function PotP_KeepOutcome(paragraph: int, tracked: CPotP_Entry)
+{
+	if (!FactsDoesExist(PotP_OutcomeFact(paragraph)))
+	{
+		FactsAdd(PotP_OutcomeFact(paragraph), 1);
+		PotP_Log("Outcome " + paragraph + " for " + tracked.entry_name, 'QuestHook');
+	}
+}
+
+function PotP_OutcomeFact(paragraph: int) : string
+{
+	return "potp_outcome_" + paragraph;
 }
 
 //---------------------------------------------------

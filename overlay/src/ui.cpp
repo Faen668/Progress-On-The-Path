@@ -4201,7 +4201,7 @@ namespace
 			return;
 		}
 
-		// A quest: its story so far, as the journal tells it
+		// A quest or random event: its story so far, as the journal tells it
 		if (g_book == kBookQuest)
 		{
 			std::vector<std::string> lore;
@@ -4220,6 +4220,8 @@ namespace
 			}
 			for (const std::string& paragraph : lore)
 			{
+				if (paragraph.empty())
+					continue;
 				Text(kSerif, 30, mx0 + 12, y, Rgb(232, 222, 200), paragraph.c_str(), textW);
 				y += WrappedHeight(kSerif, 30, paragraph.c_str(), textW) + 22.f;
 			}
@@ -4507,6 +4509,9 @@ namespace
 			if (!p.empty())
 				paragraphs.push_back(std::move(p));
 		}
+		// A lone -: an event with no story to tell. One empty paragraph, so it isn't taken for one not started.
+		if (paragraphs.size() == 1 && paragraphs[0] == "-")
+			paragraphs[0].clear();
 		std::lock_guard lock(g_itemStatsLock);
 		g_questLore[f[1]] = std::move(paragraphs);
 	}
