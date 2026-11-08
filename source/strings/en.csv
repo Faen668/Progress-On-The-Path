@@ -1432,6 +1432,8 @@
 2116569288||potp_ov_update_key_hint|The key that runs a full update, if the mod's Via Hotkey setting is on. Choose this, then press the key you'd like. Esc cancels.
 2116569289||potp_ov_live_bestiary|Live Bestiary
 2116569290||potp_ov_live_bestiary_hint|Shows each creature in the Bestiary as the game's own model, standing in one of its idles, in place of the painting. Off, the Bestiary shows the paintings, as the game's does.
+2116569436||potp_ov_menu_sounds|Menu Sounds
+2116569437||potp_ov_menu_sounds_hint|Plays the game's own menu sounds as you use the window: changing tabs, moving the selection, opening sections and panels, and changing settings. They follow the game's sound effects volume. Off, the window is silent.
 2116569291||potp_ov_zoom_turn|Turn
 2116569292||potp_ov_zoom_tilt|Tilt
 2116569293||potp_ov_zoom_zoom|Zoom
@@ -1481,8 +1483,6 @@
 2116569337||potp_ov_colour_default|Default
 2116569338||potp_ov_key_arrows|Arrows
 2116569339||potp_ov_key_tab|Tab
-2116569436||potp_ov_menu_sounds|Menu Sounds
-2116569437||potp_ov_menu_sounds_hint|Plays the game's own menu sounds as you use the window: changing tabs, moving the selection, opening sections and panels, and changing settings. They follow the game's sound effects volume. Off, the window is silent.
 2116569340||potp_ov_key_right|Right
 2116569341||potp_ov_key_drag|Drag
 2116569342||potp_ov_key_right_drag|Right drag

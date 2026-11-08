@@ -5045,15 +5045,15 @@ namespace
 				changed = true;
 			}
 			if (changed)
+			{
 				MarkDirty();
+				MenuSound(kSoundValue, kRankValue);
+			}
 			const float t = (value - low) / (high - low);
 			dl->AddRectFilled(ImVec2(tx0, ty - 4), ImVec2(tx1, ty + 4), Rgb(14, 12, 9));
 			dl->AddRect(ImVec2(tx0 - 1, ty - 5), ImVec2(tx1 + 1, ty + 5), Rgb(92, 76, 50));
 			dl->AddRectFilledMultiColor(ImVec2(tx0, ty - 4), ImVec2(tx0 + (tx1 - tx0) * t, ty + 4), Rgb(126, 84, 30), Rgb(236, 196, 116), Rgb(236, 196, 116), Rgb(126, 84, 30));
-			{
 			const ImVec2 knob(tx0 + (tx1 - tx0) * t, ty);
-				MenuSound(kSoundValue, kRankValue);
-			}
 			if (focused && g_setEditing)
 				SoftGlow(knob, 30, Alpha(kGoldHi, 0.45f));
 			Diamond(knob, 13, Rgb(20, 16, 10));
@@ -5073,12 +5073,12 @@ namespace
 			{
 				value = !value;
 				MarkDirty();
+				MenuSound(kSoundValue, kRankValue);
 			}
 			const ImVec2 m(x + colW - 18, y + 28);
 			if (value)
 				SoftGlow(m, 26, Alpha(kGoldHi, 0.35f));
 			Diamond(m, 15, value ? kGoldHi : Rgb(120, 110, 90), false, 2.2f);
-				MenuSound(kSoundValue, kRankValue);
 			if (value)
 				Diamond(m, 8, kGoldHi);
 			TextRight(kSans, 26, x + colW - 46, y + 12, value ? kText : kDim, value ? Tx(T_on) : Tx(T_off));
@@ -5103,12 +5103,12 @@ namespace
 			{
 				value = (value + step + n) % n;
 				MarkDirty();
+				MenuSound(kSoundValue, kRankValue);
 			}
 			const ImVec2 t1[3] = { {left + 6, y + 28}, {left + 24, y + 17}, {left + 24, y + 39} };
 			const ImVec2 t2[3] = { {right - 6, y + 28}, {right - 24, y + 17}, {right - 24, y + 39} };
 			const bool lit = focused && g_setEditing;
 			dl->AddConvexPolyFilled(t1, 3, lit ? Rgb(255, 244, 214) : Hover(la, lb) ? kGoldHi : kGold);
-				MenuSound(kSoundValue, kRankValue);
 			dl->AddConvexPolyFilled(t2, 3, lit ? Rgb(255, 244, 214) : Hover(ra, rb) ? kGoldHi : kGold);
 			TextCentre(kSerif, 30, (left + right) * 0.5f, y + 8, focused ? Rgb(255, 248, 230) : kText, names[value]);
 		};
@@ -5222,13 +5222,13 @@ namespace
 		ry += rowH;
 		toggle(x1, ry, { Tx(T_live_bestiary), Tx(T_live_bestiary_hint) }, st.liveBestiary);
 		ry += rowH;
+		toggle(x1, ry, { Tx(T_menu_sounds), Tx(T_menu_sounds_hint) }, st.menuSounds);
+		ry += rowH;
 		ry += rowH + 8;
 
 		// The scale is applied when it stops changing, as it means baking the fonts again
 		if (g_dragSlider == scaleRow && !ImGui::IsMouseDown(0))
 			g_scaleCommitAt = ImGui::GetTime();
-		toggle(x1, ry, { Tx(T_menu_sounds), Tx(T_menu_sounds_hint) }, st.menuSounds);
-		ry += rowH;
 		if (g_pendingScale >= 0.f && (g_dragSlider != scaleRow || !ImGui::IsMouseDown(0)) && ImGui::GetTime() >= g_scaleCommitAt)
 		{
 			st.scale = g_pendingScale;
@@ -9583,11 +9583,6 @@ static void TourSyncWardrobe(const Model* model)
 	onDyes = dyes;
 }
 
-void DrawUi()
-{
-	ImGuiIO& io = ImGui::GetIO();
-	Settings& st = GetSettings();
-	g_dt = std::min(io.DeltaTime, 0.1f);
 // The sound for what the player changed this frame, by comparing it with the last: whether it was the mouse, the keys
 // or the controller that did it, the tab, the selection and the panels over the window end up somewhere new
 static void WatchSounds()
@@ -9641,6 +9636,11 @@ static void WatchSounds()
 	was = now;
 }
 
+void DrawUi()
+{
+	ImGuiIO& io = ImGui::GetIO();
+	Settings& st = GetSettings();
+	g_dt = std::min(io.DeltaTime, 0.1f);
 
 	// The panel's size and scale, whether it's open or not, so the fonts are right when it opens
 	const float base = std::min(io.DisplaySize.x / kRefW, io.DisplaySize.y / kRefH);
@@ -9710,16 +9710,16 @@ static void WatchSounds()
 		g_statusOpen = false;
 		if (g_wardrobeOpen)
 			CloseWardrobe();
-		g_wasOpen = false;
-		g_openT = 0.f;
-		g_dragging = false;
-		g_capture = false;
-		g_setEditing = false;
 		if (g_wasOpen)
 		{
 			MenuSound(kSoundWindowClose, kRankWindow);
 			FlushMenuSound();
 		}
+		g_wasOpen = false;
+		g_openT = 0.f;
+		g_dragging = false;
+		g_capture = false;
+		g_setEditing = false;
 		g_freeScrolled = false;
 		if (g_placing)
 		{
@@ -9735,15 +9735,15 @@ static void WatchSounds()
 	if (!g_wasOpen)
 	{
 		g_wasOpen = true;
+		MenuSound(kSoundWindowOpen, kRankWindow);
+		g_soundFresh = true;
+		if (st.menuSounds)
+			RequestExec("potpoverlay_soundbanks()", false);   // the enlarged view's sounds are in a bank of their own
 		{
 			// What he has on may have changed, and with it what his sets give
 			std::lock_guard statsLock(g_itemStatsLock);
 			g_itemStats.clear();
 			g_itemStatsAsked.clear();
-		MenuSound(kSoundWindowOpen, kRankWindow);
-		g_soundFresh = true;
-		if (st.menuSounds)
-			RequestExec("potpoverlay_soundbanks()", false);   // the enlarged view's sounds are in a bank of their own
 			// and the quests' stories may have gone on
 			g_questLore.clear();
 			g_questLoreAsked.clear();
@@ -9804,6 +9804,7 @@ static void WatchSounds()
 	if (g_warning)
 	{
 		DrawWarning();
+		FlushMenuSound();
 		return;
 	}
 	if (g_placing)
@@ -9815,7 +9816,6 @@ static void WatchSounds()
 	dl->AddRectFilled(ImVec2(0, 0), io.DisplaySize, Rgb(0, 0, 0, static_cast<int>(255.f * st.dim * ease)));   // the game, dimmed but still there
 	dl->PushClipRect(ImVec2(-10000, -10000), ImVec2(20000, 20000), false);
 	const int firstVertex = dl->VtxBuffer.Size;
-		FlushMenuSound();
 	const int firstCommand = dl->CmdBuffer.Size - 1;
 
 	BridgeState state = GetBridgeState();
@@ -9967,13 +9967,13 @@ static void WatchSounds()
 			StartTour();
 	}
 	DrawCursor();
+	WatchSounds();
+	FlushMenuSound();
 
 	dl->PopClipRect();
 	for (int i = firstVertex; i < dl->VtxBuffer.Size; ++i)
 	{
 		ImDrawVert& v = dl->VtxBuffer[i];
-	WatchSounds();
-	FlushMenuSound();
 		v.pos.x = ox + v.pos.x * k;
 		v.pos.y = oy + v.pos.y * k;
 		if (ease < 1.f)
