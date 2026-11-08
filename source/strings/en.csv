@@ -825,6 +825,7 @@
 2116568717||potp_ov_set_full_world|<font color="#FF7D63">Main Update Notification       :   Include Map Pin Updates</font>
 2116568718||potp_ov_set_full_nulls|<font color="#FF7D63">Main Update Notification       :   Show Null Updates</font> <font size="16">(Nothing To Update...)</font>
 2116568719||potp_ov_set_pins_show|<font color="#F56C77">Event Map Pins          :   Show Map Pins</font>
+2116569434||potp_ov_set_pins_minimap|<font color="#F56C77">Event Map Pins          :   Show on the Minimap</font>
 2116568720||potp_ov_set_pins_description|<font color="#F56C77">Event Map Pins          :   Show Descriptions</font>
 2116568721||potp_ov_set_pins_radius|<font color="#F56C77">Event Map Pins          :   Map Pin Radius</font>
 2116568722||potp_ov_set_pins_type|<font color="#F56C77">Event Map Pins          :   Map Pin Type</font>
@@ -853,6 +854,7 @@
 2116568745||potp_ov_set_hotkey_hint|Lets you run a full update at any time with the Full Update key, which you can change under Controls. It can be used once every 5 seconds.
 2116568746||potp_ov_set_tooltips_hint|Adds (Collected) or (Needed) after the names of tracked gear, trophies and Gwent cards in shops and the crafting menu, so you can see at a glance whether you still need one.
 2116568747||potp_ov_set_pins_show_hint|Shows a map pin for every random event you have unlocked but not yet completed.
+2116569435||potp_ov_set_pins_minimap_hint|Also shows the event pins on the minimap, for the area you are in. When off, they are only on the world map.
 2116568748||potp_ov_set_pins_description_hint|When on, each event pin describes its event. When off, every pin uses the same general description.
 2116568749||potp_ov_set_pins_radius_hint|Size of the area circle drawn around each event pin on the map.
 2116568750||potp_ov_set_pins_type_hint|The icon used for event map pins.
@@ -1508,4 +1510,4 @@
 2116569384||potp_ov_card_details|Card
 ;overlay-text-end
 ;
-; Next id: 2116569426
+; Next id: 2116569436

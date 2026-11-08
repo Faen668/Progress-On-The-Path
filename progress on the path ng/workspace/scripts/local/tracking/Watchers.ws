@@ -179,6 +179,12 @@ state Watching in CPotP_WorldWatcher
 			}
 			parent.was_meditating = meditating;
 
+			// Event pins on the minimap follow the area and the hour.
+			if (parent.master.catalog.is_ready)
+			{
+				parent.master.map_pins.Tick();
+			}
+
 			if (tick % parent.check_interval != 0 || !parent.master.catalog.is_ready || !parent.master.tracker.IsInState('Idle') || PotP_IsPlayerBusy() || PotP_IsMenuOpen())
 			{
 				continue;

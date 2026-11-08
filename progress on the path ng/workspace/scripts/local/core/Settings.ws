@@ -226,6 +226,7 @@ function PotP_DefineSettings(s: CPotP_Settings)
 	s.Add('ProgressOnThePath_ShowCollectabilityTooltips',	"TOGGLE",			"true",	"potp_ov_set_tooltips", "potp_ov_set_tooltips_hint");
 	s.Separator();
 	s.Add('ProgressOnThePath_EventMapPins_ShowMapPins',		"TOGGLE",			"true",	"potp_ov_set_pins_show", "potp_ov_set_pins_show_hint");
+	s.Add('ProgressOnThePath_EventMapPins_ShowOnMinimap',		"TOGGLE",			"true",	"potp_ov_set_pins_minimap", "potp_ov_set_pins_minimap_hint");
 	s.Add('ProgressOnThePath_EventMapPins_MapPinDescription',	"TOGGLE",		"true",	"potp_ov_set_pins_description", "potp_ov_set_pins_description_hint");
 	s.Add('ProgressOnThePath_EventMapPins_MapPinRadius',		"SLIDER;5;60;55",	"30",	"potp_ov_set_pins_radius", "potp_ov_set_pins_radius_hint");
 	PotP_SettingOptions(s.Add('ProgressOnThePath_EventMapPins_MapPinType', "OPTIONS", "1", "potp_ov_set_pins_type", "potp_ov_set_pins_type_hint"), "potp_ov_set_pins_type_", 5);

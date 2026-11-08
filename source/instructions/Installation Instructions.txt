@@ -2,13 +2,7 @@
 //-------------------- Requirements ----------------------
 //--------------------------------------------------------
 
-This mod requires 'Shared Utils', maintained by myself and Aeltoth.
-https://www.nexusmods.com/witcher3/mods/12997
-
-Shared Utils is used for the event map pins, so make sure it is installed and up
-to date.
-
-This mod also requires 'Native Quest Hook'.
+This mod requires 'Native Quest Hook'.
 https://www.nexusmods.com/witcher3/mods/15527
 
 Native Quest Hook tells Progress on the Path when the game's random events start
@@ -170,6 +164,8 @@ Event map pins are missing
 - Check 'Show Map Pins' in General Settings. Pins only appear for events you
   have unlocked and not yet finished.
 - Some events only happen at night, so their pins only show at night.
+- Pins show on the minimap only for the area you are in. Check 'Show on the
+  Minimap' in General Settings.
 
 A quest is marked missed but you can still do it
 - Start it: it goes back to In Progress automatically. If it was marked by

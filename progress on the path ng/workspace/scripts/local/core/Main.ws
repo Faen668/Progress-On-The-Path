@@ -272,6 +272,7 @@ statemachine class CPotP_Main
 	private function GetPinSettings() : string
 	{
 		return PotP_GetSetting('ProgressOnThePath_EventMapPins_ShowMapPins') + "|"
+			+ PotP_GetSetting('ProgressOnThePath_EventMapPins_ShowOnMinimap') + "|"
 			+ PotP_GetSetting('ProgressOnThePath_EventMapPins_MapPinDescription') + "|"
 			+ PotP_GetSetting('ProgressOnThePath_EventMapPins_MapPinRadius') + "|"
 			+ PotP_GetSetting('ProgressOnThePath_EventMapPins_MapPinType');
