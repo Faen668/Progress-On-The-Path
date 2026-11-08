@@ -900,6 +900,17 @@
 2116569420||potp_item_desc_navigator|A silver blade set with the north star and a sapphire, made for one who has followed every path to its end. It grows with whoever bears it.
 ;
 ;---------------------------------------------------
+;-- PotP's own achievement pack
+;-- The pack's title and its achievements' titles and descriptions, as the key="" attributes in
+;-- source/achievements/potp_achievements.xml. The English written there is only for when a key can't be found.
+;---------------------------------------------------
+2116569421||potp_ach_pack_title|Progress on the Path
+2116569422||potp_ach_pathfinder_title|Pathfinder
+2116569423||potp_ach_pathfinder_desc|Find every place on White Orchard's map: its signposts, Places of Power, camps, treasures, nests and abandoned sites.
+2116569424||potp_ach_navigator_title|Navigator
+2116569425||potp_ach_navigator_desc|Follow every quest in White Orchard to its end: the prologue, its side quests, the contract and the treasure hunts.
+;
+;---------------------------------------------------
 ;-- The overlay's own text
 ;-- One line per string, potp_ov_<name>, used in the overlay as Tx(T_<name>). utility/gen-overlay-text.py makes the
 ;-- overlay's table and the scripts' list from this block: run it, or build the overlay, after changing it.
@@ -1497,4 +1508,4 @@
 2116569384||potp_ov_card_details|Card
 ;overlay-text-end
 ;
-; Next id: 2116569421
+; Next id: 2116569426

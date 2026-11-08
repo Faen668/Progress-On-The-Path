@@ -7,7 +7,7 @@
 -->
 <potpAchievements schemaVersion="1" id="potp">
   <about>
-    <title>Progress on the Path</title>
+    <title key="potp_ach_pack_title">Progress on the Path</title>
     <author>Faen90</author>
     <version>8.0</version>
     <minPotP>8.0</minPotP>
@@ -16,8 +16,8 @@
   <!-- Every map location in White Orchard: each category's completion as PotP tracks it, so mod-added places count.
        Not stashes: PotP tracks them only with dlcExtraStashes installed, and an empty section never counts as done. -->
   <achievement id="pathfinder" icon="builtin:compass" ring="gold">
-    <title>Pathfinder</title>
-    <description>Find every place on White Orchard's map: its signposts, Places of Power, camps, treasures, nests and abandoned sites.</description>
+    <title key="potp_ach_pathfinder_title">Pathfinder</title>
+    <description key="potp_ach_pathfinder_desc">Find every place on White Orchard's map: its signposts, Places of Power, camps, treasures, nests and abandoned sites.</description>
     <unlock>
       <all>
         <potpSection id="PotP_TrackingGroup_WorldMap_Signposts_WhiteOrchard" label="Signposts"/>
@@ -38,8 +38,8 @@
 
   <!-- Every White Orchard quest but Faithful Friend, the epilogue only the Empress ending brings -->
   <achievement id="navigator" icon="builtin:star" ring="gold">
-    <title>Navigator</title>
-    <description>Follow every quest in White Orchard to its end: the prologue, its side quests, the contract and the treasure hunts.</description>
+    <title key="potp_ach_navigator_title">Navigator</title>
+    <description key="potp_ach_navigator_desc">Follow every quest in White Orchard to its end: the prologue, its side quests, the contract and the treasure hunts.</description>
     <unlock>
       <all>
         <potpSection id="PotP_TrackingGroup_MainQuests_Prologue" label="Main quests: Prologue"/>
