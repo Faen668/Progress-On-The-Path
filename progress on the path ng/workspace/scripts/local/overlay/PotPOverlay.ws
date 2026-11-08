@@ -479,6 +479,23 @@ exec function potpoverlay_resetgroup(group_name: name)
 	PotP_Settings().ResetGroup(group_name);
 }
 
+// One of the game's own menu sounds, for the overlay's window: gui_global_highlight, gui_global_switch and the like,
+// as the inventory and journal play them. They follow the game's sound effects volume.
+exec function potpoverlay_sound(event_name: string)
+{
+	theSound.SoundEvent(event_name);
+}
+
+// The window has opened. The inventory's player stats sounds, which its enlarged view plays, are in gui_ep2.bnk, which
+// the game's menus only load while one is open. Left loaded: it's small, and the menus' own load and unload pair up.
+exec function potpoverlay_soundbanks()
+{
+	if (!theSound.SoundIsBankLoaded("gui_ep2.bnk"))
+	{
+		theSound.SoundLoadBank("gui_ep2.bnk", true);
+	}
+}
+
 // When the window closes after a setting changed
 function PotPOverlay_SettingsClosed()
 {

@@ -97,6 +97,7 @@ namespace
 	std::string g_message = Tx(T_waiting_for_game);
 	struct PendingExec { std::string command; bool readAgain; };
 	std::vector<PendingExec> g_pendingExec;
+	std::vector<std::string> g_pendingSounds;   // the sound events still to play, under the same lock
 	std::atomic<bool> g_wantSettingsClosed{ false };
 	std::atomic<bool> g_wantOpen{ false };
 	std::atomic<bool> g_openFromPad{ false };
@@ -325,6 +326,30 @@ namespace
 			Log("%s: %d", line.c_str(), ok);
 	}
 
+	// The window's menu sounds, played by the scripts as the game's menus play theirs. Scripts from before
+	// potpoverlay_sound can't: the first that fails turns them off for the rest of the session.
+	void SoundTick()
+	{
+		static bool works = true;
+		std::vector<std::string> sounds;
+		{
+			std::lock_guard lock(g_stateMutex);
+			sounds.swap(g_pendingSounds);
+		}
+		for (const std::string& event : sounds)
+		{
+			if (!works)
+				break;
+			std::string line = "potpoverlay_sound(" + event + ")";
+			EngineString command{ line.data(), static_cast<uint32_t>(line.size() + 1) };
+			if (!GuardedExec(&command))
+			{
+				works = false;
+				Log("menu sounds: the scripts have no potpoverlay_sound, so the window is silent");
+			}
+		}
+	}
+
 	// PotP's notifications, a few times a second, and whether they have to wait
 	void NotificationTick()
 	{
@@ -499,6 +524,7 @@ namespace
 				if (c.readAgain)
 					g_wantRefresh = true;
 			}
+			SoundTick();
 			if (g_wantSettingsClosed.exchange(false))
 				CallVoid("PotPOverlay_SettingsClosed");
 
@@ -762,6 +788,15 @@ void RequestExec(const std::string& command, bool readAgain)
 {
 	std::lock_guard lock(g_stateMutex);
 	g_pendingExec.push_back({ command, readAgain });
+}
+
+void RequestMenuSound(const char* event)
+{
+	if (!g_bridgeOk || g_crashed)
+		return;
+	std::lock_guard lock(g_stateMutex);
+	if (g_pendingSounds.size() < 8)   // a few at most between two ticks, however fast the frames come
+		g_pendingSounds.push_back(event);
 }
 
 void RequestAchievements()

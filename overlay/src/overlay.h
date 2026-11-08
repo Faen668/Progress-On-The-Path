@@ -71,6 +71,7 @@ void RequestRefresh();
 void RequestPause(bool pause);
 void RequestSetStatus(const std::string& uuid, int manual);   // manual: 0 automatic, 1 ignored, 2 completed, 3 missed
 void RequestExec(const std::string& command, bool readAgain);   // runs a script exec function on the game's tick
+void RequestMenuSound(const char* event);   // one of the game's own sound events, such as gui_global_highlight, on the game's tick
 void RequestSettingsClosed();
 void RequestAchievements();           // has the game's tick read them again
 void RequestKills();                  // and the kill list

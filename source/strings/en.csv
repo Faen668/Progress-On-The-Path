@@ -1481,6 +1481,8 @@
 2116569337||potp_ov_colour_default|Default
 2116569338||potp_ov_key_arrows|Arrows
 2116569339||potp_ov_key_tab|Tab
+2116569436||potp_ov_menu_sounds|Menu Sounds
+2116569437||potp_ov_menu_sounds_hint|Plays the game's own menu sounds as you use the window: changing tabs, moving the selection, opening sections and panels, and changing settings. They follow the game's sound effects volume. Off, the window is silent.
 2116569340||potp_ov_key_right|Right
 2116569341||potp_ov_key_drag|Drag
 2116569342||potp_ov_key_right_drag|Right drag
@@ -1518,4 +1520,4 @@
 2116569433||potp_ov_lore_not_started|Geralt has yet to take this quest up. Its story will be written here as it unfolds.
 ;overlay-text-end
 ;
-; Next id: 2116569436
+; Next id: 2116569438

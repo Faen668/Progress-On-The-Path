@@ -72,6 +72,7 @@ void LoadSettings()
 	s.autoRotate = ReadInt(ini, "AutoRotate", d.autoRotate) != 0;
 	s.clothSim = ReadInt(ini, "ClothSim", d.clothSim) != 0;
 	s.liveBestiary = ReadInt(ini, "LiveBestiary", d.liveBestiary) != 0;
+	s.menuSounds = ReadInt(ini, "MenuSounds", d.menuSounds) != 0;
 	s.tourOffered = ReadInt(ini, "TourOffered", d.tourOffered) != 0;
 	s.hideCompleted = ReadInt(ini, "HideCompleted", d.hideCompleted) != 0;
 	s.hideIgnored = ReadInt(ini, "HideIgnored", d.hideIgnored) != 0;
@@ -131,6 +132,7 @@ void SaveSettings()
 	WriteInt(ini, "AutoRotate", s.autoRotate);
 	WriteInt(ini, "ClothSim", s.clothSim);
 	WriteInt(ini, "LiveBestiary", s.liveBestiary);
+	WriteInt(ini, "MenuSounds", s.menuSounds);
 	WriteInt(ini, "TourOffered", s.tourOffered);
 	WriteInt(ini, "HideCompleted", s.hideCompleted);
 	WriteInt(ini, "HideIgnored", s.hideIgnored);

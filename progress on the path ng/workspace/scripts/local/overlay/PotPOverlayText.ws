@@ -520,6 +520,8 @@ function PotPOverlay_TextKeys_3(out keys: array<string>)
 	keys.PushBack("update_key_hint");
 	keys.PushBack("live_bestiary");
 	keys.PushBack("live_bestiary_hint");
+	keys.PushBack("menu_sounds");
+	keys.PushBack("menu_sounds_hint");
 	keys.PushBack("zoom_turn");
 	keys.PushBack("zoom_tilt");
 	keys.PushBack("zoom_zoom");

@@ -619,11 +619,49 @@ namespace
 		return g_clicked && Hover(a, b);
 	}
 
+	// The game's own menu sounds, as its menus play them (the names are in the menus' scripts and .swf files).
+	// gui_global_dropdown_open, _close and gui_global_slider_move are in gui.bnk but play sounds that aren't in any
+	// bank, so they're silent in the game's menus too: the options menu plays gui_global_switch for a value instead.
+	// One a frame at most, the one that matters most: a tab changing outweighs the selection that moved with it.
+	const char* const kSoundHighlight = "gui_global_highlight";     // the selection moves
+	const char* const kSoundValue = "gui_global_switch";            // a setting's value changes, or a section opens or closes
+	const char* const kSoundOpen = kSoundValue;
+	const char* const kSoundClose = kSoundValue;
+	const char* const kSoundSwitch = "gui_global_submenu_whoosh";   // a tab, a page or a region, as the menus' tabs along the top
+	const char* const kSoundPanelOpen = "gui_global_panel_open";    // the wardrobe or a panel over the window, as the inventory's dye and upgrade choices
+	const char* const kSoundPanelClose = "gui_global_panel_close";
+	const char* const kSoundZoomIn = "gui_ep2_character_submenu_in";    // enlarged, as the inventory's player stats (in gui_ep2.bnk)
+	const char* const kSoundZoomOut = "gui_ep2_character_submenu_out";
+	const char* const kSoundWindowOpen = kSoundPanelOpen;
+	const char* const kSoundWindowClose = kSoundPanelClose;
+	enum SoundRank { kRankHighlight = 1, kRankValue, kRankPanel, kRankSwitch, kRankWindow };
+	const char* g_soundNext = nullptr;
+	int g_soundRank = 0;
+	bool g_soundFresh = false;   // the window has just opened: what's selected now isn't a move
+
+	void MenuSound(const char* event, int rank)
+	{
+		if (rank > g_soundRank)
+		{
+			g_soundRank = rank;
+			g_soundNext = event;
+		}
+	}
+
+	void FlushMenuSound()
+	{
+		if (g_soundNext && GetSettings().menuSounds)
+			RequestMenuSound(g_soundNext);
+		g_soundNext = nullptr;
+		g_soundRank = 0;
+	}
+
 	// One setting of the mod's: the scripts' settings map is told at once (and saved from there), the mod when the window closes
 	void SendValue(const ModPage& page, const ModVar& v)
 	{
 		RequestExec("potpoverlay_setvar(" + page.id + ", " + v.id + ", " + v.value + ")", false);
 		g_modDirty = true;
+		MenuSound(kSoundValue, kRankValue);
 	}
 
 	// A fresh model brings the game's values
@@ -2265,6 +2303,7 @@ namespace
 			const Section& s = m.sections[g_rows[focus].section];
 			const bool open = SectionOpen(s, g_rows[focus].section, firstVisible);
 			SetSectionOpen(s, !open);
+			MenuSound(open ? kSoundClose : kSoundOpen, kRankPanel);
 			g_focusHeader = std::to_string(g_book) + s.header;
 			g_followSelection = true;
 			g_revealHeader = true;
@@ -2273,7 +2312,9 @@ namespace
 		if (g_navAccept && g_rows[focus].entry < 0)
 		{
 			const Section& s = m.sections[g_rows[focus].section];
-			SetSectionOpen(s, !SectionOpen(s, g_rows[focus].section, firstVisible));
+			const bool open = SectionOpen(s, g_rows[focus].section, firstVisible);
+			SetSectionOpen(s, !open);
+			MenuSound(open ? kSoundClose : kSoundOpen, kRankPanel);
 			g_revealHeader = true;
 		}
 
@@ -2414,6 +2455,7 @@ namespace
 				if (Clicked(a, b) && Hover(la, lb))
 				{
 					SetSectionOpen(s, !open);
+					MenuSound(open ? kSoundClose : kSoundOpen, kRankPanel);
 					g_focusHeader = std::to_string(g_book) + s.header;
 					g_revealHeader = true;
 				}
@@ -4924,10 +4966,10 @@ namespace
 		const float m0 = 60.f, gap = 70.f;
 		const float colW = (kW - m0 * 2 - gap) * 0.5f;
 		const float x0 = m0, x1 = m0 + colW + gap;
-		// As tall as there's room for: the left column has 10 rows under three headings, the right 11 under two, and the
+		// As tall as there's room for: the left column has 10 rows under three headings, the right 13 under two, and the
 		// rows are sized for whichever needs more. When the window's short the hint below gives up some of its height
 		// first, as its text shrinks to fit.
-		constexpr float kLeftRows = 10.f, kLeftHeadings = 3.f, kRightRows = 11.f, kRightHeadings = 2.f;
+		constexpr float kLeftRows = 10.f, kLeftHeadings = 3.f, kRightRows = 13.f, kRightHeadings = 2.f;
 		const float top = 240.f;
 		const float hintH = std::clamp(kH - 106.f - 12.f - top - 16.f - std::max(54.f * kLeftHeadings + 40.f * kLeftRows, 54.f * kRightHeadings + 40.f * kRightRows), 64.f, 104.f);
 		const float room = kH - 106.f - hintH - 12.f - top - 16.f - 8.f;   // and a little clear of the hint
@@ -5008,7 +5050,10 @@ namespace
 			dl->AddRectFilled(ImVec2(tx0, ty - 4), ImVec2(tx1, ty + 4), Rgb(14, 12, 9));
 			dl->AddRect(ImVec2(tx0 - 1, ty - 5), ImVec2(tx1 + 1, ty + 5), Rgb(92, 76, 50));
 			dl->AddRectFilledMultiColor(ImVec2(tx0, ty - 4), ImVec2(tx0 + (tx1 - tx0) * t, ty + 4), Rgb(126, 84, 30), Rgb(236, 196, 116), Rgb(236, 196, 116), Rgb(126, 84, 30));
+			{
 			const ImVec2 knob(tx0 + (tx1 - tx0) * t, ty);
+				MenuSound(kSoundValue, kRankValue);
+			}
 			if (focused && g_setEditing)
 				SoftGlow(knob, 30, Alpha(kGoldHi, 0.45f));
 			Diamond(knob, 13, Rgb(20, 16, 10));
@@ -5033,6 +5078,7 @@ namespace
 			if (value)
 				SoftGlow(m, 26, Alpha(kGoldHi, 0.35f));
 			Diamond(m, 15, value ? kGoldHi : Rgb(120, 110, 90), false, 2.2f);
+				MenuSound(kSoundValue, kRankValue);
 			if (value)
 				Diamond(m, 8, kGoldHi);
 			TextRight(kSans, 26, x + colW - 46, y + 12, value ? kText : kDim, value ? Tx(T_on) : Tx(T_off));
@@ -5062,6 +5108,7 @@ namespace
 			const ImVec2 t2[3] = { {right - 6, y + 28}, {right - 24, y + 17}, {right - 24, y + 39} };
 			const bool lit = focused && g_setEditing;
 			dl->AddConvexPolyFilled(t1, 3, lit ? Rgb(255, 244, 214) : Hover(la, lb) ? kGoldHi : kGold);
+				MenuSound(kSoundValue, kRankValue);
 			dl->AddConvexPolyFilled(t2, 3, lit ? Rgb(255, 244, 214) : Hover(ra, rb) ? kGoldHi : kGold);
 			TextCentre(kSerif, 30, (left + right) * 0.5f, y + 8, focused ? Rgb(255, 248, 230) : kText, names[value]);
 		};
@@ -5180,6 +5227,8 @@ namespace
 		// The scale is applied when it stops changing, as it means baking the fonts again
 		if (g_dragSlider == scaleRow && !ImGui::IsMouseDown(0))
 			g_scaleCommitAt = ImGui::GetTime();
+		toggle(x1, ry, { Tx(T_menu_sounds), Tx(T_menu_sounds_hint) }, st.menuSounds);
+		ry += rowH;
 		if (g_pendingScale >= 0.f && (g_dragSlider != scaleRow || !ImGui::IsMouseDown(0)) && ImGui::GetTime() >= g_scaleCommitAt)
 		{
 			st.scale = g_pendingScale;
@@ -9539,6 +9588,59 @@ void DrawUi()
 	ImGuiIO& io = ImGui::GetIO();
 	Settings& st = GetSettings();
 	g_dt = std::min(io.DeltaTime, 0.1f);
+// The sound for what the player changed this frame, by comparing it with the last: whether it was the mouse, the keys
+// or the controller that did it, the tab, the selection and the panels over the window end up somewhere new
+static void WatchSounds()
+{
+	struct Watch
+	{
+		int book = 0, region = 0, setPage = 0, killPage = 0, killKind = 0, wardKind = 0;
+		std::string selected, header;
+		int focus[9] = {};
+		bool status = false, visibility = false, picker = false, wardSearch = false, zoom = false, wardrobe = false;
+	};
+	static Watch was;
+	Watch now;
+	now.book = g_book;
+	now.region = g_region;
+	now.setPage = g_setPage;
+	now.killPage = g_killPage;
+	now.killKind = g_killKind;
+	now.wardKind = g_wardKind;
+	now.selected = g_selected[g_book];
+	now.header = g_headerFocus ? std::to_string(g_headerFocus->book) + g_headerFocus->header : g_focusHeader;
+	const int focus[9] = { g_setFocus, g_modFocus, g_statusFocus, g_visibilityFocus, g_picker.focus, g_killRowOn[0], g_killRowOn[1], g_wardRows[g_wardKind], g_wardSearchRow };
+	std::copy(std::begin(focus), std::end(focus), now.focus);
+	now.status = g_statusOpen && !g_visibilityOpen && !g_cardZoom;
+	now.visibility = g_statusOpen && g_visibilityOpen;
+	now.picker = g_picker.open;
+	now.wardSearch = g_wardSearch;
+	now.zoom = (g_statusOpen && g_cardZoom) || g_wardEnlarged;
+	now.wardrobe = g_wardrobeOpen;
+	if (g_soundFresh)
+	{
+		g_soundFresh = false;
+		was = now;
+		return;
+	}
+
+	if (now.book != was.book || now.setPage != was.setPage || now.killPage != was.killPage || now.wardKind != was.wardKind
+		|| now.region != was.region || now.killKind != was.killKind)
+		MenuSound(kSoundSwitch, kRankSwitch);
+	if (now.wardrobe != was.wardrobe)
+		MenuSound(now.wardrobe ? kSoundPanelOpen : kSoundPanelClose, kRankSwitch + 1);
+	if (now.zoom != was.zoom)
+		MenuSound(now.zoom ? kSoundZoomIn : kSoundZoomOut, kRankSwitch + 1);
+	const bool panels[4] = { now.status, now.visibility, now.picker, now.wardSearch };
+	const bool panelsWere[4] = { was.status, was.visibility, was.picker, was.wardSearch };
+	for (int i = 0; i < 4; ++i)
+		if (panels[i] != panelsWere[i])
+			MenuSound(panels[i] ? kSoundPanelOpen : kSoundPanelClose, kRankPanel);
+	if (now.selected != was.selected || now.header != was.header || !std::equal(std::begin(now.focus), std::end(now.focus), std::begin(was.focus)))
+		MenuSound(kSoundHighlight, kRankHighlight);
+	was = now;
+}
+
 
 	// The panel's size and scale, whether it's open or not, so the fonts are right when it opens
 	const float base = std::min(io.DisplaySize.x / kRefW, io.DisplaySize.y / kRefH);
@@ -9613,6 +9715,11 @@ void DrawUi()
 		g_dragging = false;
 		g_capture = false;
 		g_setEditing = false;
+		if (g_wasOpen)
+		{
+			MenuSound(kSoundWindowClose, kRankWindow);
+			FlushMenuSound();
+		}
 		g_freeScrolled = false;
 		if (g_placing)
 		{
@@ -9633,6 +9740,10 @@ void DrawUi()
 			std::lock_guard statsLock(g_itemStatsLock);
 			g_itemStats.clear();
 			g_itemStatsAsked.clear();
+		MenuSound(kSoundWindowOpen, kRankWindow);
+		g_soundFresh = true;
+		if (st.menuSounds)
+			RequestExec("potpoverlay_soundbanks()", false);   // the enlarged view's sounds are in a bank of their own
 			// and the quests' stories may have gone on
 			g_questLore.clear();
 			g_questLoreAsked.clear();
@@ -9698,11 +9809,13 @@ void DrawUi()
 	if (g_placing)
 	{
 		DrawPlacement();
+		FlushMenuSound();
 		return;
 	}
 	dl->AddRectFilled(ImVec2(0, 0), io.DisplaySize, Rgb(0, 0, 0, static_cast<int>(255.f * st.dim * ease)));   // the game, dimmed but still there
 	dl->PushClipRect(ImVec2(-10000, -10000), ImVec2(20000, 20000), false);
 	const int firstVertex = dl->VtxBuffer.Size;
+		FlushMenuSound();
 	const int firstCommand = dl->CmdBuffer.Size - 1;
 
 	BridgeState state = GetBridgeState();
@@ -9859,6 +9972,8 @@ void DrawUi()
 	for (int i = firstVertex; i < dl->VtxBuffer.Size; ++i)
 	{
 		ImDrawVert& v = dl->VtxBuffer[i];
+	WatchSounds();
+	FlushMenuSound();
 		v.pos.x = ox + v.pos.x * k;
 		v.pos.y = oy + v.pos.y * k;
 		if (ease < 1.f)
