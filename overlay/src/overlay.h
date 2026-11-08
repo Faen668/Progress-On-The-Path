@@ -49,6 +49,7 @@ bool UiCaptureKey(unsigned vk);  // true when a settings row was waiting for a k
 void UiPushPopup(const std::string& text);   // one of PotP's notifications, as its script sends them
 bool UiWarningUp();              // a warning is on screen, and the game has to stay paused for it
 void UiSetPopupHold(bool hold);  // the game's own notification is up, or there's nothing to show one over
+void UiSetTracker(const std::string& text);   // the tracker panel's place and lines, as PotPOverlay_Tracker sends them, or "" for none
 #ifdef POTP_OVERLAY_TEST
 void UiTestStance(int stance);    // the off-screen test's way to a stance
 void UiTestBook(int book);        // the off-screen test's way to a tab

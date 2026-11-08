@@ -496,6 +496,7 @@ private function AddCollectabilityString(title: string, craftedItemName: name, c
 	var item_quality	: int;
 	var rarity_colour	: string;
 	var label			: string;
+	var horse_gear		: bool;
 
 	tooltip_data = wrappedMethod(item, itemInvComponent, isShopItem, compareWithItem, compareItemInv);
 
@@ -505,7 +506,8 @@ private function AddCollectabilityString(title: string, craftedItemName: name, c
 	}
 
 	item_category = itemInvComponent.GetItemCategory(item);
-	if (!itemInvComponent.IsItemAnyArmor(item) && !itemInvComponent.IsItemWeapon(item) && item_category != 'gwint' && item_category != 'trophy')
+	horse_gear = (item_category == 'horse_saddle' || item_category == 'horse_bag' || item_category == 'horse_blinder');
+	if (!horse_gear && !itemInvComponent.IsItemAnyArmor(item) && !itemInvComponent.IsItemWeapon(item) && item_category != 'gwint' && item_category != 'trophy')
 	{
 		return tooltip_data;
 	}
@@ -522,7 +524,8 @@ private function AddCollectabilityString(title: string, craftedItemName: name, c
 	default:	rarity_colour = "<font color='#01b701'>"; break;
 	}
 
-	if (item_quality >= 4)
+	// PotP tracks every named piece of horse gear, whatever its quality
+	if (item_quality >= 4 || horse_gear)
 	{
 		label += PotP_GetCollectabilityTag(itemInvComponent.GetItemName(item));
 	}

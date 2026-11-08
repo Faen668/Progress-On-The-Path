@@ -881,6 +881,10 @@
 2116568771||potp_ov_set_misc_missable_hint|Before a point of no return closes off missable quests you haven't finished, pauses the game with a warning listing them. Also shows a notification when a missable quest is missed.
 2116568772||potp_ov_set_misc_tracker|<font color="#DE8971">Miscellaneous       :   Missable Notes on Tracked Quest</font>
 2116568773||potp_ov_set_misc_tracker_hint|Adds a note under the tracked quest's objectives on the HUD when the quest is missable, or when it contains a point of no return with missable quests still open.
+2116569426||potp_ov_set_misc_tracker_style|<font color="#DE8971">Miscellaneous       :   How Tracked Quest Notes Show</font>
+2116569427||potp_ov_set_misc_tracker_style_hint|Panel draws the notes in a panel of their own under the HUD's quest list, with the quests a point of no return would close off. In the Objective Text adds them to the last objective as plain lines, in the HUD's own font.
+2116569428||potp_ov_set_misc_tracker_style_0|Panel Under the Quest List
+2116569429||potp_ov_set_misc_tracker_style_1|In the Objective Text
 2116568774||potp_ov_area_0|All Regions
 2116568775||potp_ov_area_1|White Orchard
 2116568776||potp_ov_area_2|Velen
@@ -1508,6 +1512,10 @@
 2116569378||potp_ov_items_part_mods|Added by Mods
 2116569382||potp_ov_can_be_missed|Can Be Missed
 2116569384||potp_ov_card_details|Card
+2116569430||potp_ov_tracker_head|Point of No Return
+2116569431||potp_ov_tracker_open|[1] open
+2116569432||potp_ov_tracker_more|and [1] more, in the Missable tab
+2116569433||potp_ov_lore_not_started|Geralt has yet to take this quest up. Its story will be written here as it unfolds.
 ;overlay-text-end
 ;
 ; Next id: 2116569436

@@ -600,6 +600,10 @@ function PotPOverlay_TextKeys_3(out keys: array<string>)
 	keys.PushBack("items_part_mods");
 	keys.PushBack("can_be_missed");
 	keys.PushBack("card_details");
+	keys.PushBack("tracker_head");
+	keys.PushBack("tracker_open");
+	keys.PushBack("tracker_more");
+	keys.PushBack("lore_not_started");
 }
 
 function PotPOverlay_ExportText() : string

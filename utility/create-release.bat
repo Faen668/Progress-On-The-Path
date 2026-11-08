@@ -16,9 +16,10 @@ mkdir "%modpath%\release"
 mkdir "%modpath%\release\mods\mod%modname%\content\
 XCOPY "%modpath%\progress on the path ng\packed\mods\modprogressonthepathng\content" "%modpath%\release\mods\mod%modname%\content\" /e /s /y
 
-::Copy over the reward swords' DLC (dlc\potp: Pathfinder and Navigator), as REDkit's Publish packs it.
-mkdir "%modpath%\release\dlc\potp\"
-XCOPY "%modpath%\progress on the path ng\packed\dlc\potp" "%modpath%\release\dlc\potp\" /e /s /y
+::Copy over the reward swords' DLC (Pathfinder and Navigator), as REDkit's Publish packs it. It installs as dlc%modname%,
+::named as the mod's folder is; inside, its files are still REDkit's dlc\potp.
+mkdir "%modpath%\release\dlc\dlc%modname%\"
+XCOPY "%modpath%\progress on the path ng\packed\dlc\potp" "%modpath%\release\dlc\dlc%modname%\" /e /s /y
 
 ::Copy over PotP's own achievement pack (the reward swords' achievements): the overlay reads mods\<mod>\potp_achievements.xml.
 mkdir "%modpath%\release\mods\mod%modname%\"

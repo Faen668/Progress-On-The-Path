@@ -256,6 +256,7 @@ function PotP_DefineSettings(s: CPotP_Settings)
 	s.Add('ProgressOnThePath_MiscNotification_Enter',		"TOGGLE",			"true",	"potp_ov_set_misc_enter", "");
 	s.Add('ProgressOnThePath_MiscNotification_Missable',	"TOGGLE",			"true",	"potp_ov_set_misc_missable", "potp_ov_set_misc_missable_hint");
 	s.Add('ProgressOnThePath_MiscNotification_Tracker',		"TOGGLE",			"true",	"potp_ov_set_misc_tracker", "potp_ov_set_misc_tracker_hint");
+	PotP_SettingOptions(s.Add('ProgressOnThePath_MiscNotification_TrackerStyle', "OPTIONS", "0", "potp_ov_set_misc_tracker_style", "potp_ov_set_misc_tracker_style_hint"), "potp_ov_set_misc_tracker_style_", 2);
 
 	// Disabled, Lite and Enabled: everything off; brief pop-ups only; everything on
 	preset = s.Preset("potp_ov_set_preset_disabled");

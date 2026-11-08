@@ -178,7 +178,51 @@
 		<tags>NoShow,NoDrop,EncumbranceOff</tags><base_abilities></base_abilities>
 	</item>
 
+	<!-- Their crafting diagrams. Never given as items: PotP teaches them with the sword (AddCraftingSchematic), so a lost
+	     or sold sword can be made again. These entries only give the game's "new diagram" notice its name and icon. -->
+	<item name="PotP Pathfinder schematic" category="crafting_schematic" price="0" weight="0" localisation_key_name="potp_item_name_pathfinder" localisation_key_description="item_desc_crafting_schematic" icon_path="icons/inventory/quests/ico_recipe.png">
+		<tags>NoShow, NoDrop, mod_crafting, mod_legendary</tags><base_abilities></base_abilities>
+	</item>
+	<item name="PotP Navigator schematic" category="crafting_schematic" price="0" weight="0" localisation_key_name="potp_item_name_navigator" localisation_key_description="item_desc_crafting_schematic" icon_path="icons/inventory/quests/ico_recipe.png">
+		<tags>NoShow, NoDrop, mod_crafting, mod_legendary</tags><base_abilities></base_abilities>
+	</item>
+
 </items>
 
 </definitions>
+
+<custom>
+<crafting_schematics>
+
+	<!-- A master smith, as the game's own relic swords need -->
+	<schematic
+		name_name						="PotP Pathfinder schematic"
+		craftedItem_name				="PotP Pathfinder"
+		craftsmanLevel_name				="Master"
+		craftsmanType_name				="Smith"
+		price							="400"
+	>
+		<ingredients>					<ingredient	quantity="1"	item_name="Leather straps"					/>
+										<ingredient	quantity="2"	item_name="Dark steel ingot"				/>
+										<ingredient	quantity="1"	item_name="Hardened leather"				/>
+										<ingredient	quantity="1"	item_name="Monstrous bone"					/>
+		</ingredients>
+	</schematic>
+
+	<schematic
+		name_name						="PotP Navigator schematic"
+		craftedItem_name				="PotP Navigator"
+		craftsmanLevel_name				="Master"
+		craftsmanType_name				="Smith"
+		price							="400"
+	>
+		<ingredients>					<ingredient	quantity="1"	item_name="Leather squares"					/>
+										<ingredient	quantity="2"	item_name="Meteorite silver ingot"			/>
+										<ingredient	quantity="1"	item_name="Sapphire"						/>
+										<ingredient	quantity="1"	item_name="Monstrous dust"					/>
+		</ingredients>
+	</schematic>
+
+</crafting_schematics>
+</custom>
 </redxml>

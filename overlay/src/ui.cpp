@@ -523,6 +523,7 @@ namespace
 	ULONGLONG g_achievementsNextAsk = 0;   // when the Achievements tab next reads them
 	ULONGLONG g_killsNextAsk = 0;
 	int g_region = 0;   // 0 all
+	int g_regionOf[kTabCount] = {};   // the region each tab was left on, given back when it's opened again
 	float g_scroll = 0.f, g_scrollShown = 0.f;
 	std::string g_selected[kTabCount];
 	std::map<std::string, bool> g_open;    // section header -> open, per book
@@ -640,10 +641,11 @@ namespace
 		book = (book + kTabCount) % kTabCount;
 		if (book == g_book)
 			return;
+		g_regionOf[g_book] = g_region;
 		g_book = book;
 		g_achievementsNextAsk = 0;
 		g_killsNextAsk = 0;
-		g_region = 0;
+		g_region = g_regionOf[book];
 		g_scroll = g_scrollShown = 0;
 		g_followSelection = true;
 		g_focusHeader.clear();
@@ -3999,6 +4001,8 @@ namespace
 	std::string g_detailFor;
 	float g_detailScroll = 0.f, g_detailScrollMax = 0.f;
 
+	bool QuestLore(const Entry& e, std::vector<std::string>& out);   // further down, with the other details read from the game
+
 	void DrawDetail(const Model& m, const Entry* e, const Section* section)
 	{
 		const Columns col = GetColumns();
@@ -4155,41 +4159,69 @@ namespace
 			return;
 		}
 
-		// The other entries that share its fate, or the rest of its section
-		const Section* list = group ? group : section;
-		Text(kTitle, 24, mx0 + 6, y, kHead, !group ? Tx(T_still_to_do) : group->kind == 0 && !group->cutoff.empty() ? Tx(T_also_closes) : Tx(T_also_in_group));
-		FadeLineH(mx0, mx1, y + 38, kGold);
-		y += 52;
-		// With a region chosen, only that region's; the rest are counted, so a group reaching elsewhere still says so
-		int shown = 0, elsewhere = 0;
-		for (const Entry& other : list->entries)
+		// A quest: its story so far, as the journal tells it
+		if (g_book == kBookQuest)
 		{
-			if (other.uuid == e->uuid || other.Done() || other.status == kMissed || other.upgradeHidden)
-				continue;
-			if (g_region != 0 && other.region != g_region)
+			std::vector<std::string> lore;
+			const float textW = mx1 - mx0 - 24;
+			// Not started, or never taken up: the journal has nothing yet, and its first page would give the quest away
+			const bool have = e->status != kAvailable && QuestLore(*e, lore);
+			if (e->status == kAvailable || (have && lore.empty()))
 			{
-				++elsewhere;
-				continue;
+				Text(kSerif, 30, mx0 + 12, y, kDim, Tx(T_lore_not_started), textW);
+				y += WrappedHeight(kSerif, 30, Tx(T_lore_not_started), textW) + 22.f;
 			}
-			const bool hasRegion = other.region > 0 && other.region < kRegionCount;
-			Marker(other, ImVec2(mx0 + 28, y + (hasRegion ? 26 : 20)));
-			const std::string& otherTitle = other.title.empty() ? other.uuid : other.title;
-			Text(kSerif, 30, mx0 + 66, y, kText, otherTitle.c_str(), mx1 - mx0 - 76);
-			const float otherH = WrappedHeight(kSerif, 30, otherTitle.c_str(), mx1 - mx0 - 76);
-			if (hasRegion)
-				Text(kSans, 22, mx0 + 66, y + otherH, Rgb(142, 134, 118), m.regions[other.region].c_str());
-			y += otherH + (hasRegion ? 35.f : 13.f);
-			++shown;
+			else if (!have)
+			{
+				Text(kSerif, 28, mx0 + 12, y, kDim, Tx(T_reading));
+				y += 52.f;
+			}
+			for (const std::string& paragraph : lore)
+			{
+				Text(kSerif, 30, mx0 + 12, y, Rgb(232, 222, 200), paragraph.c_str(), textW);
+				y += WrappedHeight(kSerif, 30, paragraph.c_str(), textW) + 22.f;
+			}
+			y += 14.f;
 		}
-		if (shown == 0)
+
+		// The other entries that share its fate, or the rest of its section. A quest's section is in the list beside it.
+		const Section* list = group ? group : section;
+		if (g_book != kBookQuest || group)
 		{
-			Text(kSerif, 30, mx0 + 12, y, kDim, g_region != 0 && elsewhere > 0 ? Tx(T_nothing_in_region) : Tx(T_nothing_outstanding));
-			y += 44.f;
-		}
-		if (elsewhere > 0)
-		{
-			Text(kSans, 22, mx0 + 12, y, Rgb(142, 134, 118), TxFill(T_more_other_regions, std::to_string(elsewhere)).c_str(), mx1 - mx0 - 24);
-			y += 36.f;
+			Text(kTitle, 24, mx0 + 6, y, kHead, !group ? Tx(T_still_to_do) : group->kind == 0 && !group->cutoff.empty() ? Tx(T_also_closes) : Tx(T_also_in_group));
+			FadeLineH(mx0, mx1, y + 38, kGold);
+			y += 52;
+			// With a region chosen, only that region's; the rest are counted, so a group reaching elsewhere still says so
+			int shown = 0, elsewhere = 0;
+			for (const Entry& other : list->entries)
+			{
+				if (other.uuid == e->uuid || other.Done() || other.status == kMissed || other.upgradeHidden)
+					continue;
+				if (g_region != 0 && other.region != g_region)
+				{
+					++elsewhere;
+					continue;
+				}
+				const bool hasRegion = other.region > 0 && other.region < kRegionCount;
+				Marker(other, ImVec2(mx0 + 28, y + (hasRegion ? 26 : 20)));
+				const std::string& otherTitle = other.title.empty() ? other.uuid : other.title;
+				Text(kSerif, 30, mx0 + 66, y, kText, otherTitle.c_str(), mx1 - mx0 - 76);
+				const float otherH = WrappedHeight(kSerif, 30, otherTitle.c_str(), mx1 - mx0 - 76);
+				if (hasRegion)
+					Text(kSans, 22, mx0 + 66, y + otherH, Rgb(142, 134, 118), m.regions[other.region].c_str());
+				y += otherH + (hasRegion ? 35.f : 13.f);
+				++shown;
+			}
+			if (shown == 0)
+			{
+				Text(kSerif, 30, mx0 + 12, y, kDim, g_region != 0 && elsewhere > 0 ? Tx(T_nothing_in_region) : Tx(T_nothing_outstanding));
+				y += 44.f;
+			}
+			if (elsewhere > 0)
+			{
+				Text(kSans, 22, mx0 + 12, y, Rgb(142, 134, 118), TxFill(T_more_other_regions, std::to_string(elsewhere)).c_str(), mx1 - mx0 - 24);
+				y += 36.f;
+			}
 		}
 		dl->PopClipRect();
 		const float contentH = y + g_detailScroll - viewTop, viewH = viewBottom - viewTop;
@@ -4406,6 +4438,59 @@ namespace
 	std::set<std::string> g_cardStatsAsked;
 	std::string g_cardStatsWanted;
 	double g_cardStatsWantedAt = 0.0;
+
+	// A quest's story so far, from the journal, a paragraph each. Asked for again each time the window opens, as it grows.
+	std::map<std::string, std::vector<std::string>> g_questLore;
+	std::set<std::string> g_questLoreAsked;
+	std::string g_questLoreWanted;
+	double g_questLoreWantedAt = 0.0;
+
+	void ReceiveQuestLore(const std::string& text)
+	{
+		std::vector<std::string> f;
+		for (size_t from = 0;;)
+		{
+			const size_t bar = text.find('|', from);
+			f.push_back(text.substr(from, bar == std::string::npos ? std::string::npos : bar - from));
+			if (bar == std::string::npos)
+				break;
+			from = bar + 1;
+		}
+		if (f.size() < 2)
+			return;
+		std::vector<std::string> paragraphs;
+		for (size_t i = 2; i < f.size(); ++i)
+		{
+			std::string p = CleanGameText(f[i]);
+			if (!p.empty())
+				paragraphs.push_back(std::move(p));
+		}
+		std::lock_guard lock(g_itemStatsLock);
+		g_questLore[f[1]] = std::move(paragraphs);
+	}
+
+	// The quest's story if it's here, asking for it once the selection has settled if not
+	bool QuestLore(const Entry& e, std::vector<std::string>& out)
+	{
+		{
+			std::lock_guard lock(g_itemStatsLock);
+			const auto found = g_questLore.find(e.uuid);
+			if (found != g_questLore.end())
+			{
+				out = found->second;
+				return true;
+			}
+		}
+		const double now = ImGui::GetTime();
+		if (g_questLoreWanted != e.uuid)
+		{
+			g_questLoreWanted = e.uuid;
+			g_questLoreWantedAt = now;
+		}
+		if (now - g_questLoreWantedAt > 0.15 && g_questLoreAsked.insert(e.uuid).second)
+			RequestExec("potpoverlay_questlore(" + e.uuid + ")", false);
+		return false;
+	}
 
 	void ReceiveCardStats(const std::string& text)
 	{
@@ -5757,6 +5842,209 @@ namespace
 			else
 				DrawPopup(*g_popup, LayOutPopup(*g_popup), g_popupAlpha);
 		}
+	}
+
+	// ------------------------------------------------------------------------------------------
+	// The tracker panel: PotP's missable notes under the HUD's quest list
+	// ------------------------------------------------------------------------------------------
+	// The scripts say where the list ends, in the HUD's 1920x1080 stage, and what to show, ten times a second
+	// (PotPOverlay_Tracker in QuestTracker.ws):
+	//   Q|centre x|top|width|opacity, M|the line saying the tracked quest can be missed, and L|state|title|uuid for each
+	//   quest a point of no return ahead would close off (state 2: under way)
+
+	struct TrackerPanel
+	{
+		float x = 0.f, top = 0.f, width = 0.f, opacity = 0.f;
+		std::string missable;
+		std::vector<PopupLine> quests;
+	};
+
+	bool RevealedMissable(const std::string& uuid);
+
+	std::mutex g_trackerMutex;
+	std::string g_trackerText;   // as the scripts last sent it
+	bool g_trackerFresh = false;
+	TrackerPanel g_tracker;      // what's drawn: kept as it fades out
+	float g_trackerAlpha = 0.f;
+	bool g_trackerWanted = false;
+
+	TrackerPanel ParseTracker(const std::string& text, bool& ok)
+	{
+		TrackerPanel t;
+		ok = false;
+		for (size_t start = 0; start < text.size();)
+		{
+			size_t end = text.find("\\n", start);
+			if (end == std::string::npos)
+				end = text.size();
+			const std::string line = text.substr(start, end - start);
+			start = end + 2;
+			std::vector<std::string> f;
+			for (size_t from = 0;;)
+			{
+				const size_t bar = line.find('|', from);
+				f.push_back(line.substr(from, bar == std::string::npos ? std::string::npos : bar - from));
+				if (bar == std::string::npos)
+					break;
+				from = bar + 1;
+			}
+			if (f[0] == "Q" && f.size() >= 5)
+			{
+				t.x = static_cast<float>(atof(f[1].c_str()));
+				t.top = static_cast<float>(atof(f[2].c_str()));
+				t.width = static_cast<float>(atof(f[3].c_str()));
+				t.opacity = std::clamp(static_cast<float>(atof(f[4].c_str())), 0.f, 1.f);
+				ok = t.width > 0.f;
+			}
+			else if (f[0] == "M" && f.size() >= 2)
+				t.missable = CleanGameText(f[1]);
+			else if (f[0] == "L" && f.size() >= 4)
+			{
+				PopupLine q;
+				q.inProgress = f[1] == "2";
+				q.text = CleanGameText(f[2]);
+				q.uuid = f[3];
+				t.quests.push_back(std::move(q));
+			}
+		}
+		ok = ok && (!t.missable.empty() || !t.quests.empty());
+		return t;
+	}
+
+	// The Ledger: the game's own see-through black, a red edge, the point of no return and what it would close off,
+	// then the line saying the tracked quest itself can be missed. Drawn in the units of a 2560x1440 screen, where the
+	// HUD's stage is 4/3 as big, then scaled to the screen as the HUD is.
+	void DrawTracker(const TrackerPanel& t, float alpha)
+	{
+		const ImGuiIO& io = ImGui::GetIO();
+		const Settings& st = GetSettings();
+		const float stage = std::min(io.DisplaySize.x / 1920.f, io.DisplaySize.y / 1080.f);
+		if (stage <= 0.f)
+			return;
+		const float f = stage * 0.75f;   // these units to the screen's
+		const float originX = (io.DisplaySize.x - 1920.f * stage) * 0.5f, originY = (io.DisplaySize.y - 1080.f * stage) * 0.5f;
+		const float cx = (originX + t.x * stage) / f, top = (originY + t.top * stage) / f + 6.f;
+		const float w = std::max(360.f, t.width * 4.f / 3.f), x0 = cx - w * 0.5f, x1 = cx + w * 0.5f;
+
+		const ImU32 rose = Rgb(222, 98, 112), ink = Rgb(240, 234, 220), dim = Rgb(170, 162, 146), amber = Rgb(222, 164, 66);
+		constexpr int kShown = 3;   // names listed; the rest are counted
+		constexpr float kRowH = 29.f;
+		const int count = static_cast<int>(t.quests.size());
+		const int listed = std::min(count, kShown);
+		float h = 8.f;
+		if (count > 0)
+			h += 40.f + listed * kRowH + (count > kShown ? 30.f : 0.f) + 6.f;
+		if (!t.missable.empty())
+			h += (count > 0 ? 10.f : 0.f) + WrappedHeight(kSans, 24, t.missable.c_str(), w - 32.f) + 4.f;
+		h += 6.f;
+
+		// Drawn unscaled, so nothing's clipped until it's been scaled to the screen
+		dl->PushClipRect(ImVec2(-10000, -10000), ImVec2(20000, 20000), false);
+		const int firstVertex = dl->VtxBuffer.Size;
+		const int firstCommand = dl->CmdBuffer.Size - 1;
+		const ImVec2 a(x0, top), b(x1, top + h);
+		const auto shadowed = [&](Face face, int size, float x, float y, ImU32 col, const char* s, float wrap = 0.f)
+		{
+			Text(face, size, x + 1.5f, y + 2.f, Rgb(0, 0, 0, 200), s, wrap);
+			Text(face, size, x, y, col, s, wrap);
+		};
+
+		// The band, soft at its edges, as the HUD's own behind each objective
+		const ImU32 dark = Rgb(0, 0, 0, 150), clear = Rgb(0, 0, 0, 0);
+		constexpr float soft = 10.f;
+		dl->AddRectFilled(a, b, dark);
+		dl->AddRectFilledMultiColor(ImVec2(a.x - soft, a.y), ImVec2(a.x, b.y), clear, dark, dark, clear);
+		dl->AddRectFilledMultiColor(ImVec2(b.x, a.y), ImVec2(b.x + soft, b.y), dark, clear, clear, dark);
+		dl->AddRectFilledMultiColor(ImVec2(a.x, a.y - soft * 0.5f), ImVec2(b.x, a.y), clear, clear, dark, dark);
+		dl->AddRectFilledMultiColor(ImVec2(a.x, b.y), ImVec2(b.x, b.y + soft * 0.5f), dark, dark, clear, clear);
+		dl->AddRectFilled(a, ImVec2(a.x + 3.f, b.y), count > 0 ? rose : amber);
+
+		float y = top + 8.f;
+		if (count > 0)
+		{
+			// The warning's sign, and the count on the right
+			const ImVec2 c(x0 + 26.f, y + 13.f);
+			const ImVec2 tri[3] = { { c.x, c.y - 10.f }, { c.x + 11.f, c.y + 8.5f }, { c.x - 11.f, c.y + 8.5f } };
+			dl->AddConvexPolyFilled(tri, 3, rose);
+			dl->AddRectFilled(ImVec2(c.x - 1.f, c.y - 4.5f), ImVec2(c.x + 1.f, c.y + 3.f), Rgb(20, 10, 10));
+			dl->AddCircleFilled(ImVec2(c.x, c.y + 5.5f), 1.2f, Rgb(20, 10, 10));
+			const std::string open = TxFill(T_tracker_open, std::to_string(count));
+			const float openW = Measure(kSans, 24, open.c_str()).x;
+			const std::string head = Upper(Tx(T_tracker_head));
+			TextFit(kTitle, 22, x0 + 47.f, y + 2.f, Rgb(0, 0, 0, 200), head, x1 - openW - 24.f - (x0 + 46.f));
+			TextFit(kTitle, 22, x0 + 46.f, y, rose, head, x1 - openW - 24.f - (x0 + 46.f));
+			Text(kSans, 24, x1 - 14.f - openW, y, dim, open.c_str());
+			y += 34.f;
+			FadeLineH(x0 + 6.f, x1 + 60.f, y, Rgb(222, 98, 112, 140));
+			y += 6.f;
+
+			// The first few by name, a quest not started keeping its name to itself while the spoilers are hidden
+			for (int i = 0; i < listed; ++i)
+			{
+				const PopupLine& q = t.quests[i];
+				const bool hidden = !q.inProgress && !st.revealUnstarted && !RevealedMissable(q.uuid);
+				const ImVec2 dot(x0 + 26.f, y + 15.f);
+				if (q.inProgress)
+					dl->AddCircleFilled(dot, 5.f, amber, 16);
+				else
+					dl->AddCircle(dot, 5.f, dim, 16, 1.5f);
+				const std::string name = hidden ? std::string(Tx(T_missable_quest)) : q.text;
+				TextFit(kSans, 24, x0 + 43.5f, y + 2.f, Rgb(0, 0, 0, 200), name, x1 - 12.f - (x0 + 42.f));
+				TextFit(kSans, 24, x0 + 42.f, y, q.inProgress ? ink : dim, name, x1 - 12.f - (x0 + 42.f));
+				y += kRowH;
+			}
+			if (count > kShown)
+			{
+				Text(kSans, 22, x0 + 42.f, y + 1.f, dim, TxFill(T_tracker_more, std::to_string(count - kShown)).c_str());
+				y += 30.f;
+			}
+			y += 6.f;
+		}
+		if (!t.missable.empty())
+		{
+			if (count > 0)
+			{
+				FadeLineH(x0 + 6.f, x1 + 60.f, y, Rgb(222, 164, 66, 110));
+				y += 10.f;
+			}
+			shadowed(kSans, 24, x0 + 16.f, y, amber, t.missable.c_str(), w - 32.f);
+		}
+
+		for (int i = firstVertex; i < dl->VtxBuffer.Size; ++i)
+		{
+			ImDrawVert& v = dl->VtxBuffer[i];
+			v.pos.x *= f;
+			v.pos.y *= f;
+			if (alpha < 1.f)
+				v.col = Alpha(v.col, alpha);
+		}
+		dl->PopClipRect();
+		for (int i = std::max(0, firstCommand); i < dl->CmdBuffer.Size; ++i)
+			dl->CmdBuffer[i].ClipRect = ImVec4(0.f, 0.f, io.DisplaySize.x, io.DisplaySize.y);
+	}
+
+	// It fades with the quest list, and in and out as there's something to say
+	void UpdateTracker()
+	{
+		{
+			std::lock_guard lock(g_trackerMutex);
+			if (g_trackerFresh)
+			{
+				g_trackerFresh = false;
+				bool ok = false;
+				TrackerPanel t = ParseTracker(g_trackerText, ok);
+				g_trackerWanted = ok;
+				if (ok)
+					g_tracker = std::move(t);
+			}
+		}
+		const float target = g_trackerWanted && !MenuOpen() ? g_tracker.opacity : 0.f;
+		if (g_trackerAlpha < target)
+			g_trackerAlpha = std::min(target, g_trackerAlpha + g_dt * 6.f);
+		else
+			g_trackerAlpha = std::max(target, g_trackerAlpha - g_dt * 6.f);
+		if (g_trackerAlpha > 0.f)
+			DrawTracker(g_tracker, g_trackerAlpha);
 	}
 
 	// Placing it, as Completionist places its notifications: the window steps aside for a sample, which is dragged
@@ -8943,6 +9231,12 @@ void UiPushPopup(const std::string& text)
 		g_wardExtrasFresh = true;
 		return;
 	}
+	// Q|...: the tracker panel, as the off-screen test sends it (the game's goes through UiSetTracker)
+	if (text.rfind("Q|", 0) == 0)
+	{
+		UiSetTracker(text);
+		return;
+	}
 	// I|...: an item's stats that were asked for
 	if (text.rfind("I|", 0) == 0)
 	{
@@ -8955,12 +9249,27 @@ void UiPushPopup(const std::string& text)
 		ReceiveCardStats(text);
 		return;
 	}
+	// J|...: a quest's story from the journal
+	if (text.rfind("J|", 0) == 0)
+	{
+		ReceiveQuestLore(text);
+		return;
+	}
 	PopupMessage message = ParsePopup(text);
 	std::lock_guard lock(g_popupMutex);
 	if (message.kind == 2)
 		g_warningQueue.push_back(std::move(message));
 	else
 		g_popupQueue.push_back(std::move(message));
+}
+
+void UiSetTracker(const std::string& text)
+{
+	std::lock_guard lock(g_trackerMutex);
+	if (text == g_trackerText)
+		return;
+	g_trackerText = text;
+	g_trackerFresh = true;
 }
 
 bool UiWarningUp()
@@ -9312,6 +9621,7 @@ void DrawUi()
 			st.popupY = g_placeFromY;
 		}
 		dl = ImGui::GetBackgroundDrawList();
+		UpdateTracker();
 		UpdatePopup();
 		return;
 	}
@@ -9323,6 +9633,9 @@ void DrawUi()
 			std::lock_guard statsLock(g_itemStatsLock);
 			g_itemStats.clear();
 			g_itemStatsAsked.clear();
+			// and the quests' stories may have gone on
+			g_questLore.clear();
+			g_questLoreAsked.clear();
 		}
 		g_openT = 0.f;
 		g_barT = 0.f;

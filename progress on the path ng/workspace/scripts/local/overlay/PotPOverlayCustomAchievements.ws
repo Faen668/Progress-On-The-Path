@@ -183,6 +183,33 @@ exec function potpach_end(generation: int, probes: int, defs: int, texts: int)
 	store.ready = store.generation == generation && store.probes.Size() == probes && store.defs.Size() == defs && store.text_keys.Size() == texts;
 	store.player = NULL;
 	PotP_Log("Custom achievements: " + defs + " achievements and " + probes + " probes, ready " + store.ready, 'Achievements');
+	if (store.ready)
+	{
+		PotPAch_LearnRewardSchematics(store);
+	}
+}
+
+// The reward swords' crafting diagrams for every achievement already unlocked in this save, so a sword lost or sold
+// before its diagram came with it can still be made
+function PotPAch_LearnRewardSchematics(store: CPotPAch_Store)
+{
+	var Idx		: int;
+	var Other	: int;
+
+	for (Idx = 0; Idx < store.defs.Size(); Idx += 1)
+	{
+		if (!FactsDoesExist(store.defs[Idx].fact))
+		{
+			continue;
+		}
+		for (Other = 0; Other < store.defs[Idx].rewards.Size(); Other += 1)
+		{
+			if (store.defs[Idx].rewards[Other].kind == 1)
+			{
+				PotP_LearnRewardSwordSchematic(store.defs[Idx].rewards[Other].item, true);
+			}
+		}
+	}
 }
 
 //---------------------------------------------------
@@ -490,7 +517,9 @@ function PotPAch_Give(prize: CPotPAch_Reward)
 			return;
 		}
 		witcher.GetInventory().AddAnItem(prize.item, prize.amount);
-		// PotP's own reward swords come in at Geralt's level, not the one below that the game builds them at
+		// PotP's own reward swords come with their crafting diagrams (the game's "new diagram" notice), and in at
+		// Geralt's level, not the one below that the game builds them at
+		PotP_LearnRewardSwordSchematic(prize.item, false);
 		PotP_ScaleRewardSwords();
 		break;
 	case 2:

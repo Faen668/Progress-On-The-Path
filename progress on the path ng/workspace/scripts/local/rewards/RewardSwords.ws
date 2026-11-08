@@ -125,7 +125,59 @@ function PotP_ScaleRewardSwordsIn(inv: CInventoryComponent, level: int)
 		{
 			PotP_ScaleRewardSword(inv, items[k], level);
 		}
+		// A sword had before its diagram came with it: its diagram too, quietly
+		if (items.Size() > 0)
+		{
+			PotP_LearnRewardSwordSchematic(names[i], true);
+		}
 	}
+}
+
+//---------------------------------------------------
+// Each sword's crafting diagram (dlc\potp's items XML, under crafting_schematics). It isn't an item he's given: it's
+// learnt with the sword, as reading a diagram would teach it, so a lost, sold or broken down sword can be made again.
+// It can't be named as the sword is, as the game takes anything named as a known diagram out of his inventory.
+
+function PotP_RewardSwordSchematic(sword: name) : name
+{
+	switch (sword)
+	{
+		case 'PotP Pathfinder':
+			return 'PotP Pathfinder schematic';
+		case 'PotP Navigator':
+			return 'PotP Navigator schematic';
+	}
+	return '';
+}
+
+// Silent: no "new diagram" notice, for the diagrams of swords given before there were any
+function PotP_LearnRewardSwordSchematic(sword: name, silent: bool)
+{
+	var witcher : W3PlayerWitcher = GetWitcherPlayer();
+	var schematic : name = PotP_RewardSwordSchematic(sword);
+	var learnt : bool;
+	var recipe : SCraftingSchematic;
+
+	if (witcher && schematic != '')
+	{
+		learnt = witcher.AddCraftingSchematic(schematic, silent, true);
+		recipe = getCraftingSchematicFromName(schematic);
+		// The recipe comes from dlc\potp's items XML: none there (it makes nothing), and the crafting menu shows nothing
+		PotP_Log(schematic + (learnt ? " learnt" : " already known") + ", which makes '" + recipe.craftedItemName + "'", 'RewardSwords');
+	}
+}
+
+// A sword made from its diagram comes in at Geralt's level, as a given one does
+@wrapMethod(W3CraftingManager) function Craft(schemName: name, out item: SItemUniqueId) : ECraftingException
+{
+	var result : ECraftingException;
+
+	result = wrappedMethod(schemName, item);
+	if (result == ECE_NoException && (schemName == 'PotP Pathfinder schematic' || schemName == 'PotP Navigator schematic'))
+	{
+		PotP_ScaleRewardSwords();
+	}
+	return result;
 }
 
 //---------------------------------------------------
@@ -163,6 +215,7 @@ function PotP_GiveRewardSwords(optional force: bool) : bool
 	for (i = 0; i < names.Size(); i += 1)
 	{
 		witcher.GetInventory().AddAnItem(names[i], 1);
+		PotP_LearnRewardSwordSchematic(names[i], false);
 	}
 	PotP_ScaleRewardSwords();
 	FactsAdd("potp_reward_swords_given", 1);

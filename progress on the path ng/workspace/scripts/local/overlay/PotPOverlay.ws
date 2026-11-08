@@ -1085,6 +1085,110 @@ exec function potpoverlay_itemstats(uuid_value: string)
 
 //---------------------------------------------------
 
+// A quest's story so far, as the journal's own quest page shows it: J|uuid|then a paragraph a field
+exec function potpoverlay_questlore(uuid_value: string)
+{
+	var main	: CPotP_Main = PotPOverlay_Main();
+	var tracked	: CPotP_Entry;
+
+	if (!main)
+	{
+		return;
+	}
+	tracked = main.catalog.FindByUuid(uuid_value);
+	if (tracked && tracked.category == PotP_A_Quest)
+	{
+		main.notifications.QueueForOverlay("J|" + uuid_value + PotPOverlay_QuestLore(tracked));
+	}
+}
+
+// The journal menu's GetDescription: the description entries it has reached, in their order, or the game's own line
+// for a quest it has with none yet. Nothing for a quest the journal doesn't have yet.
+function PotPOverlay_QuestLore(tracked: CPotP_Entry) : string
+{
+	var journal		: CWitcherJournalManager = theGame.GetJournalManager();
+	var quests		: array<CJournalBase>;
+	var journal_quest	: CJournalQuest;
+	var description_group	: CJournalQuestDescriptionGroup;
+	var description	: CJournalQuestDescriptionEntry;
+	var found		: array<CJournalQuestDescriptionEntry>;
+	var text		: string;
+	var paragraph	: string;
+	var Idx			: int;
+	var Jdx			: int;
+
+	journal.GetActivatedOfType('CJournalQuest', quests);
+	for (Idx = 0; Idx < quests.Size(); Idx += 1)
+	{
+		if (quests[Idx].baseName == tracked.entry_name || (tracked.alt_entry_name != "" && quests[Idx].baseName == tracked.alt_entry_name))
+		{
+			journal_quest = (CJournalQuest)quests[Idx];
+			break;
+		}
+	}
+
+	// None until he's taken it up: the overlay says so in its own words
+	if (!journal_quest)
+	{
+		return "";
+	}
+
+	if (journal_quest)
+	{
+		for (Idx = 0; Idx < journal_quest.GetNumChildren(); Idx += 1)
+		{
+			description_group = (CJournalQuestDescriptionGroup)journal_quest.GetChild(Idx);
+			if (description_group)
+			{
+				break;
+			}
+		}
+	}
+
+	if (description_group)
+	{
+		for (Idx = 0; Idx < description_group.GetNumChildren(); Idx += 1)
+		{
+			description = (CJournalQuestDescriptionEntry)description_group.GetChild(Idx);
+			if (!description || journal.GetEntryStatus(description) == JS_Inactive)
+			{
+				continue;
+			}
+			for (Jdx = 0; Jdx < found.Size(); Jdx += 1)
+			{
+				if (found[Jdx].GetOrder() > description.GetOrder())
+				{
+					break;
+				}
+			}
+			if (Jdx < found.Size())
+			{
+				found.Insert(Jdx, description);
+			}
+			else
+			{
+				found.PushBack(description);
+			}
+		}
+	}
+
+	for (Idx = 0; Idx < found.Size(); Idx += 1)
+	{
+		paragraph = GetLocStringById(found[Idx].GetDescriptionStringId());
+		if (paragraph != "")
+		{
+			text += "|" + PotPOverlay_Clean(paragraph);
+		}
+	}
+	if (text == "")
+	{
+		text = "|" + PotPOverlay_Clean(GetLocStringByKeyExt("panel_journal_quest_empty_description"));
+	}
+	return text;
+}
+
+//---------------------------------------------------
+
 exec function potpoverlay_updatekey()
 {
 	var main : CPotP_Main = PotPOverlay_Main();

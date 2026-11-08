@@ -339,6 +339,21 @@ namespace
 			UiPushPopup(message);
 	}
 
+	// Where the HUD's quest list ends and the tracker panel's lines, ten times a second while the window's shut.
+	// Scripts from before the panel have no PotPOverlay_Tracker, and so no panel.
+	void TrackerTick()
+	{
+		static ULONGLONG next = 0;
+		const ULONGLONG now = GetTickCount64();
+		if (now < next)
+			return;
+		next = now + 100;
+		std::string text;
+		if (MenuOpen() || !CallString("PotPOverlay_Tracker", text))
+			text.clear();
+		UiSetTracker(text);
+	}
+
 	// The window can open before there's anything to show, as a save is loading or the mod is still building its
 	// list. That work runs on game time, so the game stays unpaused until the list exists, and it's asked for again
 	// until then, so the window fills in by itself.
@@ -469,6 +484,7 @@ namespace
 		{
 			RadialTick();
 			NotificationTick();
+			TrackerTick();
 
 			WaitingTick();
 
