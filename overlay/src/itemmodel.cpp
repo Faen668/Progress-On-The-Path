@@ -4456,6 +4456,178 @@ std::string WornCategory(const std::string& templateName)
 	return found == g_wornByTemplate.end() ? std::string() : found->second.category;
 }
 
+// A sword's scabbard: the one it's bound to, else the plain one he starts with, as he's dressed. Null if there's none.
+static const WornItem* ScabbardOf(const std::string& templateName, std::string* category = nullptr)
+{
+	if (!g_ready)
+		return nullptr;
+	const auto sword = g_wornByTemplate.find(TemplateStem(templateName));
+	if (sword == g_wornByTemplate.end() || (sword->second.category != "steelsword" && sword->second.category != "silversword"))
+		return nullptr;
+	if (category)
+		*category = sword->second.category;
+	const WornItem& item = sword->second;
+	const auto bound = g_wornByName.find(!item.bound.empty() ? item.bound : item.category == "steelsword" ? "steel scabbard" : "silver scabbard");
+	return bound == g_wornByName.end() || bound->second.equipTemplate.empty() ? nullptr : &bound->second;
+}
+
+bool HasScabbard(const std::string& templateName)
+{
+	return ScabbardOf(templateName) != nullptr;
+}
+
+bool LoadSwordWithScabbard(const std::string& templateName, ItemModel& out)
+{
+	if (!LoadItemModel(templateName, out))
+		return false;
+	std::string category;
+	const WornItem* scabbard = ScabbardOf(templateName, &category);
+	const auto rig = ScabbardRig();
+	if (!scabbard || !rig)
+		return true;
+	// Both as they hang on his back: the sword from its bone of the scabbards' rig, the scabbard skinned to the others.
+	// Brought back into the sword's own space, the scabbard is where it would be with the sword in it.
+	const char* hung = category == "steelsword" ? "steel_sword_back" : "silver_sword_back";
+	M4 toSword;
+	bool found = false;
+	for (size_t b = 0; b < rig->names.size() && !found; ++b)
+		if (_stricmp(rig->names[b].c_str(), hung) == 0)
+			found = Invert(rig->rest[b], toSword);
+	if (!found)
+	{
+		Log("item models: no bone %s to put %s's scabbard by", hung, templateName.c_str());
+		return true;
+	}
+	ItemModel piece;
+	piece.keepSkin = true;
+	if (!LoadItemModel(scabbard->equipTemplate, piece))
+	{
+		Log("item models: %s's scabbard: %s", templateName.c_str(), piece.problem.c_str());
+		return true;
+	}
+	std::vector<ModelPart> added;
+	for (ModelPart& part : piece.parts)
+	{
+		if (part.shadowOnly)
+			continue;
+		// Each of its bones' place, carried into the sword's space
+		std::vector<M4> boneTo;
+		std::vector<char> known;
+		if (part.meshBones >= 0 && static_cast<size_t>(part.meshBones) < piece.meshBones.size())
+		{
+			const MeshBones& bones = piece.meshBones[part.meshBones];
+			boneTo.resize(bones.names.size());
+			known.assign(bones.names.size(), 0);
+			for (size_t i = 0; i < bones.names.size(); ++i)
+				for (size_t b = 0; b < rig->names.size(); ++b)
+					if (_stricmp(rig->names[b].c_str(), bones.names[i].c_str()) == 0)
+					{
+						M4 bind;
+						memcpy(bind.m, bones.inverseBinds[i].data(), sizeof(bind.m));
+						boneTo[i] = bind * rig->rest[b] * toSword;
+						known[i] = 1;
+						break;
+					}
+		}
+		for (size_t v = 0; v < part.vertices.size(); ++v)
+		{
+			M4 m = toSword;
+			if (v < part.skinning.size())
+			{
+				M4 sum;
+				float total = 0.f;
+				for (int r = 0; r < 4; ++r)
+					for (int c = 0; c < 4; ++c)
+						sum.m[r][c] = 0.f;
+				const SkinVertex& s = part.skinning[v];
+				for (int k = 0; k < 4; ++k)
+				{
+					const size_t bone = s.bones[k];
+					if (s.weights[k] == 0 || bone >= known.size() || !known[bone])
+						continue;
+					const float w = s.weights[k] / 255.f;
+					total += w;
+					for (int r = 0; r < 4; ++r)
+						for (int c = 0; c < 4; ++c)
+							sum.m[r][c] += boneTo[bone].m[r][c] * w;
+				}
+				if (total > 0.f)
+				{
+					for (int r = 0; r < 4; ++r)
+						for (int c = 0; c < 4; ++c)
+							sum.m[r][c] /= total;
+					m = sum;
+				}
+			}
+			ModelVertex& o = part.vertices[v];
+			const float p[3] = { o.position[0], o.position[1], o.position[2] };
+			const float n[3] = { o.normal[0], o.normal[1], o.normal[2] };
+			const float t[3] = { o.tangent[0], o.tangent[1], o.tangent[2] };
+			float nl = 0.f, tl = 0.f;
+			for (int i = 0; i < 3; ++i)
+			{
+				o.position[i] = p[0] * m.m[0][i] + p[1] * m.m[1][i] + p[2] * m.m[2][i] + m.m[3][i];
+				o.normal[i] = n[0] * m.m[0][i] + n[1] * m.m[1][i] + n[2] * m.m[2][i];
+				o.tangent[i] = t[0] * m.m[0][i] + t[1] * m.m[1][i] + t[2] * m.m[2][i];
+				nl += o.normal[i] * o.normal[i];
+				tl += o.tangent[i] * o.tangent[i];
+			}
+			nl = nl > 0.f ? 1.f / sqrtf(nl) : 0.f;
+			tl = tl > 0.f ? 1.f / sqrtf(tl) : 0.f;
+			for (int i = 0; i < 3; ++i)
+			{
+				o.normal[i] *= nl;
+				o.tangent[i] *= tl;
+			}
+		}
+		part.skinning.clear();
+		part.meshBones = -1;
+		part.cloth = -1;
+		part.clothing.clear();
+		added.push_back(std::move(part));
+	}
+	if (added.empty())
+		return true;
+
+	// Beside the blade rather than over it: moved out across the way the sword is widest, with its mouth still by the guard
+	float sMin[3], sMax[3];
+	for (int i = 0; i < 3; ++i)
+	{
+		sMin[i] = FLT_MAX;
+		sMax[i] = -FLT_MAX;
+	}
+	for (const ModelPart& part : added)
+		for (const ModelVertex& v : part.vertices)
+			for (int i = 0; i < 3; ++i)
+			{
+				sMin[i] = std::min(sMin[i], v.position[i]);
+				sMax[i] = std::max(sMax[i], v.position[i]);
+			}
+	int along = 0;
+	for (int i = 1; i < 3; ++i)
+		if (out.boundsMax[i] - out.boundsMin[i] > out.boundsMax[along] - out.boundsMin[along])
+			along = i;
+	int across = along == 0 ? 1 : 0;
+	for (int i = 0; i < 3; ++i)
+		if (i != along && out.boundsMax[i] - out.boundsMin[i] > out.boundsMax[across] - out.boundsMin[across])
+			across = i;
+	const float gap = (out.boundsMax[along] - out.boundsMin[along]) * 0.04f;
+	const float shift = out.boundsMax[across] + gap - sMin[across];
+	for (ModelPart& part : added)
+		for (ModelVertex& v : part.vertices)
+			v.position[across] += shift;
+	sMin[across] += shift;
+	sMax[across] += shift;
+	for (int i = 0; i < 3; ++i)
+	{
+		out.boundsMin[i] = std::min(out.boundsMin[i], sMin[i]);
+		out.boundsMax[i] = std::max(out.boundsMax[i], sMax[i]);
+	}
+	for (ModelPart& part : added)
+		out.parts.push_back(std::move(part));
+	return true;
+}
+
 bool LoadItemOnGeralt(const std::string& asked, int animation, ItemModel& out)
 {
 	if (!g_ready)

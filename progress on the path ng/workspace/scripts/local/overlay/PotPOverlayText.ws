@@ -606,6 +606,8 @@ function PotPOverlay_TextKeys_3(out keys: array<string>)
 	keys.PushBack("tracker_open");
 	keys.PushBack("tracker_more");
 	keys.PushBack("lore_not_started");
+	keys.PushBack("scabbard_shown");
+	keys.PushBack("scabbard_hidden");
 }
 
 function PotPOverlay_ExportText() : string

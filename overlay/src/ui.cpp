@@ -2848,6 +2848,7 @@ namespace
 	bool g_enlargeSpent = false;    // it's done what it was held for: let go before it does it again
 	int g_enlargeFrame = -1;
 	bool g_enlargeFired = false;
+	bool g_enlargeTapped = false;   // let go before the hold was long enough: a tap, which shows or hides a sword's scabbard
 
 	// True on the frame the hold is long enough. Asked any number of times a frame, it counts once.
 	bool EnlargeHeld()
@@ -2856,9 +2857,11 @@ namespace
 		{
 			g_enlargeFrame = ImGui::GetFrameCount();
 			g_enlargeFired = false;
+			g_enlargeTapped = false;
 			const bool down = (g_pad.buttons & kPadR3) != 0 || (!g_capture && KeyHeld(kKeyZ));
 			if (!down)
 			{
+				g_enlargeTapped = g_enlargeHeld > 0.f && !g_enlargeSpent;
 				g_enlargeHeld = 0.f;
 				g_enlargeSpent = false;
 			}
@@ -2873,6 +2876,13 @@ namespace
 			}
 		}
 		return g_enlargeFired;
+	}
+
+	// True on the frame R3 or the enlarge key is let go of before the hold did anything
+	bool EnlargeTapped()
+	{
+		EnlargeHeld();
+		return g_enlargeTapped;
 	}
 
 	// How far the hold has got, 0 to 1, for the bar under its prompt
@@ -4109,6 +4119,28 @@ namespace
 		float y = viewTop - (scrolls ? g_detailScroll : 0.f);
 		Marker(*e, ImVec2(mx0 + 28, y + 21));
 		Text(kSerif, 34, mx0 + 66, y, StatusColour(*e), StatusText(*e));
+		// A sword's scabbard, shown beside it or not: across from its status, tapped on the enlarge button (held, that enlarges)
+		if (showModel && !IsHorseGear(e->itemTemplate) && HasScabbard(e->itemTemplate))
+		{
+			Settings& st = GetSettings();
+			const char* label = Tx(st.showScabbard ? T_scabbard_shown : T_scabbard_hidden);
+			const float capH = 36.f, inner = 10.f;
+			const float gw = g_padPrompts ? PadGlyph(0, 0, capH, kPadR3, false, PadStyleNow()) : KeyCap(0, 0, capH, KeyLabel(kKeyZ), false);
+			const float tw = Measure(kSerif, 28, label).x;
+			const ImVec2 a(mx1 - 8 - tw - inner - gw, y + 3), b(mx1 - 8, y + 3 + capH);
+			const bool hot = Hover(a, b);
+			if (g_padPrompts)
+				PadGlyph(a.x, a.y, capH, kPadR3, true, PadStyleNow());
+			else
+				KeyCap(a.x, a.y, capH, KeyLabel(kKeyZ), true, hot);
+			Text(kSerif, 28, a.x + gw + inner, a.y + 2, hot ? Rgb(255, 232, 180) : Rgb(232, 196, 128), label);
+			const bool tapped = !g_statusOpen && !g_wardrobeOpen && !g_capture && EnlargeTapped();
+			if (Clicked(a, b) || tapped)
+			{
+				st.showScabbard = !st.showScabbard;
+				MarkDirty();
+			}
+		}
 		y += 58;
 		if (g_book != kBookItems && g_book != kBookMissable && g_book != kBookGwent)
 		{
@@ -4197,7 +4229,8 @@ namespace
 		if (showModel)
 		{
 			// Horse gear on Roach, as it's worn
-			DrawModelPanel(*e, mx0, mx1, y, bottom - 30, IsHorseGear(e->itemTemplate) ? std::string(kModelCreature) + kModelRoach + e->itemTemplate : e->itemTemplate);
+			DrawModelPanel(*e, mx0, mx1, y, bottom - 30, IsHorseGear(e->itemTemplate) ? std::string(kModelCreature) + kModelRoach + e->itemTemplate
+				: GetSettings().showScabbard && HasScabbard(e->itemTemplate) ? kModelWithScabbard + e->itemTemplate : e->itemTemplate);
 			return;
 		}
 
@@ -9394,7 +9427,8 @@ bool UiBackOut()
 	}
 	if (g_statusOpen)
 	{
-		g_statusOpen = false;
+		// All of what it was showing goes with it: an enlarged model left marked as enlarged stays out of its panel
+		g_statusOpen = g_visibilityOpen = g_cardZoom = false;
 		return true;
 	}
 	if (g_wardrobeOpen && g_wardEnlarged)

@@ -1293,6 +1293,8 @@ void ModelViewRequest(const std::string& templateName)
 				? LoadItemOnGeralt(templateName.substr(prefix), loaded->animation, loaded->model)
 				: templateName.compare(0, creature, kModelCreature) == 0
 				? LoadCreature(templateName.substr(creature), loaded->model)
+				: templateName.compare(0, strlen(kModelWithScabbard), kModelWithScabbard) == 0
+				? LoadSwordWithScabbard(templateName.substr(strlen(kModelWithScabbard)), loaded->model)
 				: LoadItemModel(templateName, loaded->model);
 		}
 		catch (const std::exception& problem)

@@ -1678,6 +1678,8 @@
 2116569431||potp_ov_tracker_open|[1] open
 2116569432||potp_ov_tracker_more|and [1] more, in the Missable tab
 2116569433||potp_ov_lore_not_started|Geralt has yet to take this quest up. Its story will be written here as it unfolds.
+2116569585||potp_ov_scabbard_shown|Scabbard: Shown
+2116569586||potp_ov_scabbard_hidden|Scabbard: Hidden
 ;overlay-text-end
 ;
 ; Next id: 2116569585

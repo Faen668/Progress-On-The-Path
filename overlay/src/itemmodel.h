@@ -118,6 +118,11 @@ std::vector<std::string> ItemDyeLooks(const std::string& templateName);
 // nothing:armor, among what he's asked to wear: that kind off him
 inline constexpr const char* kWornNothing = "nothing:";
 std::string WornCategory(const std::string& templateName);  // its kind, as the item definitions call it, or nothing
+// A sword with its scabbard beside it, as it hangs on him: the one bound to it, else the plain one he starts with.
+// "scabbard:" before a sword's template name, for the model viewer.
+inline constexpr const char* kModelWithScabbard = "scabbard:";
+bool HasScabbard(const std::string& templateName);          // a steel or silver sword, with a scabbard to show
+bool LoadSwordWithScabbard(const std::string& templateName, ItemModel& out);
 // The templates after "geralt:", split by |, least important first: each takes its kind's place. The last is the piece asked about.
 bool LoadItemOnGeralt(const std::string& templates, int animation, ItemModel& out);
 

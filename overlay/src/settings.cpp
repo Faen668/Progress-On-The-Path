@@ -100,6 +100,7 @@ void LoadSettings()
 	s.lastBook = ReadInt(ini, "LastBook", d.lastBook);
 	s.wardrobeAnimation = ReadInt(ini, "WardrobeAnimation", d.wardrobeAnimation);
 	s.wardrobeShowUntracked = ReadInt(ini, "WardrobeShowUntracked", d.wardrobeShowUntracked ? 1 : 0) != 0;
+	s.showScabbard = ReadInt(ini, "ShowScabbard", d.showScabbard ? 1 : 0) != 0;
 	{
 		char pins[4096] = "";
 		GetPrivateProfileStringA("Overlay", "WardrobePins", "", pins, sizeof(pins), ini.c_str());
@@ -150,6 +151,7 @@ void SaveSettings()
 	WriteInt(ini, "LastBook", s.lastBook);
 	WriteInt(ini, "WardrobeAnimation", s.wardrobeAnimation);
 	WriteInt(ini, "WardrobeShowUntracked", s.wardrobeShowUntracked ? 1 : 0);
+	WriteInt(ini, "ShowScabbard", s.showScabbard ? 1 : 0);
 	WritePrivateProfileStringA("Overlay", "WardrobePins", s.wardrobePins.c_str(), ini.c_str());
 	WritePrivateProfileStringA("Overlay", "WardrobeOutfits", s.wardrobeOutfits.c_str(), ini.c_str());
 	WriteInt(ini, "Prompts", s.promptMode);

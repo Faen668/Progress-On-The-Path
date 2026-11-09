@@ -41,6 +41,7 @@ struct Settings
 	std::string wardrobeOutfits;   // saved outfits: name^kind~template~title^kind~template~title, split by |
 	int wardrobeAnimation = 0;
 	bool wardrobeShowUntracked = true;   // the wardrobe lists armour the mod doesn't track as well
+	bool showScabbard = true;     // Items shows a sword with its scabbard beside it
 	bool hdrMatchGame = true;     // with HDR on, white is the game's Paper White
 	float hdrBrightness = 200.f;  // nits, when not matching the game
 };
