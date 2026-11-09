@@ -503,6 +503,7 @@ namespace
 		{ T_tab_gwent_caps, T_tab_gwent, 4 },
 		{ T_tab_missable_caps, T_tab_missable, 0 },
 		{ T_tab_bestiary_caps, T_tab_bestiary, 7 },
+		{ T_tab_library_caps, T_tab_library, 3 },
 		{ T_tab_achievements_caps, T_tab_achievements, 6 },
 		{ T_tab_kills_caps, T_tab_kills, 8 },
 		{ T_tab_settings_caps, T_tab_settings, 5 },
@@ -1291,7 +1292,7 @@ namespace
 	// Items and cards are collected rather than started
 	const char* NotStartedText()
 	{
-		return g_book == kBookBestiary ? Tx(T_status_undiscovered) : g_book == kBookItems || g_book == kBookGwent ? Tx(T_status_not_collected) : Tx(T_status_not_started);
+		return g_book == kBookBestiary ? Tx(T_status_undiscovered) : g_book == kBookLibrary ? Tx(T_status_unread) : g_book == kBookItems || g_book == kBookGwent ? Tx(T_status_not_collected) : Tx(T_status_not_started);
 	}
 
 	void CardListMark(const Entry& e, ImVec2 centre);
@@ -1328,7 +1329,7 @@ namespace
 		}
 		switch (e.status)
 		{
-		case kCompleted: return g_book == kBookBestiary ? Tx(T_status_discovered) : Tx(T_status_completed);
+		case kCompleted: return g_book == kBookBestiary ? Tx(T_status_discovered) : g_book == kBookLibrary ? Tx(T_status_read) : Tx(T_status_completed);
 		case kIgnored: return Tx(T_status_ignored);
 		case kInProgress: return Tx(T_status_in_progress);
 		case kMissed: return Tx(T_status_missed);
@@ -4234,8 +4235,8 @@ namespace
 			return;
 		}
 
-		// A quest or random event: its story so far, as the journal tells it
-		if (g_book == kBookQuest)
+		// A quest or random event: its story so far, as the journal tells it. A book: its text, once it's read.
+		if (g_book == kBookQuest || g_book == kBookLibrary)
 		{
 			std::vector<std::string> lore;
 			const float textW = mx1 - mx0 - 24;
@@ -4245,10 +4246,11 @@ namespace
 			const bool have = QuestLore(*e, lore);
 			if (have && lore.empty())
 			{
-				Text(kSerif, 30, mx0 + 12, y, kDim, Tx(T_lore_not_started), textW);
-				y += WrappedHeight(kSerif, 30, Tx(T_lore_not_started), textW) + 22.f;
+				const char* none = g_book == kBookLibrary ? Tx(T_book_not_read) : Tx(T_lore_not_started);
+				Text(kSerif, 30, mx0 + 12, y, kDim, none, textW);
+				y += WrappedHeight(kSerif, 30, none, textW) + 22.f;
 			}
-			else if (!have && e->status != kAvailable)
+			else if (!have && (e->status != kAvailable || g_book == kBookLibrary))
 			{
 				Text(kSerif, 28, mx0 + 12, y, kDim, Tx(T_reading));
 				y += 52.f;
@@ -4263,9 +4265,10 @@ namespace
 			y += 14.f;
 		}
 
-		// The other entries that share its fate, or the rest of its section. A quest's section is in the list beside it.
+		// The other entries that share its fate, or the rest of its section. A quest's section is in the list beside it,
+		// and a book's page is its text.
 		const Section* list = group ? group : section;
-		if (g_book != kBookQuest || group)
+		if ((g_book != kBookQuest && g_book != kBookLibrary) || group)
 		{
 			Text(kTitle, 24, mx0 + 6, y, kHead, !group ? Tx(T_still_to_do) : group->kind == 0 && !group->cutoff.empty() ? Tx(T_also_closes) : Tx(T_also_in_group));
 			FadeLineH(mx0, mx1, y + 38, kGold);
@@ -4895,7 +4898,13 @@ namespace
 			{ Tx(T_status_ignored), c.ignored, Rgb(170, 170, 150) },
 			{ Tx(T_status_missed), c.missed, Rgb(226, 100, 80) },
 		};
-		const Line* const lines = achievements ? achievementLines : g_book == kBookBestiary ? creatureLines : bookLines;
+		const Line bookshelfLines[4] = {
+			{ Tx(T_status_read), c.done - c.ignored, kGreen },
+			{ Tx(T_status_unread), c.open, kText },
+			{ Tx(T_status_ignored), c.ignored, Rgb(170, 170, 150) },
+			{ Tx(T_status_missed), c.missed, Rgb(226, 100, 80) },
+		};
+		const Line* const lines = achievements ? achievementLines : g_book == kBookBestiary ? creatureLines : g_book == kBookLibrary ? bookshelfLines : bookLines;
 		// Two columns, so the regions below all fit
 		const float columnGap = 30.f, columnW = (nb.x - na.x - 60.f - columnGap) * 0.5f;
 		for (int i = 0; i < 4; ++i)
@@ -7491,6 +7500,7 @@ namespace
 		{ kBookGwent, kTourDetail, T_tour_gwent, T_tour_gwent_body },
 		// The wolf: the first creature most players meet, so it's what the page looks like for them
 		{ kBookBestiary, kTourDetail, T_tour_bestiary, T_tour_bestiary_body, false, -1, kTourOpenNothing, "PotP_Bestiary_wolf" },
+		{ kBookLibrary, kTourList, T_tour_library, T_tour_library_body },
 		{ kTabAchievements, kTourList, T_tour_achievements, T_tour_achievements_body },
 		{ kTabKills, kTourTable, T_tour_kills, T_tour_kills_body },
 		{ kTabSettings, kTourTable, T_tour_settings, T_tour_settings_body, false, 0 },

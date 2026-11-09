@@ -1680,6 +1680,15 @@
 2116569433||potp_ov_lore_not_started|Geralt has yet to take this quest up. Its story will be written here as it unfolds.
 2116569585||potp_ov_scabbard_shown|Scabbard: Shown
 2116569586||potp_ov_scabbard_hidden|Scabbard: Hidden
+2116569587||potp_ov_tab_library_caps|LIBRARY
+2116569588||potp_ov_tab_library|Library
+2116569589||potp_ov_status_read|Read
+2116569590||potp_ov_status_unread|Unread
+2116569591||potp_ov_book_not_read|Geralt has yet to read this book. Once he has, its text will be here to read again.
+2116569592||potp_ov_library_lore|Lore Books
+2116569593||potp_ov_library_tomes|Monster Tomes
+2116569594||potp_ov_tour_library|Library
+2116569595||potp_ov_tour_library_body|Every lore book and monster tome in the game, and whether Geralt has read it, as the game itself keeps count. Select one he has read to read it again here.
 ;overlay-text-end
 ;
-; Next id: 2116569585
+; Next id: 2116569596

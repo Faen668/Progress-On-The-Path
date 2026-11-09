@@ -317,6 +317,24 @@ statemachine class CPotP_Tracker
 
 	//---------------------------------------------------
 
+	// Books are read in the inventory, the glossary or as they're picked up, with nothing PotP hears, so the Library
+	// asks the game again each time the window opens. Silent, as the game says so itself.
+	public function CheckLibrary()
+	{
+		var catalog	: CPotP_Catalog = master.catalog;
+		var Idx		: int;
+
+		for (Idx = 0; Idx < catalog.entries.Size(); Idx += 1)
+		{
+			if (catalog.entries[Idx].category == PotP_A_Library)
+			{
+				Apply(catalog.entries[Idx], resolver.Evaluate(catalog.entries[Idx]), PotP_Src_Silent);
+			}
+		}
+	}
+
+	//---------------------------------------------------
+
 	public function IsDoneByGame(tracked: CPotP_Entry) : bool
 	{
 		resolver.BeginPass();

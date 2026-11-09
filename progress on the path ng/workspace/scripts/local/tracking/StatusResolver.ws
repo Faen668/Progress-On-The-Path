@@ -273,6 +273,10 @@ class CPotP_StatusResolver
 		case PotP_A_Bestiary:
 			return Done(KnownCreatureOf(tracked));
 
+		case PotP_A_Library:
+			// The fact the game sets as a book is read, which its own Glossary goes by
+			return Done(thePlayer.GetInventory().IsBookReadByName(tracked.item_name));
+
 		default:
 			// Quests come from the journal; see EvaluateQuest.
 			return tracked.status;

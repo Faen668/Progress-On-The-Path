@@ -8,8 +8,8 @@
 // never sees a half-read list and keeps showing the old one while a new one is being read.
 enum EntryStatus { kAvailable = 0, kInProgress = 1, kCompleted = 2, kIgnored = 3, kMissed = 4 };
 enum EntryFlags { kFlagMissable = 1, kFlagModAdded = 2 };
-enum BookId { kBookQuest = 0, kBookWorld = 1, kBookItems = 2, kBookGwent = 3, kBookMissable = 4, kBookBestiary = 5 };
-constexpr int kBookCount = 6;
+enum BookId { kBookQuest = 0, kBookWorld = 1, kBookItems = 2, kBookGwent = 3, kBookMissable = 4, kBookBestiary = 5, kBookLibrary = 6 };
+constexpr int kBookCount = 7;
 constexpr int kRegionCount = 9;
 
 struct Entry

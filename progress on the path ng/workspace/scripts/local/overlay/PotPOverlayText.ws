@@ -608,6 +608,15 @@ function PotPOverlay_TextKeys_3(out keys: array<string>)
 	keys.PushBack("lore_not_started");
 	keys.PushBack("scabbard_shown");
 	keys.PushBack("scabbard_hidden");
+	keys.PushBack("tab_library_caps");
+	keys.PushBack("tab_library");
+	keys.PushBack("status_read");
+	keys.PushBack("status_unread");
+	keys.PushBack("book_not_read");
+	keys.PushBack("library_lore");
+	keys.PushBack("library_tomes");
+	keys.PushBack("tour_library");
+	keys.PushBack("tour_library_body");
 }
 
 function PotPOverlay_ExportText() : string

@@ -21,6 +21,7 @@ ICONS = [
     ("kTabAchievements", "common/panel_common.swf", 569),  # a crown and coins
     ("kTabKills", "hud/hud_enemyfocus.swf", 59),           # a skull and a dagger
     ("kBookMissable", "worldmap/panel_worldmap.swf", 284, True),  # a signpost, a fork in the path; cropped, as it sits small in its picture
+    ("kBookLibrary", "glossary/panel_glossary_books.swf", 54, True),  # the glossary's book of books; cropped, as it sits in a larger picture
 ]
 
 

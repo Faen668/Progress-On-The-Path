@@ -28,6 +28,7 @@ statemachine class CPotP_Catalog
 	var quest_blocks		: array<SPotP_QuestBlock>;   // vanilla blocks that move events on, heard through Native Quest Hook
 	var event_kills			: array<SPotP_EventKill>;    // deaths that finish events, for events without quest blocks
 	var events_near			: array<CPotP_Entry>;      // events begun by coming near their pin (AddEventOpenedNear)
+	var library_readables	: array<name>;      // every readable item the game has, read once a build for AddModBooks
 
 	var current_section		: CPotP_Section;
 	var pending				: array<CPotP_Entry>;
@@ -75,6 +76,7 @@ statemachine class CPotP_Catalog
 		quest_blocks.Clear();
 		event_kills.Clear();
 		events_near.Clear();
+		library_readables.Clear();
 		pending.Clear();
 		current_section = NULL;
 
@@ -485,6 +487,70 @@ statemachine class CPotP_Catalog
 
 	//---------------------------------------------------
 
+	// The Library's: header_key is the section's name, one of the overlay's strings
+	public function BeginLibrarySection(header_key: string)
+	{
+		BeginSection(PotP_Book_Library, header_key, PotP_A_Library, "PotP_Library_");
+	}
+
+	//---------------------------------------------------
+
+	// A book, by its item: read when the game says so (StatusResolver), named as the game names it
+	public function AddBook(suffix: string, type_value: PotP_Preview_Entry_Type, book: name) : CPotP_Entry
+	{
+		var tracked	: CPotP_Entry = NewEntry(suffix, PotP_A_Library, type_value, PotP_R_NA, 0, 0);
+		var title	: string;
+
+		title = PotP_CleanTitle(GetLocStringByKeyExt(theGame.GetDefinitionsManager().GetItemLocalisationKeyName(book)));
+		if (StrLen(title) == 0 || StrBeginsWith(title, "#"))
+		{
+			title = NameToString(book);
+		}
+		tracked.title = title;
+		tracked.item_name = book;
+		return tracked;
+	}
+
+	//---------------------------------------------------
+
+	// Books a mod adds, on the shelf they belong to (0 Lore Books, 1 Monster Tomes), into the section being defined:
+	// every readable item the game has that the section doesn't list yet and LibraryShelf puts there. Called before the
+	// section ends, so they're sorted in with the game's own.
+	public function AddModBooks(shelf: int)
+	{
+		var defs	: CDefinitionsManagerAccessor = theGame.GetDefinitionsManager();
+		var listed	: array<name>;
+		var Idx		: int;
+
+		if (library_readables.Size() == 0)
+		{
+			library_readables = defs.GetItemsWithTag('ReadableItem');
+		}
+		for (Idx = 0; Idx < pending.Size(); Idx += 1)
+		{
+			listed.PushBack(pending[Idx].item_name);
+		}
+		for (Idx = 0; Idx < entries.Size(); Idx += 1)
+		{
+			if (entries[Idx].category == PotP_A_Library)
+			{
+				listed.PushBack(entries[Idx].item_name);
+			}
+		}
+
+		for (Idx = 0; Idx < library_readables.Size(); Idx += 1)
+		{
+			if (listed.Contains(library_readables[Idx]) || PotP_LibraryShelf(defs, library_readables[Idx]) != shelf)
+			{
+				continue;
+			}
+			listed.PushBack(library_readables[Idx]);
+			AddBook(PotP_SanitizeUuid(StrLower(NameToString(library_readables[Idx]))), PotP_E_ModAdded, library_readables[Idx]);
+		}
+	}
+
+	//---------------------------------------------------
+
 	public function BeginBestiarySection(name_id: int)
 	{
 		BeginSection(PotP_Book_Bestiary, "", PotP_A_Bestiary, "PotP_Bestiary_");
@@ -878,6 +944,8 @@ state Building in CPotP_Catalog
 
 		// Last, so the sections before it keep their places in the checksum
 		PotP_DefineBestiary(parent);
+		SleepOneFrame();
+		PotP_DefineLibrary(parent);
 
 		parent.is_ready = true;
 		PotP_Log("Catalog built: " + IntToString(parent.entries.Size()) + " entries in " + IntToString(parent.sections.Size()) + " sections", 'Catalog');

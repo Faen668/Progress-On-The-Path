@@ -44,6 +44,7 @@ enum PotP_Preview_Array_Type
 	PotP_A_Event = 3,
 	PotP_A_Gwent = 4,
 	PotP_A_Bestiary = 5,
+	PotP_A_Library = 6,
 }
 
 enum PotP_Preview_Entry_Type
@@ -145,6 +146,7 @@ enum EPotP_Book
 	PotP_Book_Gwent		= 3,
 	PotP_Book_Missable	= 4,
 	PotP_Book_Bestiary	= 5,
+	PotP_Book_Library	= 6,
 }
 
 enum EPotP_UpdateSource

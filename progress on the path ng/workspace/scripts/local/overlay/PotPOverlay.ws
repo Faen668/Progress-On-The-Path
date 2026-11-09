@@ -65,6 +65,7 @@ function PotPOverlay_ExportBegin() : string
 	player = thePlayer;
 	player.potp_overlay_cursor = 0;
 	main.tracker.CheckBestiary();
+	main.tracker.CheckLibrary();
 	main.catalog.CountProgress(total, done);
 	result = "H|" + main.version_text + "|" + IntToString(done) + "|" + IntToString(total);
 	for (Idx = 1; Idx <= 8; Idx += 1)
@@ -1122,6 +1123,34 @@ exec function potpoverlay_questlore(uuid_value: string)
 	{
 		main.notifications.QueueForOverlay("J|" + uuid_value + PotPOverlay_EventLore(tracked));
 	}
+	else if (tracked && tracked.category == PotP_A_Library)
+	{
+		main.notifications.QueueForOverlay("J|" + uuid_value + PotPOverlay_BookText(tracked));
+	}
+}
+
+// A book's text, as the game's Glossary shows it, a paragraph a field: only once it's read, or marked so by hand.
+// Nothing for one not read yet, which the overlay says in its own words.
+function PotPOverlay_BookText(tracked: CPotP_Entry) : string
+{
+	var text : string;
+
+	if (!tracked.IsDone())
+	{
+		return "";
+	}
+	text = thePlayer.GetInventory().GetBookTextByName(tracked.item_name);
+	if (text == "" || StrBeginsWith(text, "#"))
+	{
+		return "|-";
+	}
+	// A backslash could read as the end of the message (the overlay splits on one and an n), and its lines are paragraphs
+	text = StrReplaceAll(PotPOverlay_Clean(text), StrChar(92), "/");
+	text = StrReplaceAll(text, StrChar(13), "");
+	text = StrReplaceAll(text, StrChar(10), "|");
+	text = StrReplaceAll(text, "<br>", "|");
+	text = StrReplaceAll(text, "<BR>", "|");
+	return "|" + text;
 }
 
 // A random event's: Brothers In Arms' Events' journal for it when that's installed and has it, as it has every choice
