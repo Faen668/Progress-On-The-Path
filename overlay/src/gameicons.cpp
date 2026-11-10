@@ -1,4 +1,5 @@
 #include "gameicons.h"
+#include "book.h"
 #include <windows.h>
 #include <dxgiformat.h>
 #include <algorithm>
@@ -464,6 +465,9 @@ bool GameTextureExists(const std::string& gamePath)
 
 bool ReadGameTexture(const std::string& gamePath, uint32_t largestSide, GameTexture& out, bool withMips)
 {
+	// PotP's own, built into the .asi: the Library's book
+	if (gamePath.compare(0, strlen(kBuiltinTexture), kBuiltinTexture) == 0)
+		return ReadBuiltinTexture(gamePath, largestSide, out, withMips);
 	if (!g_ready)
 		return false;
 	const auto found = FindAnyTexture(gamePath);

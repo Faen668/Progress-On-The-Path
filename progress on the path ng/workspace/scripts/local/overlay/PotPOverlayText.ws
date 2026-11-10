@@ -617,6 +617,11 @@ function PotPOverlay_TextKeys_3(out keys: array<string>)
 	keys.PushBack("library_tomes");
 	keys.PushBack("tour_library");
 	keys.PushBack("tour_library_body");
+	keys.PushBack("live_book");
+	keys.PushBack("live_book_hint");
+	keys.PushBack("book_page");
+	keys.PushBack("book_pages");
+	keys.PushBack("turn_page");
 }
 
 function PotPOverlay_ExportText() : string

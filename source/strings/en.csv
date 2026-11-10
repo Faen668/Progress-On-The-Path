@@ -1689,6 +1689,11 @@
 2116569593||potp_ov_library_tomes|Monster Tomes
 2116569594||potp_ov_tour_library|Library
 2116569595||potp_ov_tour_library_body|Every lore book and monster tome in the game, and whether Geralt has read it, as the game itself keeps count. Select one he has read to read it again here.
+2116569596||potp_ov_live_book|Live Book Preview
+2116569597||potp_ov_live_book_hint|Shows a book Geralt has read in the Library as a book open on its pages, to turn one by one. Off, the Library shows its text plainly, as a page to scroll.
+2116569598||potp_ov_book_page|Page [1] of [2]
+2116569599||potp_ov_book_pages|Pages [1] of [2]
+2116569600||potp_ov_turn_page|Turn Page
 ;overlay-text-end
 ;
-; Next id: 2116569596
+; Next id: 2116569601

@@ -18,6 +18,7 @@
 #include <vector>
 #include "gameicons.h"
 #include <exception>
+#include "book.h"
 #include "itemmodel.h"
 #include "log.h"
 #include "overlay.h"
@@ -41,6 +42,9 @@ cbuffer View : register(b0)
 	float4 eyeAndMask;   // y: how far a two-form creature has turned into its second, z: how far back the eye is, w: alpha tested
 	float4 pose;         // where this frame and the next start in the bones' table, and how far between them
 	float4 fromPose;     // the same in the stance it's fading from; w: how far it's come, 1 is all the new one
+	float4 sheet;        // the Library's book (book.cpp): x how far the leaf has turned, 0-1, below 0 none; y, z the right and left
+	float4 sheet2;       // blocks' thickness as parts of the made one; w the page's width. sheet2: cos, sin of its tilt, the
+	                     // left block made over the right, where the pages start from the spine
 };
 struct BoneRows { float4 x, y, z; };
 StructuredBuffer<BoneRows> boneTable : register(t6);
@@ -70,9 +74,62 @@ SamplerState surface : register(s0);
 struct In { float3 p : POSITION; float3 n : NORMAL; float4 t : TANGENT; float2 uv : TEXCOORD; float4 colour : COLOR; uint4 bones : BLENDINDICES; float4 weights : BLENDWEIGHT; uint3 clothAt : CLOTHINDEX; float3 clothBary : CLOTHBARY; };
 struct Out { float4 h : SV_Position; float3 p : POSITION; float3 n : NORMAL; float3 t : TANGENT; float3 b : BINORMAL; float2 uv : TEXCOORD0; float4 colour : COLOR; float3 bound : TEXCOORD1; };
 
+// The Library's book: its page blocks thinned or thickened to say how far through it is, and the leaf being turned, a sheet
+// bent round the spine with its outer edge lagging, so it curls. Made tilted, as everything of the book is: untilted to
+// work on (flat, the spine along y, the pages up), then tilted back. Role: 1 the left block, 2 the right, 3 the leaf's front,
+// 4 its back. Below 0 the leaf isn't there, and folds away to nothing.
+void BookPart(uint role, float base, inout float3 p, inout float3 n, inout float3 t)
+{
+	const float c = sheet2.x, s = sheet2.y;
+	p = float3(p.x, p.y * c + p.z * s, -p.y * s + p.z * c);
+	n = float3(n.x, n.y * c + n.z * s, -n.y * s + n.z * c);
+	t = float3(t.x, t.y * c + t.z * s, -t.y * s + t.z * c);
+	// A height is from the stack's own underside under it (base: down in the binding, arched off the board beside it,
+	// on the board towards the fore-edge). Only what's above that grows or shrinks, and less so near the spine, where the
+	// two sides meet in a V that has to stay where it is.
+	const float board = base, above = p.z - base, toV = smoothstep(0.0f, 0.035f, abs(p.x));
+	const float leftBy = lerp(1, sheet.z, toV), rightBy = lerp(1, sheet.y, toV);
+	if (role == 1)
+		p.z = base + (above > 0 ? above * leftBy : above);
+	else if (role == 2)
+		p.z = base + (above > 0 ? above * rightBy : above);
+	else if (sheet.x < 0)
+		p = 0;
+	else
+	{
+		const float pi = 3.14159265f, lag = 0.35f;
+		const float r = p.x;
+		const float a = saturate(sheet.x * (1 + lag) - lag * saturate((r - sheet2.w) / sheet.w));
+		const float th = a * pi;
+		// From the right block's top to the left's, a hair above either, as it goes over
+		const float h = board + (above > 0 ? lerp(above * rightBy, above * sheet2.z * leftBy, a) : above) + 0.0006f;
+		const float thr = a > 0 && a < 1 ? -pi * lag / sheet.w : 0;
+		const float3 along = normalize(float3(cos(th) - r * sin(th) * thr, 0, sin(th) + r * cos(th) * thr));
+		p = float3(r * cos(th), p.y, h + r * sin(th));
+		n = float3(-along.z, 0, along.x);
+		t = along;
+		if (role == 4)
+		{
+			n = -n;
+			t = -t;
+		}
+		p += n * 0.0003f;
+	}
+	p = float3(p.x, p.y * c - p.z * s, p.y * s + p.z * c);
+	n = float3(n.x, n.y * c - n.z * s, n.y * s + n.z * c);
+	t = float3(t.x, t.y * c - t.z * s, t.y * s + t.z * c);
+}
+
 Out VS(In i)
 {
 	Out o;
+	const uint role = (uint)round(i.colour.a * 255);
+	if (sheet.w > 0 && role >= 1 && role <= 4)
+	{
+		float3 bookTangent = i.t.xyz;
+		BookPart(role, i.colour.r * 0.03f, i.p, i.n, bookTangent);
+		i.t.xyz = bookTangent;
+	}
 	// The bones' rows at this moment, blended by the vertex's weights
 	float4 rx = 0, ry = 0, rz = 0;
 	for (uint k = 0; k < 4; ++k)
@@ -313,7 +370,12 @@ float4 PS(Out i, bool front : SV_IsFrontFace) : SV_Target
 }
 )";
 
-	struct Constants { float world[16]; float projection[4]; float eyeAndMask[4]; float pose[4]; float fromPose[4]; };
+	struct Constants { float world[16]; float projection[4]; float eyeAndMask[4]; float pose[4]; float fromPose[4]; float sheet[4]; float sheet2[4]; };
+	// The Library's book, as the window last set it (ModelViewBook)
+	std::mutex g_bookLock;
+	float g_bookSheet[4] = { -1.f, 1.f, 1.f, 0.235f }, g_bookSheet2[4] = { 1.f, 0.f, 1.f, 0.f };
+	// Pictures to put in place of those a part was loaded with, by the name it was loaded with
+	std::vector<std::pair<std::string, std::shared_ptr<PreparedTexture>>> g_replacements;
 
 	// A burst of thick smoke at a two-form creature's feet as it changes, as the game hides its swap behind one: soft puffs
 	// that billow out and up and thin away, each worked out here from its number alone
@@ -519,6 +581,10 @@ float4 PS(Out i) : SV_Target
 	D3D12_VERTEX_BUFFER_VIEW g_vertexView{};
 	D3D12_INDEX_BUFFER_VIEW g_indexView{};
 	std::vector<GpuPart> g_parts;
+	std::vector<std::string> g_partDiffuse;   // each part's diffuse texture, by the name it was loaded with
+	bool g_modelIsBook = false;               // the Library's book: only its vertices take the book's roles, as the game's
+	                                          // meshes' own vertex colours could have any alpha
+	float g_fitAspect = 1.f;                  // the book's: the shape of the part of the picture it's shown in, wide over high
 	std::vector<unsigned long long> g_ownTextures;
 	float g_centre[3] = {}, g_radius = 1.f;
 	int g_longAxis = 2;
@@ -750,6 +816,7 @@ float4 PS(Out i) : SV_Target
 			RetireIconTexture(t);
 		g_ownTextures.clear();
 		g_parts.clear();
+		g_partDiffuse.clear();
 		if (g_vertices)
 			RetireResource(g_vertices);
 		if (g_indices)
@@ -917,6 +984,8 @@ float4 PS(Out i) : SV_Target
 			materialBytes.resize(at + kMaterialStride);
 			memcpy(materialBytes.data() + at, &values, sizeof(values));
 			g_parts.push_back(part);
+			g_partDiffuse.push_back(p.diffuse);
+			g_modelIsBook = g_uploading->name.compare(0, strlen(kModelBook), kModelBook) == 0;
 			vertices.insert(vertices.end(), p.vertices.begin(), p.vertices.end());
 			vertexForm.insert(vertexForm.end(), p.vertices.size(), static_cast<uint8_t>(p.form > 0 ? 1 : 0));
 			skins.resize(vertices.size());   // what isn't skinned stays where it is, in the table's first slot
@@ -957,7 +1026,8 @@ float4 PS(Out i) : SV_Target
 				}
 		};
 		measure();
-		if (model.worn && !model.creature && !model.animation && !vertices.empty())
+		// (not the Library's book: a board's middle can have no vertex, and it isn't a pair)
+		if (model.worn && !model.creature && !model.animation && !vertices.empty() && !g_modelIsBook)
 		{
 			float leftEdge = -FLT_MAX, rightEdge = FLT_MAX;
 			for (const ModelVertex& v : vertices)
@@ -1170,6 +1240,16 @@ float4 PS(Out i) : SV_Target
 					g_formSize = std::max(g_formSize, std::max(formHigh[form][0] - formLow[form][0], formHigh[form][2] - formLow[form][2]) * 0.5f);
 			g_formSize = std::max(0.4f, g_formSize);
 		}
+		else if (g_modelIsBook && !g_keepShowing)
+		{
+			// The book: framed by its own shape as it's seen, not a sphere it could turn in, so it fills the picture.
+			// The ribbon (role 5) left out, as its end hangs well below the book.
+			g_fitPoints.reserve(vertices.size() * 3);
+			for (const ModelVertex& v : vertices)
+				if (v.colour[3] != 5)
+					for (int k = 0; k < 3; ++k)
+						g_fitPoints.push_back(v.position[k] - g_centre[k]);
+		}
 		if (g_keepShowing)
 		{
 			// He stays where he was on screen, a little further back only if this one needs the room
@@ -1293,6 +1373,8 @@ void ModelViewRequest(const std::string& templateName)
 				? LoadItemOnGeralt(templateName.substr(prefix), loaded->animation, loaded->model)
 				: templateName.compare(0, creature, kModelCreature) == 0
 				? LoadCreature(templateName.substr(creature), loaded->model)
+				: templateName.compare(0, strlen(kModelBook), kModelBook) == 0
+				? LoadBookModel(templateName.substr(strlen(kModelBook)), loaded->model)
 				: templateName.compare(0, strlen(kModelWithScabbard), kModelWithScabbard) == 0
 				? LoadSwordWithScabbard(templateName.substr(strlen(kModelWithScabbard)), loaded->model)
 				: LoadItemModel(templateName, loaded->model);
@@ -1457,6 +1539,33 @@ unsigned long long ModelViewTexture()
 	return g_drawnOnce && (g_state == kModelReady || g_keepShowing) ? g_pictureView : 0;
 }
 
+void ModelViewFitAspect(float aspect)
+{
+	g_fitAspect = std::clamp(aspect, 0.25f, static_cast<float>(kWidth) / kHeight);
+}
+
+void ModelViewBook(const float sheet[4], const float sheet2[4])
+{
+	std::lock_guard<std::mutex> hold(g_bookLock);
+	memcpy(g_bookSheet, sheet, sizeof(g_bookSheet));
+	memcpy(g_bookSheet2, sheet2, sizeof(g_bookSheet2));
+}
+
+void ModelViewReplaceTexture(const std::string& name, const GameTexture& picture)
+{
+	std::shared_ptr<PreparedTexture> prepared = PrepareIconTexture(picture);
+	if (!prepared)
+		return;
+	std::lock_guard<std::mutex> hold(g_bookLock);
+	for (auto& item : g_replacements)
+		if (item.first == name)
+		{
+			item.second = std::move(prepared);
+			return;
+		}
+	g_replacements.emplace_back(name, std::move(prepared));
+}
+
 void ModelViewRender(ID3D12GraphicsCommandList* list)
 {
 	const bool show = g_showThisFrame;
@@ -1549,6 +1658,49 @@ void ModelViewRender(ID3D12GraphicsCommandList* list)
 			g_boneStart = std::chrono::steady_clock::now();
 		}
 	}
+	// Pictures put in place of a part's own (the Library's book, as its pages turn)
+	{
+		std::vector<std::pair<std::string, std::shared_ptr<PreparedTexture>>> replacing;
+		{
+			std::lock_guard<std::mutex> hold(g_bookLock);
+			replacing.swap(g_replacements);
+		}
+		if (!replacing.empty() && !g_parts.empty())
+		{
+			std::vector<std::shared_ptr<PreparedTexture>> textures;
+			for (const auto& item : replacing)
+				textures.push_back(item.second);
+			std::vector<unsigned long long> views;
+			SubmitIconTextures(textures, views);
+			for (size_t i = 0; i < views.size() && i < replacing.size(); ++i)
+			{
+				if (!views[i])
+					continue;
+				bool used = false;
+				for (size_t k = 0; k < g_parts.size(); ++k)
+					if (g_partDiffuse[k] == replacing[i].first)
+					{
+						const unsigned long long old = g_parts[k].diffuse;
+						g_parts[k].diffuse = views[i];
+						used = true;
+						bool shared = false;
+						for (const GpuPart& other : g_parts)
+							shared = shared || other.diffuse == old;
+						const auto owned = std::find(g_ownTextures.begin(), g_ownTextures.end(), old);
+						if (!shared && owned != g_ownTextures.end())
+						{
+							RetireIconTexture(old);
+							g_ownTextures.erase(owned);
+						}
+					}
+				if (used)
+					g_ownTextures.push_back(views[i]);
+				else
+					RetireIconTexture(views[i]);
+			}
+		}
+	}
+
 	if (!show || (g_state != kModelReady && !g_keepShowing) || g_parts.empty() || !g_pipeline)
 		return;
 
@@ -1576,6 +1728,13 @@ void ModelViewRender(ID3D12GraphicsCommandList* list)
 
 	// Row vectors. To its middle, its long axis up, turned, then: the game's z up to the screen's y, its y into the screen.
 	Constants c{};
+	{
+		std::lock_guard<std::mutex> hold(g_bookLock);
+		memcpy(c.sheet, g_bookSheet, sizeof(c.sheet));
+		memcpy(c.sheet2, g_bookSheet2, sizeof(c.sheet2));
+	}
+	if (!g_modelIsBook)
+		c.sheet[3] = 0.f;
 	// How far a two-form creature has turned, by where its loop is: the first, changing, the second, changing back
 	if (g_formTimes[3] > 0.f)
 	{
@@ -1611,7 +1770,41 @@ void ModelViewRender(ID3D12GraphicsCommandList* list)
 	const float f = 1.f / tanf(kFov * 0.5f);
 	const float whole = g_radius / sinf(kFov * 0.5f) * 1.04f;   // far enough back for it to turn any way and stay in
 	float eye = whole;
-	if (!g_fitPoints.empty())
+	if (!g_fitPoints.empty() && g_modelIsBook)
+	{
+		// The book: centred on what's seen from here, and as close as lets all of it into the picture's shape, the panel's
+		// square or the enlarged view's whole width. Eased as a creature's is, so a turn by hand doesn't jump.
+		float low[2] = { FLT_MAX, FLT_MAX }, high[2] = { -FLT_MAX, -FLT_MAX };
+		std::vector<float> seen(g_fitPoints.size());
+		for (size_t i = 0; i + 2 < g_fitPoints.size(); i += 3)
+		{
+			const float p[3] = { g_fitPoints[i], g_fitPoints[i + 1], g_fitPoints[i + 2] };
+			for (int col = 0; col < 3; ++col)
+			{
+				seen[i + col] = 0.f;
+				for (int row = 0; row < 3; ++row)
+					seen[i + col] += p[row] * m[row * 4 + col];
+			}
+			for (int k = 0; k < 2; ++k)
+			{
+				low[k] = std::min(low[k], seen[i + k]);
+				high[k] = std::max(high[k], seen[i + k]);
+			}
+		}
+		const float mid[2] = { (low[0] + high[0]) * 0.5f, (low[1] + high[1]) * 0.5f };
+		c.world[12] -= mid[0];
+		c.world[13] -= mid[1];
+		const float wide = g_fitAspect;
+		float needs = 0.f;
+		for (size_t i = 0; i + 2 < seen.size(); i += 3)
+			needs = std::max(needs, std::max(fabsf(seen[i] - mid[0]) / wide, fabsf(seen[i + 1] - mid[1])) * f * 1.04f - seen[i + 2]);
+		const auto at = std::chrono::steady_clock::now();
+		const float since = g_fitEye < 0.f ? 1.f : std::min(0.25f, std::chrono::duration<float>(at - g_fitLast).count());
+		g_fitLast = at;
+		g_fitEye = g_fitEye < 0.f ? needs : g_fitEye + (needs - g_fitEye) * (1.f - expf(-since * 6.f));
+		eye = g_fitEye;
+	}
+	else if (!g_fitPoints.empty())
 	{
 		// Each point in the picture, with room for where the idle takes it past how it starts. The camera's at -eye in z.
 		constexpr float kRoom = 1.06f;

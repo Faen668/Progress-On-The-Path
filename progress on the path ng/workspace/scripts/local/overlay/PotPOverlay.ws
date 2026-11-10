@@ -1144,10 +1144,9 @@ function PotPOverlay_BookText(tracked: CPotP_Entry) : string
 	{
 		return "|-";
 	}
-	// A backslash could read as the end of the message (the overlay splits on one and an n), and its lines are paragraphs
+	// A backslash could read as the end of the message (the overlay splits on one and an n). Its <br>s are paragraphs; its
+	// line breaks the overlay splits on itself (book.cpp), as StrChar(10) and StrChar(13) took the spaces out with them.
 	text = StrReplaceAll(PotPOverlay_Clean(text), StrChar(92), "/");
-	text = StrReplaceAll(text, StrChar(13), "");
-	text = StrReplaceAll(text, StrChar(10), "|");
 	text = StrReplaceAll(text, "<br>", "|");
 	text = StrReplaceAll(text, "<BR>", "|");
 	return "|" + text;

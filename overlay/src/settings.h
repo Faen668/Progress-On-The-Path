@@ -20,6 +20,7 @@ struct Settings
 	bool clothSim = true;         // cloth on the models moves
 	bool autoRotate = false;      // models in the Bestiary and Items turn slowly by themselves
 	bool liveBestiary = true;     // the Bestiary shows each creature's model in an idle, not its painting
+	bool liveBook = true;         // the Library shows a read book as a book, its pages to turn, not plain text
 	bool menuSounds = true;       // the game's own menu sounds as the window is used
 	bool tourOffered = false;     // the guided tour has been offered once
 	bool hideCompleted = false;

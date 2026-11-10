@@ -31,6 +31,7 @@
 #include <thread>
 #include <ctime>
 #include "itemmodel.h"
+#include "book.h"
 #include "kills.h"
 #include "settings.h"
 #include "text.h"
@@ -633,6 +634,7 @@ namespace
 	const char* const kSoundPanelClose = "gui_global_panel_close";
 	const char* const kSoundZoomIn = "gui_ep2_character_submenu_in";    // enlarged, as the inventory's player stats (in gui_ep2.bnk)
 	const char* const kSoundZoomOut = "gui_ep2_character_submenu_out";
+	const char* const kSoundPageTurn = "gui_noticeboard_paper";   // a page of the Library's book turned: paper, as a notice taken down
 	const char* const kSoundWindowOpen = kSoundPanelOpen;
 	const char* const kSoundWindowClose = kSoundPanelClose;
 	enum SoundRank { kRankHighlight = 1, kRankValue, kRankPanel, kRankSwitch, kRankWindow };
@@ -3565,6 +3567,13 @@ namespace
 		return g_book == kBookBestiary && GetSettings().liveBestiary && !CreatureMasked(e) && !e.creatureTemplate.empty();
 	}
 
+	// A book shown as a book, with Live Book Preview on: open on its pages once it's read and its text is here, shut until then
+	bool LiveBook(const Entry&)
+	{
+		return g_book == kBookLibrary && GetSettings().liveBook;
+	}
+	bool g_bookOpen = false;   // the book shown this frame is open on its pages, so they can be turned
+
 	// Its model is shown, turning or not as Auto-Turn says: an item's, or a creature's with Live Bestiary on
 	bool ShowsModel(const Entry& e)
 	{
@@ -3573,7 +3582,7 @@ namespace
 
 	bool CanEnlarge(const Entry& e)
 	{
-		return (g_book == kBookGwent && !e.picture.empty()) || ((g_book == kBookItems && !e.itemTemplate.empty()) || LiveCreature(e)) && ModelViewState() == kModelReady;
+		return (g_book == kBookGwent && !e.picture.empty()) || ((g_book == kBookItems && !e.itemTemplate.empty()) || LiveCreature(e) || LiveBook(e)) && ModelViewState() == kModelReady;
 	}
 
 	// The wardrobe's pins: what he keeps on while other things are tried, by kind
@@ -3678,11 +3687,19 @@ namespace
 		ModelViewRequest(request);
 #endif
 		static bool shownReady = false;   // it's been shown since it was chosen
-		if (g_modelShown != e.uuid)
+		// A book faces the reader square on, and stays still to be read: it's turned only by hand
+		// An open one is tipped forward to undo its lectern's tilt, so its pages face the reader, and the viewer frames it
+		// as large as it fits (ModelViewFitAspect, modelview.cpp): it never needs placing by hand
+		const bool book = request.compare(0, strlen(kModelBook), kModelBook) == 0;
+		const bool openBook = book && request.compare(0, strlen(kModelBook) + 5, std::string(kModelBook) + "open:") == 0;
+		const float facing = book ? 0.f : -14.f;
+		static std::string shownRequest;
+		if (g_modelShown != e.uuid || (book && shownRequest != request))
 		{
 			g_modelShown = e.uuid;
-			g_modelYaw = -14.f;   // its front to the viewer, a little to one side so it reads as solid
-			g_modelPitch = 6.f;
+			shownRequest = request;
+			g_modelYaw = facing;   // its front to the viewer, a little to one side so it reads as solid
+			g_modelPitch = openBook ? 40.f : 6.f;
 			g_modelDragging = false;
 			shownReady = false;
 		}
@@ -3703,7 +3720,7 @@ namespace
 		{
 			shownReady = true;
 			if (!g_modelDragging)
-				g_modelYaw = -14.f;
+				g_modelYaw = facing;
 		}
 		if (g_clicked && Hover(a, b))
 			g_modelDragging = true;
@@ -3720,7 +3737,7 @@ namespace
 			{
 				g_modelYaw += g_pad.rightX * g_dt * 130.f;
 			}
-			else if (shownReady && GetSettings().autoRotate)
+			else if (shownReady && GetSettings().autoRotate && !book)
 			{
 				// A steadied step: uneven frames would otherwise show as small jumps
 				static float steady = 0.f;
@@ -3734,15 +3751,20 @@ namespace
 		int formPhase = 0;
 		float formSeconds = 0.f;
 		const float spill = ModelViewFormClock(formPhase, formSeconds) ? kSmokeRoom : 1.f;
+		// A book is shown in as wide a part of the picture as the column has room for, not only the square from its middle,
+		// and fitted to that: an open one is wider than tall
+		const float bookWide = book ? std::clamp((x1 - x0) / room, 1.f, ModelViewAspect()) : 1.f;
+		if (!g_cardZoom)
+			ModelViewFitAspect(bookWide);
 		ModelViewShow(yaw, g_modelPitch, 1.f / spill);
 		// Enlarged, it's drawn there alone: this one would show through the dimming behind it, as a dark double
 		const unsigned long long picture = ModelViewTexture();
 		if (picture && !g_cardZoom)
 		{
-			const float big = side * spill;
+			const float bigH = (book ? std::min(room, (x1 - x0) / bookWide) : side) * spill, bigW = bigH * bookWide;
 			dl->PushClipRect(ImVec2(x0, top), ImVec2(x1, top + 6.f + room), true);
-			const float u = 0.5f / ModelViewAspect();   // the square from the picture's middle
-			dl->AddImage(static_cast<ImTextureID>(picture), ImVec2(centre.x - big * 0.5f, centre.y - big * 0.5f), ImVec2(centre.x + big * 0.5f, centre.y + big * 0.5f), ImVec2(0.5f - u, 0.f), ImVec2(0.5f + u, 1.f));
+			const float u = 0.5f * bookWide / ModelViewAspect();   // that part of the picture, from its middle
+			dl->AddImage(static_cast<ImTextureID>(picture), ImVec2(centre.x - bigW * 0.5f, centre.y - bigH * 0.5f), ImVec2(centre.x + bigW * 0.5f, centre.y + bigH * 0.5f), ImVec2(0.5f - u, 0.f), ImVec2(0.5f + u, 1.f));
 			dl->PopClipRect();
 		}
 		else if (!picture)
@@ -3977,6 +3999,7 @@ namespace
 			// As far as takes it off any edge, and further the closer it is
 			g_zoomPanX = std::clamp(g_zoomPanX, -(ModelViewAspect() + closer), ModelViewAspect() + closer);
 			g_zoomPanY = std::clamp(g_zoomPanY, -(1.f + closer), 1.f + closer);
+			ModelViewFitAspect(ModelViewAspect());
 			ModelViewShow(TurnToShow(g_zoomYaw), g_zoomPitch, closer, g_zoomPanX, g_zoomPanY);
 			if (const unsigned long long picture = ModelViewTexture())
 			{
@@ -4022,6 +4045,8 @@ namespace
 			hints.push_back({ kPadLT | kPadRT, g_keyPages.c_str(), Tx(T_zoom_zoom), kActNone });
 			if (stance)
 				hints.push_back({ kPadLeft | kPadRight, Tx(T_left_right), TxFill(T_ward_stance_now, AnimationName(GetSettings().wardrobeAnimation)), kActNone });
+			else if (g_book == kBookLibrary && g_bookOpen)
+				hints.push_back({ kPadLeft | kPadRight, Tx(T_left_right), Tx(T_turn_page), kActNone });
 		}
 		else
 		{
@@ -4044,7 +4069,7 @@ namespace
 
 	void DrawCardZoom(const Entry& e, float stickX, float stickY, float wheel)
 	{
-		if (DrawZoom(&e, g_book == kBookItems || LiveCreature(e), LiveCreature(e), stickX, stickY, wheel))
+		if (DrawZoom(&e, g_book == kBookItems || LiveCreature(e) || LiveBook(e), LiveCreature(e), stickX, stickY, wheel))
 		{
 			g_statusOpen = false;
 			g_cardZoom = false;
@@ -4055,6 +4080,73 @@ namespace
 	float g_detailScroll = 0.f, g_detailScrollMax = 0.f;
 
 	bool QuestLore(const Entry& e, std::vector<std::string>& out);   // further down, with the other details read from the game
+
+	// The book, open on its text once it's read, its pages turned with [left] and [right], the arrow keys, or the arrows
+	// under it; shut on its cover until then, or while its text is on its way
+	void DrawBookPanel(const Entry& e, const Section* section, float x0, float x1, float top, float bottom)
+	{
+		BookSetTitle(e.uuid, e.title.empty() ? e.uuid : e.title);
+		std::string request = BookClosedRequest(e.uuid);
+		g_bookOpen = false;
+		if (e.status == kCompleted)
+		{
+			std::vector<std::string> lore;
+			if (QuestLore(e, lore))
+			{
+				std::vector<std::string> paragraphs;
+				for (const std::string& p : lore)
+					if (!p.empty())
+						paragraphs.push_back(p);
+				BookSetText(e.uuid, e.title.empty() ? e.uuid : e.title, section ? section->header : std::string(), paragraphs);
+				request = BookRequest(e.uuid);
+				g_bookOpen = true;
+			}
+		}
+		const float barH = g_bookOpen ? 56.f : 0.f;
+		if (g_bookOpen)
+		{
+			BookTick(g_dt);
+			int turn = 0;
+			// Enlarged, [left] and [right] zoom: the arrows and the pad's left and right turn the pages there
+			if (g_cardZoom)
+			{
+				if (g_pad.Pressed(kPadRight) || ImGui::IsKeyPressed(ImGuiKey_RightArrow, false))
+					turn = 1;
+				if (g_pad.Pressed(kPadLeft) || ImGui::IsKeyPressed(ImGuiKey_LeftArrow, false))
+					turn = -1;
+			}
+			else if (!g_statusOpen && !g_wardrobeOpen)
+			{
+				if (g_pad.Pressed(kPadRT) || KeyHit(kKeyD) || ImGui::IsKeyPressed(ImGuiKey_RightArrow, false))
+					turn = 1;
+				if (g_pad.Pressed(kPadLT) || KeyHit(kKeyA) || ImGui::IsKeyPressed(ImGuiKey_LeftArrow, false))
+					turn = -1;
+			}
+			// The page count between two arrows, under the book
+			const int spread = BookSpread(), spreads = BookSpreadCount(), pages = std::max(1, BookPageCount() - 1);
+			const int first = spread * 2, last = std::min(spread * 2 + 1, pages);
+			const std::string which = first == 0 || first >= last ? std::to_string(std::max(1, std::min(first == 0 ? 1 : first, pages))) : std::to_string(first) + "\xe2\x80\x93" + std::to_string(last);
+			const std::string label = TxFill(first == 0 || first >= last ? T_book_page : T_book_pages, which, std::to_string(pages));
+			const float cy = bottom - barH * 0.5f, cx = (x0 + x1) * 0.5f;
+			const float labelW = Measure(kSerif, 28, label.c_str()).x;
+			TextCentre(kSerif, 28, cx, cy - 17.f, kText, label.c_str());
+			for (const int dir : { -1, 1 })
+			{
+				const bool can = dir < 0 ? spread > 0 : spread + 1 < spreads;
+				const ImVec2 c(cx + dir * (labelW * 0.5f + 40.f), cy);
+				const ImVec2 a(c.x - 22.f, c.y - 22.f), b(c.x + 22.f, c.y + 22.f);
+				const bool hot = can && Hover(a, b);
+				const ImU32 col = !can ? kGoldDim : hot ? kGoldHi : kGold;
+				const ImVec2 tri[3] = { ImVec2(c.x + dir * 10.f, c.y), ImVec2(c.x - dir * 8.f, c.y - 12.f), ImVec2(c.x - dir * 8.f, c.y + 12.f) };
+				dl->AddConvexPolyFilled(tri, 3, col);
+				if (can && Clicked(a, b))
+					turn = dir;
+			}
+			if (turn != 0 && BookTurn(turn))
+				MenuSound(kSoundPageTurn, kRankSwitch);
+		}
+		DrawModelPanel(e, x0, x1, top, bottom - barH, request);
+	}
 
 	void DrawDetail(const Model& m, const Entry* e, const Section* section)
 	{
@@ -4071,7 +4163,8 @@ namespace
 			return;
 		}
 		const bool showCard = g_book == kBookGwent && !e->picture.empty();
-		const bool showModel = g_book == kBookItems && !e->itemTemplate.empty();
+		const bool showBook = LiveBook(*e);
+		const bool showModel = (g_book == kBookItems && !e->itemTemplate.empty()) || showBook;
 
 		// The book's sign, large and faint behind the page
 		if (!showCard && !showModel)
@@ -4226,6 +4319,11 @@ namespace
 						break;
 					}
 			y += 10.f;
+		}
+		if (showBook)
+		{
+			DrawBookPanel(*e, section, mx0, mx1, y, bottom - 30);
+			return;
 		}
 		if (showModel)
 		{
@@ -5270,6 +5368,8 @@ namespace
 		toggle(x1, ry, { Tx(T_cloth_sim), Tx(T_cloth_sim_hint) }, st.clothSim);
 		ry += rowH;
 		toggle(x1, ry, { Tx(T_live_bestiary), Tx(T_live_bestiary_hint) }, st.liveBestiary);
+		ry += rowH;
+		toggle(x1, ry, { Tx(T_live_book), Tx(T_live_book_hint) }, st.liveBook);
 		ry += rowH;
 		toggle(x1, ry, { Tx(T_menu_sounds), Tx(T_menu_sounds_hint) }, st.menuSounds);
 		ry += rowH;
@@ -8288,6 +8388,8 @@ namespace
 		{
 			if (g_book == kBookBestiary)
 				hints.push_back({ kPadLT | kPadRT, g_keyPages.c_str(), Tx(T_scroll_text), kActNone });
+			else if (g_book == kBookLibrary && g_bookOpen)
+				hints.push_back({ kPadLT | kPadRT, g_keyPages.c_str(), Tx(T_turn_page), kActNone });
 			else if (g_padPrompts && g_book != kTabAchievements)
 				hints.push_back({ kPadLT | kPadRT, nullptr, Tx(T_region), kActNone });
 			if (canMark)

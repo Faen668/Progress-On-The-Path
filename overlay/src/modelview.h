@@ -25,3 +25,10 @@ unsigned long long ModelViewTexture();                    // for the window to s
 
 
 void ModelViewRender(ID3D12GraphicsCommandList* list);    // from the frame, before the window is drawn
+
+// The Library's book (book.cpp): its turning leaf and its page blocks, as the vertex shader's sheet and sheet2 take them,
+// and a part's picture swapped for another without reading the model again, by the name it was loaded with
+struct GameTexture;
+void ModelViewBook(const float sheet[4], const float sheet2[4]);
+void ModelViewFitAspect(float aspect);   // the book fitted to the part of the picture shown: its width over its height, 1 the square from its middle
+void ModelViewReplaceTexture(const std::string& name, const GameTexture& picture);
