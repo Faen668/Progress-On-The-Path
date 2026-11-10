@@ -4083,9 +4083,9 @@ namespace
 
 	// The book, open on its text once it's read, its pages turned with [left] and [right], the arrow keys, or the arrows
 	// under it; shut on its cover until then, or while its text is on its way
-	void DrawBookPanel(const Entry& e, const Section* section, float x0, float x1, float top, float bottom)
+	void DrawBookPanel(const Entry& e, const Section* section, int shelf, float x0, float x1, float top, float bottom)
 	{
-		BookSetTitle(e.uuid, e.title.empty() ? e.uuid : e.title);
+		BookSetTitle(e.uuid, e.title.empty() ? e.uuid : e.title, shelf);
 		std::string request = BookClosedRequest(e.uuid);
 		g_bookOpen = false;
 		if (e.status == kCompleted)
@@ -4322,7 +4322,16 @@ namespace
 		}
 		if (showBook)
 		{
-			DrawBookPanel(*e, section, mx0, mx1, y, bottom - 30);
+			// Its shelf, for the look of its binding: the Library's sections in order, Lore Books then Monster Tomes
+			int shelf = 0;
+			for (const Section& s : m.sections)
+			{
+				if (&s == section)
+					break;
+				if (s.book == kBookLibrary)
+					++shelf;
+			}
+			DrawBookPanel(*e, section, shelf, mx0, mx1, y, bottom - 30);
 			return;
 		}
 		if (showModel)

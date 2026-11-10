@@ -21,8 +21,9 @@ bool ReadBuiltinTexture(const std::string& name, uint32_t largestSide, GameTextu
 void BookSetText(const std::string& uuid, const std::string& title, const std::string& section, const std::vector<std::string>& paragraphs);
 bool BookHasText(const std::string& uuid);
 
-// The title on a book's cover, written in gilt on the cover's plate (closed, and the open book's front cover)
-void BookSetTitle(const std::string& uuid, const std::string& title);
+// The title on a book's cover, written in gilt on the cover's plate (closed, and the open book's front cover), and the
+// Library shelf it's on (0 Lore Books, 1 Monster Tomes), which with its title and id chooses the look of its binding
+void BookSetTitle(const std::string& uuid, const std::string& title, int shelf = 0);
 std::string BookClosedRequest(const std::string& uuid);   // the book shut, its title on the cover
 
 // The book open on that one, where it was left: what to ask the model viewer for. The same while it's shown, as its

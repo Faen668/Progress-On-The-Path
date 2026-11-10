@@ -510,14 +510,15 @@ namespace
 		}
 	}
 
-	// The book's page n (0 the title page). Left pages (even) have their wide margin to the right, by the spine.
-	bool WritePage(const Book* book, int n, GameTexture& out)
+	// The paper in the book's look (below, after LookOf): its colour and spots before the text, its stains after
+	void AgePaper(const std::string& uuid, int n, GameTexture& page, bool overText);
+
+	// The text of the book's page n (0 the title page) on its paper. Left pages (even) have their wide margin to the
+	// right, by the spine.
+	void WriteText(const Book* book, int n, GameTexture& out)
 	{
-		if (!ParchmentPage(out))
-			return false;
-		ShadeGutter(out, n % 2 == 0);
 		if (!book || !Fonts())
-			return true;
+			return;
 		const bool left = n % 2 == 0;
 		const float x0 = static_cast<float>(left ? kOuter : kInner);
 		const float textW = static_cast<float>(kPageW - kInner - kOuter);
@@ -549,7 +550,7 @@ namespace
 			Flourish(out, static_cast<int>(x0 + textW * 0.5f), static_cast<int>(y + 6.f), 150, kRed);
 			if (!book->section.empty())
 				Write(out, 0, 26.f, x0 + (textW - Measure(0, 26.f, book->section)) * 0.5f, y + 70.f, book->section, kFaint);
-			return true;
+			return;
 		}
 		const int index = n - 1;
 		if (index >= static_cast<int>(book->pages.size()))
@@ -557,7 +558,7 @@ namespace
 			// Past the end: blank, but for a flourish on the page after the last
 			if (index == static_cast<int>(book->pages.size()))
 				Flourish(out, static_cast<int>(x0 + textW * 0.5f), kPageH / 3, 90, kFaint);
-			return true;
+			return;
 		}
 		const Page& page = book->pages[index];
 		const float space = Measure(0, kTextPx, " ");
@@ -588,6 +589,17 @@ namespace
 		// Its number, at the foot
 		const std::string number = std::to_string(n);
 		Write(out, 0, 20.f, x0 + (textW - Measure(0, 20.f, number)) * 0.5f, static_cast<float>(kPageH - 64), number, kFaint);
+	}
+
+	// The book's page n: its paper in the book's look, the text, then the stains over it
+	bool WritePage(const std::string& uuid, const Book* book, int n, GameTexture& out)
+	{
+		if (!ParchmentPage(out))
+			return false;
+		AgePaper(uuid, n, out, false);
+		ShadeGutter(out, n % 2 == 0);
+		WriteText(book, n, out);
+		AgePaper(uuid, n, out, true);
 		return true;
 	}
 
@@ -602,6 +614,72 @@ namespace
 
 	enum Tooling { kToolGilt, kToolBlind, kToolSilver };   // gold leaf, pressed with no leaf, or silver
 	enum Metal { kMetalBrass, kMetalIron, kMetalSilver };  // the corners
+
+	// Each book's title and shelf, as the Library gives them (BookSetTitle)
+	std::mutex g_titleLock;
+	std::map<std::string, std::string> g_titles;
+	std::map<std::string, int> g_shelves;
+
+	std::string TitleOf(const std::string& uuid)
+	{
+		std::lock_guard<std::mutex> hold(g_titleLock);
+		const auto found = g_titles.find(uuid);
+		return found == g_titles.end() ? std::string() : found->second;
+	}
+
+	int ShelfOf(const std::string& uuid)
+	{
+		std::lock_guard<std::mutex> hold(g_titleLock);
+		const auto found = g_shelves.find(uuid);
+		return found == g_shelves.end() ? 0 : found->second;
+	}
+
+	// Kinds of book, and the bindings each tends to: what its leathers are, its tooling and corners, how old and how
+	// knocked about. A book is of the first kind with a word in its id (the game's own item name, in English) or its
+	// title; else a monster tome by its shelf; else a plain lore book. Weights in kDyes' order.
+	struct Kind
+	{
+		const char* words[14];
+		float dyes[9];        // oxblood, calf, tan, black, green, navy, plum, ochre, grey green
+		float gilt, blind;    // the rest silver
+		float brass, iron;    // the rest silver
+		float age;            // added to its age
+		float water, scorch, mould;   // times the chance of each
+	};
+
+	const Kind kKinds[] = {
+		// The Empire's: black and gold, kept well
+		{ { "nilfgaard", "emperor", "empire", "emhyr", "vicovaro" }, { 0, 0, 0, 10, 0, 1, 0, 0, 0 }, 0.95f, 0.f, 0.9f, 0.f, -0.25f, 0.4f, 0.4f, 0.4f },
+		// Alchemy and herbs: greens and ochres, stained and damp
+		{ { "alchem", "potion", "elixir", "herb", "mutagen", "decoction", "formula", "apothecar", "toxic" }, { 1, 2, 1, 1, 5, 0, 0, 3, 4 }, 0.5f, 0.35f, 0.5f, 0.4f, 0.f, 1.6f, 1.f, 2.f },
+		// Skellige: plain hide, silver and iron, sea-wet
+		{ { "skellig", "isles", "craite", "hindarsfjall", "freya", "svalblod", "undvik" }, { 1, 4, 4, 1, 1, 1, 0, 0, 1 }, 0.3f, 0.3f, 0.2f, 0.5f, 0.05f, 1.6f, 1.f, 1.f },
+		// Faith: oxblood and plum, gilt
+		{ { "melitele", "eternal fire", "lebioda", "prophet", "temple", "church", "faith", "kreve", "coram", "prayer" }, { 5, 1, 0, 1, 0, 1, 4, 0, 0 }, 0.85f, 0.05f, 0.7f, 0.2f, 0.f, 1.f, 1.f, 1.f },
+		// The Elder Races and magic: pale leathers, silver, very old
+		{ { "elder", "elven", "elves", "aen ", "ichaer", "aelirenn", "conjunction", "sorcer", "magic", "lodge", "chaos", "dwarv", "gnom" }, { 0, 1, 3, 0, 1, 2, 1, 2, 1 }, 0.45f, 0.1f, 0.3f, 0.1f, 0.15f, 1.f, 1.f, 1.f },
+		// Toussaint, chivalry and verse: navy and plum, gilt, young
+		{ { "toussaint", "beauclair", "knight", "chivalr", "duchess", "romance", "poem", "ballad", "verse", "noble" }, { 2, 0, 1, 0, 0, 4, 4, 0, 0 }, 0.9f, 0.f, 0.8f, 0.f, -0.15f, 0.6f, 0.6f, 0.6f },
+		// War and the Northern Kingdoms: hard-used calf and black, iron, scorched
+		{ { "warfare", " war", "_war", "arms", "tactic", "army", "temeria", "redania", "kaedwen", "battle", "siege", "soldier" }, { 2, 4, 2, 3, 1, 0, 0, 0, 2 }, 0.5f, 0.4f, 0.3f, 0.6f, 0.1f, 1.f, 1.8f, 1.f },
+		// Monsters: dark and rough, iron, old, burnt and damp
+		{ { "beast", "bestiar", "monster", "vampir", "necrophag", "wraith", "spectre", "specter", "curse", "draconid", "relict", "ogroid" }, { 3, 5, 1, 4, 2, 0, 0, 0, 3 }, 0.4f, 0.45f, 0.3f, 0.6f, 0.2f, 1.4f, 2.5f, 1.5f },
+		// A lore book
+		{ {}, { 4, 4, 2, 3, 3, 2, 2, 1, 1 }, 0.68f, 0.22f, 0.6f, 0.28f, 0.f, 1.f, 1.f, 1.f },
+	};
+	constexpr int kKindMonster = 7, kKindLore = 8;
+
+	const Kind& KindOf(const std::string& uuid)
+	{
+		std::string text = uuid + " " + TitleOf(uuid);
+		for (char& c : text)
+			c = static_cast<char>(tolower(static_cast<unsigned char>(c)));
+		for (int k = 0; k < kKindLore; ++k)
+			for (const char* word : kKinds[k].words)
+				if (word && text.find(word) != std::string::npos)
+					return kKinds[k];
+		return kKinds[ShelfOf(uuid) == 1 ? kKindMonster : kKindLore];
+	}
 
 	// A mark on the cover, a water stain or a scorch: where on the unrolled binding (Binding), and how large
 	struct Mark
@@ -620,6 +698,7 @@ namespace
 		Mark water, scorch;
 		float mould = 0.f;        // how much of the cover has mildew on it, 0 none
 		float sunned = 0.f;       // the spine faded by the light, as one on a shelf is
+		float paper[3] = { 1.f, 1.f, 1.f };   // the paper's colour, times the parchment's, linear
 	};
 
 	// FNV-1a over the id, then the salt mixed in by murmur3's finish, so ids alike but for their ends differ in every choice
@@ -669,48 +748,63 @@ namespace
 		Look look{ { kOxblood[0], kOxblood[1], kOxblood[2] }, kToolGilt, kMetalBrass };
 		if (uuid.empty())
 			return look;
-		// Leathers a binder had, linear, about as dark as the oxblood; the commoner ones more often
-		struct Dye { float c[3]; float weight; };
-		static const Dye kDyes[] = {
-			{ { 0.030f, 0.0095f, 0.0062f }, 4 },   // oxblood
-			{ { 0.040f, 0.022f, 0.012f }, 4 },     // undyed calf
-			{ { 0.068f, 0.039f, 0.019f }, 2 },     // tan
-			{ { 0.0085f, 0.0078f, 0.0072f }, 3 },  // black
-			{ { 0.011f, 0.019f, 0.011f }, 3 },     // forest green
-			{ { 0.010f, 0.012f, 0.025f }, 2 },     // navy, faded
-			{ { 0.024f, 0.008f, 0.015f }, 2 },     // plum
-			{ { 0.058f, 0.041f, 0.014f }, 1 },     // ochre
-			{ { 0.027f, 0.029f, 0.021f }, 1 },     // grey green
+		// Leathers a binder had, linear, about as dark as the oxblood; how likely each is the book's kind's (kKinds)
+		const Kind& kind = KindOf(uuid);
+		static constexpr float kDyes[9][3] = {
+			{ 0.030f, 0.0095f, 0.0062f },   // oxblood
+			{ 0.040f, 0.022f, 0.012f },     // undyed calf
+			{ 0.068f, 0.039f, 0.019f },     // tan
+			{ 0.0085f, 0.0078f, 0.0072f },  // black
+			{ 0.011f, 0.019f, 0.011f },     // forest green
+			{ 0.010f, 0.012f, 0.025f },     // navy, faded
+			{ 0.024f, 0.008f, 0.015f },     // plum
+			{ 0.058f, 0.041f, 0.014f },     // ochre
+			{ 0.027f, 0.029f, 0.021f },     // grey green
 		};
 		float total = 0.f;
-		for (const Dye& d : kDyes)
-			total += d.weight;
+		for (const float weight : kind.dyes)
+			total += weight;
 		float pick = Unit(Hash(uuid, 1)) * total;
-		const Dye* chosen = &kDyes[0];
-		for (const Dye& d : kDyes)
+		const float* chosen = kDyes[0];
+		for (int d = 0; d < 9; ++d)
 		{
-			chosen = &d;
-			if ((pick -= d.weight) < 0.f)
+			if (kind.dyes[d] <= 0.f)
+				continue;
+			chosen = kDyes[d];
+			if ((pick -= kind.dyes[d]) < 0.f)
 				break;
 		}
 		// Each skin a little lighter or darker, a little warmer or cooler, than the next
 		const float light = 0.8f + 0.45f * Unit(Hash(uuid, 2));
 		for (int k = 0; k < 3; ++k)
-			look.dye[k] = chosen->c[k] * light * (0.92f + 0.16f * Unit(Hash(uuid, 10 + k)));
+			look.dye[k] = chosen[k] * light * (0.92f + 0.16f * Unit(Hash(uuid, 10 + k)));
 		const float tooling = Unit(Hash(uuid, 3)), corners = Unit(Hash(uuid, 4));
-		look.tooling = tooling < 0.68f ? kToolGilt : tooling < 0.9f ? kToolBlind : kToolSilver;
-		look.corners = corners < 0.6f ? kMetalBrass : corners < 0.88f ? kMetalIron : kMetalSilver;
+		look.tooling = tooling < kind.gilt ? kToolGilt : tooling < kind.gilt + kind.blind ? kToolBlind : kToolSilver;
+		look.corners = corners < kind.brass ? kMetalBrass : corners < kind.brass + kind.iron ? kMetalIron : kMetalSilver;
 		// Its life since: most books well used, a few nearly new, a few ruined
-		look.age = 0.1f + 0.9f * std::pow(Unit(Hash(uuid, 5)), 0.75f);
+		look.age = std::clamp(0.1f + 0.9f * std::pow(Unit(Hash(uuid, 5)), 0.75f) + kind.age, 0.05f, 1.f);
 		look.seed = Hash(uuid, 6);
-		if (Unit(Hash(uuid, 20)) < 0.4f)
+		if (Unit(Hash(uuid, 20)) < 0.4f * kind.water)
 			look.water = MarkAt(uuid, 21, 0.07f, 0.2f);
-		if (Unit(Hash(uuid, 30)) < 0.14f)
+		if (Unit(Hash(uuid, 30)) < 0.14f * kind.scorch)
 			look.scorch = MarkAt(uuid, 31, 0.03f, 0.08f);
-		if (Unit(Hash(uuid, 40)) < 0.2f)
+		if (Unit(Hash(uuid, 40)) < 0.2f * kind.mould)
 			look.mould = 0.4f + 0.6f * Unit(Hash(uuid, 41));
 		if (Unit(Hash(uuid, 50)) < 0.35f)
 			look.sunned = 0.35f + 0.5f * Unit(Hash(uuid, 51));
+		// Its paper: a good cream, a cheaper grey-white, or yellowed or toasted with the years, the older the likelier
+		struct Paper { float tint[3]; };
+		static const Paper kPapers[] = {
+			{ { 1.f, 1.f, 1.f } },             // cream, as the parchment is
+			{ { 1.04f, 1.06f, 1.12f } },       // grey-white rag
+			{ { 1.03f, 0.97f, 0.78f } },       // yellowed
+			{ { 0.9f, 0.8f, 0.64f } },         // toasted brown
+		};
+		const float paper = Unit(Hash(uuid, 60)) * 0.75f + look.age * 0.4f;
+		const Paper& paperOf = kPapers[paper < 0.35f ? 1 : paper < 0.7f ? 0 : paper < 0.95f ? 2 : 3];
+		const float jitter = 0.94f + 0.1f * Unit(Hash(uuid, 61));
+		for (int k = 0; k < 3; ++k)
+			look.paper[k] = paperOf.tint[k] * jitter;
 		return look;
 	}
 
@@ -1118,20 +1212,134 @@ namespace
 	}
 
 	// ------------------------------------------------------------------------------------------
+	// The paper in a book's look: its colour, browned towards its edges and spotted with foxing the older it is, and the
+	// water or fire that marked its cover come through to its pages at the same place
+	// ------------------------------------------------------------------------------------------
+
+	constexpr float kPaperW = 0.235f, kPaperH = 0.33f;   // a page, metres (build_book.py), its spine edge on the spine
+
+	void AgePaper(const std::string& uuid, int n, GameTexture& page, bool overText)
+	{
+		if (uuid.empty() || page.pixels.empty())
+			return;
+		const Look look = LookOf(uuid);
+		const int width = static_cast<int>(page.width), height = static_cast<int>(page.height);
+		const bool left = n % 2 == 0;
+		const float metre = kPaperW / width;   // a pixel's width
+		const uint32_t seed = look.seed + 1000;
+		const auto pixel = [&](int x, int y) { return &page.pixels[static_cast<size_t>(y) * page.rowBytes + x * 4]; };
+		// Where a pixel lies: out from the spine, and up the page from its middle, metres
+		const auto place = [&](int x, int y, float& out, float& up)
+		{
+			out = (left ? width - 1 - x : x) * metre;
+			up = kPaperH * 0.5f - y * (kPaperH / height);
+		};
+		if (!overText)
+		{
+			// The paper's colour, and browned in from its three open edges (not the spine's) as it aged
+			const float reach = 0.004f + 0.02f * look.age;
+			for (int y = 0; y < height; ++y)
+				for (int x = 0; x < width; ++x)
+				{
+					float out, up;
+					place(x, y, out, up);
+					const float edge = std::min(kPaperW - out, kPaperH * 0.5f - std::abs(up));
+					const float brown = Smooth(reach, 0.f, edge + (Fbm(out * 90.f, up * 90.f, seed) - 0.5f) * reach * 0.8f) * (0.25f + 0.45f * look.age);
+					uint8_t* p = pixel(x, y);
+					static constexpr float kBrowned[3] = { 0.8f, 0.62f, 0.42f };
+					for (int k = 0; k < 3; ++k)
+						p[k] = ToSrgb(ToLinear(p[k]) * look.paper[k] * (1.f + (kBrowned[k] - 1.f) * brown));
+				}
+			// Foxing: small rust-brown spots, in clusters, more of them the older the book
+			const int clusters = static_cast<int>(look.age * look.age * 9.f + Unit(Hash(uuid, 1000 + n)) * 3.f * look.age);
+			for (int c = 0; c < clusters; ++c)
+			{
+				const uint32_t h = Hash(uuid, 2000 + n * 64 + c);
+				const float cx = Unit(h) * width, cy = Unit(h * 2654435761u + 1) * height;
+				const int spots = 1 + static_cast<int>(Unit(h ^ 0x5bd1e995u) * 7.f);
+				for (int sp = 0; sp < spots; ++sp)
+				{
+					const uint32_t g = Hash(uuid, 5000 + n * 512 + c * 8 + sp);
+					const float x = cx + (Unit(g) - 0.5f) * 70.f, y = cy + (Unit(g * 747796405u + 3) - 0.5f) * 70.f;
+					const float r = 1.5f + Unit(g ^ 0x27d4eb2du) * 4.5f, strength = 0.15f + 0.3f * Unit(g * 2891336453u + 7);
+					for (int yy = std::max(0, static_cast<int>(y - r * 2.5f)); yy < std::min(height, static_cast<int>(y + r * 2.5f) + 1); ++yy)
+						for (int xx = std::max(0, static_cast<int>(x - r * 2.5f)); xx < std::min(width, static_cast<int>(x + r * 2.5f) + 1); ++xx)
+						{
+							const float f = std::exp(-((xx - x) * (xx - x) + (yy - y) * (yy - y)) / (r * r)) * strength;
+							uint8_t* p = pixel(xx, yy);
+							static constexpr float kRust[3] = { 0.36f, 0.2f, 0.09f };
+							for (int k = 0; k < 3; ++k)
+							{
+								const float v = ToLinear(p[k]);
+								p[k] = ToSrgb(v + (kRust[k] * v / 0.5f - v) * f);
+							}
+						}
+				}
+			}
+			return;
+		}
+		// Over the text, as the ink ran with it: a wetting's stain and tide lines, and a scorch's browning and char.
+		// The block lies against the board the mark is on, so each page gets it, a little stronger or weaker.
+		if (!look.water.on && !look.scorch.on)
+			return;
+		const float strength = 0.75f + 0.25f * Unit(Hash(uuid, 3000 + n));
+		for (int y = 0; y < height; ++y)
+			for (int x = 0; x < width; ++x)
+			{
+				float out, up;
+				place(x, y, out, up);
+				float mul[3] = { 1.f, 1.f, 1.f };
+				if (look.water.on)
+				{
+					const float d = std::hypot(out - std::abs(look.water.w), up - look.water.y) / look.water.radius + (Fbm(out * 16.f, up * 16.f, seed + 6) - 0.5f) * 0.5f;
+					const float inside = Smooth(1.02f, 0.95f, d) * strength;
+					const float tide = (std::exp(-std::pow((d - 1.f) / 0.02f, 2.f)) + 0.5f * std::exp(-std::pow((d - 0.7f) / 0.015f, 2.f))) * strength;
+					static constexpr float kWet[3] = { 0.94f, 0.88f, 0.76f }, kTide[3] = { 0.7f, 0.56f, 0.4f };
+					for (int k = 0; k < 3; ++k)
+						mul[k] *= (1.f + (kWet[k] - 1.f) * inside) * (1.f + (kTide[k] - 1.f) * std::min(1.f, tide));
+				}
+				if (look.scorch.on)
+				{
+					const float d = std::hypot(out - std::abs(look.scorch.w), up - look.scorch.y) / (look.scorch.radius * 0.8f) + (Fbm(out * 40.f, up * 40.f, seed + 10) - 0.5f) * 0.7f;
+					const float browned = Smooth(1.6f, 0.85f, d) * strength, charred = Smooth(0.75f, 0.5f, d);
+					static constexpr float kScorched[3] = { 0.55f, 0.38f, 0.22f };
+					for (int k = 0; k < 3; ++k)
+						mul[k] *= (1.f + (kScorched[k] - 1.f) * browned) * (1.f - 0.92f * charred);
+				}
+				if (mul[0] == 1.f && mul[1] == 1.f && mul[2] == 1.f)
+					continue;
+				uint8_t* p = pixel(x, y);
+				for (int k = 0; k < 3; ++k)
+					p[k] = ToSrgb(ToLinear(p[k]) * mul[k]);
+			}
+	}
+
+	// The page edges' sheets in the book's paper, darker the older it is
+	bool WriteEdges(const std::string& uuid, uint32_t largestSide, GameTexture& out)
+	{
+		static std::mutex lock;
+		static GameTexture base;
+		{
+			std::lock_guard<std::mutex> hold(lock);
+			if (base.pixels.empty() && !Decode(POTP_RES_BOOK_EDGES, std::max<uint32_t>(largestSide, 2048), base))
+				return false;
+			out = base;
+		}
+		const Look look = LookOf(uuid);
+		float mul[3];
+		for (int k = 0; k < 3; ++k)
+			mul[k] = (1.f + (look.paper[k] - 1.f) * 0.5f) * (1.f - 0.22f * look.age);   // half the tint: the sheets' edges are already its colour
+		for (size_t i = 0; i < out.pixels.size(); i += 4)
+			for (int k = 0; k < 3; ++k)
+				out.pixels[i + k] = ToSrgb(ToLinear(out.pixels[i + k]) * mul[k]);
+		return true;
+	}
+
+	// ------------------------------------------------------------------------------------------
 	// The cover: the book's title in gilt capitals, on a plate the renderer cuts away round the letters
 	// ------------------------------------------------------------------------------------------
 
 	constexpr int kCoverW = 1024, kCoverH = 768;   // build_book.py's TITLE_W x TITLE_H
-	std::mutex g_titleLock;
-	std::map<std::string, std::string> g_titles;
-
-	std::string TitleOf(const std::string& uuid)
-	{
-		std::lock_guard<std::mutex> hold(g_titleLock);
-		const auto found = g_titles.find(uuid);
-		return found == g_titles.end() ? std::string() : found->second;
-	}
-
 	// The title's words into lines at a size: false when a word alone is wider than the plate
 	bool WrapTitle(const std::string& title, float px, float width, std::vector<std::string>& lines)
 	{
@@ -1380,7 +1588,7 @@ namespace
 				book = found->second;
 		}
 		auto page = std::make_shared<GameTexture>();
-		if (!WritePage(book.get(), n, *page))
+		if (!WritePage(uuid, book.get(), n, *page))
 			return nullptr;
 		AddMips(*page);
 		std::lock_guard<std::mutex> hold(g_pageLock);
@@ -1475,6 +1683,8 @@ bool ReadBuiltinTexture(const std::string& name, uint32_t largestSide, GameTextu
 		ok = Decode(POTP_RES_BOOK_SPECULAR, largestSide, out);
 	else if (key == "parchment")
 		ok = Decode(POTP_RES_PARCHMENT, largestSide, out);
+	else if (key.compare(0, 6, "edges:") == 0)
+		ok = WriteEdges(key.substr(6), largestSide, out);   // the page edges in a book's paper
 	else if (key == "edges" || key == "edges_n")
 	{
 		// The page edges' sheets, a line every few pixels: kept at their full 2048, as fitting them in less blurs them
@@ -1628,7 +1838,7 @@ bool LoadBookModel(const std::string& which, ItemModel& out)
 		if (material == 3)
 		{
 			// The page edges: the sheets' own tiling texture, one sheet a line, matte paper
-			paper(part, std::string(kBuiltinTexture) + "edges");
+			paper(part, std::string(kBuiltinTexture) + (uuid.empty() ? std::string("edges") : "edges:" + uuid));
 			part.normal = std::string(kBuiltinTexture) + "edges_n";   // a faint groove at each sheet's edge
 			finish(part, role);
 			continue;
@@ -1702,10 +1912,11 @@ bool BookHasText(const std::string& uuid)
 	return g_books.count(uuid) != 0;
 }
 
-void BookSetTitle(const std::string& uuid, const std::string& title)
+void BookSetTitle(const std::string& uuid, const std::string& title, int shelf)
 {
 	std::lock_guard<std::mutex> hold(g_titleLock);
 	g_titles[uuid] = title;
+	g_shelves[uuid] = shelf;
 }
 
 std::string BookClosedRequest(const std::string& uuid)
