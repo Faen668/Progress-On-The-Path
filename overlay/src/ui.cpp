@@ -525,6 +525,9 @@ namespace
 	ULONGLONG g_achievementsNextAsk = 0;   // when the Achievements tab next reads them
 	ULONGLONG g_killsNextAsk = 0;
 	int g_region = 0;   // 0 all
+	// Each tab's Missable Only: the list down to what can still be missed there, every group open. Not kept between games.
+	bool g_missableOnly[kTabCount] = {};
+	bool g_tabHasMissables = false;   // this frame's tab has anything that can be missed (the Missable tab aside)
 	int g_regionOf[kTabCount] = {};   // the region each tab was left on, given back when it's opened again
 	float g_scroll = 0.f, g_scrollShown = 0.f;
 	std::string g_selected[kTabCount];
@@ -677,9 +680,28 @@ namespace
 		}
 	}
 
+	// The tabs along the top. The Missable book has none of its own: it's the Quests tab with Missable Only on, so the
+	// slots after Quests' are one along from the books'.
+	constexpr int kTabSlots = kTabCount - 1;
+
+	int SlotOf(int book)
+	{
+		return book < kBookMissable ? book : book == kBookMissable ? kBookQuest : book - 1;
+	}
+
+	int BookAtSlot(int slot)
+	{
+		slot = (slot + kTabSlots) % kTabSlots;
+		if (slot == kBookQuest && g_missableOnly[kBookQuest])
+			return kBookMissable;   // Quests as it was left
+		return slot < kBookMissable ? slot : slot + 1;
+	}
+
 	void SetBook(int book)
 	{
 		book = (book + kTabCount) % kTabCount;
+		if (book == kBookMissable || book == kBookQuest)
+			g_missableOnly[kBookQuest] = book == kBookMissable;
 		if (book == g_book)
 			return;
 		g_regionOf[g_book] = g_region;
@@ -1093,22 +1115,52 @@ namespace
 	// Lists
 	// ------------------------------------------------------------------------------------------
 
+	bool MissableOnly()
+	{
+		return g_book != kBookMissable && g_book != kBookQuest && g_book >= 0 && g_book < kTabCount && g_missableOnly[g_book];
+	}
+
+	// Still to be had, and can be missed
+	bool StillMissable(const Entry& e)
+	{
+		return (e.flags & kFlagMissable) && !e.Done();
+	}
+
+	bool BookHasMissables(const Model& m, int book)
+	{
+		for (const Section& s : m.sections)
+			if (s.book == kBookMissable && (book == kBookQuest || book == kBookMissable) && !s.entries.empty())
+				return true;   // Quests' Missable Only is the Missable book
+		if (book == kBookMissable)
+			return false;
+		for (const Section& s : m.sections)
+			if (s.book == book)
+				for (const Entry& e : s.entries)
+					if ((e.flags & kFlagMissable) && !e.upgradeHidden)
+						return true;
+		return false;
+	}
+
+	// With Missable Only on, the groups open and shut apart from the full list's, and start open
 	bool SectionOpen(const Section& s, int index, int firstVisible)
 	{
-		const std::string key = std::to_string(s.book) + s.header;
+		const bool only = MissableOnly();
+		const std::string key = (only ? "!" : "") + std::to_string(s.book) + s.header;
 		auto it = g_open.find(key);
-		return it != g_open.end() ? it->second : index == firstVisible;
+		return it != g_open.end() ? it->second : only || index == firstVisible;
 	}
 
 	void SetSectionOpen(const Section& s, bool open)
 	{
-		g_open[std::to_string(s.book) + s.header] = open;
+		g_open[(MissableOnly() ? "!" : "") + std::to_string(s.book) + s.header] = open;
 	}
 
 	bool EntryShown(const Entry& e)
 	{
 		if (e.upgradeHidden)
 			return false;
+		if (MissableOnly())
+			return StillMissable(e) && (g_region == 0 || e.region == g_region);
 		const Settings& st = GetSettings();
 		if (st.hideCompleted && e.status == kCompleted)
 			return false;
@@ -1126,8 +1178,9 @@ namespace
 	DoneOf RegionCount(const Section& s)
 	{
 		DoneOf c;
+		const bool only = MissableOnly();
 		for (const Entry& e : s.entries)
-			if (g_region == 0 || e.region == g_region)
+			if ((g_region == 0 || e.region == g_region) && (!only || ((e.flags & kFlagMissable) && !e.upgradeHidden)))
 			{
 				++c.total;
 				c.done += e.Done() ? 1 : 0;
@@ -1153,10 +1206,12 @@ namespace
 	Counts BookCounts(const Model& m, int book)
 	{
 		Counts c;
+		const bool only = MissableOnly() && book == g_book;
 		for (const Section& s : m.sections)
 			if (s.book == book)
 				for (const Entry& e : s.entries)
-					Add(c, e);
+					if (!only || ((e.flags & kFlagMissable) && !e.upgradeHidden))
+						Add(c, e);
 		return c;
 	}
 
@@ -1289,6 +1344,23 @@ namespace
 		const ImVec2 w[3] = { {m.x, m.y - 12}, {m.x + 12, m.y + 10}, {m.x - 12, m.y + 10} };
 		dl->AddConvexPolyFilled(w, 3, Rgb(196, 82, 58));
 		TextOnPoint(kSans, 22, ImVec2(m.x, m.y + 2.f), Rgb(20, 8, 4), "!");
+	}
+
+	void ToggleMissableOnly()
+	{
+		if (g_book < 0 || g_book >= kTabCount)
+			return;
+		MenuSound(kSoundValue, kRankValue);
+		if (g_book == kBookQuest || g_book == kBookMissable)
+		{
+			SetBook(g_book == kBookQuest ? kBookMissable : kBookQuest);
+			return;
+		}
+		g_missableOnly[g_book] = !g_missableOnly[g_book];
+		g_scroll = 0.f;
+		g_followSelection = true;
+		g_barT = 0.f;
+		g_focusHeader.clear();
 	}
 
 	// Items and cards are collected rather than started
@@ -1498,23 +1570,24 @@ namespace
 		}
 
 		const float room = kW - 556.f - 70.f - 100.f;
-		const float tabW = std::min(140.f, room / kTabCount);
-		const float tabX0 = std::max((kW - tabW * kTabCount) * 0.5f, 556.f);
+		const float tabW = std::min(140.f, room / kTabSlots);
+		const float tabX0 = std::max((kW - tabW * kTabSlots) * 0.5f, 556.f);
+		const int slotNow = SlotOf(g_book);
 		for (int dir = 0; dir < 2; ++dir)
 		{
-			const float tx = dir == 0 ? tabX0 - 44 : tabX0 + tabW * kTabCount + 44;
+			const float tx = dir == 0 ? tabX0 - 44 : tabX0 + tabW * kTabSlots + 44;
 			const float sgn = dir == 0 ? 1.f : -1.f;
 			const ImVec2 t[3] = { {tx, 62}, {tx + 22 * sgn, 48}, {tx + 22 * sgn, 76} };
 			const ImVec2 ha(std::min(tx, tx + 22 * sgn) - 12, 36), hb(std::max(tx, tx + 22 * sgn) + 12, 88);
 			dl->AddConvexPolyFilled(t, 3, Hover(ha, hb) ? kGoldHi : Rgb(120, 112, 98));
 			if (Clicked(ha, hb))
-				SetBook(g_book + (dir == 0 ? -1 : 1));
+				SetBook(BookAtSlot(slotNow + (dir == 0 ? -1 : 1)));
 		}
 
 		// The gold tab slides to the book that's open
-		g_tabShown += (static_cast<float>(g_book) - g_tabShown) * std::min(1.f, g_dt * 16.f);
-		if (std::fabs(g_tabShown - g_book) < 0.002f)
-			g_tabShown = static_cast<float>(g_book);
+		g_tabShown += (static_cast<float>(slotNow) - g_tabShown) * std::min(1.f, g_dt * 16.f);
+		if (std::fabs(g_tabShown - slotNow) < 0.002f)
+			g_tabShown = static_cast<float>(slotNow);
 		{
 			const float x = tabX0 + tabW * g_tabShown;
 			const ImVec2 a(x + 2, 5), b(x + tabW - 2, barH - 12);
@@ -1529,10 +1602,11 @@ namespace
 			const ImVec2 notch[3] = { {x + tabW * 0.5f - 12, b.y}, {x + tabW * 0.5f + 12, b.y}, {x + tabW * 0.5f, b.y + 10} };
 			dl->AddConvexPolyFilled(notch, 3, Rgb(226, 198, 142));
 		}
-		for (int i = 0; i < kTabCount; ++i)
+		for (int slot = 0; slot < kTabSlots; ++slot)
 		{
-			const float x = tabX0 + tabW * i;
-			const bool on = i == g_book;
+			const int i = slot < kBookMissable ? slot : slot + 1;
+			const float x = tabX0 + tabW * slot;
+			const bool on = slot == slotNow;
 			const ImVec2 a(x + 2, 5), b(x + tabW - 2, barH - 12);
 			if (!on && Hover(a, b))
 				dl->AddRectFilled(a, b, Rgb(226, 196, 134, 24));
@@ -1543,8 +1617,8 @@ namespace
 			const float capMiddle = InkCentre(face, size, "H").y;
 			const float inkX = InkCentre(face, size, Tx(kBooks[i].caps)).x;
 			Text(face, size, x + tabW * 0.5f - inkX, 106.f - capMiddle, on ? kInk : Rgb(186, 176, 156), Tx(kBooks[i].caps));
-			if (Clicked(a, b))
-				SetBook(i);
+			if (Clicked(a, b) && !on)
+				SetBook(BookAtSlot(slot));
 		}
 
 		const ImVec2 ca(kW - 84, 34), cb(kW - 34, 84);
@@ -1555,12 +1629,65 @@ namespace
 			SetMenuOpen(false);
 
 		// The rest of the bar moves the panel
-		if (g_clicked && Hover(ImVec2(0, 0), ImVec2(kW, barH)) && !Hover(ImVec2(tabX0 - 60, 0), ImVec2(tabX0 + tabW * kTabCount + 60, barH)) && !Hover(ca, cb))
+		if (g_clicked && Hover(ImVec2(0, 0), ImVec2(kW, barH)) && !Hover(ImVec2(tabX0 - 60, 0), ImVec2(tabX0 + tabW * kTabSlots + 60, barH)) && !Hover(ca, cb))
 			g_dragging = true;
+	}
+
+	// The three columns: the list, the details, the summary
+	struct Columns { float l0, l1, m0, m1, r0, r1; };
+
+	Columns GetColumns()
+	{
+		const float margin = 36.f, gap = 40.f;
+		const float each = (kW - margin * 2 - gap * 2) / 3.f;
+		return { margin, margin + each - 12.f, margin + each + gap, margin + each * 2 + gap, margin + each * 2 + gap * 2, kW - margin };
+	}
+
+	// At the right of the region row, on a tab with anything that can be missed: Missable Only, on or off (S, or
+	// Change Visibility). Its width, drawn or not.
+	float MissableChip(bool draw)
+	{
+		if (!g_tabHasMissables)
+			return 0.f;
+		const char* label = Tx(T_missable_only_caps);
+		const float w = Measure(kTitle, 22, label).x + 82.f;
+		if (!draw)
+			return w;
+		const Columns col = GetColumns();
+		const ImVec2 a(col.r1 - w, 168), b(col.r1, 226);
+		const bool on = MissableOnly() || g_book == kBookMissable, hot = Hover(a, b);
+		if (on)
+		{
+			Field(707, a, b, 7.f, [=](float px, float py)
+			{
+				return Mix(Rgb(120, 34, 18), Rgb(196, 82, 58), Fbm(px * 0.03f, py * 0.09f, 3));
+			});
+			dl->AddRect(a, b, Rgb(246, 170, 136), 0.f, 0, 2.f);
+		}
+		else
+		{
+			dl->AddRectFilled(a, b, hot ? Rgb(70, 30, 20, 220) : Rgb(0, 0, 0, 170));
+			dl->AddRect(a, b, hot ? Rgb(196, 82, 58) : Rgb(106, 42, 30), 0.f, 0, 1.5f);
+		}
+		const float cy = (a.y + b.y) * 0.5f;
+		if (on)
+		{
+			const ImVec2 t[3] = { {a.x + 32, cy - 12}, {a.x + 44, cy + 10}, {a.x + 20, cy + 10} };
+			dl->AddConvexPolyFilled(t, 3, Rgb(255, 236, 214));
+			TextOnPoint(kSans, 22, ImVec2(a.x + 32, cy + 2.f), Rgb(120, 34, 18), "!");
+		}
+		else
+			MissableBadge(ImVec2(a.x + 32, cy));
+		Text(kTitle, 22, a.x + 58, cy - InkCentre(kTitle, 22, "H").y, on ? Rgb(255, 244, 228) : hot ? Rgb(246, 170, 136) : Rgb(226, 120, 92), label);
+		if (Clicked(a, b))
+			ToggleMissableOnly();
+		return w;
 	}
 
 	void DrawRegionRow(const Model& m)
 	{
+		g_tabHasMissables = BookHasMissables(m, g_book);
+		const float chipW = MissableChip(true);
 		// Only the regions this book has anything in
 		bool has[kRegionCount] = {};
 		for (const Section& s : m.sections)
@@ -1599,7 +1726,9 @@ namespace
 			g_barT = 0.f;
 		}
 
-		const float rw = std::min(220.f, (kW - 72.f) / regions.size());
+		// Clear of the Missable Only chip on both sides, so they stay centred
+		const float room = chipW > 0.f ? kW - 2.f * (kW - GetColumns().r1 + chipW + 24.f) : kW - 72.f;
+		const float rw = std::min(220.f, room / regions.size());
 		const float rx0 = kW * 0.5f - rw * regions.size() * 0.5f;
 		for (size_t i = 0; i < regions.size(); ++i)
 		{
@@ -2025,15 +2154,6 @@ namespace
 		dl->AddRect(at, to, a && a->unlocked ? kGold : Rgb(70, 58, 38), 0.f, 0, 1.5f);
 	}
 
-	struct Columns { float l0, l1, m0, m1, r0, r1; };
-
-	Columns GetColumns()
-	{
-		const float margin = 36.f, gap = 40.f;
-		const float each = (kW - margin * 2 - gap * 2) / 3.f;
-		return { margin, margin + each - 12.f, margin + each + gap, margin + each * 2 + gap, margin + each * 2 + gap * 2, kW - margin };
-	}
-
 	// ------------------------------------------------------------------------------------------
 	// Bestiary: the same list as the other tabs, with the game's own pictures
 	// ------------------------------------------------------------------------------------------
@@ -2215,7 +2335,7 @@ namespace
 
 		if (g_rows.empty())
 		{
-			TextCentre(kSerif, 32, (la.x + lb.x) * 0.5f, la.y + 80, kDim, g_region > 0 ? Tx(T_nothing_in_region) : GetSettings().hideCompleted || GetSettings().hideIgnored || GetSettings().hideMissable ? Tx(T_nothing_showing) : Tx(T_nothing_yet));
+			TextCentre(kSerif, 32, (la.x + lb.x) * 0.5f, la.y + 80, kDim, MissableOnly() ? Tx(T_no_missables_left) : g_region > 0 ? Tx(T_nothing_in_region) : GetSettings().hideCompleted || GetSettings().hideIgnored || GetSettings().hideMissable ? Tx(T_nothing_showing) : Tx(T_nothing_yet));
 			return nullptr;
 		}
 
@@ -2419,6 +2539,18 @@ namespace
 				snprintf(count, sizeof(count), "%d / %d", counted.done, counted.total);
 				const float countW = Measure(kSans, 24, count).x;
 				const float room = headerRoom(s, countW);
+				if (!open && s.book != kBookMissable)
+				{
+					bool missable = false;
+					for (const Entry& e : s.entries)
+						if (StillMissable(e) && EntryShown(e))
+						{
+							missable = true;
+							break;
+						}
+					if (missable)
+						MissableBadge(ImVec2(b.x - countW - 98.f, a.y + 31.f));
+				}
 				if (s.state == 1)
 				{
 					const ImVec2 w0(b.x - countW - 104, a.y + 31);
@@ -2490,7 +2622,7 @@ namespace
 				else
 					Marker(e, ImVec2(a.x + 44, a.y + 36));
 				const RowText t = rowText(e);
-				const ImU32 titleCol = e.Done() && !UpgradePartial(e) ? kDoneText : e.status == kMissed ? Rgb(180, 116, 100) : sel ? Rgb(255, 248, 230) : kText;
+				const ImU32 titleCol = e.Done() && !UpgradePartial(e) ? (sel ? Rgb(214, 232, 196) : kDoneText) : e.status == kMissed ? (sel ? Rgb(255, 200, 182) : Rgb(180, 116, 100)) : sel ? Rgb(255, 248, 230) : kText;
 				const float textRoom = b.x - a.x - 110.f - (g_book == kBookGwent ? 58.f : 0.f) - (ShowsMissableBadge(e) ? 44.f : 0.f) - TierDiamondsWidth(e);
 				const float titleY = a.y + (t.sub.empty() && !t.tip ? 16.f : 3.f);
 				Text(kSerif, 32, a.x + 90, titleY, titleCol, t.title.c_str(), textRoom);
@@ -2894,7 +3026,7 @@ namespace
 		return g_enlargeSpent ? 0.f : std::clamp(g_enlargeHeld / kEnlargeHold, 0.f, 1.f);
 	}
 
-	enum HintAction { kActPrev, kActNext, kActMark, kActZoom, kActWardrobe, kActWardPrev, kActWardNext, kActWardWear, kActWardPin, kActWardSave, kActWardClear, kActWardStance, kActWardUntracked, kActWardEnlarge, kActWardSearch, kActAutoTurn, kActReveal, kActHide, kActRefresh, kActClose, kActShutBook, kActNone };
+	enum HintAction { kActPrev, kActNext, kActMark, kActZoom, kActWardrobe, kActWardPrev, kActWardNext, kActWardWear, kActWardPin, kActWardSave, kActWardClear, kActWardStance, kActWardUntracked, kActWardEnlarge, kActWardSearch, kActAutoTurn, kActReveal, kActHide, kActRefresh, kActClose, kActShutBook, kActMissableOnly, kActNone };
 
 	struct Hint { unsigned pad; const char* key; std::string text; HintAction action; bool held = false; };   // held: done by holding it, with a bar filling under it
 
@@ -4993,7 +5125,7 @@ namespace
 
 		const ImVec2 na(rx, kTop), nb(rr, kTop + 274);
 		InsetPanel(na, nb);
-		PanelHeading(na, nb.x, Upper(Tx(kBooks[g_book].name)).c_str());
+		PanelHeading(na, nb.x, (Upper(Tx(kBooks[g_book].name)) + (MissableOnly() ? std::string(" - ") + Tx(T_missable_only_caps) : std::string())).c_str());
 		char big[32];
 		snprintf(big, sizeof(big), "%d%%", c.total > 0 ? 100 * c.done / c.total : 0);
 		Text(kSerif, 72, na.x + 30, na.y + 70, Rgb(232, 158, 100), big);
@@ -7045,6 +7177,11 @@ namespace
 			dl->AddConvexPolyFilled(head, 3, c.colour);
 			return;
 		}
+		if (c.manual == 4)
+		{
+			MissableBadge(m);   // Missable Only, in Change Visibility
+			return;
+		}
 		Entry mark;
 		mark.status = c.manual == 2 ? kCompleted : c.manual == 1 ? kIgnored : kMissed;
 		Marker(mark, m);
@@ -7095,13 +7232,16 @@ namespace
 	void DrawVisibilityPanel(bool takesInput)
 	{
 		Settings& st = GetSettings();
-		struct Row { const char* name; const char* hint; ImU32 colour; bool* hidden; int mark; };
+		// on: a switch, ON or OFF, rather than shown or hidden. Missable Only is this tab's alone, and only where there's
+		// anything that can be missed.
+		struct Row { const char* name; const char* hint; ImU32 colour; bool* hidden; int mark; bool on = false; };
 		const Row rows[] = {
 			{ Tx(T_missable), Tx(T_missable_hint), Rgb(226, 100, 80), &st.hideMissable, 3 },
 			{ Tx(T_status_completed), Tx(T_completed_hint), kGreen, &st.hideCompleted, 2 },
 			{ Tx(T_status_ignored), Tx(T_ignored_hint), Rgb(176, 176, 156), &st.hideIgnored, 1 },
+			{ Tx(T_missable_only), Tx(T_missable_only_hint), Rgb(196, 82, 58), &g_missableOnly[SlotOf(std::clamp(g_book, 0, kTabCount - 1)) == kBookQuest ? kBookQuest : std::clamp(g_book, 0, kTabCount - 1)], 4, true },
 		};
-		constexpr int kRows = 3;
+		const int kRows = g_tabHasMissables ? 4 : 3;
 		const int firstVertex = dl->VtxBuffer.Size;
 		g_statusT = takesInput ? std::min(1.f, g_statusT + g_dt * 8.f) : 0.f;
 
@@ -7135,7 +7275,7 @@ namespace
 			const ImVec2 ra(x0, ry), rb(x1, ry + rowH - 8);
 			if (takesInput && Hover(ra, rb))
 				g_visibilityFocus = i;
-			const bool focused = g_visibilityFocus == i, shown = !*r.hidden;
+			const bool focused = g_visibilityFocus == i, shown = r.on ? *r.hidden : !*r.hidden;
 			if (focused)
 			{
 				const ImU32 left = Mix(Rgb(120, 86, 24), r.colour, 0.28f);
@@ -7153,7 +7293,7 @@ namespace
 			StatusMedallion(medal, ImVec2(ra.x + 58, (ra.y + rb.y) * 0.5f), focused && shown);
 			Text(kSerif, 34, ra.x + 112, ry + 5, !shown ? kDim : focused ? Rgb(255, 248, 230) : kText, r.name);
 			TextFit(kSans, 24, ra.x + 112, ry + 44, focused ? Rgb(226, 214, 186) : Rgb(150, 142, 124), r.hint, rb.x - ra.x - 300.f);
-			const char* tag = shown ? Tx(T_shown_caps) : Tx(T_hidden_caps);
+			const char* tag = r.on ? (shown ? Tx(T_on_caps) : Tx(T_off_caps)) : shown ? Tx(T_shown_caps) : Tx(T_hidden_caps);
 			const float tagW = Measure(kTitle, 20, tag).x + 36.f;
 			const ImVec2 ta(rb.x - tagW - 22, ry + 22), tb(rb.x - 22, ry + 58);
 			dl->AddRectFilled(ta, tb, Rgb(0, 0, 0, 150));
@@ -7166,7 +7306,9 @@ namespace
 		}
 		if (takesInput && g_navAccept)
 			toggled = g_visibilityFocus;
-		if (toggled >= 0)
+		if (toggled >= 0 && rows[toggled].on)
+			ToggleMissableOnly();
+		else if (toggled >= 0)
 		{
 			*rows[toggled].hidden = !*rows[toggled].hidden;
 			g_followSelection = true;
@@ -8334,6 +8476,28 @@ namespace
 
 		const bool settingsPage = g_book == kTabSettings;
 		const std::string closeKey = KeyName(st.openKey);
+		// Back on a controller, where the tab has Missable Only: a tap is that, and a hold refreshes, a bar filling under
+		// its prompt as Hold to Enlarge's does. Elsewhere a press refreshes, as it always has.
+		static float backHeld = 0.f;
+		static bool backSpent = false;
+		bool backTap = false, backHold = false;
+		const bool backSplit = g_tabHasMissables && !g_statusOpen && !g_capture && !settingsPage && !g_wardrobeOpen;
+		if (backSplit && (g_pad.buttons & kPadBack))
+		{
+			if (!backSpent)
+			{
+				backHeld += g_dt;
+				if (backHeld >= kEnlargeHold)
+					backHold = backSpent = true;
+			}
+		}
+		else
+		{
+			backTap = backSplit && backHeld > 0.f && !backSpent;
+			backHeld = 0.f;
+			backSpent = false;
+		}
+		const float backProgress = backSpent ? 0.f : std::clamp(backHeld / kEnlargeHold, 0.f, 1.f);
 		const bool canMark = !settingsPage && g_book != kTabAchievements && g_book != kTabKills && e && !g_statusOpen;
 		std::vector<Hint> hints;
 		if (g_wardrobeOpen)
@@ -8433,8 +8597,13 @@ namespace
 			if (g_book != kBookBestiary && g_detailScrollMax > 0.f)
 				hints.push_back({ kPadLeft | kPadRight, Tx(T_left_right), Tx(T_scroll_details), kActNone });
 			hints.push_back({ kPadY, KeyLabel(kKeyC), Tx(T_expand_collapse), kActNone });
+			if (g_tabHasMissables)
+				hints.push_back({ kPadBack, KeyLabel(kKeyS), Tx(T_missable_only), kActMissableOnly });
 			hints.push_back({ kPadStart, KeyLabel(kKeyH), Tx(T_change_visibility), kActHide });
-			hints.push_back({ kPadBack, KeyLabel(kKeyR), Tx(T_refresh), kActRefresh });
+			if (g_tabHasMissables && g_padPrompts)
+				hints.push_back({ kPadBack, KeyLabel(kKeyR), Tx(T_hold_to_refresh), kActRefresh, true });
+			else
+				hints.push_back({ kPadBack, KeyLabel(kKeyR), Tx(T_refresh), kActRefresh });
 		}
 		if (!(settingsPage && g_setEditing) && !g_statusOpen && !g_wardrobeOpen)
 			hints.push_back({ kPadB, closeKey.c_str(), Tx(T_close), kActClose });
@@ -8484,8 +8653,9 @@ namespace
 				for (unsigned btn : MaskButtons(h.pad))
 					gx += PadGlyph(gx, hy, capH, btn, true, PadStyleNow()) + 6.f;
 			}
-			if (h.held && EnlargeProgress() > 0.f)
-				dl->AddRectFilled(ImVec2(x, hy + capH + 5.f), ImVec2(x + gw * EnlargeProgress(), hy + capH + 9.f), Rgb(232, 196, 128));
+			const float heldFor = h.action == kActRefresh ? backProgress : EnlargeProgress();
+			if (h.held && heldFor > 0.f)
+				dl->AddRectFilled(ImVec2(x, hy + capH + 5.f), ImVec2(x + gw * heldFor, hy + capH + 9.f), Rgb(232, 196, 128));
 			Text(kSerif, textSize, x + gw + inner, hy + 2 + (30 - textSize) * 0.5f, hot ? Rgb(255, 232, 180) : Rgb(232, 196, 128), h.text.c_str());
 			if (Clicked(a, b))
 				switch (h.action)
@@ -8507,6 +8677,7 @@ namespace
 				case kActWardClear: g_wardClick = kWardClickClear; break;
 				case kActWardStance: g_wardClick = kWardClickStance; break;
 				case kActHide: hide = true; break;
+				case kActMissableOnly: ToggleMissableOnly(); break;
 				case kActRefresh: refresh = true; break;
 				case kActClose: close = true; break;
 				default: break;
@@ -8530,7 +8701,9 @@ namespace
 				autoTurn = autoTurn || (canMark && ShowsModel(*e) && (KeyHit(kKeyT) || g_pad.Pressed(kPadA)));
 				reveal = reveal || (canMark && CanReveal(*e) && (KeyHit(kKeyT) || g_pad.Pressed(kPadA)));
 				hide = hide || KeyHit(kKeyH) || g_pad.Pressed(kPadStart);
-				refresh = refresh || KeyHit(kKeyR) || g_pad.Pressed(kPadBack);
+				if (g_tabHasMissables && (KeyHit(kKeyS) || backTap))
+					ToggleMissableOnly();
+				refresh = refresh || KeyHit(kKeyR) || (g_tabHasMissables ? backHold : g_pad.Pressed(kPadBack));
 			}
 			close = close || (g_pad.Pressed(kPadB) && !g_backConsumed);
 		}
@@ -8545,9 +8718,9 @@ namespace
 		if (wardrobe && state.model)
 			OpenWardrobe(*state.model, e);
 		if (prev)
-			SetBook(g_book - 1);
+			SetBook(BookAtSlot(SlotOf(g_book) - 1));
 		if (next)
-			SetBook(g_book + 1);
+			SetBook(BookAtSlot(SlotOf(g_book) + 1));
 		if (zoom && e)
 		{
 			g_statusOpen = true;
@@ -10030,6 +10203,7 @@ void DrawUi()
 	if (!g_wardrobeOpen)
 		DrawTopBar(model);
 
+	g_tabHasMissables = false;   // the region row finds it again, on the tabs that have one
 	const Entry* selected = nullptr;
 	if (g_wardrobeOpen)
 	{

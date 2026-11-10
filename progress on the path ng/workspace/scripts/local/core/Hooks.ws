@@ -10,7 +10,7 @@ function PotP_UseNativeJournalAdvice(tracked: CPotP_Entry) : bool
 	return true;
 }
 
-// The note under an entry in the Missable tab, and in its details: the text itself, worked out however you like.
+// The note under an entry in the missable list (Missable Only on the Quests tab), and in its details: the text itself, worked out however you like.
 // <br> starts a new line. The row hides it once the entry is done or missed.
 function PotP_GetMissableTip(tracked: CPotP_Entry) : string
 {
@@ -31,14 +31,14 @@ function PotP_GetMissableHeader(section: CPotP_Section) : string
 	return GetLocStringByKeyExt(section.header);
 }
 
-// Whether an entry is listed in the Missable tab. False leaves it out of the tab and its counts, for now: it's asked each time.
+// Whether an entry is in the missable list (Missable Only on the Quests tab). False leaves it out of the list and its counts, for now: it's asked each time.
 // It stays in the mod's totals and on its other tabs.
 function PotP_ShowInMissableTab(tracked: CPotP_Entry) : bool
 {
 	return true;
 }
 
-// The status the Missable tab shows for an entry, if it should differ from what's been recorded.
+// The status the missable list shows for an entry, if it should differ from what's been recorded.
 function PotP_GetMissableStatus(tracked: CPotP_Entry) : EPotP_Status
 {
 	return tracked.status;

@@ -624,6 +624,13 @@ function PotPOverlay_TextKeys_3(out keys: array<string>)
 	keys.PushBack("turn_page");
 	keys.PushBack("book_close");
 	keys.PushBack("book_open");
+	keys.PushBack("missable_only_caps");
+	keys.PushBack("missable_only");
+	keys.PushBack("missable_only_hint");
+	keys.PushBack("no_missables_left");
+	keys.PushBack("on_caps");
+	keys.PushBack("off_caps");
+	keys.PushBack("hold_to_refresh");
 }
 
 function PotPOverlay_ExportText() : string

@@ -789,7 +789,7 @@
 2116568585||PotP_Preview_Missable_31|Before finishing 'Now or Never'
 2116568586||potp_missable_warning_title|Point of No Return Ahead
 2116569388||potp_missable_warning_lead|'[QUEST]' leads past this point. Once you're through it, these can no longer be completed:
-2116569389||potp_missable_warning_foot|The Missable tab lists every missable quest and what closes it off.
+2116569389||potp_missable_warning_foot|Missable Only, on the overlay's Quests tab, lists every missable quest and what closes it off.
 2116568588||potp_missable_journal_title|Missable Quest - [KIND]
 2116568589||potp_missable_journal_now|Its point of no return is in the quest you are playing now. Finish this first!
 2116568590||potp_missable_journal_missed|Missed: this quest can no longer be completed.
@@ -1250,7 +1250,7 @@
 2116568946||potp_ov_status_ignored_hint|Counts as done, for something you don't mean to do.
 2116568947||potp_ov_status_missed_hint|Counts as missed, whatever the game says.
 2116568948||potp_ov_missable|Missable
-2116568949||potp_ov_missable_hint|Entries you can miss for good. They stay on the Missable tab either way.
+2116568949||potp_ov_missable_hint|Entries you can miss for good. Missable Only shows them either way.
 2116568950||potp_ov_completed_hint|Everything you've finished.
 2116568951||potp_ov_ignored_hint|Everything you've marked as not meaning to do.
 2116568952||potp_ov_change_visibility_caps|CHANGE VISIBILITY
@@ -1549,8 +1549,8 @@
 2116569245||potp_ov_tour_detail_body|What the selected entry is, what it needs and what's left to do on it.
 2116569246||potp_ov_tour_hints|The Prompts
 2116569247||potp_ov_tour_hints_body|Along the bottom are the controls for the screen you're on, for the keyboard or the controller, whichever you're using. Click one to use it. [refresh] reads your progress from the game again.
-2116569248||potp_ov_tour_missable|Missable
-2116569249||potp_ov_tour_missable_body|Things you can lose for good, grouped by the quest that closes them. Check here before you go on with the story.
+2116569248||potp_ov_tour_missable|Missable Only
+2116569249||potp_ov_tour_missable_body|On the Quests tab, Missable Only shows what you can lose for good, grouped by the quest that closes it off. Check here before you go on with the story. Items, the World Map and Gwent have it too: click it at the top right, or find it under [vis].
 2116569250||potp_ov_tour_items|Items
 2116569251||potp_ov_tour_items_body|Each item's own model. Drag it or use the right stick to turn it, and [autoturn] sets it turning by itself. Its stats are on the right.
 2116569252||potp_ov_tour_wardrobe|The Wardrobe
@@ -1653,7 +1653,7 @@
 2116569347||potp_ov_show_uncollected|Show Uncollected Items
 2116569348||potp_ov_show_uncollected_hint|Shows the names, stats and models of items you haven't found yet. Off, each shows as an Uncollected Item until you have it.
 2116569349||potp_ov_show_unstarted|Show Unstarted Quests
-2116569350||potp_ov_show_unstarted_hint|Shows the names and tips of quests you haven't started. Off, each shows as an Unstarted Quest, and the Missable tab still warns you, keeping its counts and regions: reveal one there to see it.
+2116569350||potp_ov_show_unstarted_hint|Shows the names and tips of quests you haven't started. Off, each shows as an Unstarted Quest, and Missable Only on the Quests tab still warns you, keeping its counts and regions: reveal one there to see it.
 2116569351||potp_ov_uncollected_item|Uncollected Item
 2116569352||potp_ov_unstarted_quest|Unstarted Quest
 2116569353||potp_ov_missable_quest|Missable Quest
@@ -1676,7 +1676,7 @@
 2116569384||potp_ov_card_details|Card
 2116569430||potp_ov_tracker_head|Point of No Return
 2116569431||potp_ov_tracker_open|[1] open
-2116569432||potp_ov_tracker_more|and [1] more, in the Missable tab
+2116569432||potp_ov_tracker_more|and [1] more, under Missable Only on the Quests tab
 2116569433||potp_ov_lore_not_started|Geralt has yet to take this quest up. Its story will be written here as it unfolds.
 2116569585||potp_ov_scabbard_shown|Scabbard: Shown
 2116569586||potp_ov_scabbard_hidden|Scabbard: Hidden
@@ -1696,6 +1696,13 @@
 2116569600||potp_ov_turn_page|Turn Page
 2116569601||potp_ov_book_close|Close the Book
 2116569602||potp_ov_book_open|Open the Book
+2116569603||potp_ov_missable_only_caps|MISSABLE ONLY
+2116569604||potp_ov_missable_only|Missable Only
+2116569605||potp_ov_missable_only_hint|Only what can still be missed on this tab, every group open.
+2116569606||potp_ov_no_missables_left|Nothing left here that can be missed.
+2116569607||potp_ov_on_caps|ON
+2116569608||potp_ov_off_caps|OFF
+2116569609||potp_ov_hold_to_refresh|Hold to Refresh
 ;overlay-text-end
 ;
-; Next id: 2116569603
+; Next id: 2116569610
