@@ -610,7 +610,7 @@ namespace
 	// ------------------------------------------------------------------------------------------
 
 	constexpr float kOxblood[3] = { 0.030f, 0.0095f, 0.0062f };   // texture_book.py's OXBLOOD, linear: book_d's dye
-	constexpr float kDyeScale = 1.4f;                               // book_m's red holds a / 1.4
+	constexpr float kDyeScale = 1.7f;                               // book_m's red holds a / 1.7
 
 	enum Tooling { kToolGilt, kToolBlind, kToolSilver };   // gold leaf, pressed with no leaf, or silver
 	enum Metal { kMetalBrass, kMetalIron, kMetalSilver };  // the corners
@@ -698,7 +698,22 @@ namespace
 		Mark water, scorch;
 		float mould = 0.f;        // how much of the cover has mildew on it, 0 none
 		float sunned = 0.f;       // the spine faded by the light, as one on a shelf is
+		// The hide's own character, which the atlas is baked without (texture_book.py's CLEAN), so each book's lies where
+		// its own does: its patterns turned by angle, the mottle of its tone, stains soaked into it, the faint tide lines of
+		// an old wetting all over it, a craquelure in patches, and its finish, added to its roughness
+		float angle = 0.f;
+		float toneScale = 14.f, tone = 1.f;
+		float stainScale = 9.f, stain = 0.5f;
+		float tideScale = 5.f, tides = 0.f;
+		float cracks = 0.f;
+		float finish = 0.f;
 		float paper[3] = { 1.f, 1.f, 1.f };   // the paper's colour, times the parchment's, linear
+		// The paper's own character: clouded in the sheet, blotched, laid (the lines of the mould it was made on: laid lines
+		// laidGap apart, chain lines chainGap apart), and specks of what was in the pulp. Each sheet clouded its own way.
+		float cloud = 0.05f, cloudScale = 14.f;
+		float blotch = 0.f, blotchScale = 8.f;
+		float laid = 0.f, laidGap = 0.001f, chainGap = 0.025f, chainAt = 0.f;
+		float specks = 0.f;
 	};
 
 	// FNV-1a over the id, then the salt mixed in by murmur3's finish, so ids alike but for their ends differ in every choice
@@ -792,19 +807,67 @@ namespace
 			look.mould = 0.4f + 0.6f * Unit(Hash(uuid, 41));
 		if (Unit(Hash(uuid, 50)) < 0.35f)
 			look.sunned = 0.35f + 0.5f * Unit(Hash(uuid, 51));
-		// Its paper: a good cream, a cheaper grey-white, or yellowed or toasted with the years, the older the likelier
-		struct Paper { float tint[3]; };
-		static const Paper kPapers[] = {
-			{ { 1.f, 1.f, 1.f } },             // cream, as the parchment is
-			{ { 1.04f, 1.06f, 1.12f } },       // grey-white rag
-			{ { 1.03f, 0.97f, 0.78f } },       // yellowed
-			{ { 0.9f, 0.8f, 0.64f } },         // toasted brown
+		// The hide's character
+		look.angle = Unit(Hash(uuid, 70)) * 6.2832f;
+		look.toneScale = 7.f + 16.f * Unit(Hash(uuid, 71));
+		look.tone = 0.35f + 0.95f * Unit(Hash(uuid, 72));
+		look.stainScale = 5.f + 10.f * Unit(Hash(uuid, 73));
+		look.stain = Unit(Hash(uuid, 74)) < 0.7f ? (0.25f + 0.75f * Unit(Hash(uuid, 75))) * (0.5f + look.age) : 0.f;
+		if (Unit(Hash(uuid, 76)) < 0.3f * kind.water)
+		{
+			look.tides = 0.5f + 0.5f * Unit(Hash(uuid, 77));
+			look.tideScale = 3.f + 5.f * Unit(Hash(uuid, 78));
+		}
+		if (Unit(Hash(uuid, 79)) < 0.1f + 0.55f * look.age * look.age)
+			look.cracks = 0.4f + 0.6f * Unit(Hash(uuid, 80));
+		look.finish = (Unit(Hash(uuid, 81)) - 0.5f) * 0.24f;
+		// Its paper, of the kinds a binder had; the cheaper and the browned ones likelier the older the book
+		struct Paper
+		{
+			float tint[3];
+			float young, old;      // how likely, in a new book and an old one
+			float cloud, blotch;   // how clouded and blotched the sheets of it are, most
+			float laid, specks;    // how likely it's laid, how specked
 		};
-		const float paper = Unit(Hash(uuid, 60)) * 0.75f + look.age * 0.4f;
-		const Paper& paperOf = kPapers[paper < 0.35f ? 1 : paper < 0.7f ? 0 : paper < 0.95f ? 2 : 3];
+		static const Paper kPapers[] = {
+			{ { 1.f, 1.f, 1.f }, 4, 3, 0.14f, 0.5f, 0.3f, 0.2f },          // cream, as the parchment is
+			{ { 1.07f, 1.04f, 0.9f }, 3, 2, 0.12f, 0.4f, 0.5f, 0.1f },     // ivory
+			{ { 1.2f, 1.2f, 1.17f }, 3, 0.5f, 0.07f, 0.2f, 0.6f, 0.1f },   // a good white rag
+			{ { 1.06f, 1.1f, 1.22f }, 3, 1, 0.12f, 0.4f, 0.4f, 0.3f },     // grey-white
+			{ { 0.9f, 1.f, 1.2f }, 1.5f, 1, 0.14f, 0.4f, 0.4f, 0.3f },     // blue-grey
+			{ { 0.9f, 1.02f, 0.84f }, 1, 1, 0.16f, 0.5f, 0.3f, 0.4f },        // green-grey
+			{ { 1.1f, 0.94f, 0.9f }, 1, 0.5f, 0.12f, 0.4f, 0.5f, 0.2f },  // a rose rag
+			{ { 1.05f, 0.95f, 0.68f }, 1, 4, 0.18f, 0.8f, 0.3f, 0.3f },     // yellowed
+			{ { 0.85f, 0.72f, 0.52f }, 0.3f, 2.5f, 0.22f, 0.9f, 0.2f, 0.4f },  // toasted brown
+			{ { 1.02f, 0.9f, 0.74f }, 1, 2, 0.4f, 1.f, 0.f, 0.f },        // vellum: skin, heavily clouded, no mould's lines
+			{ { 0.8f, 0.79f, 0.74f }, 1, 2, 0.18f, 0.6f, 0.f, 1.f },        // a cheap grey pulp, full of specks
+		};
+		float paperTotal = 0.f;
+		for (const Paper& p : kPapers)
+			paperTotal += p.young + (p.old - p.young) * look.age;
+		float paperPick = Unit(Hash(uuid, 60)) * paperTotal;
+		const Paper* paperOf = &kPapers[0];
+		for (const Paper& p : kPapers)
+		{
+			paperOf = &p;
+			if ((paperPick -= p.young + (p.old - p.young) * look.age) < 0.f)
+				break;
+		}
 		const float jitter = 0.94f + 0.1f * Unit(Hash(uuid, 61));
 		for (int k = 0; k < 3; ++k)
-			look.paper[k] = paperOf.tint[k] * jitter;
+			look.paper[k] = paperOf->tint[k] * jitter * (0.97f + 0.06f * Unit(Hash(uuid, 62 + k)));
+		look.cloud = paperOf->cloud * (0.3f + 0.7f * Unit(Hash(uuid, 65)));
+		look.cloudScale = 6.f + 26.f * Unit(Hash(uuid, 66));
+		look.blotch = Unit(Hash(uuid, 67)) < 0.75f ? paperOf->blotch * (0.3f + 0.7f * Unit(Hash(uuid, 68))) * (0.4f + look.age) : 0.f;
+		look.blotchScale = 4.f + 10.f * Unit(Hash(uuid, 69));
+		if (Unit(Hash(uuid, 90)) < paperOf->laid)
+		{
+			look.laid = 0.5f + 0.5f * Unit(Hash(uuid, 91));
+			look.laidGap = 0.0008f + 0.0006f * Unit(Hash(uuid, 92));
+			look.chainGap = 0.02f + 0.012f * Unit(Hash(uuid, 93));
+			look.chainAt = Unit(Hash(uuid, 94)) * look.chainGap;
+		}
+		look.specks = paperOf->specks * Unit(Hash(uuid, 95));
 		return look;
 	}
 
@@ -850,6 +913,30 @@ namespace
 	{
 		const float t = std::clamp((x - edge0) / (edge1 - edge0), 0.f, 1.f);
 		return t * t * (3.f - 2.f * t);
+	}
+
+	// Cells, as cracked leather's: how far a point is from the edge between its cell and the next, in cells, 0 on it
+	float CellEdge(float x, float y, uint32_t seed)
+	{
+		const int i = static_cast<int>(std::floor(x)), j = static_cast<int>(std::floor(y));
+		float first = 9.f, second = 9.f;
+		for (int dj = -1; dj <= 1; ++dj)
+			for (int di = -1; di <= 1; ++di)
+			{
+				uint32_t h = static_cast<uint32_t>(i + di) * 374761393u + static_cast<uint32_t>(j + dj) * 668265263u + seed * 2654435761u;
+				h = (h ^ (h >> 13)) * 1274126177u;
+				h ^= h >> 16;
+				const float px = i + di + Unit(h), py = j + dj + Unit(h * 747796405u + 2891336453u);
+				const float d = std::hypot(px - x, py - y);
+				if (d < first)
+				{
+					second = first;
+					first = d;
+				}
+				else if (d < second)
+					second = d;
+			}
+		return (second - first) * 0.5f;
 	}
 
 	// The atlas's three maps as they're built in, read once
@@ -1024,8 +1111,51 @@ namespace
 		float burnt = 0.f;      // charred: any metal here blackened too
 	};
 
+	// The hide's own character where the bake left it plain (texture_book.py's CLEAN): its tone mottled, stains soaked in,
+	// an old wetting's faint tide lines, and a craquelure in patches, each book's turned and placed its own way
+	void Character(const Look& look, float w, float y, float leather, Wear& out)
+	{
+		if (leather <= 0.f)
+			return;
+		const uint32_t seed = look.seed;
+		const float cs = std::cos(look.angle), sn = std::sin(look.angle);
+		const float u = w * cs - y * sn + 3.7f, v = w * sn + y * cs + 1.3f;
+		float* c = out.colour;
+		// Tone: darker and lighter, as the bake had it at the middle of (0.8 to 1.15 of the dye)
+		const float tone = Smooth(0.3f, 0.7f, Fbm(u * look.toneScale, v * look.toneScale, seed + 80));
+		float mul = 1.f + ((0.8f + 0.35f * tone) / 0.975f - 1.f) * look.tone;
+		// Stains soaked in, darker and a little glossier
+		if (look.stain > 0.f)
+		{
+			const float s = Smooth(0.56f, 0.72f, Fbm(u * look.stainScale, v * look.stainScale, seed + 81)) * look.stain;
+			mul *= 1.f - 0.3f * std::min(1.f, s);
+			out.rough += (0.42f - out.rough) * std::min(1.f, s) * 0.5f * leather;
+		}
+		// An old wetting's tide lines, faint, wandering all over
+		if (look.tides > 0.f)
+		{
+			const float line = Smooth(0.03f, 0.f, std::abs(Fbm(u * look.tideScale, v * look.tideScale, seed + 82) - 0.5f)) * look.tides;
+			mul *= 1.f - 0.3f * line;
+		}
+		// Craquelure: fine cracks between small cells, longer along the spine, in patches
+		if (look.cracks > 0.f)
+		{
+			const float patch = Smooth(0.5f, 0.64f, Fbm(u * 11.f, v * 11.f, seed + 83)) * look.cracks;
+			if (patch > 0.f)
+			{
+				const float crack = Smooth(0.05f, 0.f, CellEdge(u * 140.f, v * 85.f, seed + 84)) * patch;
+				mul *= 1.f - 0.6f * crack;
+				out.rough += (0.85f - out.rough) * crack * leather;
+			}
+		}
+		for (int k = 0; k < 3; ++k)
+			c[k] *= 1.f + (mul - 1.f) * leather;
+		out.rough = std::clamp(out.rough + look.finish * leather, 0.f, 1.f);
+	}
+
 	void Weather(const Look& look, float w, float y, float spine, float leather, Wear& out)
 	{
+		Character(look, w, y, leather, out);
 		const uint32_t seed = look.seed;
 		float* c = out.colour;
 		const float lum = 0.2126f * c[0] + 0.7152f * c[1] + 0.0722f * c[2];
@@ -1238,6 +1368,7 @@ namespace
 		{
 			// The paper's colour, and browned in from its three open edges (not the spine's) as it aged
 			const float reach = 0.004f + 0.02f * look.age;
+			const uint32_t sheet = seed + 100 + n * 7;
 			for (int y = 0; y < height; ++y)
 				for (int x = 0; x < width; ++x)
 				{
@@ -1245,11 +1376,35 @@ namespace
 					place(x, y, out, up);
 					const float edge = std::min(kPaperW - out, kPaperH * 0.5f - std::abs(up));
 					const float brown = Smooth(reach, 0.f, edge + (Fbm(out * 90.f, up * 90.f, seed) - 0.5f) * reach * 0.8f) * (0.25f + 0.45f * look.age);
+					// The sheet's clouding, its own on every leaf; a blotch or two; the mould's laid and chain lines
+					float shade = 1.f + (Fbm(out * look.cloudScale, up * look.cloudScale, sheet) - 0.5f) * 5.f * look.cloud;
+					const float blotch = look.blotch > 0.f ? Smooth(0.5f, 0.72f, Fbm(out * look.blotchScale, up * look.blotchScale, sheet + 3)) * look.blotch : 0.f;
+					if (look.laid > 0.f)
+					{
+						const float chain = std::abs(std::fmod(out + look.chainAt, look.chainGap) - look.chainGap * 0.5f);
+						shade *= 1.f - look.laid * (0.05f * (0.5f + 0.5f * std::cos(up * 6.2832f / look.laidGap)) + 0.1f * Smooth(look.chainGap * 0.5f - 0.0016f, look.chainGap * 0.5f, chain));
+					}
 					uint8_t* p = pixel(x, y);
-					static constexpr float kBrowned[3] = { 0.8f, 0.62f, 0.42f };
+					static constexpr float kBrowned[3] = { 0.8f, 0.62f, 0.42f }, kBlotch[3] = { 0.76f, 0.66f, 0.5f };
 					for (int k = 0; k < 3; ++k)
-						p[k] = ToSrgb(ToLinear(p[k]) * look.paper[k] * (1.f + (kBrowned[k] - 1.f) * brown));
+						p[k] = ToSrgb(ToLinear(p[k]) * look.paper[k] * shade * (1.f + (kBlotch[k] - 1.f) * blotch) * (1.f + (kBrowned[k] - 1.f) * brown));
 				}
+			// Specks of what was in the pulp: bark, rag and dirt, small and dark
+			const int specks = static_cast<int>(look.specks * 450.f * (0.6f + 0.8f * Unit(Hash(uuid, 4000 + n))));
+			for (int sp = 0; sp < specks; ++sp)
+			{
+				const uint32_t g = Hash(uuid, 9000 + n * 512 + sp);
+				const float x = Unit(g) * width, y = Unit(g * 747796405u + 3) * height;
+				const float r = 0.5f + Unit(g ^ 0x27d4eb2du) * 1.4f, strength = 0.25f + 0.5f * Unit(g * 2891336453u + 7);
+				for (int yy = std::max(0, static_cast<int>(y - r * 2.f)); yy < std::min(height, static_cast<int>(y + r * 2.f) + 1); ++yy)
+					for (int xx = std::max(0, static_cast<int>(x - r * 2.f)); xx < std::min(width, static_cast<int>(x + r * 2.f) + 1); ++xx)
+					{
+						const float f = std::exp(-((xx - x) * (xx - x) + (yy - y) * (yy - y)) / (r * r)) * strength;
+						uint8_t* p = pixel(xx, yy);
+						for (int k = 0; k < 3; ++k)
+							p[k] = ToSrgb(ToLinear(p[k]) * (1.f - 0.75f * f));
+					}
+			}
 			// Foxing: small rust-brown spots, in clusters, more of them the older the book
 			const int clusters = static_cast<int>(look.age * look.age * 9.f + Unit(Hash(uuid, 1000 + n)) * 3.f * look.age);
 			for (int c = 0; c < clusters; ++c)
