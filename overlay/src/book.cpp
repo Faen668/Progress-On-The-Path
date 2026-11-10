@@ -6,6 +6,7 @@
 #include <windows.h>
 #include <wincodec.h>
 #include <algorithm>
+#include <array>
 #include <atomic>
 #include <cmath>
 #include <cstring>
@@ -591,6 +592,532 @@ namespace
 	}
 
 	// ------------------------------------------------------------------------------------------
+	// Each book's look: its leather's dye, its tooling and its corners, chosen from its id, so a book always looks the
+	// same and no two on the shelf match. The atlas is recoloured for it (WriteLookMap) with the masks bake_masks.py
+	// made: how much of the dye each pixel holds, and where the gilt and the brass are.
+	// ------------------------------------------------------------------------------------------
+
+	constexpr float kOxblood[3] = { 0.030f, 0.0095f, 0.0062f };   // texture_book.py's OXBLOOD, linear: book_d's dye
+	constexpr float kDyeScale = 1.4f;                               // book_m's red holds a / 1.4
+
+	enum Tooling { kToolGilt, kToolBlind, kToolSilver };   // gold leaf, pressed with no leaf, or silver
+	enum Metal { kMetalBrass, kMetalIron, kMetalSilver };  // the corners
+
+	// A mark on the cover, a water stain or a scorch: where on the unrolled binding (Binding), and how large
+	struct Mark
+	{
+		bool on = false;
+		float w = 0.f, y = 0.f, radius = 0.f;
+	};
+
+	struct Look
+	{
+		float dye[3];
+		Tooling tooling;
+		Metal corners;
+		float age = 0.f;          // 0 hardly handled, 1 falling apart: wear, rubbed edges, grime, the gilt rubbed off
+		uint32_t seed = 0;        // where the wear falls
+		Mark water, scorch;
+		float mould = 0.f;        // how much of the cover has mildew on it, 0 none
+		float sunned = 0.f;       // the spine faded by the light, as one on a shelf is
+	};
+
+	// FNV-1a over the id, then the salt mixed in by murmur3's finish, so ids alike but for their ends differ in every choice
+	uint32_t Hash(const std::string& text, uint32_t salt)
+	{
+		uint32_t h = 2166136261u;
+		for (const char ch : text)
+			h = (h ^ static_cast<uint8_t>(ch)) * 16777619u;
+		h ^= salt * 0x9E3779B9u;
+		h ^= h >> 16;
+		h *= 0x85ebca6bu;
+		h ^= h >> 13;
+		h *= 0xc2b2ae35u;
+		h ^= h >> 16;
+		return h;
+	}
+
+	float Unit(uint32_t h) { return (h >> 8) / 16777216.f; }
+
+	// The unrolled binding: w across it, the front board's edge -kEdgeW, the spine 0, the back board's edge +kEdgeW; y up it
+	constexpr float kEdgeW = 0.265f, kEdgeY = 0.175f;
+
+	// A point on the binding's edge, where the wet or the fire came in: a corner more often than not
+	Mark MarkAt(const std::string& uuid, uint32_t salt, float smallest, float largest)
+	{
+		Mark m;
+		m.on = true;
+		const float side = Unit(Hash(uuid, salt)), along = Unit(Hash(uuid, salt + 1)) * 2.f - 1.f;
+		const float corner = along < 0.f ? -1.f : 1.f;
+		const float t = std::abs(along) > 0.5f ? corner : along;   // half of them right in a corner
+		if (side < 0.5f)
+		{
+			m.w = (side < 0.25f ? -kEdgeW : kEdgeW);
+			m.y = t * kEdgeY;
+		}
+		else
+		{
+			m.w = t * kEdgeW;
+			m.y = side < 0.75f ? -kEdgeY : kEdgeY;
+		}
+		m.radius = smallest + (largest - smallest) * Unit(Hash(uuid, salt + 2));
+		return m;
+	}
+
+	Look LookOf(const std::string& uuid)
+	{
+		Look look{ { kOxblood[0], kOxblood[1], kOxblood[2] }, kToolGilt, kMetalBrass };
+		if (uuid.empty())
+			return look;
+		// Leathers a binder had, linear, about as dark as the oxblood; the commoner ones more often
+		struct Dye { float c[3]; float weight; };
+		static const Dye kDyes[] = {
+			{ { 0.030f, 0.0095f, 0.0062f }, 4 },   // oxblood
+			{ { 0.040f, 0.022f, 0.012f }, 4 },     // undyed calf
+			{ { 0.068f, 0.039f, 0.019f }, 2 },     // tan
+			{ { 0.0085f, 0.0078f, 0.0072f }, 3 },  // black
+			{ { 0.011f, 0.019f, 0.011f }, 3 },     // forest green
+			{ { 0.010f, 0.012f, 0.025f }, 2 },     // navy, faded
+			{ { 0.024f, 0.008f, 0.015f }, 2 },     // plum
+			{ { 0.058f, 0.041f, 0.014f }, 1 },     // ochre
+			{ { 0.027f, 0.029f, 0.021f }, 1 },     // grey green
+		};
+		float total = 0.f;
+		for (const Dye& d : kDyes)
+			total += d.weight;
+		float pick = Unit(Hash(uuid, 1)) * total;
+		const Dye* chosen = &kDyes[0];
+		for (const Dye& d : kDyes)
+		{
+			chosen = &d;
+			if ((pick -= d.weight) < 0.f)
+				break;
+		}
+		// Each skin a little lighter or darker, a little warmer or cooler, than the next
+		const float light = 0.8f + 0.45f * Unit(Hash(uuid, 2));
+		for (int k = 0; k < 3; ++k)
+			look.dye[k] = chosen->c[k] * light * (0.92f + 0.16f * Unit(Hash(uuid, 10 + k)));
+		const float tooling = Unit(Hash(uuid, 3)), corners = Unit(Hash(uuid, 4));
+		look.tooling = tooling < 0.68f ? kToolGilt : tooling < 0.9f ? kToolBlind : kToolSilver;
+		look.corners = corners < 0.6f ? kMetalBrass : corners < 0.88f ? kMetalIron : kMetalSilver;
+		// Its life since: most books well used, a few nearly new, a few ruined
+		look.age = 0.1f + 0.9f * std::pow(Unit(Hash(uuid, 5)), 0.75f);
+		look.seed = Hash(uuid, 6);
+		if (Unit(Hash(uuid, 20)) < 0.4f)
+			look.water = MarkAt(uuid, 21, 0.07f, 0.2f);
+		if (Unit(Hash(uuid, 30)) < 0.14f)
+			look.scorch = MarkAt(uuid, 31, 0.03f, 0.08f);
+		if (Unit(Hash(uuid, 40)) < 0.2f)
+			look.mould = 0.4f + 0.6f * Unit(Hash(uuid, 41));
+		if (Unit(Hash(uuid, 50)) < 0.35f)
+			look.sunned = 0.35f + 0.5f * Unit(Hash(uuid, 51));
+		return look;
+	}
+
+	float ToLinear(uint8_t v)
+	{
+		static const auto table = [] { std::array<float, 256> t{}; for (int i = 0; i < 256; ++i) { const float c = i / 255.f; t[i] = c <= 0.04045f ? c / 12.92f : std::pow((c + 0.055f) / 1.055f, 2.4f); } return t; }();
+		return table[v];
+	}
+
+	uint8_t ToSrgb(float v)
+	{
+		static const auto table = [] { std::array<uint8_t, 4096> t{}; for (int i = 0; i < 4096; ++i) { const float c = i / 4095.f; t[i] = static_cast<uint8_t>(std::clamp((c <= 0.0031308f ? c * 12.92f : 1.055f * std::pow(c, 1.f / 2.4f) - 0.055f) * 255.f + 0.5f, 0.f, 255.f)); } return t; }();
+		return table[static_cast<size_t>(std::clamp(v, 0.f, 1.f) * 4095.f + 0.5f)];
+	}
+
+	// A metal's specular colour, sRGB, as another metal: its brightness kept, its colour that metal's
+	void AsMetal(uint8_t* p, Metal metal)
+	{
+		const float lum = 0.2126f * ToLinear(p[0]) + 0.7152f * ToLinear(p[1]) + 0.0722f * ToLinear(p[2]);
+		static constexpr float kIron[3] = { 0.52f, 0.52f, 0.55f }, kSilver[3] = { 1.3f, 1.3f, 1.36f };
+		const float* tint = metal == kMetalIron ? kIron : kSilver;
+		for (int k = 0; k < 3; ++k)
+			p[k] = ToSrgb(lum * tint[k]);
+	}
+
+	// A smooth value noise, 0 to 1, and three octaves of it, for where the wear falls
+	float LookNoise(float x, float y, uint32_t seed)
+	{
+		const auto hash = [seed](int i, int j) { uint32_t h = static_cast<uint32_t>(i) * 374761393u + static_cast<uint32_t>(j) * 668265263u + seed * 2654435761u; h = (h ^ (h >> 13)) * 1274126177u; return (h ^ (h >> 16)) / 4294967295.f; };
+		const int i = static_cast<int>(std::floor(x)), j = static_cast<int>(std::floor(y));
+		float u = x - i, v = y - j;
+		u = u * u * (3 - 2 * u);
+		v = v * v * (3 - 2 * v);
+		return (hash(i, j) * (1 - u) + hash(i + 1, j) * u) * (1 - v) + (hash(i, j + 1) * (1 - u) + hash(i + 1, j + 1) * u) * v;
+	}
+
+	float Fbm(float x, float y, uint32_t seed)
+	{
+		return (LookNoise(x, y, seed) * 0.57f + LookNoise(x * 2.1f, y * 2.1f, seed + 1) * 0.29f + LookNoise(x * 4.3f, y * 4.3f, seed + 2) * 0.14f);
+	}
+
+	float Smooth(float edge0, float edge1, float x)
+	{
+		const float t = std::clamp((x - edge0) / (edge1 - edge0), 0.f, 1.f);
+		return t * t * (3.f - 2.f * t);
+	}
+
+	// The atlas's three maps as they're built in, read once
+	struct Atlas
+	{
+		GameTexture diffuse, specular, normal, mask;   // normal: roughness in its alpha
+		bool ok = false;
+	};
+
+	const Atlas& BaseAtlas()
+	{
+		static std::mutex lock;
+		static Atlas atlas;
+		static bool tried = false;
+		std::lock_guard<std::mutex> hold(lock);
+		if (!tried)
+		{
+			tried = true;
+			GameTexture rough;
+			atlas.ok = Decode(POTP_RES_BOOK_DIFFUSE, 1024, atlas.diffuse) && Decode(POTP_RES_BOOK_SPECULAR, 1024, atlas.specular)
+				&& Decode(POTP_RES_BOOK_NORMAL, 1024, atlas.normal) && Decode(POTP_RES_BOOK_ROUGHNESS, 1024, rough)
+				&& Decode(POTP_RES_BOOK_MASK, 1024, atlas.mask);
+			for (const GameTexture* t : { &atlas.specular, &atlas.normal, &rough, &atlas.mask })
+				atlas.ok = atlas.ok && t->width == atlas.diffuse.width && t->height == atlas.diffuse.height;
+			if (atlas.ok)
+				for (size_t i = 3; i < atlas.normal.pixels.size(); i += 4)
+					atlas.normal.pixels[i] = rough.pixels[i - 3];
+		}
+		return atlas;
+	}
+
+	// Where each pixel of the atlas lies on the binding unrolled flat (w, y), the open book's parts and the closed one's
+	// alike, so a mark on the cover is in the same place whichever is shown. Made once from the mesh: its atlas parts'
+	// triangles drawn into the atlas, then spread a few pixels into the margins round each island.
+	struct Binding
+	{
+		int width = 0, height = 0;
+		std::vector<float> w, y;      // NaN where no part is
+		std::vector<float> spine;     // 1 on the spine, 0 on the boards
+	};
+
+	const Binding& BindingOf(int width, int height)
+	{
+		static std::mutex lock;
+		static Binding binding;
+		std::lock_guard<std::mutex> hold(lock);
+		if (binding.width == width && binding.height == height)
+			return binding;
+		binding = Binding{};
+		binding.width = width;
+		binding.height = height;
+		const size_t count = static_cast<size_t>(width) * height;
+		binding.w.assign(count, NAN);
+		binding.y.assign(count, NAN);
+		binding.spine.assign(count, 0.f);
+		const std::string_view data = EmbeddedFile(POTP_RES_BOOK_MESH);
+		if (data.size() < 8 || memcmp(data.data(), "PBK2", 4) != 0)
+			return binding;
+		const char* at = data.data() + 4;
+		const char* const end = data.data() + data.size();
+		uint32_t parts = 0;
+		Take(at, end, parts);
+		for (uint32_t p = 0; p < parts; ++p)
+		{
+			uint8_t nameLength = 0, material = 0;
+			if (!Take(at, end, nameLength) || end - at < nameLength)
+				break;
+			const std::string name(at, nameLength);
+			at += nameLength;
+			uint32_t vertices = 0, indices = 0;
+			if (!Take(at, end, material) || !Take(at, end, vertices) || end - at < static_cast<ptrdiff_t>(vertices) * 52)
+				break;
+			const float* v = reinterpret_cast<const float*>(at);
+			at += static_cast<size_t>(vertices) * 52;
+			if (!Take(at, end, indices) || end - at < static_cast<ptrdiff_t>(indices) * 4)
+				break;
+			const uint32_t* index = reinterpret_cast<const uint32_t*>(at);
+			at += static_cast<size_t>(indices) * 4;
+			if (material != 0)
+				continue;
+			// The open book lies spread with its spine on x = 0, the front board at -x. The closed one lies shut, its spine
+			// at x = -0.13 and its front board on top: its boards unrolled about the spine, the spine itself across its height.
+			const bool closed = name.compare(0, 7, "closed_") == 0;
+			const auto unroll = [closed](const float* q, float& w, float& onSpine)
+			{
+				if (!closed)
+				{
+					w = q[0];
+					onSpine = Smooth(0.04f, 0.03f, std::abs(q[0]));
+					return;
+				}
+				constexpr float kSpineX = -0.13f, kMidZ = 0.033f;
+				if (q[0] < -0.121f)
+				{
+					w = -(q[2] - kMidZ) * 0.9f;
+					onSpine = 1.f;
+				}
+				else
+				{
+					w = q[2] > kMidZ ? -(q[0] - kSpineX) : q[0] - kSpineX;
+					onSpine = 0.f;
+				}
+			};
+			for (uint32_t t = 0; t + 2 < indices; t += 3)
+			{
+				const float* c[3] = { v + index[t] * 13, v + index[t + 1] * 13, v + index[t + 2] * 13 };
+				float px[3], py[3], ww[3], yy[3], ss[3];
+				for (int k = 0; k < 3; ++k)
+				{
+					px[k] = c[k][10] * width - 0.5f;
+					py[k] = c[k][11] * height - 0.5f;
+					unroll(c[k], ww[k], ss[k]);
+					yy[k] = c[k][1];
+				}
+				const float area = (px[1] - px[0]) * (py[2] - py[0]) - (px[2] - px[0]) * (py[1] - py[0]);
+				if (std::abs(area) < 1e-8f)
+					continue;
+				const int x0 = std::max(0, static_cast<int>(std::floor(std::min({ px[0], px[1], px[2] })))), x1 = std::min(width - 1, static_cast<int>(std::ceil(std::max({ px[0], px[1], px[2] }))));
+				const int y0 = std::max(0, static_cast<int>(std::floor(std::min({ py[0], py[1], py[2] })))), y1 = std::min(height - 1, static_cast<int>(std::ceil(std::max({ py[0], py[1], py[2] }))));
+				for (int y = y0; y <= y1; ++y)
+					for (int x = x0; x <= x1; ++x)
+					{
+						const float b1 = ((x - px[0]) * (py[2] - py[0]) - (px[2] - px[0]) * (y - py[0])) / area;
+						const float b2 = ((px[1] - px[0]) * (y - py[0]) - (x - px[0]) * (py[1] - py[0])) / area;
+						const float b0 = 1.f - b1 - b2;
+						if (b0 < -0.01f || b1 < -0.01f || b2 < -0.01f)
+							continue;
+						const size_t i = static_cast<size_t>(y) * width + x;
+						binding.w[i] = b0 * ww[0] + b1 * ww[1] + b2 * ww[2];
+						binding.y[i] = b0 * yy[0] + b1 * yy[1] + b2 * yy[2];
+						binding.spine[i] = b0 * ss[0] + b1 * ss[1] + b2 * ss[2];
+					}
+			}
+		}
+		// Into the margins, as a bake does, so the smaller levels don't take in pixels with no place
+		for (int pass = 0; pass < 4; ++pass)
+		{
+			const std::vector<float> w = binding.w, y = binding.y, s = binding.spine;
+			for (int py = 0; py < height; ++py)
+				for (int px = 0; px < width; ++px)
+				{
+					const size_t i = static_cast<size_t>(py) * width + px;
+					if (!std::isnan(w[i]))
+						continue;
+					static constexpr int kStep[4][2] = { { 1, 0 }, { -1, 0 }, { 0, 1 }, { 0, -1 } };
+					for (const auto& step : kStep)
+					{
+						const int nx = px + step[0], ny = py + step[1];
+						if (nx < 0 || ny < 0 || nx >= width || ny >= height)
+							continue;
+						const size_t j = static_cast<size_t>(ny) * width + nx;
+						if (!std::isnan(w[j]))
+						{
+							binding.w[i] = w[j];
+							binding.y[i] = y[j];
+							binding.spine[i] = s[j];
+							break;
+						}
+					}
+				}
+		}
+		return binding;
+	}
+
+	// What the years did at one place on the binding: the leather's colour (linear) and roughness changed, the leaf
+	// rubbed off. leather: how much of the pixel is the dyed leather (the rest metal, silk or paper).
+	struct Wear
+	{
+		float colour[3];
+		float rough;
+		float leafLost = 0.f;   // the gilt or silver here rubbed through to the leather, 0 to 1
+		float burnt = 0.f;      // charred: any metal here blackened too
+	};
+
+	void Weather(const Look& look, float w, float y, float spine, float leather, Wear& out)
+	{
+		const uint32_t seed = look.seed;
+		float* c = out.colour;
+		const float lum = 0.2126f * c[0] + 0.7152f * c[1] + 0.0722f * c[2];
+		const float age = look.age;
+		// Sun on the spine: faded, paler and greyer, as it stood on a shelf
+		if (look.sunned > 0.f && spine > 0.f)
+		{
+			const float f = look.sunned * spine * leather * (0.8f + 0.4f * Fbm(w * 40.f, y * 8.f, seed + 70));
+			for (int k = 0; k < 3; ++k)
+				c[k] += ((c[k] * 0.5f + lum * 0.5f) * 1.9f + 0.006f - c[k]) * f;
+		}
+		// Handled: every edge and corner rubbed pale, more the older it is, and the grain scuffed through in small patches
+		// near them, where hands hold it; a paler shade of the leather itself with a little of the bare hide's brown
+		const float edge = std::min(kEdgeW - std::abs(w), kEdgeY - std::abs(y));
+		const float nearEdge = Smooth(0.07f, 0.f, edge);
+		const float scuffs = Smooth(0.7f, 0.8f, Fbm(w * 26.f, y * 26.f, seed + 1) + 0.12f * nearEdge * age);
+		const float worn = scuffs * age * leather * (0.35f + 0.65f * nearEdge);
+		const float rubbed = Smooth(0.005f + 0.012f * age, 0.f, edge) * (0.5f + 0.5f * Fbm(w * 60.f, y * 60.f, seed + 2)) * age * leather;
+		static constexpr float kHide[3] = { 0.05f, 0.028f, 0.017f };
+		const float shade = 0.8f + 0.4f * Fbm(w * 90.f, y * 90.f, seed + 3);
+		for (int k = 0; k < 3; ++k)
+		{
+			const float paler = (look.dye[k] * 1.7f * 0.6f + kHide[k] * 0.4f) * shade;
+			c[k] += (paler - c[k]) * worn * 0.6f;
+			c[k] += (paler * 1.35f - c[k]) * rubbed * 0.55f;
+		}
+		out.rough += (0.8f - out.rough) * worn * 0.8f;
+		// Grime from hands, darkest along the fore-edges where it's held
+		const float grime = age * leather * Smooth(0.45f, 0.75f, Fbm(w * 24.f, y * 24.f, seed + 4)) * (0.4f + 0.6f * Smooth(0.05f, 0.f, edge));
+		for (int k = 0; k < 3; ++k)
+			c[k] *= 1.f - 0.35f * grime;
+		// The leaf rubbed off the tooling with use
+		out.leafLost = Smooth(0.75f - 0.45f * age, 0.85f - 0.4f * age, Fbm(w * 70.f, y * 70.f, seed + 5));
+		// A wetting: the dye lifted inside it, paler and drier, and a dark tide line where the water stopped, a fainter
+		// one inside where it stood a while
+		if (look.water.on)
+		{
+			const float d = std::hypot(w - look.water.w, y - look.water.y) / look.water.radius + (Fbm(w * 14.f, y * 14.f, seed + 6) - 0.5f) * 0.55f;
+			const float inside = Smooth(1.02f, 0.96f, d);
+			const float tide = std::exp(-std::pow((d - 1.f) / 0.022f, 2.f)) + 0.45f * std::exp(-std::pow((d - 0.72f) / 0.018f, 2.f));
+			for (int k = 0; k < 3; ++k)
+			{
+				c[k] += ((c[k] * 0.6f + lum * 0.4f) * 1.45f - c[k]) * inside * 0.55f * leather;
+				c[k] *= 1.f - std::min(0.4f, tide * 0.35f) * leather;
+			}
+			out.rough += (0.86f - out.rough) * (inside * 0.6f + std::min(1.f, tide)) * leather;
+			out.leafLost = std::max(out.leafLost, inside * 0.5f);
+		}
+		// Mildew: pale grey-green blooms in clusters, where it was kept damp
+		if (look.mould > 0.f)
+		{
+			// soft-edged and thin, the leather showing through: a bloom, not paint
+			const float bloom = Smooth(0.56f, 0.8f, Fbm(w * 70.f, y * 70.f, seed + 8)) * Smooth(0.45f, 0.7f, Fbm(w * 7.f, y * 7.f, seed + 9)) * look.mould;
+			static constexpr float kMildew[3] = { 0.075f, 0.08f, 0.065f };
+			const float bright = std::min(1.f, 0.6f + 20.f * lum);   // fainter on the darkest leathers
+			for (int k = 0; k < 3; ++k)
+				c[k] += (kMildew[k] * bright - c[k]) * bloom * 0.4f;
+			out.rough += (0.92f - out.rough) * bloom * 0.7f;
+		}
+		// Fire: charred black and crazed at the heart, browned round it
+		if (look.scorch.on)
+		{
+			const float d = std::hypot(w - look.scorch.w, y - look.scorch.y) / look.scorch.radius + (Fbm(w * 30.f, y * 30.f, seed + 10) - 0.5f) * 0.8f;
+			const float burnt = Smooth(0.95f, 0.55f, d), browned = Smooth(1.7f, 0.9f, d) * (1.f - burnt);
+			const float crazed = 0.6f + 0.8f * Fbm(w * 160.f, y * 160.f, seed + 11);
+			for (int k = 0; k < 3; ++k)
+			{
+				c[k] *= 1.f - 0.6f * browned;
+				c[k] += (0.008f * crazed - c[k]) * burnt;
+			}
+			out.rough += (0.93f - out.rough) * burnt;
+			out.burnt = burnt;
+			out.leafLost = std::max(out.leafLost, burnt);
+		}
+	}
+
+	// A book's look on the atlas: its three maps, made together, the last few kept
+	struct LookMaps
+	{
+		std::string uuid;
+		GameTexture diffuse, specular, normal;
+	};
+
+	std::shared_ptr<const LookMaps> MakeLookMaps(const std::string& uuid)
+	{
+		static std::mutex lock;
+		static std::list<std::shared_ptr<const LookMaps>> kept;
+		{
+			std::lock_guard<std::mutex> hold(lock);
+			for (const auto& k : kept)
+				if (k->uuid == uuid)
+					return k;
+		}
+		const Atlas& atlas = BaseAtlas();
+		if (!atlas.ok)
+			return nullptr;
+		auto made = std::make_shared<LookMaps>();
+		made->uuid = uuid;
+		made->diffuse = atlas.diffuse;
+		made->specular = atlas.specular;
+		made->normal = atlas.normal;
+		const Look look = LookOf(uuid);
+		const Binding& binding = BindingOf(static_cast<int>(atlas.diffuse.width), static_cast<int>(atlas.diffuse.height));
+		float shift[3], pressed[3];
+		for (int k = 0; k < 3; ++k)
+		{
+			shift[k] = look.dye[k] - kOxblood[k];
+			pressed[k] = look.dye[k] * 0.5f;   // blind tooling: the leather pressed darker, no leaf
+		}
+		const uint8_t* mask = atlas.mask.pixels.data();
+		const size_t count = made->diffuse.pixels.size() / 4;
+		for (size_t i = 0; i < count; ++i)
+		{
+			uint8_t* d = &made->diffuse.pixels[i * 4];
+			uint8_t* s = &made->specular.pixels[i * 4];
+			uint8_t* n = &made->normal.pixels[i * 4];
+			const uint8_t* m = &mask[i * 4];
+			const float dyed = m[0] / 255.f * kDyeScale, gilt = m[1] / 255.f, brass = m[2] / 255.f;
+			Wear wear{};
+			for (int k = 0; k < 3; ++k)
+				wear.colour[k] = ToLinear(d[k]) + dyed * shift[k];
+			wear.rough = n[3] / 255.f;
+			// The tooling's leaf: none on a blind-tooled book, as if it had all rubbed off
+			if (look.tooling == kToolBlind)
+				for (int k = 0; k < 3; ++k)
+					wear.colour[k] += (pressed[k] - wear.colour[k]) * gilt;
+			if (look.tooling == kToolBlind)
+				wear.rough += (0.72f - wear.rough) * gilt;
+			// The years: on the leather's colour, and the leaf and the corners where it's rubbed or burnt
+			const float leather = std::clamp(dyed * 2.f, 0.f, 1.f);
+			if (!binding.w.empty() && !std::isnan(binding.w[i]) && (leather > 0.f || gilt > 0.f || brass > 0.f))
+				Weather(look, binding.w[i], binding.y[i], binding.spine[i], leather, wear);
+			else
+				wear.leafLost = 0.f;
+			// Leaf lost: the leather shows through, as on the book as baked where it's rubbed
+			const float lost = look.tooling == kToolBlind ? 0.f : gilt * wear.leafLost * 0.8f;
+			for (int k = 0; k < 3; ++k)
+				wear.colour[k] += (pressed[k] * 1.6f - wear.colour[k]) * lost;
+			wear.rough += (0.7f - wear.rough) * lost;
+			for (int k = 0; k < 3; ++k)
+				d[k] = ToSrgb(wear.colour[k]);
+			n[3] = static_cast<uint8_t>(std::clamp(wear.rough, 0.f, 1.f) * 255.f + 0.5f);
+			// Specular: the leaf as the book's metal, or none; the corners' metal; fire dulls them all
+			if (gilt > 0.f && look.tooling != kToolGilt)
+			{
+				uint8_t to[3] = { s[0], s[1], s[2] };
+				if (look.tooling == kToolSilver)
+					AsMetal(to, kMetalSilver);
+				else
+					to[0] = to[1] = to[2] = 59;   // leather's 0.04
+				for (int k = 0; k < 3; ++k)
+					s[k] = static_cast<uint8_t>(s[k] + (to[k] - s[k]) * gilt + 0.5f);
+			}
+			if (brass > 0.f && look.corners != kMetalBrass)
+			{
+				uint8_t to[3] = { s[0], s[1], s[2] };
+				AsMetal(to, look.corners);
+				for (int k = 0; k < 3; ++k)
+					s[k] = static_cast<uint8_t>(s[k] + (to[k] - s[k]) * brass + 0.5f);
+				if (look.corners == kMetalIron)
+					n[3] = static_cast<uint8_t>(n[3] + (std::max<int>(n[3], 140) - n[3]) * brass);
+			}
+			const float dull = std::max(lost, wear.burnt * std::max(gilt, brass));
+			if (dull > 0.f)
+				for (int k = 0; k < 3; ++k)
+					s[k] = static_cast<uint8_t>(s[k] + (59 - s[k]) * dull + 0.5f);
+		}
+		std::lock_guard<std::mutex> hold(lock);
+		kept.push_front(made);
+		while (kept.size() > 3)
+			kept.pop_back();
+		return made;
+	}
+
+	enum AtlasMap { kAtlasDiffuse, kAtlasSpecular, kAtlasNormal };
+
+	bool WriteLookMap(AtlasMap map, const std::string& uuid, GameTexture& out)
+	{
+		const std::shared_ptr<const LookMaps> maps = MakeLookMaps(uuid);
+		if (!maps)
+			return false;
+		out = map == kAtlasDiffuse ? maps->diffuse : map == kAtlasSpecular ? maps->specular : maps->normal;
+		return true;
+	}
+
+	// ------------------------------------------------------------------------------------------
 	// The cover: the book's title in gilt capitals, on a plate the renderer cuts away round the letters
 	// ------------------------------------------------------------------------------------------
 
@@ -773,8 +1300,19 @@ namespace
 		const std::vector<float>& soft = shape->soft;
 		const std::vector<float>& spread = shape->spread;
 		out = NewCover();
-		constexpr float kLeather[3] = { 30.f, 11.f, 8.f }, kGiltDark[3] = { 40.f, 28.f, 12.f };
-		constexpr float kGold[3] = { 150.f, 104.f, 46.f }, kDielectric = 59.f;   // sRGB, as book_s holds them
+		// In the book's own leather and leaf (LookOf): sRGB, as book_s holds them. Blind tooling: the letters pressed, no leaf.
+		const Look look = LookOf(uuid);
+		float leather[3], giltDark[3] = { 40.f, 28.f, 12.f }, gold[3] = { 150.f, 104.f, 46.f };
+		constexpr float kDielectric = 59.f;
+		for (int k = 0; k < 3; ++k)
+			leather[k] = ToSrgb(look.dye[k] * 0.42f);
+		if (look.tooling == kToolSilver)
+		{
+			const float silverDark[3] = { 34.f, 34.f, 36.f }, silver[3] = { 168.f, 168.f, 174.f };
+			std::copy(silverDark, silverDark + 3, giltDark);
+			std::copy(silver, silver + 3, gold);
+		}
+		const float leaf = look.tooling == kToolBlind ? 0.f : 1.f;
 		for (int y = 0; y < kCoverH; ++y)
 			for (int x = 0; x < kCoverW; ++x)
 			{
@@ -783,19 +1321,19 @@ namespace
 				const float rim = std::clamp(spread[i] * 3.5f, 0.f, 1.f);
 				// Gilt in the letters, rubbed through where the noise is high and towards their edges
 				const float rub = std::clamp((CoverNoise(x / 46.f, y / 46.f) * 0.7f + CoverNoise(x / 9.f, y / 9.f) * 0.3f - 0.6f) * 6.f, 0.f, 1.f);
-				const float gilt = std::clamp((letters[i] - 0.35f) * 3.f, 0.f, 1.f) * (1.f - rub * 0.85f);
+				const float gilt = std::clamp((letters[i] - 0.35f) * 3.f, 0.f, 1.f) * (1.f - rub * 0.85f) * leaf;
 				if (layer == kCoverColour)
 				{
 					// Darker the nearer the letter, where the tool pressed hardest
 					const float press = 1.f - 0.45f * std::clamp(spread[i] * 2.f, 0.f, 1.f);
 					for (int k = 0; k < 3; ++k)
-						p[k] = static_cast<uint8_t>(kLeather[k] * press + (kGiltDark[k] - kLeather[k] * press) * gilt);
+						p[k] = static_cast<uint8_t>(leather[k] * press + (giltDark[k] - leather[k] * press) * gilt);
 					p[3] = static_cast<uint8_t>(std::max(rim, letters[i]) * 255.f);
 				}
 				else if (layer == kCoverSpecular)
 				{
 					for (int k = 0; k < 3; ++k)
-						p[k] = static_cast<uint8_t>(kDielectric + (kGold[k] - kDielectric) * gilt);
+						p[k] = static_cast<uint8_t>(kDielectric + (gold[k] - kDielectric) * gilt);
 					p[3] = 255;
 				}
 				else
@@ -917,6 +1455,16 @@ bool ReadBuiltinTexture(const std::string& name, uint32_t largestSide, GameTextu
 	if (layer != static_cast<CoverLayer>(-1))
 	{
 		ok = WriteCover(key.substr(key.find(':') + 1), layer, out);
+		if (ok && withMips)
+			AddMips(out);
+		return ok;
+	}
+	// The atlas in a book's look: book_d:, book_s: and book_n: (normal and roughness), then the book
+	const AtlasMap map = key.compare(0, 7, "book_d:") == 0 ? kAtlasDiffuse : key.compare(0, 7, "book_s:") == 0 ? kAtlasSpecular
+		: key.compare(0, 7, "book_n:") == 0 ? kAtlasNormal : static_cast<AtlasMap>(-1);
+	if (map != static_cast<AtlasMap>(-1))
+	{
+		ok = WriteLookMap(map, key.substr(7), out);
 		if (ok && withMips)
 			AddMips(out);
 		return ok;
@@ -1054,9 +1602,11 @@ bool LoadBookModel(const std::string& which, ItemModel& out)
 			role = closed ? 255 : 2;
 		if (material == 0)
 		{
-			part.diffuse = std::string(kBuiltinTexture) + "book_d";
-			part.normal = std::string(kBuiltinTexture) + "book_n";
-			part.specular = std::string(kBuiltinTexture) + "book_s";
+			// The atlas, in this book's look (LookOf): its leather, its tooling and its corners
+			const std::string look = uuid.empty() ? std::string() : ":" + uuid;
+			part.diffuse = std::string(kBuiltinTexture) + "book_d" + look;
+			part.normal = std::string(kBuiltinTexture) + "book_n" + look;
+			part.specular = std::string(kBuiltinTexture) + "book_s" + look;
 			finish(part, role);
 			continue;
 		}

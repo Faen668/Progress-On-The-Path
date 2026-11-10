@@ -15,7 +15,7 @@ add_library(PotpOverlay SHARED src/main.cpp src/d3d12_hook.cpp src/input_hook.cp
 set_target_properties(PotpOverlay PROPERTIES SUFFIX ".asi")
 # The achievement pack and the fonts are built into the .asi: a new one of either builds it again
 set_source_files_properties(src/potp.rc PROPERTIES OBJECT_DEPENDS
-	"${CMAKE_CURRENT_SOURCE_DIR}/data/achievements.dat;${CMAKE_CURRENT_SOURCE_DIR}/fonts/AlegreyaSans-Regular.ttf;${CMAKE_CURRENT_SOURCE_DIR}/fonts/EBGaramond.ttf;${CMAKE_CURRENT_SOURCE_DIR}/fonts/Cinzel.ttf;${CMAKE_CURRENT_SOURCE_DIR}/data/book.mesh;${CMAKE_CURRENT_SOURCE_DIR}/data/book_d.jpg;${CMAKE_CURRENT_SOURCE_DIR}/data/book_s.jpg;${CMAKE_CURRENT_SOURCE_DIR}/data/book_n.jpg;${CMAKE_CURRENT_SOURCE_DIR}/data/book_r.jpg;${CMAKE_CURRENT_SOURCE_DIR}/data/parchment.jpg;${CMAKE_CURRENT_SOURCE_DIR}/data/edges.jpg;${CMAKE_CURRENT_SOURCE_DIR}/data/edges_n.jpg")
+	"${CMAKE_CURRENT_SOURCE_DIR}/data/achievements.dat;${CMAKE_CURRENT_SOURCE_DIR}/fonts/AlegreyaSans-Regular.ttf;${CMAKE_CURRENT_SOURCE_DIR}/fonts/EBGaramond.ttf;${CMAKE_CURRENT_SOURCE_DIR}/fonts/Cinzel.ttf;${CMAKE_CURRENT_SOURCE_DIR}/data/book.mesh;${CMAKE_CURRENT_SOURCE_DIR}/data/book_d.jpg;${CMAKE_CURRENT_SOURCE_DIR}/data/book_s.jpg;${CMAKE_CURRENT_SOURCE_DIR}/data/book_n.jpg;${CMAKE_CURRENT_SOURCE_DIR}/data/book_r.jpg;${CMAKE_CURRENT_SOURCE_DIR}/data/parchment.jpg;${CMAKE_CURRENT_SOURCE_DIR}/data/edges.jpg;${CMAKE_CURRENT_SOURCE_DIR}/data/edges_n.jpg;${CMAKE_CURRENT_SOURCE_DIR}/data/book_m.png")
 target_link_libraries(PotpOverlay PRIVATE imgui::imgui d3d12 dxgi dxguid psapi shell32 ole32 uuid xmllite shlwapi windowscodecs)
 target_compile_options(PotpOverlay PRIVATE /W4 /utf-8 /permissive-)
 target_compile_definitions(PotpOverlay PRIVATE NOMINMAX WIN32_LEAN_AND_MEAN)

@@ -14,3 +14,4 @@
 #define POTP_RES_PARCHMENT      110
 #define POTP_RES_BOOK_EDGES     111
 #define POTP_RES_BOOK_EDGES_N   112
+#define POTP_RES_BOOK_MASK      113   // each book's look: its dye (red), gilt (green), brass (blue)
