@@ -39,3 +39,4 @@ bool BookTurning();
 bool BookShut(bool shut);
 bool BookShutting();            // shut or shutting: what a second press would undo
 void BookTestShut(float shut);  // the test harness's: held that far shut, 0 to 1, as it is shown; below 0 let go
+void BookTestTurn(float leaf);  // and its leaf held that far over, 0 to 1; below 0 let go

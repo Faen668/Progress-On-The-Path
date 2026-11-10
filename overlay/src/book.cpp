@@ -1866,6 +1866,55 @@ bool ReadBuiltinTexture(const std::string& name, uint32_t largestSide, GameTextu
 	return ok;
 }
 
+namespace
+{
+	// A direction turned th over toward the back half, as the front half goes shut (modelview.cpp's Turned)
+	void Turn(float v[3], float th)
+	{
+		const float c = cosf(th), s = sinf(th), x = v[0], z = v[2];
+		v[0] = x * c + z * s;
+		v[2] = -x * s + z * c;
+	}
+
+	// A part of the open book as it lies shut: where modelview.cpp's BookPart takes it all the way shut, at the blocks'
+	// made thickness. A book not read shows this way, the same book as one read and shut.
+	void PoseShut(ModelPart& part)
+	{
+		constexpr float kJointX = 0.030f, kBoardT = 0.0055f, kPi = 3.14159265f;
+		const float round = (kMadeLeft + kMadeRight) / 2.f + kBoardT;   // the spine's half round shut, its radius
+		for (size_t i = 0; i < part.vertices.size() && i < part.shut.size(); ++i)
+		{
+			ModelVertex& v = part.vertices[i];
+			const ShutVertex& s = part.shut[i];
+			const int piece = static_cast<int>(s.fold + 0.5f);
+			if (piece == 2)
+			{
+				// Round the spine: so far along its half round, so far out from it, its sag let go
+				const float phi = kPi * s.place[0], outward = s.place[1] - s.place[2];
+				v.position[0] = kJointX - round * sinf(phi) - sinf(phi) * outward;
+				v.position[2] = -kBoardT + round * (1.f - cosf(phi)) - cosf(phi) * outward;
+				Turn(v.normal, phi);
+				Turn(v.tangent, phi);
+				continue;
+			}
+			memcpy(v.position, s.place, sizeof(s.place));
+			memcpy(v.normal, s.normal, sizeof(s.normal));
+			memcpy(v.tangent, s.tangent, sizeof(s.tangent));
+			if (piece == 1)
+			{
+				// The front half over on the spine's far end, at the top
+				float from[3] = { v.position[0] + kJointX, 0.f, v.position[2] + kBoardT };
+				Turn(from, kPi);
+				v.position[0] = kJointX + from[0];
+				v.position[2] = -kBoardT + 2.f * round + from[2];
+				Turn(v.normal, kPi);
+				Turn(v.tangent, kPi);
+			}
+		}
+		part.shut.clear();
+	}
+}
+
 bool LoadBookModel(const std::string& which, ItemModel& out)
 {
 	// "closed:uuid", or "open:spread:uuid": the closed book's parts (closed_...), or the open one's with its pages named
@@ -1973,11 +2022,15 @@ bool LoadBookModel(const std::string& which, ItemModel& out)
 		part.indices.resize(indices);
 		memcpy(part.indices.data(), at, static_cast<size_t>(indices) * 4);
 		at += static_cast<size_t>(indices) * 4;
-		if ((name.compare(0, 7, "closed_") == 0) != closed)
+		// Shut, the open book's own parts posed shut (PoseShut), as a book read and shut is; the closed_ parts only from
+		// a book.mesh without the shut shape
+		const bool closedPart = name.compare(0, 7, "closed_") == 0;
+		if (closedPart != (closed && !withShut))
 			continue;
+		const bool posed = closed && withShut;
+		if (posed)
+			PoseShut(part);
 		uint8_t role = 255;
-		if (name == "ribbon" || name == "closed_ribbon")
-			role = 5;   // not moved, but left out of the framing (modelview.cpp)
 		if (name == "pages_left" || name == "page_edges_left")
 			role = closed ? 255 : 1;
 		else if (name == "pages_right" || name == "page_edges_right")
@@ -2012,6 +2065,13 @@ bool LoadBookModel(const std::string& which, ItemModel& out)
 			// The page edges: the sheets' own tiling texture, one sheet a line, matte paper
 			paper(part, std::string(kBuiltinTexture) + (uuid.empty() ? std::string("edges") : "edges:" + uuid));
 			part.normal = std::string(kBuiltinTexture) + "edges_n";   // a faint groove at each sheet's edge
+			finish(part, role);
+			continue;
+		}
+		if (posed && (material == 1 || material == 2))
+		{
+			// Shut, its top pages lie inside: plain parchment
+			paper(part, std::string(kBuiltinTexture) + "parchment");
 			finish(part, role);
 			continue;
 		}
@@ -2093,6 +2153,10 @@ void BookSetTitle(const std::string& uuid, const std::string& title, int shelf)
 
 std::string BookClosedRequest(const std::string& uuid)
 {
+	// The viewer's book let go of: nothing turning or shutting, so a book shown shut (posed shut already) stays as it is.
+	// The book open, if it's shown, says otherwise this same frame (BookTick).
+	const float sheet[4] = { -1.f, 1.f, 1.f, kPageWidth }, sheet2[4] = { cosf(kTilt), sinf(kTilt), kMadeLeft / kMadeRight, kGutter }, shut[4] = {};
+	ModelViewBook(sheet, sheet2, shut);
 	return std::string(kModelBook) + "closed:" + uuid;
 }
 
@@ -2165,10 +2229,11 @@ bool BookShutting() { return g_shown.shutting > 0 || (g_shown.shutting == 0 && g
 
 namespace
 {
-	float g_testShut = -1.f;
+	float g_testShut = -1.f, g_testTurn = -1.f;
 }
 
 void BookTestShut(float shut) { g_testShut = shut; }
+void BookTestTurn(float leaf) { g_testTurn = leaf; }
 
 void BookTick(float dt)
 {
@@ -2177,7 +2242,8 @@ void BookTick(float dt)
 	float progress = static_cast<float>(g_shown.spread);
 	if (g_shown.turning != 0 && g_shown.ready && *g_shown.ready)
 	{
-		// A frame or two for the leaf's pictures to reach the card before it lifts
+		// A frame or two for the leaf's pictures to reach the card before it lifts. Once they have, the leaf is shown over
+		// the page it lifts off, which has the next pages under it already.
 		g_shown.t = std::clamp(g_shown.t + g_shown.turning * dt / kTurnSeconds, 0.f, 1.f);
 		const bool done = g_shown.turning > 0 ? g_shown.t >= 1.f : g_shown.t <= 0.f;
 		sheet[0] = Ease(g_shown.t);
@@ -2203,6 +2269,8 @@ void BookTick(float dt)
 		sheet[0] = g_shown.t >= 0.5f ? 1.f : 0.f;
 		progress = static_cast<float>(g_shown.spread);
 	}
+	if (g_testTurn >= 0.f)
+		sheet[0] = g_testTurn;
 	// The blocks: thicker on the left the further through
 	const int spreads = std::max(1, Spreads(g_shown.uuid) - 1);
 	const float f = std::clamp(progress / spreads, 0.f, 1.f);

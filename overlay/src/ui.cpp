@@ -4047,7 +4047,11 @@ namespace
 			if (stance)
 				hints.push_back({ kPadLeft | kPadRight, Tx(T_left_right), TxFill(T_ward_stance_now, AnimationName(GetSettings().wardrobeAnimation)), kActNone });
 			else if (g_book == kBookLibrary && g_bookOpen)
-				hints.push_back({ kPadLeft | kPadRight, Tx(T_left_right), Tx(T_turn_page), kActNone });
+			{
+				if (!BookShutting())
+					hints.push_back({ kPadLeft | kPadRight, Tx(T_left_right), Tx(T_turn_page), kActNone });
+				hints.push_back({ kPadL3, KeyLabel(kKeyX), Tx(BookShutting() ? T_book_open : T_book_close), kActNone });
+			}
 		}
 		else
 		{
@@ -4149,8 +4153,9 @@ namespace
 			}
 			if (turn != 0 && BookTurn(turn))
 				MenuSound(kSoundPageTurn, kRankSwitch);
-			// [X] or the left stick pressed, or its hint clicked: the book shut on its cover, or opened again
-			const bool shutKey = !g_statusOpen && !g_wardrobeOpen && !g_capture && (KeyHit(kKeyX) || g_pad.Pressed(kPadL3));
+			// [X] or the left stick pressed, or its hint clicked: the book shut on its cover, or opened again. Enlarged too
+			// (which takes the input as the Change Status panel does)
+			const bool shutKey = (!g_statusOpen || g_cardZoom) && !g_wardrobeOpen && !g_capture && (KeyHit(kKeyX) || g_pad.Pressed(kPadL3));
 			if ((shutKey || g_shutBookClicked) && BookShut(!BookShutting()))
 				MenuSound(BookShutting() ? kSoundClose : kSoundOpen, kRankSwitch);
 			g_shutBookClicked = false;
