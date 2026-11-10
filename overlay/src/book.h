@@ -35,3 +35,7 @@ int BookSpread();               // the spread open, from 0
 int BookSpreadCount();
 int BookPageCount();            // the title page included
 bool BookTurning();
+// The open book shut, its cover up, or opened again, turning over on its spine: false while a page is turning
+bool BookShut(bool shut);
+bool BookShutting();            // shut or shutting: what a second press would undo
+void BookTestShut(float shut);  // the test harness's: held that far shut, 0 to 1, as it is shown; below 0 let go

@@ -41,6 +41,14 @@ extern "C" void PotpOverlay_TestCardTurn(float degrees)
 	UiTestCardTurn(degrees);
 }
 
+void UiTestBookShut(float shut, float yaw, float pitch);
+
+// The Library's book held shut that far (0 open to 1 shut, below 0 as the player has it), seen from there
+extern "C" void PotpOverlay_TestBookShut(float shut, float yaw, float pitch)
+{
+	UiTestBookShut(shut, yaw, pitch);
+}
+
 extern "C" void PotpOverlay_TestPopup(const char* text)
 {
 	UiPushPopup(text);

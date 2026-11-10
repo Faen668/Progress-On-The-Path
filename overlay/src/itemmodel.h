@@ -18,6 +18,17 @@ struct ModelVertex
 	uint8_t colour[4] = { 255, 255, 255, 255 };   // the mesh's vertex colour, as it's stored: the hair graphs darken by it
 };
 
+// The Library's book shut (book.cpp, from book.mesh's PBK3): where a vertex of the open book lies once it's shut, turned
+// back by its fold to lie with the open book, its normal and tangent there, and its fold: how much of the half turn
+// over the spine it makes as the book shuts. A fourth stream beside its ModelVertex.
+struct ShutVertex
+{
+	float place[3] = { 0.f, 0.f, 0.f };
+	float normal[3] = { 0.f, 0.f, 1.f };
+	float tangent[3] = { 1.f, 0.f, 0.f };
+	float fold = 0.f;
+};
+
 // Which bones move a vertex and how much: a second stream beside its ModelVertex
 struct SkinVertex
 {
@@ -49,6 +60,7 @@ struct ModelPart
 {
 	std::vector<ModelVertex> vertices;
 	std::vector<SkinVertex> skinning;   // as many as vertices, only when asked for and it's skinned
+	std::vector<ShutVertex> shut;       // the Library's book: as many as vertices, the book shut
 	int meshBones = -1;             // in ItemModel::meshBones
 	std::string hungOn;             // a weapon's: the bone of the scabbards' rig it hangs on
 	std::string attachBone;         // a creature's prop: the bone of its rig it's fastened to, rigidly

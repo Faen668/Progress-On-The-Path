@@ -45,6 +45,8 @@ cbuffer View : register(b0)
 	float4 sheet;        // the Library's book (book.cpp): x how far the leaf has turned, 0-1, below 0 none; y, z the right and left
 	float4 sheet2;       // blocks' thickness as parts of the made one; w the page's width. sheet2: cos, sin of its tilt, the
 	                     // left block made over the right, where the pages start from the spine
+	float4 shut;         // the book shutting: x how far, 0 open to 1 shut; y how far it moves over as it shuts, to stay in
+	                     // the middle; z the spine's length now; w how far its pages have flattened
 };
 struct BoneRows { float4 x, y, z; };
 StructuredBuffer<BoneRows> boneTable : register(t6);
@@ -71,14 +73,49 @@ Texture2D detail1Map : register(t4);
 Texture2D detail2Map : register(t5);
 SamplerState surface : register(s0);
 
-struct In { float3 p : POSITION; float3 n : NORMAL; float4 t : TANGENT; float2 uv : TEXCOORD; float4 colour : COLOR; uint4 bones : BLENDINDICES; float4 weights : BLENDWEIGHT; uint3 clothAt : CLOTHINDEX; float3 clothBary : CLOTHBARY; };
+struct In { float3 p : POSITION; float3 n : NORMAL; float4 t : TANGENT; float2 uv : TEXCOORD; float4 colour : COLOR; uint4 bones : BLENDINDICES; float4 weights : BLENDWEIGHT; uint3 clothAt : CLOTHINDEX; float3 clothBary : CLOTHBARY; float3 shutP : SHUTPLACE; float3 shutN : SHUTNORMAL; float3 shutT : SHUTTANGENT; float fold : SHUTFOLD; };
 struct Out { float4 h : SV_Position; float3 p : POSITION; float3 n : NORMAL; float3 t : TANGENT; float3 b : BINORMAL; float2 uv : TEXCOORD0; float4 colour : COLOR; float3 bound : TEXCOORD1; };
 
 // The Library's book: its page blocks thinned or thickened to say how far through it is, and the leaf being turned, a sheet
 // bent round the spine with its outer edge lagging, so it curls. Made tilted, as everything of the book is: untilted to
 // work on (flat, the spine along y, the pages up), then tilted back. Role: 1 the left block, 2 the right, 3 the leaf's front,
 // 4 its back. Below 0 the leaf isn't there, and folds away to nothing.
-void BookPart(uint role, float base, inout float3 p, inout float3 n, inout float3 t)
+// Shutting (shut.x above 0), as a book's case does (book.mesh's PBK3, export_book.py): the back half stays; the spine
+// bends up from its joint with the back board, an arc turning from flat to half round as it lengthens to the half
+// round's length; the front half rides on its end, turned as far. The halves' pages flatten onto their boards as it goes.
+static const float kJointX = 0.030f, kBoardT = 0.0055f;   // the back board's joint, on its outside (build_book.py)
+static const float kMidZ = 0.026f;                         // half the pages' height, shut: the spine's middle
+static const float kBackIn = 0.0055f, kBackR = 0.026f;     // the pages' backs: in from the spine's outside (its shell and a
+                                                           // hair), and their round about its middle, shut (export_book.py)
+
+// A direction turned th over toward the back half, as the front half goes: (-1, 0) up through (0, 1) to (1, 0)
+float3 Turned(float3 v, float th)
+{
+	const float c = cos(th), s = sin(th);
+	return float3(v.x * c + v.z * s, v.y, -v.x * s + v.z * c);
+}
+
+// The spine's outside, a distance along it from the back board's joint, as it is with the book that far shut: an arc of
+// that length turning th in all. phi: how far it's turned there.
+float3 SpineAt(float along, float total, float th, out float phi)
+{
+	phi = th * along / max(total, 1e-5f);
+	float x, z;
+	if (th < 1e-3f)
+	{
+		x = -along;
+		z = 0.5f * along * phi;
+	}
+	else
+	{
+		const float r = total / th, h = sin(phi * 0.5f);
+		x = -r * sin(phi);
+		z = 2.0f * r * h * h;
+	}
+	return float3(kJointX + x, 0, -kBoardT + z);
+}
+
+void BookPart(uint role, float base, float3 sp, float3 sn, float3 st, float fold, inout float3 p, inout float3 n, inout float3 t)
 {
 	const float c = sheet2.x, s = sheet2.y;
 	p = float3(p.x, p.y * c + p.z * s, -p.y * s + p.z * c);
@@ -93,7 +130,10 @@ void BookPart(uint role, float base, inout float3 p, inout float3 n, inout float
 		p.z = base + (above > 0 ? above * leftBy : above);
 	else if (role == 2)
 		p.z = base + (above > 0 ? above * rightBy : above);
-	else if (sheet.x < 0)
+	else if (role != 3 && role != 4)
+	{
+	}
+	else if (sheet.x < 0 || shut.x > 0)
 		p = 0;
 	else
 	{
@@ -115,19 +155,77 @@ void BookPart(uint role, float base, inout float3 p, inout float3 n, inout float
 		}
 		p += n * 0.0003f;
 	}
+	if (shut.x > 0 && role != 3 && role != 4)
+	{
+		const float th = shut.x * 3.14159265f, spineLength = shut.z, m = shut.w;
+		const uint piece = (uint)round(fold);
+		if (piece == 2)
+		{
+			// Bent with the spine: so far along it, so far out from its outside, its open sag let go as it rounds
+			float phi;
+			const float3 on = SpineAt(sp.x * spineLength, spineLength, th, phi);
+			const float outward = sp.y - sp.z * m;
+			p = float3(on.x, p.y, on.z) + Turned(float3(0, 0, -1), phi) * outward;
+			n = Turned(n, phi);
+			t = Turned(t, phi);
+		}
+		else
+		{
+			// A half: its pages flattening onto its board, as thick as they are now
+			float3 q = sp;
+			if (role == 1)
+				q.z *= sheet.z;
+			else if (role == 2)
+				q.z *= sheet.y;
+			p = lerp(p, q, m);
+			const float3 nm = lerp(n, sn, m), tm = lerp(t, st, m);
+			n = dot(nm, nm) > 1e-8f ? normalize(nm) : sn;
+			t = dot(tm, tm) > 1e-8f ? normalize(tm) : st;
+			if (piece == 1)
+			{
+				// The front half on the spine's end, turned as far as it has
+				float phi;
+				const float3 end = SpineAt(spineLength, spineLength, th, phi);
+				const float3 from = Turned(float3(p.x + kJointX, 0, p.z + kBoardT), th);
+				p = float3(end.x + from.x, p.y, end.z + from.z);
+				n = Turned(n, th);
+				t = Turned(t, th);
+			}
+			if (role == 1 || role == 2)
+			{
+				// The pages' backs are glued into the spine, both halves' along the one round (kBackR about the spine's
+				// middle shut, export_book.py's BACK_R): near its back, a page goes round with the spine as it bends, so
+				// the halves' backs never part, and the gutter dips into the spine as a real book's does. How high up the
+				// shut book a page lies says where along the spine its back is glued; out from there, its own half's way.
+				const float zs = role == 2 ? q.z : 2.0f * kMidZ - q.z;
+				const float glue = acos(clamp((kMidZ - zs) / kBackR, -1.0f, 1.0f));   // round the spine, shut
+				const float fromBack = max(0.0f, abs(q.x) - (kJointX - kBackR * sin(glue)));
+				float phi;
+				const float3 on = SpineAt(glue / 3.14159265f * spineLength, spineLength, th, phi);
+				const float3 inward = -Turned(float3(0, 0, -1), phi);
+				const float3 way = role == 2 ? float3(1, 0, 0) : Turned(float3(-1, 0, 0), th);
+				const float3 glued = float3(on.x, 0, on.z) + inward * kBackIn + way * fromBack;
+				const float w = smoothstep(0.05f, 0.0f, fromBack) * smoothstep(0.0f, 0.45f, shut.x);
+				p.x = lerp(p.x, glued.x, w);
+				p.z = lerp(p.z, glued.z, w);
+			}
+		}
+		p.x -= shut.y * shut.x;
+	}
 	p = float3(p.x, p.y * c - p.z * s, p.y * s + p.z * c);
 	n = float3(n.x, n.y * c - n.z * s, n.y * s + n.z * c);
 	t = float3(t.x, t.y * c - t.z * s, t.y * s + t.z * c);
 }
 
+)" R"(
 Out VS(In i)
 {
 	Out o;
 	const uint role = (uint)round(i.colour.a * 255);
-	if (sheet.w > 0 && role >= 1 && role <= 4)
+	if (sheet.w > 0 && ((role >= 1 && role <= 4) || shut.x > 0))
 	{
 		float3 bookTangent = i.t.xyz;
-		BookPart(role, i.colour.r * 0.03f, i.p, i.n, bookTangent);
+		BookPart(role, i.colour.r * 0.03f, i.shutP, i.shutN, i.shutT, i.fold, i.p, i.n, bookTangent);
 		i.t.xyz = bookTangent;
 	}
 	// The bones' rows at this moment, blended by the vertex's weights
@@ -370,10 +468,10 @@ float4 PS(Out i, bool front : SV_IsFrontFace) : SV_Target
 }
 )";
 
-	struct Constants { float world[16]; float projection[4]; float eyeAndMask[4]; float pose[4]; float fromPose[4]; float sheet[4]; float sheet2[4]; };
+	struct Constants { float world[16]; float projection[4]; float eyeAndMask[4]; float pose[4]; float fromPose[4]; float sheet[4]; float sheet2[4]; float shut[4]; };
 	// The Library's book, as the window last set it (ModelViewBook)
 	std::mutex g_bookLock;
-	float g_bookSheet[4] = { -1.f, 1.f, 1.f, 0.235f }, g_bookSheet2[4] = { 1.f, 0.f, 1.f, 0.f };
+	float g_bookSheet[4] = { -1.f, 1.f, 1.f, 0.235f }, g_bookSheet2[4] = { 1.f, 0.f, 1.f, 0.f }, g_bookShut[4] = {};
 	// Pictures to put in place of those a part was loaded with, by the name it was loaded with
 	std::vector<std::pair<std::string, std::shared_ptr<PreparedTexture>>> g_replacements;
 
@@ -511,6 +609,8 @@ float4 PS(Out i) : SV_Target
 	constexpr int kClothRing = 4;
 	ID3D12Resource* g_clothVertices = nullptr;
 	D3D12_VERTEX_BUFFER_VIEW g_clothView{};
+	ID3D12Resource* g_shutVertices = nullptr;   // the Library's book shut (ShutVertex): a stream for every model
+	D3D12_VERTEX_BUFFER_VIEW g_shutView{};
 	ID3D12Resource* g_clothRing[kClothRing] = {};
 	void* g_clothMapped[kClothRing] = {};
 	int g_clothAt = 0;
@@ -593,6 +693,67 @@ float4 PS(Out i) : SV_Target
 	// seen from, as a wyvern's tail is end on from the front and its whole length from the side. Empty for an item.
 	std::vector<float> g_fitPoints;
 	std::vector<uint8_t> g_fitForm;     // a two-form creature's: which form each of those points is
+	std::vector<ShutVertex> g_fitShut;  // the Library's book: each of those points shut, and its role (BookPart), so it's
+	std::vector<uint8_t> g_fitRole;     // framed as it is while it shuts
+
+	// The book's case as the shader moves it (BookPart, SpineAt), for framing it: one point of it, in the model's tilted
+	// space, that far shut
+	void PoseShut(const float shut[4], const float sheet[4], const float sheet2[4], const ShutVertex& sv, uint8_t role, float p[3])
+	{
+		constexpr float kJointX = 0.030f, kBoardT = 0.0055f;
+		const float c = sheet2[0], s = sheet2[1];
+		float x = p[0], y = p[1] * c + p[2] * s, z = -p[1] * s + p[2] * c;
+		const float th = shut[0] * 3.14159265f, length = shut[2], m = shut[3];
+		const auto spineAt = [&](float along, float& ax, float& az, float& phi)
+		{
+			phi = th * along / std::max(length, 1e-5f);
+			if (th < 1e-3f)
+			{
+				ax = -along;
+				az = 0.5f * along * phi;
+			}
+			else
+			{
+				const float r = length / th, h = sinf(phi * 0.5f);
+				ax = -r * sinf(phi);
+				az = 2.f * r * h * h;
+			}
+			ax += kJointX;
+			az -= kBoardT;
+		};
+		const int piece = static_cast<int>(sv.fold + 0.5f);
+		if (piece == 2)
+		{
+			float ax, az, phi;
+			spineAt(sv.place[0] * length, ax, az, phi);
+			const float outward = sv.place[1] - sv.place[2] * m;
+			x = ax - sinf(phi) * outward;
+			z = az - cosf(phi) * outward;
+		}
+		else
+		{
+			float qz = sv.place[2];
+			if (role == 1)
+				qz *= sheet[2];
+			else if (role == 2)
+				qz *= sheet[1];
+			x += (sv.place[0] - x) * m;
+			y += (sv.place[1] - y) * m;
+			z += (qz - z) * m;
+			if (piece == 1)
+			{
+				float ax, az, phi;
+				spineAt(length, ax, az, phi);
+				const float fx = x + kJointX, fz = z + kBoardT, ct = cosf(th), st = sinf(th);
+				x = ax + fx * ct + fz * st;
+				z = az - fx * st + fz * ct;
+			}
+		}
+		x -= shut[1] * shut[0];
+		p[0] = x;
+		p[1] = y * c - z * s;
+		p[2] = y * s + z * c;
+	}
 	float g_formCentre[2][3] = {};      // and each form's middle, as the camera moves from one to the other
 	float g_formFeet[3] = {}, g_formSize = 1.f;   // where its smoke bursts from, and how big the bigger form is
 	// When the loop began: each creature from its first form, not from where the last one shown had got to
@@ -704,6 +865,10 @@ float4 PS(Out i) : SV_Target
 			{ "BLENDWEIGHT", 0, DXGI_FORMAT_R8G8B8A8_UNORM, 1, offsetof(SkinVertex, weights), D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
 			{ "CLOTHINDEX", 0, DXGI_FORMAT_R32G32B32_UINT, 2, offsetof(ClothVertex, a), D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
 			{ "CLOTHBARY", 0, DXGI_FORMAT_R32G32B32_FLOAT, 2, offsetof(ClothVertex, bary), D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
+			{ "SHUTPLACE", 0, DXGI_FORMAT_R32G32B32_FLOAT, 3, offsetof(ShutVertex, place), D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
+			{ "SHUTNORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 3, offsetof(ShutVertex, normal), D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
+			{ "SHUTTANGENT", 0, DXGI_FORMAT_R32G32B32_FLOAT, 3, offsetof(ShutVertex, tangent), D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
+			{ "SHUTFOLD", 0, DXGI_FORMAT_R32_FLOAT, 3, offsetof(ShutVertex, fold), D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
 		};
 		D3D12_GRAPHICS_PIPELINE_STATE_DESC pso{};
 		pso.pRootSignature = g_root;
@@ -834,6 +999,9 @@ float4 PS(Out i) : SV_Target
 		if (g_clothVertices)
 			RetireResource(g_clothVertices);
 		g_clothVertices = nullptr;
+		if (g_shutVertices)
+			RetireResource(g_shutVertices);
+		g_shutVertices = nullptr;
 		for (int i = 0; i < kClothRing; ++i)
 		{
 			if (g_clothRing[i])
@@ -919,6 +1087,7 @@ float4 PS(Out i) : SV_Target
 		std::vector<SkinVertex> skins;
 		std::vector<uint32_t> indices;
 		std::vector<ClothVertex> clothing;
+		std::vector<ShutVertex> shutting;
 		std::vector<uint8_t> vertexForm;   // each vertex's form, for a two-form creature
 		std::vector<uint32_t> firstParticle;
 		{
@@ -992,6 +1161,9 @@ float4 PS(Out i) : SV_Target
 			if (p.skinning.size() == p.vertices.size())
 				std::copy(p.skinning.begin(), p.skinning.end(), skins.end() - static_cast<ptrdiff_t>(p.skinning.size()));
 			clothing.resize(vertices.size());
+			shutting.resize(vertices.size());
+			if (p.shut.size() == p.vertices.size())
+				std::copy(p.shut.begin(), p.shut.end(), shutting.end() - static_cast<ptrdiff_t>(p.shut.size()));
 			if (p.cloth >= 0 && p.clothing.size() == p.vertices.size() && !g_uploading->cloth.empty())
 			{
 				ClothVertex* to = clothing.data() + (clothing.size() - p.clothing.size());
@@ -1105,6 +1277,8 @@ float4 PS(Out i) : SV_Target
 		g_skins = MakeBuffer(skins.data(), skins.size() * sizeof(SkinVertex));
 		g_clothVertices = MakeBuffer(clothing.data(), clothing.size() * sizeof(ClothVertex));
 		g_clothView = g_clothVertices ? D3D12_VERTEX_BUFFER_VIEW{ g_clothVertices->GetGPUVirtualAddress(), static_cast<UINT>(clothing.size() * sizeof(ClothVertex)), sizeof(ClothVertex) } : D3D12_VERTEX_BUFFER_VIEW{};
+		g_shutVertices = MakeBuffer(shutting.data(), shutting.size() * sizeof(ShutVertex));
+		g_shutView = g_shutVertices ? D3D12_VERTEX_BUFFER_VIEW{ g_shutVertices->GetGPUVirtualAddress(), static_cast<UINT>(shutting.size() * sizeof(ShutVertex)), sizeof(ShutVertex) } : D3D12_VERTEX_BUFFER_VIEW{};
 		g_animationNow = model.animation;
 		g_animationFrom.reset();
 		if (!g_uploading->cloth.empty() && !g_uploading->clothStart.empty())
@@ -1186,6 +1360,8 @@ float4 PS(Out i) : SV_Target
 		g_radius = std::max(0.001f, sqrtf(furthest)) * (model.animation ? 1.03f : 1.f);   // room to move in
 		g_fitPoints.clear();
 		g_fitForm.clear();
+		g_fitShut.clear();
+		g_fitRole.clear();
 		g_fitEye = -1.f;
 		float formLow[2][3] = { { FLT_MAX, FLT_MAX, FLT_MAX }, { FLT_MAX, FLT_MAX, FLT_MAX } };
 		float formHigh[2][3] = { { -FLT_MAX, -FLT_MAX, -FLT_MAX }, { -FLT_MAX, -FLT_MAX, -FLT_MAX } };
@@ -1245,10 +1421,16 @@ float4 PS(Out i) : SV_Target
 			// The book: framed by its own shape as it's seen, not a sphere it could turn in, so it fills the picture.
 			// The ribbon (role 5) left out, as its end hangs well below the book.
 			g_fitPoints.reserve(vertices.size() * 3);
-			for (const ModelVertex& v : vertices)
-				if (v.colour[3] != 5)
-					for (int k = 0; k < 3; ++k)
-						g_fitPoints.push_back(v.position[k] - g_centre[k]);
+			for (size_t i = 0; i < vertices.size(); ++i)
+			{
+				const ModelVertex& v = vertices[i];
+				if (v.colour[3] == 5)
+					continue;
+				for (int k = 0; k < 3; ++k)
+					g_fitPoints.push_back(v.position[k] - g_centre[k]);
+				g_fitShut.push_back(i < shutting.size() ? shutting[i] : ShutVertex{});
+				g_fitRole.push_back(v.colour[3]);
+			}
 		}
 		if (g_keepShowing)
 		{
@@ -1544,11 +1726,12 @@ void ModelViewFitAspect(float aspect)
 	g_fitAspect = std::clamp(aspect, 0.25f, static_cast<float>(kWidth) / kHeight);
 }
 
-void ModelViewBook(const float sheet[4], const float sheet2[4])
+void ModelViewBook(const float sheet[4], const float sheet2[4], const float shut[4])
 {
 	std::lock_guard<std::mutex> hold(g_bookLock);
 	memcpy(g_bookSheet, sheet, sizeof(g_bookSheet));
 	memcpy(g_bookSheet2, sheet2, sizeof(g_bookSheet2));
+	memcpy(g_bookShut, shut, sizeof(g_bookShut));
 }
 
 void ModelViewReplaceTexture(const std::string& name, const GameTexture& picture)
@@ -1721,8 +1904,8 @@ void ModelViewRender(ID3D12GraphicsCommandList* list)
 	list->SetGraphicsRootSignature(g_root);
 	list->SetPipelineState(g_pipeline);
 	list->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	const D3D12_VERTEX_BUFFER_VIEW streams[3] = { g_vertexView, g_skinView, g_clothView };
-	list->IASetVertexBuffers(0, 3, streams);
+	const D3D12_VERTEX_BUFFER_VIEW streams[4] = { g_vertexView, g_skinView, g_clothView, g_shutView };
+	list->IASetVertexBuffers(0, 4, streams);
 	list->SetGraphicsRootShaderResourceView(8, g_boneTable->GetGPUVirtualAddress());
 	list->IASetIndexBuffer(&g_indexView);
 
@@ -1732,9 +1915,13 @@ void ModelViewRender(ID3D12GraphicsCommandList* list)
 		std::lock_guard<std::mutex> hold(g_bookLock);
 		memcpy(c.sheet, g_bookSheet, sizeof(c.sheet));
 		memcpy(c.sheet2, g_bookSheet2, sizeof(c.sheet2));
+		memcpy(c.shut, g_bookShut, sizeof(c.shut));
 	}
 	if (!g_modelIsBook)
+	{
 		c.sheet[3] = 0.f;
+		c.shut[0] = 0.f;
+	}
 	// How far a two-form creature has turned, by where its loop is: the first, changing, the second, changing back
 	if (g_formTimes[3] > 0.f)
 	{
@@ -1776,9 +1963,25 @@ void ModelViewRender(ID3D12GraphicsCommandList* list)
 		// square or the enlarged view's whole width. Eased as a creature's is, so a turn by hand doesn't jump.
 		float low[2] = { FLT_MAX, FLT_MAX }, high[2] = { -FLT_MAX, -FLT_MAX };
 		std::vector<float> seen(g_fitPoints.size());
+		// Shutting, it's framed as it is now, its front half up in the air
+		const bool shutting = c.shut[0] > 0.f && g_fitShut.size() * 3 == g_fitPoints.size();
 		for (size_t i = 0; i + 2 < g_fitPoints.size(); i += 3)
 		{
-			const float p[3] = { g_fitPoints[i], g_fitPoints[i + 1], g_fitPoints[i + 2] };
+			float p[3] = { g_fitPoints[i], g_fitPoints[i + 1], g_fitPoints[i + 2] };
+			if (shutting)
+			{
+				const uint8_t role = g_fitRole[i / 3];
+				if (role == 3 || role == 4)
+					p[0] = p[1] = p[2] = 0.f;   // the leaf, folded away
+				else
+				{
+					for (int k = 0; k < 3; ++k)
+						p[k] += g_centre[k];
+					PoseShut(c.shut, c.sheet, c.sheet2, g_fitShut[i / 3], role, p);
+					for (int k = 0; k < 3; ++k)
+						p[k] -= g_centre[k];
+				}
+			}
 			for (int col = 0; col < 3; ++col)
 			{
 				seen[i + col] = 0.f;
@@ -1802,6 +2005,8 @@ void ModelViewRender(ID3D12GraphicsCommandList* list)
 		const float since = g_fitEye < 0.f ? 1.f : std::min(0.25f, std::chrono::duration<float>(at - g_fitLast).count());
 		g_fitLast = at;
 		g_fitEye = g_fitEye < 0.f ? needs : g_fitEye + (needs - g_fitEye) * (1.f - expf(-since * 6.f));
+		if (shutting)
+			g_fitEye = std::max(g_fitEye, needs);   // shutting, back at once for the cover as it rises, in again eased
 		eye = g_fitEye;
 	}
 	else if (!g_fitPoints.empty())

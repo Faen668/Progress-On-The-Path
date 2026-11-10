@@ -2894,7 +2894,7 @@ namespace
 		return g_enlargeSpent ? 0.f : std::clamp(g_enlargeHeld / kEnlargeHold, 0.f, 1.f);
 	}
 
-	enum HintAction { kActPrev, kActNext, kActMark, kActZoom, kActWardrobe, kActWardPrev, kActWardNext, kActWardWear, kActWardPin, kActWardSave, kActWardClear, kActWardStance, kActWardUntracked, kActWardEnlarge, kActWardSearch, kActAutoTurn, kActReveal, kActHide, kActRefresh, kActClose, kActNone };
+	enum HintAction { kActPrev, kActNext, kActMark, kActZoom, kActWardrobe, kActWardPrev, kActWardNext, kActWardWear, kActWardPin, kActWardSave, kActWardClear, kActWardStance, kActWardUntracked, kActWardEnlarge, kActWardSearch, kActAutoTurn, kActReveal, kActHide, kActRefresh, kActClose, kActShutBook, kActNone };
 
 	struct Hint { unsigned pad; const char* key; std::string text; HintAction action; bool held = false; };   // held: done by holding it, with a bar filling under it
 
@@ -3573,6 +3573,7 @@ namespace
 		return g_book == kBookLibrary && GetSettings().liveBook;
 	}
 	bool g_bookOpen = false;   // the book shown this frame is open on its pages, so they can be turned
+	bool g_shutBookClicked = false;   // the hint to shut or open it clicked, for the book to take next frame
 
 	// Its model is shown, turning or not as Auto-Turn says: an item's, or a creature's with Live Bestiary on
 	bool ShowsModel(const Entry& e)
@@ -4122,16 +4123,20 @@ namespace
 				if (g_pad.Pressed(kPadLT) || KeyHit(kKeyA) || ImGui::IsKeyPressed(ImGuiKey_LeftArrow, false))
 					turn = -1;
 			}
-			// The page count between two arrows, under the book
+			// The page count between two arrows, under the book: none while it's shut
+			const bool shutNow = BookShutting();
 			const int spread = BookSpread(), spreads = BookSpreadCount(), pages = std::max(1, BookPageCount() - 1);
 			const int first = spread * 2, last = std::min(spread * 2 + 1, pages);
 			const std::string which = first == 0 || first >= last ? std::to_string(std::max(1, std::min(first == 0 ? 1 : first, pages))) : std::to_string(first) + "\xe2\x80\x93" + std::to_string(last);
 			const std::string label = TxFill(first == 0 || first >= last ? T_book_page : T_book_pages, which, std::to_string(pages));
 			const float cy = bottom - barH * 0.5f, cx = (x0 + x1) * 0.5f;
 			const float labelW = Measure(kSerif, 28, label.c_str()).x;
-			TextCentre(kSerif, 28, cx, cy - 17.f, kText, label.c_str());
+			if (!shutNow)
+				TextCentre(kSerif, 28, cx, cy - 17.f, kText, label.c_str());
 			for (const int dir : { -1, 1 })
 			{
+				if (shutNow)
+					continue;
 				const bool can = dir < 0 ? spread > 0 : spread + 1 < spreads;
 				const ImVec2 c(cx + dir * (labelW * 0.5f + 40.f), cy);
 				const ImVec2 a(c.x - 22.f, c.y - 22.f), b(c.x + 22.f, c.y + 22.f);
@@ -4144,6 +4149,11 @@ namespace
 			}
 			if (turn != 0 && BookTurn(turn))
 				MenuSound(kSoundPageTurn, kRankSwitch);
+			// [X] or the left stick pressed, or its hint clicked: the book shut on its cover, or opened again
+			const bool shutKey = !g_statusOpen && !g_wardrobeOpen && !g_capture && (KeyHit(kKeyX) || g_pad.Pressed(kPadL3));
+			if ((shutKey || g_shutBookClicked) && BookShut(!BookShutting()))
+				MenuSound(BookShutting() ? kSoundClose : kSoundOpen, kRankSwitch);
+			g_shutBookClicked = false;
 		}
 		DrawModelPanel(e, x0, x1, top, bottom - barH, request);
 	}
@@ -8398,7 +8408,11 @@ namespace
 			if (g_book == kBookBestiary)
 				hints.push_back({ kPadLT | kPadRT, g_keyPages.c_str(), Tx(T_scroll_text), kActNone });
 			else if (g_book == kBookLibrary && g_bookOpen)
-				hints.push_back({ kPadLT | kPadRT, g_keyPages.c_str(), Tx(T_turn_page), kActNone });
+			{
+				if (!BookShutting())
+					hints.push_back({ kPadLT | kPadRT, g_keyPages.c_str(), Tx(T_turn_page), kActNone });
+				hints.push_back({ kPadL3, KeyLabel(kKeyX), Tx(BookShutting() ? T_book_open : T_book_close), kActShutBook });
+			}
 			else if (g_padPrompts && g_book != kTabAchievements)
 				hints.push_back({ kPadLT | kPadRT, nullptr, Tx(T_region), kActNone });
 			if (canMark)
@@ -8477,6 +8491,7 @@ namespace
 				case kActZoom: zoom = true; break;
 				case kActAutoTurn: autoTurn = true; break;
 				case kActReveal: reveal = true; break;
+				case kActShutBook: g_shutBookClicked = true; break;
 				case kActWardrobe: wardrobe = true; break;
 				case kActWardWear: g_wardClick = kWardClickWear; break;
 				case kActWardPin: g_wardClick = kWardClickPin; break;
@@ -10163,4 +10178,14 @@ void UiTestCardTurn(float degrees)
 {
 	g_cardTestTurn = degrees;
 }
+
+void UiTestBookShut(float shut, float yaw, float pitch)
+{
+	BookTestShut(shut);
+	g_cardTestTurn = shut < 0.f ? FLT_MAX : yaw;
+	if (shut >= 0.f)
+		g_modelPitch = pitch;
+}
+#else
+void UiTestBookShut(float, float, float) {}
 #endif

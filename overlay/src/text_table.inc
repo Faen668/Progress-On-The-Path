@@ -610,3 +610,5 @@ X(live_book_hint, "Shows a book Geralt has read in the Library as a book open on
 X(book_page, "Page [1] of [2]")
 X(book_pages, "Pages [1] of [2]")
 X(turn_page, "Turn Page")
+X(book_close, "Close the Book")
+X(book_open, "Open the Book")

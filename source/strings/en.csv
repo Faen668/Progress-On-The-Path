@@ -1694,6 +1694,8 @@
 2116569598||potp_ov_book_page|Page [1] of [2]
 2116569599||potp_ov_book_pages|Pages [1] of [2]
 2116569600||potp_ov_turn_page|Turn Page
+2116569601||potp_ov_book_close|Close the Book
+2116569602||potp_ov_book_open|Open the Book
 ;overlay-text-end
 ;
-; Next id: 2116569601
+; Next id: 2116569603

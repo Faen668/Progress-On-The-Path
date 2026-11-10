@@ -622,6 +622,8 @@ function PotPOverlay_TextKeys_3(out keys: array<string>)
 	keys.PushBack("book_page");
 	keys.PushBack("book_pages");
 	keys.PushBack("turn_page");
+	keys.PushBack("book_close");
+	keys.PushBack("book_open");
 }
 
 function PotPOverlay_ExportText() : string

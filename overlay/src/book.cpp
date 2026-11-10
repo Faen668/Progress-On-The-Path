@@ -993,8 +993,9 @@ namespace
 		binding.y.assign(count, NAN);
 		binding.spine.assign(count, 0.f);
 		const std::string_view data = EmbeddedFile(POTP_RES_BOOK_MESH);
-		if (data.size() < 8 || memcmp(data.data(), "PBK2", 4) != 0)
+		if (data.size() < 8 || (memcmp(data.data(), "PBK2", 4) != 0 && memcmp(data.data(), "PBK3", 4) != 0))
 			return binding;
+		const size_t stride = memcmp(data.data(), "PBK3", 4) == 0 ? 23 : 13;   // floats a vertex
 		const char* at = data.data() + 4;
 		const char* const end = data.data() + data.size();
 		uint32_t parts = 0;
@@ -1007,10 +1008,10 @@ namespace
 			const std::string name(at, nameLength);
 			at += nameLength;
 			uint32_t vertices = 0, indices = 0;
-			if (!Take(at, end, material) || !Take(at, end, vertices) || end - at < static_cast<ptrdiff_t>(vertices) * 52)
+			if (!Take(at, end, material) || !Take(at, end, vertices) || end - at < static_cast<ptrdiff_t>(vertices * stride * 4))
 				break;
 			const float* v = reinterpret_cast<const float*>(at);
-			at += static_cast<size_t>(vertices) * 52;
+			at += static_cast<size_t>(vertices) * stride * 4;
 			if (!Take(at, end, indices) || end - at < static_cast<ptrdiff_t>(indices) * 4)
 				break;
 			const uint32_t* index = reinterpret_cast<const uint32_t*>(at);
@@ -1042,7 +1043,7 @@ namespace
 			};
 			for (uint32_t t = 0; t + 2 < indices; t += 3)
 			{
-				const float* c[3] = { v + index[t] * 13, v + index[t + 1] * 13, v + index[t + 2] * 13 };
+				const float* c[3] = { v + index[t] * stride, v + index[t + 1] * stride, v + index[t + 2] * stride };
 				float px[3], py[3], ww[3], yy[3], ss[3];
 				for (int k = 0; k < 3; ++k)
 				{
@@ -1775,6 +1776,8 @@ namespace
 		float t = 0.f;                   // how far through the turn
 		int settle = 0;                  // frames the leaf stays down after a turn, while the page under it changes
 		std::shared_ptr<std::atomic<bool>> ready;   // the pictures for the turn are in place
+		float shut = 0.f;                // how far it's shut, 0 open to 1 shut
+		int shutting = 0;                // 1 shutting, -1 opening, 0 still
 	};
 	Shown g_shown;
 	std::map<std::string, int> g_spreadOf;   // where each book was left open
@@ -1882,8 +1885,10 @@ bool LoadBookModel(const std::string& which, ItemModel& out)
 	const char* at = data.data();
 	const char* const end = at + data.size();
 	uint32_t parts = 0;
-	// PBK2 adds a 13th float a vertex: the height of the stack's underside under it
-	const bool withBase = data.size() >= 8 && memcmp(at, "PBK2", 4) == 0;
+	// PBK2 adds a 13th float a vertex: the height of the stack's underside under it. PBK3 ten more: the book shut
+	// (export_book.py), for the shader to close it.
+	const bool withShut = data.size() >= 8 && memcmp(at, "PBK3", 4) == 0;
+	const bool withBase = withShut || (data.size() >= 8 && memcmp(at, "PBK2", 4) == 0);
 	if (data.size() < 8 || (memcmp(at, "PBK1", 4) != 0 && !withBase))
 	{
 		out.problem = "the book's mesh isn't in the overlay";
@@ -1934,16 +1939,28 @@ bool LoadBookModel(const std::string& which, ItemModel& out)
 		const std::string name(at, nameLength);
 		at += nameLength;
 		uint32_t vertices = 0, indices = 0;
-		const size_t floats = withBase ? 13 : 12;
+		const size_t floats = withShut ? 23 : withBase ? 13 : 12;
 		if (!Take(at, end, material) || !Take(at, end, vertices) || end - at < static_cast<ptrdiff_t>(vertices * floats * 4))
 			break;
 		ModelPart part;
 		part.vertices.resize(vertices);
-		for (ModelVertex& v : part.vertices)
+		if (withShut)
+			part.shut.resize(vertices);
+		for (size_t i = 0; i < part.vertices.size(); ++i)
 		{
-			float f[13] = {};
+			ModelVertex& v = part.vertices[i];
+			float f[23] = {};
 			memcpy(f, at, floats * 4);
 			at += floats * 4;
+			if (withShut)
+			{
+				// Not tilted as the rest is (finish): the shader works on the book untilted
+				ShutVertex& s = part.shut[i];
+				memcpy(s.place, f + 13, 12);
+				memcpy(s.normal, f + 16, 12);
+				memcpy(s.tangent, f + 19, 12);
+				s.fold = f[22];
+			}
 			memcpy(v.position, f, 12);
 			memcpy(v.normal, f + 3, 12);
 			memcpy(v.tangent, f + 6, 16);
@@ -2097,7 +2114,7 @@ std::string BookRequest(const std::string& uuid)
 
 bool BookTurn(int direction)
 {
-	if (g_shown.uuid.empty() || g_shown.turning != 0 || g_shown.settle > 0)
+	if (g_shown.uuid.empty() || g_shown.turning != 0 || g_shown.settle > 0 || g_shown.shut > 0.f || g_shown.shutting != 0)
 		return false;
 	const int to = g_shown.spread + direction;
 	if (to < 0 || to >= Spreads(g_shown.uuid))
@@ -2136,9 +2153,26 @@ bool BookTurn(int direction)
 	return true;
 }
 
+bool BookShut(bool shut)
+{
+	if (g_shown.uuid.empty() || g_shown.turning != 0 || g_shown.settle > 0)
+		return false;
+	g_shown.shutting = shut ? 1 : -1;
+	return true;
+}
+
+bool BookShutting() { return g_shown.shutting > 0 || (g_shown.shutting == 0 && g_shown.shut > 0.f); }
+
+namespace
+{
+	float g_testShut = -1.f;
+}
+
+void BookTestShut(float shut) { g_testShut = shut; }
+
 void BookTick(float dt)
 {
-	constexpr float kTurnSeconds = 0.75f;
+	constexpr float kTurnSeconds = 0.75f, kShutSeconds = 1.2f;
 	float sheet[4] = { -1.f, 1.f, 1.f, kPageWidth }, sheet2[4] = { cosf(kTilt), sinf(kTilt), kMadeLeft / kMadeRight, kGutter };
 	float progress = static_cast<float>(g_shown.spread);
 	if (g_shown.turning != 0 && g_shown.ready && *g_shown.ready)
@@ -2176,7 +2210,21 @@ void BookTick(float dt)
 	const float right = kAllPages - left;
 	sheet[1] = right / kMadeRight;
 	sheet[2] = left / kMadeLeft;
-	ModelViewBook(sheet, sheet2);
+	// Shutting or opening: the front half over onto the back on the end of the spine, the spine bending from flat to half
+	// round and lengthening to it (kSpineOpen to kSpineShut, export_book.py), its pages flattening as it goes, and the
+	// book moved over so it stays in the middle (shut, it lies from its spine's back, kShutLeft, to its boards' edge)
+	if (g_shown.shutting != 0)
+	{
+		g_shown.shut = std::clamp(g_shown.shut + g_shown.shutting * dt / kShutSeconds, 0.f, 1.f);
+		if (g_shown.shut <= 0.f || g_shown.shut >= 1.f)
+			g_shown.shutting = 0;
+	}
+	constexpr float kShutLeft = -0.0045f, kShutRight = 0.265f, kBoardT = 0.0055f;
+	constexpr float kSpineOpen = 0.06f, kSpineShut = 3.14159265f * ((kMadeLeft + kMadeRight) / 2.f + kBoardT);
+	const float how = g_testShut >= 0.f ? g_testShut : Ease(g_shown.shut);
+	const float flat = std::clamp((how - 0.05f) / 0.85f, 0.f, 1.f);
+	const float shut[4] = { how, (kShutLeft + kShutRight) / 2.f, kSpineOpen + (kSpineShut - kSpineOpen) * how, Ease(flat) };
+	ModelViewBook(sheet, sheet2, shut);
 }
 
 int BookSpread() { return g_shown.spread; }
