@@ -115,6 +115,96 @@ float3 SpineAt(float along, float total, float th, out float phi)
 	return float3(kJointX + x, 0, -kBoardT + z);
 }
 
+// The journal folding shut (book.h's JournalFold, which this is the same as; build_journal.py makes it open and flat):
+// a point on leather that bends twice, so far along it from where the first bend begins, so far in from its outside, the
+// two bends turning th between them with flat of that length between. Along it and up from it; a: how far it's turned.
+static const float kJXS = 0.0105124f, kJWO = 0.1308124f, kJBend = 0.0047124f, kJSpineFlat = 0.0116f, kJFlapFlat = 0.0134f;
+
+float2 BendTwice(float d, float inward, float th, float flat, bool rigid, out float a)
+{
+	const float h = th * 0.5f, b = kJBend;
+	const bool straight = h < 1e-4f;
+	const float r = straight ? 0.0f : b / h;
+	const float2 e1 = straight ? float2(b, 0.5f * b * h) : r * float2(sin(h), 1.0f - cos(h));
+	const float2 e2 = e1 + float2(cos(h), sin(h)) * flat;
+	const float2 e3 = straight ? e2 + float2(b, 0) : e2 + r * float2(sin(th) - sin(h), cos(h) - cos(th));
+	float2 at;
+	if (rigid || d >= 2.0f * b + flat)
+	{
+		a = th;
+		at = e3 + float2(cos(th), sin(th)) * (d - 2.0f * b - flat);
+	}
+	else if (d <= 0)
+	{
+		a = 0;
+		at = float2(d, 0);
+	}
+	else if (d < b)
+	{
+		a = h * d / b;
+		at = straight ? float2(d, 0.5f * d * a) : r * float2(sin(a), 1.0f - cos(a));
+	}
+	else if (d < b + flat)
+	{
+		a = h;
+		at = e1 + float2(cos(h), sin(h)) * (d - b);
+	}
+	else
+	{
+		a = h + h * (d - b - flat) / b;
+		at = straight ? e2 + float2(d - b - flat, 0) : e2 + r * float2(sin(a) - sin(h), cos(h) - cos(a));
+	}
+	return at + float2(-sin(a), cos(a)) * inward;
+}
+
+// A journal's vertex, the journal shut.x shut: the front cover over on the spine first, the flap round the fore-edge
+// after, the pages flattening onto their covers. piece: export_journal.py's (1 round the spine, 2 the right pages, 3 the
+// left, 4 the flap, 6 only there shut).
+void JournalPart(uint piece, float3 sp, inout float3 p, inout float3 n, inout float3 t)
+{
+	const float pi = 3.14159265f;
+	const float spine = pi * smoothstep(0.0f, 0.65f, shut.x), flap = pi * smoothstep(0.45f, 1.0f, shut.x), flat = smoothstep(0.0f, 0.6f, shut.x);
+	float a = 0;
+	if (piece == 6)
+	{
+		if (shut.x < 0.999f)
+			p = 0;
+	}
+	else if (piece == 1)
+	{
+		if (kJXS - p.x > 0)
+		{
+			const float2 at = BendTwice(kJXS - p.x, p.z, spine, kJSpineFlat, false, a);
+			p = float3(kJXS - at.x, p.y, at.y);
+			n = Turned(n, a);
+			t = Turned(t, a);
+		}
+	}
+	else if (piece == 2)
+	{
+		p.x = lerp(p.x, sp.x, flat);
+		p.z = lerp(p.z, sp.z, flat);
+	}
+	else if (piece == 3)
+	{
+		const float2 q = lerp(float2(-kJXS - p.x, p.z), sp.xz, flat);
+		const float2 at = BendTwice(2.0f * kJBend + kJSpineFlat + q.x, q.y, spine, kJSpineFlat, true, a);
+		p = float3(kJXS - at.x, p.y, at.y);
+		n = Turned(n, a);
+		t = Turned(t, a);
+	}
+	else if (piece == 4)
+	{
+		if (p.x - kJWO > 0)
+		{
+			const float2 at = BendTwice(p.x - kJWO, p.z, flap, kJFlapFlat, false, a);
+			p = float3(kJWO + at.x, p.y, at.y);
+			n = Turned(n, -a);
+			t = Turned(t, -a);
+		}
+	}
+}
+
 void BookPart(uint role, float base, float3 sp, float3 sn, float3 st, float fold, inout float3 p, inout float3 n, inout float3 t)
 {
 	const float c = sheet2.x, s = sheet2.y;
@@ -155,7 +245,13 @@ void BookPart(uint role, float base, float3 sp, float3 sn, float3 st, float fold
 		}
 		p += n * 0.0003f;
 	}
-	if (shut.x > 0 && role != 3 && role != 4)
+	// A journal (a spine length below 0) folds its own way; what's only there while it's shut (role 6) is hidden till then
+	if (shut.z < 0 && role != 3 && role != 4)
+	{
+		if (shut.x > 0 || role == 6)
+			JournalPart(role == 6 ? 6 : (uint)round(fold), sp, p, n, t);
+	}
+	else if (shut.x > 0 && role != 3 && role != 4)
 	{
 		const float th = shut.x * 3.14159265f, spineLength = shut.z, m = shut.w;
 		const uint piece = (uint)round(fold);
@@ -222,7 +318,7 @@ Out VS(In i)
 {
 	Out o;
 	const uint role = (uint)round(i.colour.a * 255);
-	if (sheet.w > 0 && ((role >= 1 && role <= 4) || shut.x > 0))
+	if (sheet.w > 0 && ((role >= 1 && role <= 6) || shut.x > 0))
 	{
 		float3 bookTangent = i.t.xyz;
 		BookPart(role, i.colour.r * 0.03f, i.shutP, i.shutN, i.shutT, i.fold, i.p, i.n, bookTangent);
@@ -703,6 +799,16 @@ float4 PS(Out i) : SV_Target
 		constexpr float kJointX = 0.030f, kBoardT = 0.0055f;
 		const float c = sheet2[0], s = sheet2[1];
 		float x = p[0], y = p[1] * c + p[2] * s, z = -p[1] * s + p[2] * c;
+		if (shut[2] < 0.f)
+		{
+			// A journal, which folds its own way (book.h)
+			float q[3] = { x, y, z }, turned = 0.f;
+			JournalFold(static_cast<int>(sv.fold + 0.5f), sv.place, JournalShutAt(shut[0]), shut[0], q, turned);
+			p[0] = q[0];
+			p[1] = q[1] * c - q[2] * s;
+			p[2] = q[1] * s + q[2] * c;
+			return;
+		}
 		const float th = shut[0] * 3.14159265f, length = shut[2], m = shut[3];
 		const auto spineAt = [&](float along, float& ax, float& az, float& phi)
 		{
@@ -1424,7 +1530,7 @@ float4 PS(Out i) : SV_Target
 			for (size_t i = 0; i < vertices.size(); ++i)
 			{
 				const ModelVertex& v = vertices[i];
-				if (v.colour[3] == 5)
+				if (v.colour[3] == 5 || v.colour[3] == 6)   // nor what's only on a journal shut, which lies where it is then
 					continue;
 				for (int k = 0; k < 3; ++k)
 					g_fitPoints.push_back(v.position[k] - g_centre[k]);

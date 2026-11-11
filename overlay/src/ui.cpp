@@ -3701,10 +3701,11 @@ namespace
 	}
 
 	// A book shown as a book, with Live Book Preview on: open on its pages once it's read and its text is here, shut until then.
-	// Not a note: a letter is no leather-bound tome, so until it has a sheet of its own to show, its text is shown plainly.
+	// A journal is one too, in a small soft-backed notebook of its own (book.cpp). Not the other notes: a letter is a
+	// sheet, so until it has one to show, its text is shown plainly.
 	bool LiveBook(const Entry& e)
 	{
-		return g_book == kBookLibrary && GetSettings().liveBook && !(e.flags & kFlagNote);
+		return g_book == kBookLibrary && GetSettings().liveBook && (!(e.flags & kFlagNote) || (e.flags & kFlagJournal));
 	}
 	bool g_bookOpen = false;   // the book shown this frame is open on its pages, so they can be turned
 	bool g_shutBookClicked = false;   // the hint to shut or open it clicked, for the book to take next frame
@@ -4184,7 +4185,8 @@ namespace
 			{
 				if (!BookShutting())
 					hints.push_back({ kPadLeft | kPadRight, Tx(T_left_right), Tx(T_turn_page), kActNone });
-				hints.push_back({ kPadL3, KeyLabel(kKeyX), Tx(BookShutting() ? T_book_open : T_book_close), kActNone });
+				if (BookCanShut())   // not a journal, which doesn't shut on screen yet
+					hints.push_back({ kPadL3, KeyLabel(kKeyX), Tx(BookShutting() ? T_book_open : T_book_close), kActNone });
 			}
 		}
 		else
@@ -4263,8 +4265,10 @@ namespace
 			}
 			// The page count between two arrows, under the book: none while it's shut
 			const bool shutNow = BookShutting();
-			const int spread = BookSpread(), spreads = BookSpreadCount(), pages = std::max(1, BookPageCount() - 1);
-			const int first = spread * 2, last = std::min(spread * 2 + 1, pages);
+			// A journal has no title page: its first spread is its pages 1 and 2
+			const int untitled = BookHasTitlePage() ? 0 : 1;
+			const int spread = BookSpread(), spreads = BookSpreadCount(), pages = std::max(1, BookPageCount() - 1 + untitled);
+			const int first = spread * 2 + untitled, last = std::min(spread * 2 + 1 + untitled, pages);
 			const std::string which = first == 0 || first >= last ? std::to_string(std::max(1, std::min(first == 0 ? 1 : first, pages))) : std::to_string(first) + "\xe2\x80\x93" + std::to_string(last);
 			const std::string label = TxFill(first == 0 || first >= last ? T_book_page : T_book_pages, which, std::to_string(pages));
 			const float cy = bottom - barH * 0.5f, cx = (x0 + x1) * 0.5f;
@@ -4471,7 +4475,7 @@ namespace
 		}
 		if (showBook)
 		{
-			// Its shelf, for the look of its binding: the Library's sections in order, Lore Books then Monster Tomes
+			// Its shelf, for the look of its binding: the Library's sections in order, Lore Books, Monster Tomes, then the journals
 			int shelf = 0;
 			for (const Section& s : m.sections)
 			{
@@ -4480,7 +4484,8 @@ namespace
 				if (s.book == kBookLibrary)
 					++shelf;
 			}
-			DrawBookPanel(*e, section, shelf, mx0, mx1, y, bottom - 30);
+			// A journal is one wherever its shelf comes in the list (book.cpp's kShelfJournals)
+			DrawBookPanel(*e, section, (e->flags & kFlagJournal) ? 2 : std::min(shelf, 1), mx0, mx1, y, bottom - 30);
 			return;
 		}
 		if (showModel)
@@ -8582,7 +8587,8 @@ namespace
 			{
 				if (!BookShutting())
 					hints.push_back({ kPadLT | kPadRT, g_keyPages.c_str(), Tx(T_turn_page), kActNone });
-				hints.push_back({ kPadL3, KeyLabel(kKeyX), Tx(BookShutting() ? T_book_open : T_book_close), kActShutBook });
+				if (BookCanShut())
+					hints.push_back({ kPadL3, KeyLabel(kKeyX), Tx(BookShutting() ? T_book_open : T_book_close), kActShutBook });
 			}
 			else if (g_padPrompts && g_book != kTabAchievements)
 				hints.push_back({ kPadLT | kPadRT, nullptr, Tx(T_region), kActNone });

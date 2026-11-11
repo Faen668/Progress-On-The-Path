@@ -28,6 +28,7 @@ statemachine class CPotP_Catalog
 	var quest_blocks		: array<SPotP_QuestBlock>;   // vanilla blocks that move events on, heard through Native Quest Hook
 	var event_kills			: array<SPotP_EventKill>;    // deaths that finish events, for events without quest blocks
 	var events_near			: array<CPotP_Entry>;      // events begun by coming near their pin (AddEventOpenedNear)
+	var library_shelf		: int;              // the Library shelf being defined, from 0 (PotP_LibraryShelf's numbers)
 	var library_readables	: array<name>;      // every readable item the game has, read once a build for AddModBooks
 
 	var current_section		: CPotP_Section;
@@ -77,6 +78,7 @@ statemachine class CPotP_Catalog
 		event_kills.Clear();
 		events_near.Clear();
 		library_readables.Clear();
+		library_shelf = -1;
 		pending.Clear();
 		current_section = NULL;
 
@@ -491,6 +493,7 @@ statemachine class CPotP_Catalog
 	public function BeginLibrarySection(header_key: string)
 	{
 		BeginSection(PotP_Book_Library, header_key, PotP_A_Library, "PotP_Library_");
+		library_shelf += 1;
 	}
 
 	//---------------------------------------------------
@@ -520,6 +523,7 @@ statemachine class CPotP_Catalog
 		var tracked : CPotP_Entry = AddBook(suffix, type_value, note);
 
 		tracked.is_note = true;
+		tracked.is_journal = library_shelf == 2;
 		return tracked;
 	}
 
