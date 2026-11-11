@@ -1688,7 +1688,7 @@
 2116569592||potp_ov_library_lore|Lore Books
 2116569593||potp_ov_library_tomes|Monster Tomes
 2116569594||potp_ov_tour_library|Library
-2116569595||potp_ov_tour_library_body|Every lore book and monster tome in the game, and whether Geralt has read it, as the game itself keeps count. Select one he has read to read it again here.
+2116569595||potp_ov_tour_library_body|Every lore book and monster tome in the game, and whether Geralt has read it, as the game itself keeps count. Select one he has read to read it again here. Below them are the journals, letters, notices and notes he can come by: kept to read again, but not counted in his progress.
 2116569596||potp_ov_live_book|Live Book Preview
 2116569597||potp_ov_live_book_hint|Shows a book Geralt has read in the Library as a book open on its pages, to turn one by one. Off, the Library shows its text plainly, as a page to scroll.
 2116569598||potp_ov_book_page|Page [1] of [2]
@@ -1703,6 +1703,11 @@
 2116569607||potp_ov_on_caps|ON
 2116569608||potp_ov_off_caps|OFF
 2116569609||potp_ov_hold_to_refresh|Hold to Refresh
+2116569610||potp_ov_library_journals|Journals and Diaries
+2116569611||potp_ov_library_letters|Letters
+2116569612||potp_ov_library_notices|Notices and Contracts
+2116569613||potp_ov_library_notes|Notes and Documents
+2116569614||potp_ov_note_not_read|Geralt has yet to read this. Once he has, its text will be here to read again.
 ;overlay-text-end
 ;
-; Next id: 2116569610
+; Next id: 2116569615

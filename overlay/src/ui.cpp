@@ -1210,7 +1210,8 @@ namespace
 		for (const Section& s : m.sections)
 			if (s.book == book)
 				for (const Entry& e : s.entries)
-					if (!only || ((e.flags & kFlagMissable) && !e.upgradeHidden))
+					// The Library's notes are read, not counted: each shelf's header says how many
+					if (!(e.flags & kFlagNote) && (!only || ((e.flags & kFlagMissable) && !e.upgradeHidden)))
 						Add(c, e);
 		return c;
 	}
@@ -3699,10 +3700,11 @@ namespace
 		return g_book == kBookBestiary && GetSettings().liveBestiary && !CreatureMasked(e) && !e.creatureTemplate.empty();
 	}
 
-	// A book shown as a book, with Live Book Preview on: open on its pages once it's read and its text is here, shut until then
-	bool LiveBook(const Entry&)
+	// A book shown as a book, with Live Book Preview on: open on its pages once it's read and its text is here, shut until then.
+	// Not a note: a letter is no leather-bound tome, so until it has a sheet of its own to show, its text is shown plainly.
+	bool LiveBook(const Entry& e)
 	{
-		return g_book == kBookLibrary && GetSettings().liveBook;
+		return g_book == kBookLibrary && GetSettings().liveBook && !(e.flags & kFlagNote);
 	}
 	bool g_bookOpen = false;   // the book shown this frame is open on its pages, so they can be turned
 	bool g_shutBookClicked = false;   // the hint to shut or open it clicked, for the book to take next frame
@@ -3938,9 +3940,9 @@ namespace
 		const int titleSize = Measure(kTitle, 32, title.c_str()).x <= titleRoom ? 32 : 24;
 		TextFit(kTitle, titleSize, ca.x + 112, ca.y + (titleSize == 32 ? 14 : 20), Rgb(250, 242, 220), title, titleRoom);
 		std::string sub = section ? section->header : "";
-		if ((e.flags >> 2) == 1)
+		if (((e.flags >> 2) & 3) == 1)
 			sub += std::string("  -  ") + Tx(T_group_hos);
-		else if ((e.flags >> 2) == 2)
+		else if (((e.flags >> 2) & 3) == 2)
 			sub += std::string("  -  ") + Tx(T_group_baw);
 		TextFit(kSerif, 28, ca.x + 112, ca.y + 62, Rgb(226, 214, 186), sub, titleRoom);
 
@@ -4321,9 +4323,9 @@ namespace
 		const float titleRoom = mx1 - mx0 - 130;
 		const int titleSize = Measure(kTitle, 32, title.c_str()).x <= titleRoom ? 32 : 24;
 		std::string sub = e->region > 0 && e->region < kRegionCount ? m.regions[e->region] : section->book == kBookGwent && !m.regions[0].empty() ? m.regions[0] : section->header;
-		if ((e->flags >> 2) == 1)
+		if (((e->flags >> 2) & 3) == 1)
 			sub += std::string("  -  ") + Tx(T_group_hos);
-		else if ((e->flags >> 2) == 2)
+		else if (((e->flags >> 2) & 3) == 2)
 			sub += std::string("  -  ") + Tx(T_group_baw);
 		const float titleH = WrappedHeight(kTitle, titleSize, title.c_str(), titleRoom);
 		const float boxH = std::max(118.f, 30.f + titleH + WrappedHeight(kSerif, 28, sub.c_str(), titleRoom));
@@ -4500,7 +4502,7 @@ namespace
 			const bool have = QuestLore(*e, lore);
 			if (have && lore.empty())
 			{
-				const char* none = g_book == kBookLibrary ? Tx(T_book_not_read) : Tx(T_lore_not_started);
+				const char* none = g_book != kBookLibrary ? Tx(T_lore_not_started) : (e->flags & kFlagNote) ? Tx(T_note_not_read) : Tx(T_book_not_read);
 				Text(kSerif, 30, mx0 + 12, y, kDim, none, textW);
 				y += WrappedHeight(kSerif, 30, none, textW) + 22.f;
 			}

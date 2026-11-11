@@ -513,9 +513,21 @@ statemachine class CPotP_Catalog
 
 	//---------------------------------------------------
 
-	// Books a mod adds, on the shelf they belong to (0 Lore Books, 1 Monster Tomes), into the section being defined:
-	// every readable item the game has that the section doesn't list yet and LibraryShelf puts there. Called before the
-	// section ends, so they're sorted in with the game's own.
+	// A note: a journal, a letter, a notice or any other sheet with something to read. As a book, but not counted in
+	// progress (CountProgress): many belong to one side of a quest, or are gone once it's over.
+	public function AddNote(suffix: string, type_value: PotP_Preview_Entry_Type, note: name) : CPotP_Entry
+	{
+		var tracked : CPotP_Entry = AddBook(suffix, type_value, note);
+
+		tracked.is_note = true;
+		return tracked;
+	}
+
+	//---------------------------------------------------
+
+	// What a mod adds, on the shelf it belongs to (PotP_LibraryShelf: 0 Lore Books, 1 Monster Tomes, then the notes'),
+	// into the section being defined: every readable item the game has that the Library doesn't list yet and
+	// LibraryShelf puts there. Called before the section ends, so they're sorted in with the game's own.
 	public function AddModBooks(shelf: int)
 	{
 		var defs	: CDefinitionsManagerAccessor = theGame.GetDefinitionsManager();
@@ -545,7 +557,14 @@ statemachine class CPotP_Catalog
 				continue;
 			}
 			listed.PushBack(library_readables[Idx]);
-			AddBook(PotP_SanitizeUuid(StrLower(NameToString(library_readables[Idx]))), PotP_E_ModAdded, library_readables[Idx]);
+			if (shelf >= 2)
+			{
+				AddNote(PotP_SanitizeUuid(StrLower(NameToString(library_readables[Idx]))), PotP_E_ModAdded, library_readables[Idx]);
+			}
+			else
+			{
+				AddBook(PotP_SanitizeUuid(StrLower(NameToString(library_readables[Idx]))), PotP_E_ModAdded, library_readables[Idx]);
+			}
 		}
 	}
 
@@ -839,6 +858,11 @@ statemachine class CPotP_Catalog
 				{
 					continue;
 				}
+			}
+			// The Library's notes are read, not counted
+			if (entries[Idx].is_note)
+			{
+				continue;
 			}
 
 			total_count += 1;

@@ -16,6 +16,7 @@ class CPotP_Entry
 
 	var is_missable		: bool;
 	var is_modadded		: bool;
+	var is_note			: bool;		// a Library note, not a book: listed and marked read, never counted in progress
 	var dlc_index		: int;
 
 	var missable_group	: CPotP_Section;

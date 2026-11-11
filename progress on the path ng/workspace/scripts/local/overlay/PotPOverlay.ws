@@ -574,6 +574,10 @@ function PotPOverlay_ExportSection(section: CPotP_Section) : string
 			flags += 2;
 		}
 		flags += tracked.dlc_index * 4;
+		if (tracked.is_note)
+		{
+			flags += 16;
+		}
 
 		tip = PotPOverlay_Clean(PotP_GetMissableTip(tracked));
 

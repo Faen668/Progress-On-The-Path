@@ -631,6 +631,11 @@ function PotPOverlay_TextKeys_3(out keys: array<string>)
 	keys.PushBack("on_caps");
 	keys.PushBack("off_caps");
 	keys.PushBack("hold_to_refresh");
+	keys.PushBack("library_journals");
+	keys.PushBack("library_letters");
+	keys.PushBack("library_notices");
+	keys.PushBack("library_notes");
+	keys.PushBack("note_not_read");
 }
 
 function PotPOverlay_ExportText() : string
