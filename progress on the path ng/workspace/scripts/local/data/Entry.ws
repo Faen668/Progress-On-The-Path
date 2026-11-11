@@ -18,6 +18,8 @@ class CPotP_Entry
 	var is_modadded		: bool;
 	var is_note			: bool;		// a Library note, not a book: listed and marked read, never counted in progress
 	var is_journal		: bool;		// a note bound as a book is: a journal, a diary, a log
+	var shelf			: int;		// a Library entry's shelf, from 0 (PotP_LibraryShelf's numbers)
+	var untracked		: bool;		// its kind is turned off in Tracked Contents: listed, but not counted, announced or pinned
 	var dlc_index		: int;
 
 	var missable_group	: CPotP_Section;

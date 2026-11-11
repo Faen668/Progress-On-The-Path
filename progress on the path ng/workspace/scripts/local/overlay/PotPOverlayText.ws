@@ -494,8 +494,6 @@ function PotPOverlay_TextKeys_2(out keys: array<string>)
 	keys.PushBack("item_set");
 	keys.PushBack("item_set_worn");
 	keys.PushBack("item_set_pieces");
-	keys.PushBack("cloth_sim");
-	keys.PushBack("cloth_sim_hint");
 	keys.PushBack("ward_nothing");
 	keys.PushBack("tour_ward_list");
 	keys.PushBack("tour_ward_list_body");
@@ -507,12 +505,12 @@ function PotPOverlay_TextKeys_2(out keys: array<string>)
 	keys.PushBack("tour_ward_cards_body");
 	keys.PushBack("tour_ward_outfits");
 	keys.PushBack("tour_ward_outfits_body");
+	keys.PushBack("ward_not_tracked");
+	keys.PushBack("update_key");
 }
 
 function PotPOverlay_TextKeys_3(out keys: array<string>)
 {
-	keys.PushBack("ward_not_tracked");
-	keys.PushBack("update_key");
 	keys.PushBack("pad_cross");
 	keys.PushBack("pad_circle");
 	keys.PushBack("pad_square");
@@ -636,6 +634,52 @@ function PotPOverlay_TextKeys_3(out keys: array<string>)
 	keys.PushBack("library_notices");
 	keys.PushBack("library_notes");
 	keys.PushBack("note_not_read");
+	keys.PushBack("set_page_tracked");
+	keys.PushBack("set_page_tracked_intro");
+	keys.PushBack("not_tracked");
+	keys.PushBack("set_track_quest_main");
+	keys.PushBack("set_track_quest_side");
+	keys.PushBack("set_track_quest_contract");
+	keys.PushBack("set_track_quest_scavenger");
+	keys.PushBack("set_track_quest_treasure");
+	keys.PushBack("set_track_event");
+	keys.PushBack("set_track_world_camps");
+	keys.PushBack("set_track_world_dens");
+	keys.PushBack("set_track_world_nests");
+	keys.PushBack("set_track_world_places");
+	keys.PushBack("set_track_world_signs");
+	keys.PushBack("set_track_world_sites");
+	keys.PushBack("set_track_world_guarded");
+	keys.PushBack("set_track_world_distress");
+	keys.PushBack("set_track_world_knights");
+	keys.PushBack("set_track_world_infested");
+	keys.PushBack("set_track_world_hanse");
+	keys.PushBack("set_track_world_stashes");
+	keys.PushBack("set_track_world_caches");
+	keys.PushBack("set_track_world_spoils");
+	keys.PushBack("set_track_world_hidden");
+	keys.PushBack("set_track_items_silver");
+	keys.PushBack("set_track_items_steel");
+	keys.PushBack("set_track_items_crossbows");
+	keys.PushBack("set_track_items_relics");
+	keys.PushBack("set_track_items_sets");
+	keys.PushBack("set_track_items_witcher");
+	keys.PushBack("set_track_items_horse");
+	keys.PushBack("set_track_items_trophies");
+	keys.PushBack("set_track_items_mods");
+	keys.PushBack("set_track_gwent_monsters");
+	keys.PushBack("set_track_gwent_nilfgaard");
+	keys.PushBack("set_track_gwent_north");
+	keys.PushBack("set_track_gwent_scoiatael");
+	keys.PushBack("set_track_gwent_skellige");
+	keys.PushBack("set_track_gwent_neutral");
+	keys.PushBack("set_track_bestiary");
+	keys.PushBack("set_track_library_lore");
+	keys.PushBack("set_track_library_tomes");
+	keys.PushBack("set_track_library_journals");
+	keys.PushBack("set_track_library_letters");
+	keys.PushBack("set_track_library_notices");
+	keys.PushBack("set_track_library_notes");
 }
 
 function PotPOverlay_ExportText() : string

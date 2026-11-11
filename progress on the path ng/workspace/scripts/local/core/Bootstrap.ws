@@ -335,7 +335,7 @@ function PotP_GetCollectabilityTag(item: name) : string
 	}
 
 	tracked = main.catalog.FindItem(item);
-	if (!tracked)
+	if (!tracked || tracked.untracked)
 	{
 		return "";
 	}

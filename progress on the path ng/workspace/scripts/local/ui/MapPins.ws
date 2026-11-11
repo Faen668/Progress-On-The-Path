@@ -79,7 +79,7 @@ class CPotP_MapPins
 
 			for (Idx = 0; Idx < events.Size(); Idx += 1)
 			{
-				if (events[Idx].IsDone() || events[Idx].status == PotP_S_Missed || !PotP_IsEventUnlocked(events[Idx]))
+				if (events[Idx].IsDone() || events[Idx].status == PotP_S_Missed || events[Idx].untracked || !PotP_IsEventUnlocked(events[Idx]))
 				{
 					continue;
 				}

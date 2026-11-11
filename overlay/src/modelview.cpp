@@ -1857,7 +1857,7 @@ void ModelViewRequest(const std::string& templateName)
 			loaded->model.problem = problem.what();
 		}
 		// Cloth comes to rest here, so it's there at rest the moment it's shown
-		if (loaded->ok && !loaded->model.cloths.empty() && GetSettings().clothSim)
+		if (loaded->ok && !loaded->model.cloths.empty())
 		{
 			try
 			{
@@ -2371,7 +2371,7 @@ void ModelViewRender(ID3D12GraphicsCommandList* list)
 	list->SetGraphicsRootShaderResourceView(9, (g_fromTable ? g_fromTable : g_boneTable)->GetGPUVirtualAddress());
 
 	// The cloth: this frame's pose to work on, and the newest it's finished. It's worked out apart, so it can't hold a frame up.
-	const bool clothOn = g_clothBytes > 0 && g_clothRing[g_clothAt] && GetSettings().clothSim;
+	const bool clothOn = g_clothBytes > 0 && g_clothRing[g_clothAt];
 	if (clothOn)
 	{
 		const float since = std::chrono::duration<float>(now - g_clothLastAt).count();

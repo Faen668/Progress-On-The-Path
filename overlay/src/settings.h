@@ -17,7 +17,6 @@ struct Settings
 	float posX = 0.f, posY = 0.f;  // dragged this far from the centre, as parts of the screen
 	bool pauseGame = false;
 	bool openOnLastBook = true;
-	bool clothSim = true;         // cloth on the models moves
 	bool autoRotate = false;      // models in the Bestiary and Items turn slowly by themselves
 	bool liveBestiary = true;     // the Bestiary shows each creature's model in an idle, not its painting
 	bool liveBook = true;         // the Library shows a read book as a book, its pages to turn, not plain text

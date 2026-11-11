@@ -106,7 +106,7 @@ class CPotP_Section
 
 		for (Idx = 0; Idx < entries.Size(); Idx += 1)
 		{
-			if (!entries[Idx].IsDone() && entries[Idx].status != PotP_S_Missed)
+			if (!entries[Idx].IsDone() && entries[Idx].status != PotP_S_Missed && !entries[Idx].untracked)
 			{
 				outstanding.PushBack(entries[Idx]);
 			}

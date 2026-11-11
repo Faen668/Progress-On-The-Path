@@ -1188,6 +1188,15 @@ namespace
 		return c;
 	}
 
+	// A section none of whose entries is tracked (Tracked Contents turns off a kind, and a section is of one kind)
+	bool SectionUntracked(const Section& s)
+	{
+		for (const Entry& e : s.entries)
+			if (!(e.flags & kFlagUntracked))
+				return false;
+		return !s.entries.empty();
+	}
+
 	struct Counts { int done = 0, total = 0, progress = 0, open = 0, ignored = 0, missed = 0; };
 
 	void Add(Counts& c, const Entry& e)
@@ -1210,8 +1219,8 @@ namespace
 		for (const Section& s : m.sections)
 			if (s.book == book)
 				for (const Entry& e : s.entries)
-					// The Library's notes are read, not counted: each shelf's header says how many
-					if (!(e.flags & kFlagNote) && (!only || ((e.flags & kFlagMissable) && !e.upgradeHidden)))
+					// What's turned off in Tracked Contents isn't counted: its section's header still says how many
+					if (!(e.flags & kFlagUntracked) && (!only || ((e.flags & kFlagMissable) && !e.upgradeHidden)))
 						Add(c, e);
 		return c;
 	}
@@ -2209,7 +2218,7 @@ namespace
 		const auto sectionCount = [](const Section& s)
 		{
 			const DoneOf c = RegionCount(s);
-			return std::to_string(c.done) + " / " + std::to_string(c.total);
+			return (SectionUntracked(s) ? std::string(Tx(T_not_tracked)) + "   " : std::string()) + std::to_string(c.done) + " / " + std::to_string(c.total);
 		};
 		const auto headerH = [&](const Section& s)
 		{
@@ -2536,8 +2545,9 @@ namespace
 				dl->AddRectFilledMultiColor(a, ImVec2(a.x + 9, b.y), Mix(stripe, Rgb(255, 255, 255), 0.25f), Mix(stripe, Rgb(255, 255, 255), 0.25f), stripe, stripe);
 				dl->AddRect(a, b, focused ? Rgb(238, 232, 214) : Rgb(78, 66, 44), 0.f, 0, focused ? 2.f : 1.f);
 				const DoneOf counted = RegionCount(s);
-				char count[24];
-				snprintf(count, sizeof(count), "%d / %d", counted.done, counted.total);
+				// Not tracked (its kind turned off in Tracked Contents): said before its count, which isn't in the tab's
+				char count[96];
+				snprintf(count, sizeof(count), "%s%d / %d", SectionUntracked(s) ? (std::string(Tx(T_not_tracked)) + "   ").c_str() : "", counted.done, counted.total);
 				const float countW = Measure(kSans, 24, count).x;
 				const float room = headerRoom(s, countW);
 				if (!open && s.book != kBookMissable)
@@ -5529,8 +5539,6 @@ namespace
 		toggle(x1, ry, { Tx(T_show_unstarted), Tx(T_show_unstarted_hint) }, st.revealUnstarted);
 		ry += rowH;
 		toggle(x1, ry, { Tx(T_show_secret), Tx(T_show_secret_hint) }, st.revealHiddenAchievements);
-		ry += rowH;
-		toggle(x1, ry, { Tx(T_cloth_sim), Tx(T_cloth_sim_hint) }, st.clothSim);
 		ry += rowH;
 		toggle(x1, ry, { Tx(T_live_bestiary), Tx(T_live_bestiary_hint) }, st.liveBestiary);
 		ry += rowH;

@@ -144,6 +144,12 @@ statemachine class CPotP_Tracker
 			}
 		}
 
+		// A kind turned off in Tracked Contents is kept up to date, but nothing's said of it
+		if (tracked.untracked)
+		{
+			return true;
+		}
+
 		switch (source)
 		{
 		case PotP_Src_Full:

@@ -265,6 +265,58 @@ function PotP_DefineSettings(s: CPotP_Settings)
 	PotP_PresetNotifications(preset, "18", "9DB4FF", "3", "true", "false", "true");
 	preset = s.Preset("potp_ov_set_preset_enabled");
 	PotP_PresetNotifications(preset, "18", "9DB4FF", "7", "true", "true", "true");
+
+	// Tracked Contents: a toggle a kind of content. Off, a kind isn't counted, announced, pinned or warned about; it's
+	// still listed, marked as not tracked. The Library's are off to begin with: it's for reading, not for counting.
+	s.Group('ProgressOnThePath_TrackedContents', "potp_ov_set_page_tracked", "potp_ov_set_page_tracked_intro");
+	s.Add('ProgressOnThePath_Track_Quest_Main', "TOGGLE", "true", "potp_ov_set_track_quest_main", "");
+	s.Add('ProgressOnThePath_Track_Quest_Side', "TOGGLE", "true", "potp_ov_set_track_quest_side", "");
+	s.Add('ProgressOnThePath_Track_Quest_Contract', "TOGGLE", "true", "potp_ov_set_track_quest_contract", "");
+	s.Add('ProgressOnThePath_Track_Quest_Scavenger', "TOGGLE", "true", "potp_ov_set_track_quest_scavenger", "");
+	s.Add('ProgressOnThePath_Track_Quest_Treasure', "TOGGLE", "true", "potp_ov_set_track_quest_treasure", "");
+	s.Add('ProgressOnThePath_Track_Event', "TOGGLE", "true", "potp_ov_set_track_event", "");
+	s.Separator();
+	s.Add('ProgressOnThePath_Track_World_Camps', "TOGGLE", "true", "potp_ov_set_track_world_camps", "");
+	s.Add('ProgressOnThePath_Track_World_Dens', "TOGGLE", "true", "potp_ov_set_track_world_dens", "");
+	s.Add('ProgressOnThePath_Track_World_Nests', "TOGGLE", "true", "potp_ov_set_track_world_nests", "");
+	s.Add('ProgressOnThePath_Track_World_Places', "TOGGLE", "true", "potp_ov_set_track_world_places", "");
+	s.Add('ProgressOnThePath_Track_World_Signs', "TOGGLE", "true", "potp_ov_set_track_world_signs", "");
+	s.Add('ProgressOnThePath_Track_World_Sites', "TOGGLE", "true", "potp_ov_set_track_world_sites", "");
+	s.Add('ProgressOnThePath_Track_World_Guarded', "TOGGLE", "true", "potp_ov_set_track_world_guarded", "");
+	s.Add('ProgressOnThePath_Track_World_Distress', "TOGGLE", "true", "potp_ov_set_track_world_distress", "");
+	s.Add('ProgressOnThePath_Track_World_Knights', "TOGGLE", "true", "potp_ov_set_track_world_knights", "");
+	s.Add('ProgressOnThePath_Track_World_Infested', "TOGGLE", "true", "potp_ov_set_track_world_infested", "");
+	s.Add('ProgressOnThePath_Track_World_Hanse', "TOGGLE", "true", "potp_ov_set_track_world_hanse", "");
+	s.Add('ProgressOnThePath_Track_World_Stashes', "TOGGLE", "true", "potp_ov_set_track_world_stashes", "");
+	s.Add('ProgressOnThePath_Track_World_Caches', "TOGGLE", "true", "potp_ov_set_track_world_caches", "");
+	s.Add('ProgressOnThePath_Track_World_Spoils', "TOGGLE", "true", "potp_ov_set_track_world_spoils", "");
+	s.Add('ProgressOnThePath_Track_World_Hidden', "TOGGLE", "true", "potp_ov_set_track_world_hidden", "");
+	s.Separator();
+	s.Add('ProgressOnThePath_Track_Items_Silver', "TOGGLE", "true", "potp_ov_set_track_items_silver", "");
+	s.Add('ProgressOnThePath_Track_Items_Steel', "TOGGLE", "true", "potp_ov_set_track_items_steel", "");
+	s.Add('ProgressOnThePath_Track_Items_Crossbows', "TOGGLE", "true", "potp_ov_set_track_items_crossbows", "");
+	s.Add('ProgressOnThePath_Track_Items_Relics', "TOGGLE", "true", "potp_ov_set_track_items_relics", "");
+	s.Add('ProgressOnThePath_Track_Items_Sets', "TOGGLE", "true", "potp_ov_set_track_items_sets", "");
+	s.Add('ProgressOnThePath_Track_Items_Witcher', "TOGGLE", "true", "potp_ov_set_track_items_witcher", "");
+	s.Add('ProgressOnThePath_Track_Items_Horse', "TOGGLE", "true", "potp_ov_set_track_items_horse", "");
+	s.Add('ProgressOnThePath_Track_Items_Trophies', "TOGGLE", "true", "potp_ov_set_track_items_trophies", "");
+	s.Add('ProgressOnThePath_Track_Items_Mods', "TOGGLE", "true", "potp_ov_set_track_items_mods", "");
+	s.Separator();
+	s.Add('ProgressOnThePath_Track_Gwent_Monsters', "TOGGLE", "true", "potp_ov_set_track_gwent_monsters", "");
+	s.Add('ProgressOnThePath_Track_Gwent_Nilfgaard', "TOGGLE", "true", "potp_ov_set_track_gwent_nilfgaard", "");
+	s.Add('ProgressOnThePath_Track_Gwent_North', "TOGGLE", "true", "potp_ov_set_track_gwent_north", "");
+	s.Add('ProgressOnThePath_Track_Gwent_Scoiatael', "TOGGLE", "true", "potp_ov_set_track_gwent_scoiatael", "");
+	s.Add('ProgressOnThePath_Track_Gwent_Skellige', "TOGGLE", "true", "potp_ov_set_track_gwent_skellige", "");
+	s.Add('ProgressOnThePath_Track_Gwent_Neutral', "TOGGLE", "true", "potp_ov_set_track_gwent_neutral", "");
+	s.Separator();
+	s.Add('ProgressOnThePath_Track_Bestiary', "TOGGLE", "true", "potp_ov_set_track_bestiary", "");
+	s.Separator();
+	s.Add('ProgressOnThePath_Track_Library_Lore', "TOGGLE", "false", "potp_ov_set_track_library_lore", "");
+	s.Add('ProgressOnThePath_Track_Library_Tomes', "TOGGLE", "false", "potp_ov_set_track_library_tomes", "");
+	s.Add('ProgressOnThePath_Track_Library_Journals', "TOGGLE", "false", "potp_ov_set_track_library_journals", "");
+	s.Add('ProgressOnThePath_Track_Library_Letters', "TOGGLE", "false", "potp_ov_set_track_library_letters", "");
+	s.Add('ProgressOnThePath_Track_Library_Notices', "TOGGLE", "false", "potp_ov_set_track_library_notices", "");
+	s.Add('ProgressOnThePath_Track_Library_Notes', "TOGGLE", "false", "potp_ov_set_track_library_notes", "");
 }
 
 function PotP_SettingOptions(setting: CPotP_Setting, key_prefix: string, count: int)
@@ -304,6 +356,122 @@ function PotP_PresetEntry(preset: CPotP_SettingPreset, id: name, value: string)
 {
 	preset.ids.PushBack(id);
 	preset.values.PushBack(value);
+}
+
+//---------------------------------------------------
+//-- Tracked Contents -------------------------------
+//---------------------------------------------------
+
+// The setting an entry's kind is tracked by (Tracked Contents, above)
+function PotP_TrackSetting(tracked: CPotP_Entry) : name
+{
+	switch (tracked.category)
+	{
+	case PotP_A_Event:
+		return 'ProgressOnThePath_Track_Event';
+
+	case PotP_A_Quest:
+		switch (tracked.filter)
+		{
+		case PotP_I_Mains:	return 'ProgressOnThePath_Track_Quest_Main';
+		case PotP_I_Sides:	return 'ProgressOnThePath_Track_Quest_Side';
+		case PotP_I_Conts:	return 'ProgressOnThePath_Track_Quest_Contract';
+		case PotP_I_Scavs:	return 'ProgressOnThePath_Track_Quest_Scavenger';
+		case PotP_I_Hunts:	return 'ProgressOnThePath_Track_Quest_Treasure';
+		case PotP_I_Event:	return 'ProgressOnThePath_Track_Event';
+		}
+		return '';
+
+	case PotP_A_World:
+		switch (tracked.filter)
+		{
+		case PotP_I_Camps:	return 'ProgressOnThePath_Track_World_Camps';
+		case PotP_I_MDens:	return 'ProgressOnThePath_Track_World_Dens';
+		case PotP_I_Nests:	return 'ProgressOnThePath_Track_World_Nests';
+		case PotP_I_Place:	return 'ProgressOnThePath_Track_World_Places';
+		case PotP_I_Signs:	return 'ProgressOnThePath_Track_World_Signs';
+		case PotP_I_Sites:	return 'ProgressOnThePath_Track_World_Sites';
+		case PotP_I_Guard:	return 'ProgressOnThePath_Track_World_Guarded';
+		case PotP_I_Distr:	return 'ProgressOnThePath_Track_World_Distress';
+		case PotP_I_Knigh:	return 'ProgressOnThePath_Track_World_Knights';
+		case PotP_I_Infes:	return 'ProgressOnThePath_Track_World_Infested';
+		case PotP_I_Hanse:	return 'ProgressOnThePath_Track_World_Hanse';
+		case PotP_I_Stash:	return 'ProgressOnThePath_Track_World_Stashes';
+		case PotP_I_Cache:	return 'ProgressOnThePath_Track_World_Caches';
+		case PotP_I_Spoil:	return 'ProgressOnThePath_Track_World_Spoils';
+		case PotP_I_Hiddn:	return 'ProgressOnThePath_Track_World_Hidden';
+		}
+		return '';
+
+	case PotP_A_Items:
+		switch (tracked.filter)
+		{
+		case PotP_I_Relic:
+			switch (tracked.sub_filter)
+			{
+			case PotP_U_Silve:	return 'ProgressOnThePath_Track_Items_Silver';
+			case PotP_U_Steel:	return 'ProgressOnThePath_Track_Items_Steel';
+			case PotP_U_Cross:	return 'ProgressOnThePath_Track_Items_Crossbows';
+			}
+			return 'ProgressOnThePath_Track_Items_Relics';
+		case PotP_I_Gears:	return 'ProgressOnThePath_Track_Items_Sets';
+		case PotP_I_Witch:	return 'ProgressOnThePath_Track_Items_Witcher';
+		case PotP_I_Horse:	return 'ProgressOnThePath_Track_Items_Horse';
+		case PotP_I_Troph:	return 'ProgressOnThePath_Track_Items_Trophies';
+		}
+		// What mods' item packs add
+		return 'ProgressOnThePath_Track_Items_Mods';
+
+	case PotP_A_Gwent:
+		switch (tracked.sub_filter)
+		{
+		case PotP_I_Monst:	return 'ProgressOnThePath_Track_Gwent_Monsters';
+		case PotP_I_Nilfg:	return 'ProgressOnThePath_Track_Gwent_Nilfgaard';
+		case PotP_I_North:	return 'ProgressOnThePath_Track_Gwent_North';
+		case PotP_I_Scoia:	return 'ProgressOnThePath_Track_Gwent_Scoiatael';
+		case PotP_I_Skell:	return 'ProgressOnThePath_Track_Gwent_Skellige';
+		case PotP_I_Neutr:	return 'ProgressOnThePath_Track_Gwent_Neutral';
+		}
+		return '';
+
+	case PotP_A_Bestiary:
+		return 'ProgressOnThePath_Track_Bestiary';
+
+	case PotP_A_Library:
+		switch (tracked.shelf)
+		{
+		case 0:	return 'ProgressOnThePath_Track_Library_Lore';
+		case 1:	return 'ProgressOnThePath_Track_Library_Tomes';
+		case 2:	return 'ProgressOnThePath_Track_Library_Journals';
+		case 3:	return 'ProgressOnThePath_Track_Library_Letters';
+		case 4:	return 'ProgressOnThePath_Track_Library_Notices';
+		}
+		return 'ProgressOnThePath_Track_Library_Notes';
+	}
+	return '';
+}
+
+// A kind with no toggle of its own is tracked
+function PotP_IsTracked(tracked: CPotP_Entry) : bool
+{
+	return PotP_GetSetting(PotP_TrackSetting(tracked)) != "false";
+}
+
+// Every toggle's value, to tell when one has changed
+function PotP_TrackedSettings() : string
+{
+	var store	: CPotP_Settings = PotP_Settings();
+	var result	: string;
+	var Idx		: int;
+
+	for (Idx = 0; Idx < store.settings.Size(); Idx += 1)
+	{
+		if (store.settings[Idx].group == 'ProgressOnThePath_TrackedContents' && IsNameValid(store.settings[Idx].id))
+		{
+			result += store.settings[Idx].value + "|";
+		}
+	}
+	return result;
 }
 
 //---------------------------------------------------
@@ -352,8 +520,18 @@ exec function potp_setting(id: name, value: string)
 
 exec function potp_settings_end(count: int)
 {
-	var store : CPotP_Settings = PotP_Settings();
+	var store	: CPotP_Settings = PotP_Settings();
+	var main	: CPotP_Main;
 
 	store.loaded = true;
 	PotP_Log("Settings from the overlay: " + IntToString(count), 'Settings');
+	// What's tracked may be among them, and the catalog built already
+	if (thePlayer)
+	{
+		main = PotP_Get();
+		if (main && main.catalog.is_ready)
+		{
+			main.catalog.ApplyTracking();
+		}
+	}
 }

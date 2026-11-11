@@ -8,7 +8,9 @@
 // never sees a half-read list and keeps showing the old one while a new one is being read.
 enum EntryStatus { kAvailable = 0, kInProgress = 1, kCompleted = 2, kIgnored = 3, kMissed = 4 };
 // 4 and 8 are the part of the game it belongs to: (flags >> 2) & 3, 1 Hearts of Stone, 2 Blood and Wine
-enum EntryFlags { kFlagMissable = 1, kFlagModAdded = 2, kFlagNote = 16, kFlagJournal = 32 };   // kFlagNote: a Library note, not counted; kFlagJournal: one bound as a book
+// kFlagNote: a Library note; kFlagJournal: one bound as a book; kFlagUntracked: its kind is turned off in Tracked Contents,
+// so it's listed but not counted
+enum EntryFlags { kFlagMissable = 1, kFlagModAdded = 2, kFlagNote = 16, kFlagJournal = 32, kFlagUntracked = 64 };
 enum BookId { kBookQuest = 0, kBookWorld = 1, kBookItems = 2, kBookGwent = 3, kBookMissable = 4, kBookBestiary = 5, kBookLibrary = 6 };
 constexpr int kBookCount = 7;
 constexpr int kRegionCount = 9;

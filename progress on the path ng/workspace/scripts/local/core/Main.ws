@@ -25,6 +25,7 @@ statemachine class CPotP_Main
 	var version_changed		: bool;
 	var last_update_time	: float;
 	var pin_settings		: string;
+	var tracked_settings	: string;	// Tracked Contents' toggles, as they were when each entry was last told
 
 	//---------------------------------------------------
 
@@ -82,6 +83,7 @@ statemachine class CPotP_Main
 		baseline_pending = false;
 
 		pin_settings = GetPinSettings();
+		tracked_settings = PotP_TrackedSettings();
 		map_pins.Refresh();
 
 		if (!inventory_listener)
@@ -254,6 +256,15 @@ statemachine class CPotP_Main
 		if (!catalog.is_ready)
 		{
 			return;
+		}
+
+		// What's tracked: each entry told again, and the pins made again without what's been turned off
+		current_pins = PotP_TrackedSettings();
+		if (current_pins != tracked_settings)
+		{
+			tracked_settings = current_pins;
+			catalog.ApplyTracking();
+			pin_settings = "";
 		}
 
 		current_pins = GetPinSettings();

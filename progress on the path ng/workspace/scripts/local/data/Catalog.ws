@@ -511,13 +511,14 @@ statemachine class CPotP_Catalog
 		}
 		tracked.title = title;
 		tracked.item_name = book;
+		tracked.shelf = library_shelf;
 		return tracked;
 	}
 
 	//---------------------------------------------------
 
-	// A note: a journal, a letter, a notice or any other sheet with something to read. As a book, but not counted in
-	// progress (CountProgress): many belong to one side of a quest, or are gone once it's over.
+	// A note: a journal, a letter, a notice or any other sheet with something to read. As a book; not tracked unless its
+	// shelf is turned on in Tracked Contents, as many belong to one side of a quest, or are gone once it's over.
 	public function AddNote(suffix: string, type_value: PotP_Preview_Entry_Type, note: name) : CPotP_Entry
 	{
 		var tracked : CPotP_Entry = AddBook(suffix, type_value, note);
@@ -844,6 +845,20 @@ statemachine class CPotP_Catalog
 
 	//---------------------------------------------------
 
+	// Each entry told whether its kind is tracked (Settings.ws, Tracked Contents): once the catalog's built, and again
+	// when a toggle changes
+	public function ApplyTracking()
+	{
+		var Idx : int;
+
+		for (Idx = 0; Idx < entries.Size(); Idx += 1)
+		{
+			entries[Idx].untracked = !PotP_IsTracked(entries[Idx]);
+		}
+	}
+
+	//---------------------------------------------------
+
 	public function CountProgress(out total_count: int, out done_count: int)
 	{
 		var gwent			: CR4GwintManager = theGame.GetGwintManager();
@@ -863,8 +878,8 @@ statemachine class CPotP_Catalog
 					continue;
 				}
 			}
-			// The Library's notes are read, not counted
-			if (entries[Idx].is_note)
+			// A kind turned off in Tracked Contents isn't counted (the Library's are off unless they're turned on)
+			if (entries[Idx].untracked)
 			{
 				continue;
 			}
@@ -975,6 +990,7 @@ state Building in CPotP_Catalog
 		SleepOneFrame();
 		PotP_DefineLibrary(parent);
 
+		parent.ApplyTracking();
 		parent.is_ready = true;
 		PotP_Log("Catalog built: " + IntToString(parent.entries.Size()) + " entries in " + IntToString(parent.sections.Size()) + " sections", 'Catalog');
 

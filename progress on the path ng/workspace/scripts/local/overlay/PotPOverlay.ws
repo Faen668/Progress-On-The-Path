@@ -582,6 +582,10 @@ function PotPOverlay_ExportSection(section: CPotP_Section) : string
 		{
 			flags += 32;
 		}
+		if (tracked.untracked)
+		{
+			flags += 64;
+		}
 
 		tip = PotPOverlay_Clean(PotP_GetMissableTip(tracked));
 
