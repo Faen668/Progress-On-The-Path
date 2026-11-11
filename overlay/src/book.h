@@ -36,6 +36,7 @@ int BookSpread();               // the spread open, from 0
 int BookSpreadCount();
 int BookPageCount();            // the title page included
 bool BookHasTitlePage();        // false for what's written by hand (a journal): its text is from the first page
+bool BookOnePage();             // a letter: one page shown at a time, not a spread of two
 bool BookTurning();
 // The open book shut, its cover up, or opened again, turning over on its spine: false while a page is turning
 bool BookShut(bool shut);
@@ -64,3 +65,17 @@ JournalShut JournalShutAt(float shut);
 // turned (to turn its normal and tangent by: about y, toward +x for a positive angle). piece and place: its ShutVertex.
 // False for what's only there shut (piece 6) while it isn't.
 bool JournalFold(int piece, const float place[3], const JournalShut& at, float shut, float p[3], float& turned);
+
+// ------------------------------------------------------------------------------------------
+// The letter folding (the Resources' library-letter/scripts/build_letter.py, which makes it open and flat). The vertex
+// shader does the same (modelview.cpp's LetterPart): this is for posing it folded as it loads, and for framing it.
+// ------------------------------------------------------------------------------------------
+
+// As it's made, metres: its creases up the page from its middle, and how round each fold is
+inline constexpr float kLetterFoot = -0.035f, kLetterHead = 0.035f, kLetterFootR = 0.0006f, kLetterHeadR = 0.0013f;
+inline constexpr float kLetterWidth = 0.15f;
+
+// One vertex of the open letter, untilted (its page's head at +y, its writing up), the letter that far folded (0 open to
+// 1 shut): its place, and how far it's turned about x (to turn its normal and tangent by). piece: export_letter.py's
+// (0 the middle third, 1 the foot third, 4 the head third and the seal on its back).
+void LetterFold(int piece, float shut, float p[3], float& turned);

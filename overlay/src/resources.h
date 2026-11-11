@@ -28,3 +28,9 @@
 #define POTP_RES_HAND_BAD         122
 #define POTP_RES_HAND_AURORE      123
 #define POTP_RES_HAND_ITALIANNO   124
+// The Library's letter (book.cpp): the sheet its letters and notes are shown on, and its wax seal
+#define POTP_RES_LETTER_MESH     125
+#define POTP_RES_SEAL_DIFFUSE    126
+#define POTP_RES_SEAL_NORMAL     127
+#define POTP_RES_SEAL_ROUGHNESS  128
+#define POTP_RES_SEAL_MASK       129   // how much of the wax's colour is in each pixel

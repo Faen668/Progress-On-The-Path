@@ -288,6 +288,91 @@ void JournalPart(uint piece, float3 sp, inout float3 p, inout float3 n, inout fl
 	}
 }
 
+// The letter folding in three (book.h's LetterFold, which this is the same as; build_letter.py makes it open and flat,
+// its page's head at +y): a third carried round its crease, so far out from it, so far in from the paper's back, on a
+// bend that ends a half round of the crease's radius. Out from the crease and up; a: how far it's turned.
+static const float kLFoot = -0.035f, kLHead = 0.035f, kLFootR = 0.0006f, kLHeadR = 0.0013f;
+
+float2 RoundCrease(float d, float inward, float turn, float r, out float a)
+{
+	const float b = 3.14159265f * r;
+	a = turn * min(d, b) / b;
+	float2 at;
+	if (turn < 1e-4f)
+		at = float2(min(d, b), 0);
+	else
+	{
+		const float rho = b / turn;
+		at = float2(rho * sin(a), rho * (1.0f - cos(a)));
+	}
+	if (d > b)
+		at += float2(cos(turn), sin(turn)) * (d - b);
+	return at + float2(-sin(a), cos(a)) * inward;
+}
+
+// A letter's vertex. A letter is a pile of sheets, each written on both sides (s: which sheet a vertex is of). sheet.y
+// says which is on top, and how far the next has come up to take its place; sheet.x how far the top one's turned over
+// to show its back; sheet.z how many there are. Under the top one the rest lie fanned, each turned a little further
+// and a little further out. A sheet done with goes round to the bottom of the pile, out to one side and over as it
+// goes, so it comes back the same way, on its back. shut.x: the pile squared up and folded in three, the foot third up
+// over the middle first, then the head third (and the seal on its back) down over that. piece: export_letter.py's.
+void LetterPart(uint piece, float s, inout float3 p, inout float3 n, inout float3 t)
+{
+	const float pi = 3.14159265f;
+	const float count = max(1.0f, sheet.z);
+	const float rank = fmod(s - sheet.y + count * 8.0f, count);
+	float under = rank, over = pi * sheet.x * saturate(1.0f - rank), aside = 0;
+	// Turning over where it lies, it's lifted clear of the pile under it: its edge comes down as far as half its width
+	float lift = 0.08f * sin(over);
+	if (count > 1.5f && rank > count - 1.0f)
+	{
+		const float u = rank - (count - 1.0f);   // 1 on top, 0 at the bottom of the pile
+		under = (count - 1.0f) * (1.0f - u);
+		over = pi * u;
+		aside = sin(pi * u);
+		// Up off the pile as it leaves the top, down below it as it goes in at the bottom, edge on between the two
+		lift = -0.06f * sin(2.0f * pi * u);
+	}
+	const float loose = 1.0f - smoothstep(0.0f, 0.25f, shut.x);
+	p.z -= 0.0005f * under;
+	float a = 0;
+	if (shut.x > 0 && piece == 1 && p.y < kLFoot)
+	{
+		const float2 at = RoundCrease(kLFoot - p.y, p.z, pi * smoothstep(0.0f, 0.6f, shut.x), kLFootR, a);
+		p = float3(p.x, kLFoot - at.x, at.y);
+		// turned about x, the third's far edge coming up and over toward the head
+		n = float3(n.x, n.y * cos(a) + n.z * sin(a), -n.y * sin(a) + n.z * cos(a));
+		t = float3(t.x, t.y * cos(a) + t.z * sin(a), -t.y * sin(a) + t.z * cos(a));
+	}
+	else if (shut.x > 0 && piece == 4 && p.y > kLHead)
+	{
+		const float2 at = RoundCrease(p.y - kLHead, p.z, pi * smoothstep(0.4f, 1.0f, shut.x), kLHeadR, a);
+		p = float3(p.x, kLHead + at.x, at.y);
+		n = float3(n.x, n.y * cos(a) - n.z * sin(a), n.y * sin(a) + n.z * cos(a));
+		t = float3(t.x, t.y * cos(a) - t.z * sin(a), t.y * sin(a) + t.z * cos(a));
+	}
+	// Turned over, about the page's upright
+	if (over != 0)
+	{
+		const float c = cos(over), sn = sin(over);
+		p = float3(p.x * c + p.z * sn, p.y, -p.x * sn + p.z * c);
+		n = float3(n.x * c + n.z * sn, n.y, -n.x * sn + n.z * c);
+		t = float3(t.x * c + t.z * sn, t.y, -t.x * sn + t.z * c);
+	}
+	// Where it lies in the pile: turned in its own plane, and out from under the one above
+	const float turn = 0.1f * under * loose;
+	if (turn != 0)
+	{
+		const float c = cos(turn), sn = sin(turn);
+		p = float3(p.x * c - p.y * sn, p.x * sn + p.y * c, p.z);
+		n = float3(n.x * c - n.y * sn, n.x * sn + n.y * c, n.z);
+		t = float3(t.x * c - t.y * sn, t.x * sn + t.y * c, t.z);
+	}
+	p.x += 0.006f * under * loose + 0.13f * aside;
+	p.y -= 0.004f * under * loose;
+	p.z += lift;
+}
+
 )" R"(
 void BookPart(uint role, float base, float3 sp, float3 sn, float3 st, float fold, inout float3 p, inout float3 n, inout float3 t)
 {
@@ -330,7 +415,12 @@ void BookPart(uint role, float base, float3 sp, float3 sn, float3 st, float fold
 		p += n * 0.0003f;
 	}
 	// A journal (a spine length below 0) folds its own way; what's only there while it's shut (role 6) is hidden till then
-	if (shut.z < 0 && role != 3 && role != 4)
+	if (shut.z < -1.5f && role != 3 && role != 4)
+	{
+		// A letter (a spine length of -2): a pile of sheets, turned over and brought forward, and folded in three
+		LetterPart((uint)round(fold), sp.x, p, n, t);
+	}
+	else if (shut.z < 0 && role != 3 && role != 4)
 	{
 		if (shut.x > 0 || role == 6)
 			JournalPart((uint)round(fold), sp, p, n, t);
@@ -402,7 +492,7 @@ Out VS(In i)
 {
 	Out o;
 	const uint role = (uint)round(i.colour.a * 255);
-	if (sheet.w > 0 && ((role >= 1 && role <= 6) || shut.x > 0))
+	if (sheet.w > 0 && ((role >= 1 && role <= 7) || shut.x > 0))
 	{
 		float3 bookTangent = i.t.xyz;
 		BookPart(role, i.colour.r * 0.03f, i.shutP, i.shutN, i.shutT, i.fold, i.p, i.n, bookTangent);
@@ -883,6 +973,16 @@ float4 PS(Out i) : SV_Target
 		constexpr float kJointX = 0.030f, kBoardT = 0.0055f;
 		const float c = sheet2[0], s = sheet2[1];
 		float x = p[0], y = p[1] * c + p[2] * s, z = -p[1] * s + p[2] * c;
+		if (shut[2] < -1.5f)
+		{
+			// A letter, which folds in three (book.h)
+			float q[3] = { x, y, z }, turned = 0.f;
+			LetterFold(static_cast<int>(sv.fold + 0.5f), shut[0], q, turned);
+			p[0] = q[0];
+			p[1] = q[1] * c - q[2] * s;
+			p[2] = q[1] * s + q[2] * c;
+			return;
+		}
 		if (shut[2] < 0.f)
 		{
 			// A journal, which folds its own way (book.h)

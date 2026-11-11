@@ -448,6 +448,7 @@ namespace
 		std::string title, section;
 		std::vector<Page> pages;   // the text's pages: the book's page 1 is the title page, then these
 		bool hand = false;         // written by hand (a journal): no title page, its text from the first page, in its hand
+		bool sheet = false;        // a letter: loose sheets, one shown at a time, creased where it folds, no gutter
 		Hand style;
 		int Count() const { return hand ? std::max(1, static_cast<int>(pages.size())) : 1 + static_cast<int>(pages.size()); }
 	};
@@ -473,11 +474,12 @@ namespace
 		return out;
 	}
 
-	std::shared_ptr<const Book> Lay(const std::string& title, const std::string& section, const std::vector<std::string>& paragraphs, const Hand* hand = nullptr)
+	std::shared_ptr<const Book> Lay(const std::string& title, const std::string& section, const std::vector<std::string>& paragraphs, const Hand* hand = nullptr, bool sheet = false)
 	{
 		auto book = std::make_shared<Book>();
 		book->title = title;
 		book->section = section;
+		book->sheet = sheet;
 		if (hand)
 		{
 			book->hand = true;
@@ -630,6 +632,37 @@ namespace
 		}
 	}
 
+	uint32_t Hash(const std::string& text, uint32_t salt);
+
+	// A letter's sheet: creased across where it folds in three (a dark line along each fold, a paler one beside it where
+	// the paper's stood up), and browned in from all four edges, as a loose sheet is
+	void CreaseSheet(GameTexture& page, uint32_t seed)
+	{
+		const int width = static_cast<int>(page.width), height = static_cast<int>(page.height);
+		for (int y = 0; y < height; ++y)
+		{
+			float keep = 1.f;
+			for (const float at : { height / 3.f, height * 2.f / 3.f })
+			{
+				const float d = y - at;
+				if (std::abs(d) <= 4.f)
+					keep = std::min(keep, 0.8f + 0.2f * std::abs(d) / 4.f);
+				else if (d > 5.f && d < 9.f)
+					keep = 1.05f;
+			}
+			for (int x = 0; x < width; ++x)
+			{
+				const int edge = std::min(std::min(x, width - 1 - x), std::min(y, height - 1 - y));
+				const float ragged = edge + 18.f * (((seed + x * 7919u + y * 104729u) % 97u) / 97.f - 0.5f) * 0.2f;
+				const float t = std::clamp(ragged / 46.f, 0.f, 1.f), rim = 0.72f + 0.28f * t * t * (3.f - 2.f * t);
+				uint8_t* const p = &page.pixels[static_cast<size_t>(y) * page.rowBytes + x * 4];
+				p[0] = static_cast<uint8_t>(std::min(255.f, p[0] * keep * rim));
+				p[1] = static_cast<uint8_t>(std::min(255.f, p[1] * keep * (rim - (1.f - rim) * 0.1f)));
+				p[2] = static_cast<uint8_t>(std::min(255.f, p[2] * keep * (rim - (1.f - rim) * 0.3f)));
+			}
+		}
+	}
+
 	// The paper in the book's look (below, after LookOf): its colour and spots before the text, its stains after
 	void AgePaper(const std::string& uuid, int n, GameTexture& page, bool overText);
 
@@ -742,7 +775,10 @@ namespace
 		if (!ParchmentPage(out))
 			return false;
 		AgePaper(uuid, n, out, false);
-		ShadeGutter(out, n % 2 == 0);
+		if (book && book->sheet)
+			CreaseSheet(out, Hash(uuid, 400));   // a letter: no gutter, but creased where it's folded
+		else
+			ShadeGutter(out, n % 2 == 0);
 		WriteText(book, n, out);
 		AgePaper(uuid, n, out, true);
 		return true;
@@ -817,6 +853,9 @@ namespace
 	};
 	constexpr int kKindMonster = 7, kKindLore = 8, kKindJournal = 9;
 	constexpr int kShelfJournals = 2;   // the Library's third shelf, and the first of its notes
+	constexpr int kShelfLetters = 3;    // and its fourth: from here on a note is a sheet, shown as a letter is
+
+	bool IsLetter(const std::string& uuid) { return ShelfOf(uuid) >= kShelfLetters; }
 
 	const Kind& KindOf(const std::string& uuid)
 	{
@@ -1991,7 +2030,8 @@ namespace
 	{
 		std::lock_guard<std::mutex> hold(g_bookLock);
 		const auto found = g_books.find(uuid);
-		return found == g_books.end() ? 1 : (found->second->Count() + 1) / 2;
+		// A letter's sheets are shown one at a time
+		return found == g_books.end() ? 1 : found->second->sheet ? found->second->Count() : (found->second->Count() + 1) / 2;
 	}
 
 	void Swap(int slot, int page)
@@ -2015,7 +2055,7 @@ namespace
 
 	constexpr float kJournalPageWidth = 0.115f;   // build_journal.py's PAGE_W
 
-	bool IsJournal(const std::string& uuid) { return ShelfOf(uuid) >= kShelfJournals; }
+	bool IsJournal(const std::string& uuid) { return ShelfOf(uuid) == kShelfJournals; }
 
 	// What the atlas is baked with (texture_journal.py's DYE, THONG and THREAD), linear
 	constexpr float kJournalDye[3] = { 0.085f, 0.04f, 0.017f }, kJournalThong[3] = { 0.03f, 0.015f, 0.008f }, kJournalThread[3] = { 0.36f, 0.29f, 0.17f };
@@ -2319,12 +2359,19 @@ namespace
 		const bool journal = IsJournal(uuid);
 		sheet[0] = -1.f;
 		sheet[1] = sheet[2] = 1.f;
-		sheet[3] = journal ? kJournalPageWidth : kPageWidth;
+		sheet[3] = journal ? kJournalPageWidth : IsLetter(uuid) ? kLetterWidth : kPageWidth;
 		sheet2[0] = cosf(kTilt);
 		sheet2[1] = sinf(kTilt);
 		sheet2[2] = journal ? 1.f : kMadeLeft / kMadeRight;
 		sheet2[3] = kGutter;
 	}
+}
+
+namespace
+{
+	// The letter's pictures (below, with the rest of the letter)
+	bool WriteSealDiffuse(const std::string& uuid, uint32_t largestSide, GameTexture& out);
+	bool WriteLetterBack(const std::string& uuid, GameTexture& out);
 }
 
 bool ReadBuiltinTexture(const std::string& name, uint32_t largestSide, GameTexture& out, bool withMips)
@@ -2375,6 +2422,19 @@ bool ReadBuiltinTexture(const std::string& name, uint32_t largestSide, GameTextu
 		ok = WriteLabel(key.substr(6), out);
 	else if (key.compare(0, 5, "slip:") == 0)
 		ok = WriteSlip(key.substr(5), out);
+	else if (key.compare(0, 7, "seal_d:") == 0)
+		ok = WriteSealDiffuse(key.substr(7), largestSide, out);
+	else if (key.compare(0, 11, "letterback:") == 0)
+		ok = WriteLetterBack(key.substr(11), out);
+	else if (key == "seal_n")
+	{
+		GameTexture rough;
+		ok = Decode(POTP_RES_SEAL_NORMAL, largestSide, out) && Decode(POTP_RES_SEAL_ROUGHNESS, largestSide, rough)
+			&& rough.width == out.width && rough.height == out.height;
+		if (ok)
+			for (size_t i = 3; i < out.pixels.size(); i += 4)
+				out.pixels[i] = rough.pixels[i - 3];
+	}
 	else if (key == "journal_s")
 		ok = Decode(POTP_RES_JOURNAL_SPECULAR, largestSide, out);
 	else if (key == "book_d")
@@ -2472,6 +2532,107 @@ namespace
 	}
 }
 
+namespace
+{
+	// ------------------------------------------------------------------------------------------
+	// The letter: the sheet the Library's letters and other loose notes are shown on (data/letter.mesh and seal_*.jpg,
+	// from the Resources' library-letter). Written by hand as a journal is, one sheet shown at a time; not read, it's
+	// shown folded in three, and a letter proper sealed with wax.
+	// ------------------------------------------------------------------------------------------
+
+	constexpr float kSealWax[3] = { 0.2f, 0.014f, 0.012f };   // what the seal's baked with (texture_letter.py's WAX), linear
+	constexpr float kSealDyeScale = 3.f;                       // seal_m holds a / 3
+	constexpr float kSealY = 0.083f;                           // its middle, up the open sheet (build_letter.py)
+
+	// Each letter's look, chosen from its id: whether it's sealed, its wax, and how the seal was pressed on, a little
+	// off the middle and turned
+	struct LetterLook
+	{
+		bool seal = false;
+		float wax[3] = { 0.2f, 0.014f, 0.012f };
+		float sealAcross = 0.f, sealTurn = 0.f;
+	};
+
+	LetterLook LetterLookOf(const std::string& uuid)
+	{
+		// Waxes, and how likely each: reds mostly
+		struct Wax { float colour[3]; float weight; };
+		static constexpr Wax kWaxes[] = {
+			{ { 0.2f, 0.014f, 0.012f }, 6 },     // red
+			{ { 0.09f, 0.006f, 0.012f }, 4 },    // crimson
+			{ { 0.015f, 0.07f, 0.025f }, 1.5f }, // green
+			{ { 0.012f, 0.011f, 0.012f }, 2 },   // black
+			{ { 0.012f, 0.03f, 0.11f }, 1 },     // blue
+			{ { 0.22f, 0.11f, 0.015f }, 1.5f },  // ochre
+		};
+		LetterLook look;
+		// A letter proper is sealed, most of them; a notice or a rough note isn't
+		look.seal = ShelfOf(uuid) == kShelfLetters && Unit(Hash(uuid, 501)) < 0.8f;
+		float total = 0.f;
+		for (const Wax& w : kWaxes)
+			total += w.weight;
+		float pick = Unit(Hash(uuid, 502)) * total;
+		const Wax* wax = &kWaxes[0];
+		for (const Wax& w : kWaxes)
+		{
+			wax = &w;
+			if ((pick -= w.weight) < 0.f)
+				break;
+		}
+		const float light = 0.8f + 0.4f * Unit(Hash(uuid, 503));
+		for (int k = 0; k < 3; ++k)
+			look.wax[k] = wax->colour[k] * light;
+		look.sealAcross = (Unit(Hash(uuid, 504)) - 0.5f) * 0.03f;
+		look.sealTurn = Unit(Hash(uuid, 505)) * 6.2832f;
+		return look;
+	}
+
+	// The seal's colour in a letter's wax:  colour + a * (its wax - the wax it's baked with), in linear
+	bool WriteSealDiffuse(const std::string& uuid, uint32_t largestSide, GameTexture& out)
+	{
+		GameTexture mask;
+		if (!Decode(POTP_RES_SEAL_DIFFUSE, largestSide, out) || !Decode(POTP_RES_SEAL_MASK, largestSide, mask) || mask.width != out.width || mask.height != out.height)
+			return false;
+		const LetterLook look = LetterLookOf(uuid);
+		for (size_t i = 0; i + 3 < out.pixels.size(); i += 4)
+		{
+			const float a = mask.pixels[i] / 255.f * kSealDyeScale;
+			for (int k = 0; k < 3; ++k)
+				out.pixels[i + k] = ToSrgb(std::max(0.f, ToLinear(out.pixels[i + k]) + a * (look.wax[k] - kSealWax[k])));
+		}
+		return true;
+	}
+
+	// A letter's back: its paper with nothing written on it, creased and browned as its face is
+	bool WriteLetterBack(const std::string& uuid, GameTexture& out)
+	{
+		if (!ParchmentPage(out))
+			return false;
+		AgePaper(uuid, 1, out, false);
+		CreaseSheet(out, Hash(uuid, 401));
+		AgePaper(uuid, 1, out, true);
+		return true;
+	}
+
+	// A part of the open letter as it lies folded (LetterFold, all the way), as one not read is shown
+	void PoseLetterShut(ModelPart& part)
+	{
+		for (size_t i = 0; i < part.vertices.size() && i < part.shut.size(); ++i)
+		{
+			ModelVertex& v = part.vertices[i];
+			float turned = 0.f;
+			LetterFold(static_cast<int>(part.shut[i].fold + 0.5f), 1.f, v.position, turned);
+			for (float* d : { v.normal, v.tangent })
+			{
+				const float y = d[1], z = d[2], c = cosf(turned), s = sinf(turned);
+				d[1] = y * c - z * s;
+				d[2] = y * s + z * c;
+			}
+		}
+		part.shut.clear();
+	}
+}
+
 bool LoadBookModel(const std::string& which, ItemModel& out)
 {
 	// "closed:uuid", or "open:spread:uuid": the closed book's parts (closed_...), or the open one's with its pages named
@@ -2490,7 +2651,10 @@ bool LoadBookModel(const std::string& which, ItemModel& out)
 	// A journal's is its own mesh, folded shut its own way (PoseJournalShut)
 	const bool journal = IsJournal(uuid);
 	const JournalLook journalLook = journal ? JournalLookOf(uuid) : JournalLook{};
-	const std::string_view data = EmbeddedFile(journal ? POTP_RES_JOURNAL_MESH : POTP_RES_BOOK_MESH);
+	// and a letter's its own, folded in three
+	const bool letter = IsLetter(uuid);
+	const LetterLook letterLook = letter ? LetterLookOf(uuid) : LetterLook{};
+	const std::string_view data = EmbeddedFile(letter ? POTP_RES_LETTER_MESH : journal ? POTP_RES_JOURNAL_MESH : POTP_RES_BOOK_MESH);
 	const char* at = data.data();
 	const char* const end = at + data.size();
 	uint32_t parts = 0;
@@ -2590,7 +2754,9 @@ bool LoadBookModel(const std::string& which, ItemModel& out)
 		const bool posed = closed && withShut;
 		// What's only there while a journal's shut: its thong (piece 6), its marker and its slip (7)
 		const bool shutOnly = journal && withShut && !part.shut.empty() && static_cast<int>(part.shut[0].fold + 0.5f) >= 6;
-		if (posed && journal)
+		if (posed && letter)
+			PoseLetterShut(part);
+		else if (posed && journal)
 			PoseJournalShut(part);
 		else if (posed)
 			PoseShut(part);
@@ -2599,6 +2765,69 @@ bool LoadBookModel(const std::string& which, ItemModel& out)
 			role = closed ? 255 : 1;
 		else if (name == "pages_right" || name == "page_edges_right" || name == "block_right")
 			role = closed ? 255 : 2;
+		if (letter)
+		{
+			if (material == 0)
+			{
+				// The seal, where this letter has one: pressed on a little off the middle and turned, in its own wax.
+				// Moved as it lies on the open sheet, so not once it's posed folded: a letter not read has it as it's made.
+				// Not on one that runs past a page, once it's open: its back is written on
+				if (!letterLook.seal || (!posed && Spreads(uuid) > 1))
+					continue;
+				if (!posed)
+				{
+					const float ct = cosf(letterLook.sealTurn), st = sinf(letterLook.sealTurn);
+					for (ModelVertex& v : part.vertices)
+					{
+						const float x = v.position[0], y = v.position[1] - kSealY;
+						v.position[0] = letterLook.sealAcross + x * ct - y * st;
+						v.position[1] = kSealY + x * st + y * ct;
+						for (float* d : { v.normal, v.tangent })
+						{
+							const float dx = d[0], dy = d[1];
+							d[0] = dx * ct - dy * st;
+							d[1] = dx * st + dy * ct;
+						}
+					}
+				}
+				part.diffuse = std::string(kBuiltinTexture) + "seal_d:" + uuid;
+				part.normal = std::string(kBuiltinTexture) + "seal_n";
+				part.specular = std::string(kBuiltinTexture) + "journal_s";
+				finish(part, posed ? role : 7);   // it's of the first sheet
+				continue;
+			}
+			// Open, it's a pile of sheets, each written on both sides: its face one page, its back the next (or blank,
+			// past the letter's end). Each vertex is told which sheet it's of (its first number), for the shader to turn
+			// the top one over and bring the next forward (modelview.cpp's LetterPart): role 7.
+			const int sheets = std::max(1, (Spreads(uuid) + 1) / 2);
+			if (material == 6 && posed)
+			{
+				// Folded, not read: its back and its edges, its paper plain
+				paper(part, std::string(kBuiltinTexture) + "letterback:" + uuid);
+				finish(part, role);
+				continue;
+			}
+			if ((material == 6 || material == 2) && !posed)
+			{
+				for (int sheet = 0; sheet < sheets; ++sheet)
+				{
+					ModelPart one = part;
+					for (ShutVertex& v : one.shut)
+						v.place[0] = static_cast<float>(sheet);
+					if (material == 6)
+					{
+						// Its back reads from what's the left seen from behind
+						for (ModelVertex& v : one.vertices)
+							v.uv[0] = 1.f - v.uv[0];
+						paper(one, SlotName(uuid, sheet * 2 + 1, kSlotBack));
+					}
+					else
+						paper(one, SlotName(uuid, sheet * 2, kSlotRight));
+					finish(one, 7);
+				}
+				continue;
+			}
+		}
 		if (journal)
 		{
 			// What this journal hasn't got: a silk marker, a slip tucked in at its head
@@ -2759,11 +2988,12 @@ void BookSetText(const std::string& uuid, const std::string& title, const std::s
 	}
 	// A journal's is in its own hand, from the first page
 	const bool byHand = ShelfOf(uuid) >= kShelfJournals && Fonts();
+	const bool sheet = IsLetter(uuid);
 	std::string all;
 	for (const std::string& line : lines)
 		all += line;
 	const Hand hand = byHand ? HandFor(uuid, all) : Hand{};
-	std::shared_ptr<const Book> book = Lay(title, section, lines, byHand ? &hand : nullptr);
+	std::shared_ptr<const Book> book = Lay(title, section, lines, byHand ? &hand : nullptr, sheet);
 	{
 		std::lock_guard<std::mutex> hold(g_bookLock);
 		g_books[uuid] = book;
@@ -2808,6 +3038,12 @@ std::string BookRequest(const std::string& uuid)
 		g_shown.spread = found == g_spreadOf.end() ? 0 : std::clamp(found->second, 0, Spreads(uuid) - 1);
 		g_shown.loadedSpread = g_shown.spread;
 		g_shown.request = std::string(kModelBook) + "open:" + std::to_string(g_shown.spread) + ":" + uuid;
+		if (IsLetter(uuid))
+		{
+			// A letter's sheets are all in its model, each with its own pages: the same whichever it's open at
+			g_shown.loadedSpread = 0;
+			g_shown.request = std::string(kModelBook) + "open:0:" + uuid;
+		}
 	}
 	return g_shown.request;
 }
@@ -2819,6 +3055,13 @@ bool BookTurn(int direction)
 	const int to = g_shown.spread + direction;
 	if (to < 0 || to >= Spreads(g_shown.uuid))
 		return false;
+	if (IsLetter(g_shown.uuid))
+	{
+		// A letter: its sheet turned over for its back, or the next brought forward (BookTick)
+		g_shown.turning = direction;
+		g_shown.t = 0.f;
+		return true;
+	}
 	g_shown.turning = direction;
 	g_shown.t = direction > 0 ? 0.f : 1.f;
 	g_shown.ready = std::make_shared<std::atomic<bool>>(false);
@@ -2857,12 +3100,20 @@ bool BookShut(bool shut)
 {
 	if (g_shown.uuid.empty() || g_shown.turning != 0 || g_shown.settle > 0)
 		return false;
+	// A letter folds from its first page: its pile squared up, the first sheet on top, its face up
+	if (shut && IsLetter(g_shown.uuid))
+	{
+		g_shown.spread = 0;
+		g_spreadOf[g_shown.uuid] = 0;
+	}
 	g_shown.shutting = shut ? 1 : -1;
 	return true;
 }
 
 bool BookShutting() { return g_shown.shutting > 0 || (g_shown.shutting == 0 && g_shown.shut > 0.f); }
 bool BookCanShut() { return !g_shown.uuid.empty(); }
+
+bool BookOnePage() { return IsLetter(g_shown.uuid); }
 
 bool BookHasTitlePage()
 {
@@ -3009,6 +3260,61 @@ bool JournalFold(int piece, const float place[3], const JournalShut& at, float s
 	return true;
 }
 
+// ------------------------------------------------------------------------------------------
+// The letter folding (book.h)
+// ------------------------------------------------------------------------------------------
+
+void LetterFold(int piece, float shut, float p[3], float& turned)
+{
+	turned = 0.f;
+	constexpr float kPi = 3.14159265f;
+	const auto ease = [](float lo, float hi, float x)
+	{
+		const float t = std::clamp((x - lo) / (hi - lo), 0.f, 1.f);
+		return t * t * (3.f - 2.f * t);
+	};
+	// A third carried round its crease: so far out from it, so far in from the paper's back, on a bend that ends a half
+	// round of the crease's radius
+	const auto roundCrease = [](float d, float in, float turn, float r, float& along, float& up, float& a)
+	{
+		const float b = kPi * r;
+		a = turn * std::min(d, b) / b;
+		if (turn < 1e-4f)
+		{
+			along = std::min(d, b);
+			up = 0.f;
+		}
+		else
+		{
+			const float rho = b / turn;
+			along = rho * sinf(a);
+			up = rho * (1.f - cosf(a));
+		}
+		if (d > b)
+		{
+			along += cosf(turn) * (d - b);
+			up += sinf(turn) * (d - b);
+		}
+		along += -sinf(a) * in;
+		up += cosf(a) * in;
+	};
+	float along = 0.f, up = 0.f, a = 0.f;
+	if (piece == 1 && p[1] < kLetterFoot)
+	{
+		roundCrease(kLetterFoot - p[1], p[2], kPi * ease(0.f, 0.6f, shut), kLetterFootR, along, up, a);
+		p[1] = kLetterFoot - along;
+		p[2] = up;
+		turned = -a;
+	}
+	else if (piece == 4 && p[1] > kLetterHead)
+	{
+		roundCrease(p[1] - kLetterHead, p[2], kPi * ease(0.4f, 1.f, shut), kLetterHeadR, along, up, a);
+		p[1] = kLetterHead + along;
+		p[2] = up;
+		turned = a;
+	}
+}
+
 void BookTestShut(float shut) { g_testShut = shut; }
 void BookTestTurn(float leaf) { g_testTurn = leaf; }
 
@@ -3017,7 +3323,42 @@ void BookTick(float dt)
 	constexpr float kTurnSeconds = 0.75f, kShutSeconds = 1.2f;
 	float sheet[4], sheet2[4];
 	SheetOf(g_shown.uuid, sheet, sheet2);
-	const bool journal = IsJournal(g_shown.uuid);
+	const bool journal = IsJournal(g_shown.uuid), letter = IsLetter(g_shown.uuid);
+	if (letter)
+	{
+		// A letter: where it is among its pages, a sheet's face and its back each one. From a face to its back the sheet
+		// is turned over; from a back to the next face that sheet goes to the bottom of the pile and the next comes up.
+		float at = static_cast<float>(g_shown.spread);
+		if (g_shown.turning != 0)
+		{
+			const int to = g_shown.spread + g_shown.turning;
+			const bool over = to / 2 == g_shown.spread / 2;
+			g_shown.t = std::min(1.f, g_shown.t + dt / (over ? 0.6f : 0.95f));
+			at = g_shown.spread + g_shown.turning * Ease(g_shown.t);
+			if (g_shown.t >= 1.f)
+			{
+				g_shown.spread = to;
+				g_shown.turning = 0;
+				g_spreadOf[g_shown.uuid] = to;
+				at = static_cast<float>(to);
+			}
+		}
+		if (g_testTurn >= 0.f)
+			at = g_testTurn;
+		if (g_shown.shutting != 0)
+		{
+			g_shown.shut = std::clamp(g_shown.shut + g_shown.shutting * dt / 1.3f, 0.f, 1.f);
+			if (g_shown.shut <= 0.f || g_shown.shut >= 1.f)
+				g_shown.shutting = 0;
+		}
+		const float onSheet = std::floor(at / 2.f), within = at - 2.f * onSheet;
+		sheet[0] = within <= 1.f ? within : 0.f;                     // how far the top sheet's turned over
+		sheet[1] = within <= 1.f ? onSheet : onSheet + (within - 1.f);   // which is on top, and how far the next has come up
+		sheet[2] = static_cast<float>(std::max(1, (Spreads(g_shown.uuid) + 1) / 2));
+		const float folded[4] = { g_testShut >= 0.f ? g_testShut : g_shown.shut, 0.f, -2.f, 0.f };
+		ModelViewBook(sheet, sheet2, folded);
+		return;
+	}
 	float progress = static_cast<float>(g_shown.spread);
 	if (g_shown.turning != 0 && g_shown.ready && *g_shown.ready)
 	{
@@ -3055,7 +3396,7 @@ void BookTick(float dt)
 	const float f = std::clamp(progress / spreads, 0.f, 1.f);
 	const float left = kThinnest + (kAllPages - 2.f * kThinnest) * (0.3f + 0.4f * f);
 	const float right = kAllPages - left;
-	if (!journal)
+	if (!journal && !letter)
 	{
 		sheet[1] = right / kMadeRight;
 		sheet[2] = left / kMadeLeft;
@@ -3066,7 +3407,7 @@ void BookTick(float dt)
 	if (g_shown.shutting != 0)
 	{
 		// A journal takes longer: its cover, then its flap, then its thong wound on
-		g_shown.shut = std::clamp(g_shown.shut + g_shown.shutting * dt / (journal ? 1.9f : kShutSeconds), 0.f, 1.f);
+		g_shown.shut = std::clamp(g_shown.shut + g_shown.shutting * dt / (journal ? 1.9f : letter ? 1.3f : kShutSeconds), 0.f, 1.f);
 		if (g_shown.shut <= 0.f || g_shown.shut >= 1.f)
 			g_shown.shutting = 0;
 	}
@@ -3077,7 +3418,9 @@ void BookTick(float dt)
 	// A journal folds its own way (modelview.cpp's JournalPart), told by a spine length below 0; its shutting isn't eased
 	// here, as each of its parts is in turn (JournalShutAt)
 	const float journalHow = g_testShut >= 0.f ? g_testShut : g_shown.shut;
-	const float shut[4] = { journal ? journalHow : how, journal ? 0.f : (kShutLeft + kShutRight) / 2.f, journal ? -1.f : kSpineOpen + (kSpineShut - kSpineOpen) * how, Ease(flat) };
+	// and a letter in three (LetterPart), told by -2
+	const bool own = journal || letter;
+	const float shut[4] = { own ? journalHow : how, own ? 0.f : (kShutLeft + kShutRight) / 2.f, letter ? -2.f : journal ? -1.f : kSpineOpen + (kSpineShut - kSpineOpen) * how, Ease(flat) };
 	ModelViewBook(sheet, sheet2, shut);
 }
 

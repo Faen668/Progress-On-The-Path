@@ -3701,11 +3701,10 @@ namespace
 	}
 
 	// A book shown as a book, with Live Book Preview on: open on its pages once it's read and its text is here, shut until then.
-	// A journal is one too, in a small soft-backed notebook of its own (book.cpp). Not the other notes: a letter is a
-	// sheet, so until it has one to show, its text is shown plainly.
-	bool LiveBook(const Entry& e)
+	// A journal is one too, in a small soft-backed notebook of its own, and any other note a sheet that folds (book.cpp).
+	bool LiveBook(const Entry&)
 	{
-		return g_book == kBookLibrary && GetSettings().liveBook && (!(e.flags & kFlagNote) || (e.flags & kFlagJournal));
+		return g_book == kBookLibrary && GetSettings().liveBook;
 	}
 	bool g_bookOpen = false;   // the book shown this frame is open on its pages, so they can be turned
 	bool g_shutBookClicked = false;   // the hint to shut or open it clicked, for the book to take next frame
@@ -4268,7 +4267,9 @@ namespace
 			// A journal has no title page: its first spread is its pages 1 and 2
 			const int untitled = BookHasTitlePage() ? 0 : 1;
 			const int spread = BookSpread(), spreads = BookSpreadCount(), pages = std::max(1, BookPageCount() - 1 + untitled);
-			const int first = spread * 2 + untitled, last = std::min(spread * 2 + 1 + untitled, pages);
+			// and a letter's sheets are shown one at a time
+			const bool onePage = BookOnePage();
+			const int first = onePage ? spread + 1 : spread * 2 + untitled, last = onePage ? first : std::min(spread * 2 + 1 + untitled, pages);
 			const std::string which = first == 0 || first >= last ? std::to_string(std::max(1, std::min(first == 0 ? 1 : first, pages))) : std::to_string(first) + "\xe2\x80\x93" + std::to_string(last);
 			const std::string label = TxFill(first == 0 || first >= last ? T_book_page : T_book_pages, which, std::to_string(pages));
 			const float cy = bottom - barH * 0.5f, cx = (x0 + x1) * 0.5f;
@@ -4485,7 +4486,8 @@ namespace
 					++shelf;
 			}
 			// A journal is one wherever its shelf comes in the list (book.cpp's kShelfJournals)
-			DrawBookPanel(*e, section, (e->flags & kFlagJournal) ? 2 : std::min(shelf, 1), mx0, mx1, y, bottom - 30);
+			// and any other note is a sheet, on the letters' shelf or after it (kShelfLetters)
+			DrawBookPanel(*e, section, (e->flags & kFlagJournal) ? 2 : (e->flags & kFlagNote) ? std::max(shelf, 3) : std::min(shelf, 1), mx0, mx1, y, bottom - 30);
 			return;
 		}
 		if (showModel)
