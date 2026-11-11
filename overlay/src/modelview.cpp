@@ -119,6 +119,7 @@ float3 SpineAt(float along, float total, float th, out float phi)
 // a point on leather that bends twice, so far along it from where the first bend begins, so far in from its outside, the
 // two bends turning th between them with flat of that length between. Along it and up from it; a: how far it's turned.
 static const float kJXS = 0.0105124f, kJWO = 0.1308124f, kJBend = 0.0047124f, kJSpineFlat = 0.0116f, kJFlapFlat = 0.0134f;
+static const float kJBendR = 0.003f, kJThick = 0.0176f, kJRest = 0.002f;   // a bend's radius, the journal shut cover to cover, what the pages rest on
 
 float2 BendTwice(float d, float inward, float th, float flat, bool rigid, out float a)
 {
@@ -180,18 +181,36 @@ void JournalPart(uint piece, float3 sp, inout float3 p, inout float3 n, inout fl
 			t = Turned(t, a);
 		}
 	}
-	else if (piece == 2)
+	else if (piece == 2 || piece == 3)
 	{
-		p.x = lerp(p.x, sp.x, flat);
-		p.z = lerp(p.z, sp.z, flat);
-	}
-	else if (piece == 3)
-	{
-		const float2 q = lerp(float2(-kJXS - p.x, p.z), sp.xz, flat);
-		const float2 at = BendTwice(2.0f * kJBend + kJSpineFlat + q.x, q.y, spine, kJSpineFlat, true, a);
-		p = float3(kJXS - at.x, p.y, at.y);
-		n = Turned(n, a);
-		t = Turned(t, a);
+		// The pages. Each half's flatten onto its cover and go with it: the right stay, the left are carried over. But
+		// their backs are sewn into the spine, both halves' along its flat: near its back a page goes with the spine as
+		// it bends, so the halves never part down the gutter. How high a page lies in the journal shut says where up the
+		// spine's flat its back is sewn; out from there it runs its own half's way.
+		const float fromBack = abs(p.x), open = p.z;
+		const float lies = piece == 2 ? sp.z : kJThick - sp.z;
+		float2 own;
+		float2 way;
+		if (piece == 2)
+		{
+			own = float2(lerp(p.x, sp.x, flat), lerp(p.z, sp.z, flat));
+			way = float2(1, 0);
+		}
+		else
+		{
+			const float2 q = lerp(float2(-kJXS - p.x, p.z), sp.xz, flat);
+			const float2 at = BendTwice(2.0f * kJBend + kJSpineFlat + q.x, q.y, spine, kJSpineFlat, true, a);
+			own = float2(kJXS - at.x, at.y);
+			way = float2(-cos(spine), sin(spine));
+			n = Turned(n, a);
+			t = Turned(t, a);
+		}
+		float sewnTurn;
+		const float2 on = BendTwice(kJBend + clamp(lies - kJBendR, 0.0f, kJSpineFlat), lerp(open, kJRest, flat), spine, kJSpineFlat, false, sewnTurn);
+		const float2 sewn = float2(kJXS - on.x, on.y) + way * fromBack;
+		const float w = smoothstep(0.035f, 0.0f, fromBack) * smoothstep(0.0f, 0.15f, shut.x);
+		p.x = lerp(own.x, sewn.x, w);
+		p.z = lerp(own.y, sewn.y, w);
 	}
 	else if (piece == 4)
 	{

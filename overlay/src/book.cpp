@@ -2872,18 +2872,38 @@ bool JournalFold(int piece, const float place[3], const JournalShut& at, float s
 		}
 		break;
 	case 2:
-		// The right pages: flattening onto the back cover, out beside the spine's wall
-		p[0] += (place[0] - p[0]) * at.flat;
-		p[2] += (place[2] - p[2]) * at.flat;
-		break;
 	case 3:
 	{
-		// The left pages: flattening onto the front cover, which carries them over
-		const float qx = (-kJournalXS - p[0]) + (place[0] - (-kJournalXS - p[0])) * at.flat, qz = p[2] + (place[2] - p[2]) * at.flat;
-		BendTwice(2.f * kJournalBend + kJournalSpineFlat + qx, qz, at.spine, kJournalSpineFlat, true, along, up, a);
-		p[0] = kJournalXS - along;
-		p[2] = up;
-		turned = a;
+		// The pages. Each half's flatten onto its cover and go with it: the right stay, the left are carried over. But
+		// their backs are sewn into the spine, both halves' along its flat: near its back a page goes with the spine as
+		// it bends, so the halves never part down the gutter (modelview.cpp's JournalPart has it all)
+		constexpr float kBendR = 0.003f, kThick = 0.0176f, kRest = 0.002f;
+		const float fromBack = std::abs(p[0]), open = p[2];
+		const float lies = piece == 2 ? place[2] : kThick - place[2];
+		float ownX, ownZ, wayX, wayZ;
+		if (piece == 2)
+		{
+			ownX = p[0] + (place[0] - p[0]) * at.flat;
+			ownZ = p[2] + (place[2] - p[2]) * at.flat;
+			wayX = 1.f;
+			wayZ = 0.f;
+		}
+		else
+		{
+			const float qx = (-kJournalXS - p[0]) + (place[0] - (-kJournalXS - p[0])) * at.flat, qz = p[2] + (place[2] - p[2]) * at.flat;
+			BendTwice(2.f * kJournalBend + kJournalSpineFlat + qx, qz, at.spine, kJournalSpineFlat, true, along, up, a);
+			ownX = kJournalXS - along;
+			ownZ = up;
+			wayX = -cosf(at.spine);
+			wayZ = sinf(at.spine);
+			turned = a;
+		}
+		float sewnTurn = 0.f;
+		BendTwice(kJournalBend + std::clamp(lies - kBendR, 0.f, kJournalSpineFlat), open + (kRest - open) * at.flat, at.spine, kJournalSpineFlat, false, along, up, sewnTurn);
+		const auto smooth = [](float lo, float hi, float x) { const float t = std::clamp((x - lo) / (hi - lo), 0.f, 1.f); return t * t * (3.f - 2.f * t); };
+		const float w = smooth(0.035f, 0.f, fromBack) * smooth(0.f, 0.15f, shut);
+		p[0] = ownX + (kJournalXS - along + wayX * fromBack - ownX) * w;
+		p[2] = ownZ + (up + wayZ * fromBack - ownZ) * w;
 		break;
 	}
 	case 4:
