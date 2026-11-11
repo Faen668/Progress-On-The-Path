@@ -3037,7 +3037,7 @@ namespace
 		return g_enlargeSpent ? 0.f : std::clamp(g_enlargeHeld / kEnlargeHold, 0.f, 1.f);
 	}
 
-	enum HintAction { kActPrev, kActNext, kActMark, kActZoom, kActWardrobe, kActWardPrev, kActWardNext, kActWardWear, kActWardPin, kActWardSave, kActWardClear, kActWardStance, kActWardUntracked, kActWardEnlarge, kActWardSearch, kActAutoTurn, kActReveal, kActHide, kActRefresh, kActClose, kActShutBook, kActMissableOnly, kActNone };
+	enum HintAction { kActPrev, kActNext, kActMark, kActZoom, kActWardrobe, kActWardPrev, kActWardNext, kActWardWear, kActWardPin, kActWardSave, kActWardClear, kActWardStance, kActWardUntracked, kActWardEnlarge, kActWardSearch, kActAutoTurn, kActReveal, kActHide, kActRefresh, kActClose, kActShutBook, kActMissableOnly, kActBookText, kActNone };
 
 	struct Hint { unsigned pad; const char* key; std::string text; HintAction action; bool held = false; };   // held: done by holding it, with a bar filling under it
 
@@ -3710,13 +3710,20 @@ namespace
 		return g_book == kBookBestiary && GetSettings().liveBestiary && !CreatureMasked(e) && !e.creatureTemplate.empty();
 	}
 
-	// A book shown as a book, with Live Book Preview on: open on its pages once it's read and its text is here, shut until then.
-	// A journal is one too, in a small soft-backed notebook of its own, and any other note a sheet that folds (book.cpp).
+	// A book shown as a book: open on its pages once it's read and its text is here, shut until then. A journal is one too,
+	// in a small soft-backed notebook of its own, and any other note a sheet that folds (book.cpp).
 	bool LiveBook(const Entry&)
 	{
-		return g_book == kBookLibrary && GetSettings().liveBook;
+		return g_book == kBookLibrary;
 	}
-	bool g_bookOpen = false;   // the book shown this frame is open on its pages, so they can be turned
+	// Read as Text (T, or A), in the Library: a read book's text laid over it, the book dimmed behind, plain and large to
+	// scroll, for anyone who'd rather not read the pages' own hand. Kept as the Library was left (the liveBook setting).
+	bool BookAsText()
+	{
+		return g_book == kBookLibrary && !GetSettings().liveBook;
+	}
+	bool g_bookOpen = false;       // the book shown this frame is open on its pages, so they can be turned
+	bool g_bookReadable = false;   // the book shown this frame has been read and its text is here: Read as Text can show it
 	bool g_shutBookClicked = false;   // the hint to shut or open it clicked, for the book to take next frame
 
 	// Its model is shown, turning or not as Auto-Turn says: an item's, or a creature's with Live Bestiary on
@@ -3727,7 +3734,7 @@ namespace
 
 	bool CanEnlarge(const Entry& e)
 	{
-		return (g_book == kBookGwent && !e.picture.empty()) || ((g_book == kBookItems && !e.itemTemplate.empty()) || LiveCreature(e) || LiveBook(e)) && ModelViewState() == kModelReady;
+		return (g_book == kBookGwent && !e.picture.empty()) || ((g_book == kBookItems && !e.itemTemplate.empty()) || LiveCreature(e) || (LiveBook(e) && !(g_bookReadable && BookAsText()))) && ModelViewState() == kModelReady;
 	}
 
 	// The wardrobe's pins: what he keeps on while other things are tried, by kind
@@ -4233,17 +4240,72 @@ namespace
 
 	// The book, open on its text once it's read, its pages turned with [left] and [right], the arrow keys, or the arrows
 	// under it; shut on its cover until then, or while its text is on its way
+	// Read as Text: the book dimmed behind its text, which scrolls with the wheel, [left] and [right] held, or a screenful
+	// at a time on the page keys
+	void DrawBookText(const std::string& uuid, const std::vector<std::string>& paragraphs, float x0, float x1, float top, float bottom)
+	{
+		if (g_detailFor != uuid)
+		{
+			g_detailFor = uuid;
+			g_detailScroll = 0.f;
+		}
+		dl->AddRectFilled(ImVec2(x0 - 4.f, top - 8.f), ImVec2(x1 + 4.f, bottom + 8.f), Rgb(0, 0, 0, 170));
+		const ImVec2 pa(x0 + 14.f, top), pb(x1 - 14.f, bottom);
+		dl->AddRectFilledMultiColor(pa, pb, Rgb(40, 31, 20, 240), Rgb(32, 25, 16, 240), Rgb(22, 18, 12, 244), Rgb(28, 22, 14, 244));
+		dl->AddRect(pa, pb, kGoldDim, 0.f, 0, 1.5f);
+		dl->AddRect(ImVec2(pa.x + 5.f, pa.y + 5.f), ImVec2(pb.x - 5.f, pb.y - 5.f), Alpha(kGold, 0.22f), 0.f, 0, 1.f);
+		const float pad = 40.f, textW = pb.x - pa.x - pad * 2.f - 12.f, gapP = 26.f;
+		const float viewTop = pa.y + 30.f, viewBottom = pb.y - 30.f, viewH = viewBottom - viewTop;
+		float total = 0.f;
+		for (const std::string& p : paragraphs)
+			total += WrappedHeight(kSerif, 32, p.c_str(), textW) + gapP;
+		g_detailScrollMax = std::max(0.f, total - gapP - viewH);
+		if (!g_statusOpen && !g_wardrobeOpen && !g_capture && !g_cardZoom)
+		{
+			if (Hover(pa, pb) && g_wheel != 0.f)
+				g_detailScroll -= g_wheel * 90.f;
+			if ((g_pad.buttons & kPadRight) != 0 || ImGui::IsKeyDown(ImGuiKey_RightArrow))
+				g_detailScroll += g_dt * 520.f;
+			if ((g_pad.buttons & kPadLeft) != 0 || ImGui::IsKeyDown(ImGuiKey_LeftArrow))
+				g_detailScroll -= g_dt * 520.f;
+			if (g_pad.Pressed(kPadRT) || KeyHit(kKeyD))
+				g_detailScroll += viewH * 0.85f;
+			if (g_pad.Pressed(kPadLT) || KeyHit(kKeyA))
+				g_detailScroll -= viewH * 0.85f;
+		}
+		g_detailScroll = std::clamp(g_detailScroll, 0.f, g_detailScrollMax);
+		dl->PushClipRect(ImVec2(pa.x, viewTop - 4.f), ImVec2(pb.x, viewBottom + 4.f), true);
+		float y = viewTop - g_detailScroll;
+		for (const std::string& p : paragraphs)
+		{
+			const float h = WrappedHeight(kSerif, 32, p.c_str(), textW);
+			if (y + h > viewTop - 40.f && y < viewBottom + 40.f)
+				Text(kSerif, 32, pa.x + pad, y, Rgb(242, 234, 214), p.c_str(), textW);
+			y += h + gapP;
+		}
+		dl->PopClipRect();
+		// How far through: a thin bar down the right, when there's more than fits
+		if (g_detailScrollMax > 0.f)
+		{
+			const float tx = pb.x - 20.f, th = viewH * std::max(0.08f, viewH / (total - gapP));
+			const float ty = viewTop + (viewH - th) * (g_detailScroll / g_detailScrollMax);
+			dl->AddRectFilled(ImVec2(tx - 1.5f, viewTop), ImVec2(tx + 1.5f, viewBottom), Rgb(70, 58, 38));
+			dl->AddRectFilled(ImVec2(tx - 3.f, ty), ImVec2(tx + 3.f, ty + th), kGold);
+		}
+	}
+
 	void DrawBookPanel(const Entry& e, const Section* section, int shelf, float x0, float x1, float top, float bottom)
 	{
 		BookSetTitle(e.uuid, e.title.empty() ? e.uuid : e.title, shelf);
 		std::string request = BookClosedRequest(e.uuid);
 		g_bookOpen = false;
+		g_detailScrollMax = 0.f;
+		std::vector<std::string> paragraphs;
 		if (e.status == kCompleted)
 		{
 			std::vector<std::string> lore;
 			if (QuestLore(e, lore))
 			{
-				std::vector<std::string> paragraphs;
 				for (const std::string& p : lore)
 					if (!p.empty())
 						paragraphs.push_back(p);
@@ -4251,6 +4313,20 @@ namespace
 				request = BookRequest(e.uuid);
 				g_bookOpen = true;
 			}
+		}
+		g_bookReadable = g_bookOpen;
+		if (g_bookOpen && BookAsText())
+		{
+			// The book as it was left under its text, ready to come back to: not turned or tipped by a drag over the text
+			g_bookOpen = false;
+			g_shutBookClicked = false;
+			const float yaw = g_modelYaw, pitch = g_modelPitch;
+			DrawModelPanel(e, x0, x1, top, bottom, request, true);
+			g_modelYaw = yaw;
+			g_modelPitch = pitch;
+			g_modelDragging = false;
+			DrawBookText(e.uuid, paragraphs, x0, x1, top, bottom);
+			return;
 		}
 		const float barH = g_bookOpen ? 56.f : 0.f;
 		if (g_bookOpen)
@@ -5132,7 +5208,17 @@ namespace
 	{
 		const Columns col = GetColumns();
 		const float rx = col.r0, rr = col.r1;
-		const Counts c = BookCounts(m, g_book);
+		Counts c = BookCounts(m, g_book);
+		// Everything on the tab turned off in Tracked Contents: what it would count, said to be untracked
+		bool untracked = false;
+		if (c.total == 0 && !MissableOnly())
+			for (const Section& s : m.sections)
+				if (s.book == g_book)
+					for (const Entry& e : s.entries)
+					{
+						Add(c, e);
+						untracked = true;
+					}
 		const bool achievements = g_book == kTabAchievements;
 		int secretLeft = 0, counted = 0;
 		if (achievements)
@@ -5147,7 +5233,10 @@ namespace
 		PanelHeading(na, nb.x, (Upper(Tx(kBooks[g_book].name)) + (MissableOnly() ? std::string(" - ") + Tx(T_missable_only_caps) : std::string())).c_str());
 		char big[32];
 		snprintf(big, sizeof(big), "%d%%", c.total > 0 ? 100 * c.done / c.total : 0);
-		Text(kSerif, 72, na.x + 30, na.y + 70, Rgb(232, 158, 100), big);
+		if (untracked)
+			Text(kSerif, 40, na.x + 30, na.y + 96, kDim, Tx(T_not_tracked));
+		else
+			Text(kSerif, 72, na.x + 30, na.y + 70, Rgb(232, 158, 100), big);
 		char of[64];
 		snprintf(of, sizeof(of), "%s", TxFill(T_x_of_y, std::to_string(c.done), std::to_string(c.total)).c_str());
 		TextRight(kSerif, 32, nb.x - 30, na.y + 106, kText, of);
@@ -5541,8 +5630,6 @@ namespace
 		toggle(x1, ry, { Tx(T_show_secret), Tx(T_show_secret_hint) }, st.revealHiddenAchievements);
 		ry += rowH;
 		toggle(x1, ry, { Tx(T_live_bestiary), Tx(T_live_bestiary_hint) }, st.liveBestiary);
-		ry += rowH;
-		toggle(x1, ry, { Tx(T_live_book), Tx(T_live_book_hint) }, st.liveBook);
 		ry += rowH;
 		toggle(x1, ry, { Tx(T_menu_sounds), Tx(T_menu_sounds_hint) }, st.menuSounds);
 		ry += rowH;
@@ -8600,6 +8687,8 @@ namespace
 				if (BookCanShut())
 					hints.push_back({ kPadL3, KeyLabel(kKeyX), Tx(BookShutting() ? T_book_open : T_book_close), kActShutBook });
 			}
+			else if (g_book == kBookLibrary && g_bookReadable)
+				hints.push_back({ kPadLT | kPadRT, g_keyPages.c_str(), Tx(T_scroll_text), kActNone });
 			else if (g_padPrompts && g_book != kTabAchievements)
 				hints.push_back({ kPadLT | kPadRT, nullptr, Tx(T_region), kActNone });
 			if (canMark)
@@ -8608,11 +8697,13 @@ namespace
 				hints.push_back({ kPadR3, KeyLabel(kKeyZ), Tx(T_hold_to_enlarge), kActZoom, true });
 			if (canMark && ShowsModel(*e))
 				hints.push_back({ kPadA, KeyLabel(kKeyT), Tx(GetSettings().autoRotate ? T_auto_turn_on : T_auto_turn_off), kActAutoTurn });
+			if (canMark && g_book == kBookLibrary && g_bookReadable)
+				hints.push_back({ kPadA, KeyLabel(kKeyT), Tx(BookAsText() ? T_show_the_book : T_read_as_text), kActBookText });
 			if (canMark && CanReveal(*e))
 				hints.push_back({ kPadA, KeyLabel(kKeyT), Tx(e->masked ? T_reveal : T_hide_again), kActReveal });
 			if (g_book == kBookItems && state.model)
 				hints.push_back({ kPadL3, KeyLabel(kKeyG), Tx(T_ward_open), kActWardrobe });
-			if (g_book != kBookBestiary && g_detailScrollMax > 0.f)
+			if (g_book != kBookBestiary && g_detailScrollMax > 0.f && !(g_book == kBookLibrary && g_bookReadable))
 				hints.push_back({ kPadLeft | kPadRight, Tx(T_left_right), Tx(T_scroll_details), kActNone });
 			hints.push_back({ kPadY, KeyLabel(kKeyC), Tx(T_expand_collapse), kActNone });
 			if (g_tabHasMissables)
@@ -8656,7 +8747,7 @@ namespace
 		float x = kW * 0.5f - (total - gap) * 0.5f;
 
 		bool wardrobe = false;
-		bool prev = false, next = false, mark = false, zoom = false, autoTurn = false, reveal = false, hide = false, refresh = false, close = false;
+		bool prev = false, next = false, mark = false, zoom = false, autoTurn = false, reveal = false, hide = false, refresh = false, close = false, bookText = false;
 		for (const Hint& h : hints)
 		{
 			const float gw = glyphsWidth(h);
@@ -8696,6 +8787,7 @@ namespace
 				case kActWardStance: g_wardClick = kWardClickStance; break;
 				case kActHide: hide = true; break;
 				case kActMissableOnly: ToggleMissableOnly(); break;
+				case kActBookText: bookText = true; break;
 				case kActRefresh: refresh = true; break;
 				case kActClose: close = true; break;
 				default: break;
@@ -8718,6 +8810,7 @@ namespace
 				// A on an entry: a header's A opens and closes it
 				autoTurn = autoTurn || (canMark && ShowsModel(*e) && (KeyHit(kKeyT) || g_pad.Pressed(kPadA)));
 				reveal = reveal || (canMark && CanReveal(*e) && (KeyHit(kKeyT) || g_pad.Pressed(kPadA)));
+				bookText = bookText || (canMark && g_book == kBookLibrary && g_bookReadable && (KeyHit(kKeyT) || g_pad.Pressed(kPadA)));
 				hide = hide || KeyHit(kKeyH) || g_pad.Pressed(kPadStart);
 				if (g_tabHasMissables && (KeyHit(kKeyS) || backTap))
 					ToggleMissableOnly();
@@ -8726,6 +8819,13 @@ namespace
 			close = close || (g_pad.Pressed(kPadB) && !g_backConsumed);
 		}
 		g_backConsumed = false;
+		if (bookText)
+		{
+			Settings& st = GetSettings();
+			st.liveBook = !st.liveBook;
+			MarkDirty();
+			MenuSound(kSoundValue, kRankValue);
+		}
 		if (autoTurn)
 		{
 			GetSettings().autoRotate = !GetSettings().autoRotate;
@@ -10222,6 +10322,8 @@ void DrawUi()
 		DrawTopBar(model);
 
 	g_tabHasMissables = false;   // the region row finds it again, on the tabs that have one
+	g_bookOpen = false;          // and the Library's book, drawn open, says so again: none drawn, no hints to turn or shut it
+	g_bookReadable = false;
 	const Entry* selected = nullptr;
 	if (g_wardrobeOpen)
 	{

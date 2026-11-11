@@ -615,8 +615,6 @@ function PotPOverlay_TextKeys_3(out keys: array<string>)
 	keys.PushBack("library_tomes");
 	keys.PushBack("tour_library");
 	keys.PushBack("tour_library_body");
-	keys.PushBack("live_book");
-	keys.PushBack("live_book_hint");
 	keys.PushBack("book_page");
 	keys.PushBack("book_pages");
 	keys.PushBack("turn_page");
@@ -680,6 +678,8 @@ function PotPOverlay_TextKeys_3(out keys: array<string>)
 	keys.PushBack("set_track_library_letters");
 	keys.PushBack("set_track_library_notices");
 	keys.PushBack("set_track_library_notes");
+	keys.PushBack("read_as_text");
+	keys.PushBack("show_the_book");
 }
 
 function PotPOverlay_ExportText() : string
