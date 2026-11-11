@@ -118,7 +118,11 @@ float3 SpineAt(float along, float total, float th, out float phi)
 // The journal folding shut (book.h's JournalFold, which this is the same as; build_journal.py makes it open and flat):
 // a point on leather that bends twice, so far along it from where the first bend begins, so far in from its outside, the
 // two bends turning th between them with flat of that length between. Along it and up from it; a: how far it's turned.
-static const float kJXS = 0.0105124f, kJWO = 0.1308124f, kJBend = 0.0047124f, kJSpineFlat = 0.0116f, kJFlapFlat = 0.0134f;
+static const float kJXS = 0.0105124f, kJWO = 0.1278124f, kJBend = 0.0047124f, kJSpineFlat = 0.0116f, kJFlapFlat = 0.0134f;
+// The thong's way round the journal shut (build_journal.py's THONG_...): the spine's wall, the fore-edge's, the top, where
+// its end is tucked, and its thickness
+static const float kJThongWall = 0.0075124f, kJThongFore = 0.1308124f, kJThongTop = 0.0194f, kJThongX0 = 0.0758124f, kJThongT = 0.0011f;
+static const float kJThongY = -0.00425f;   // the first turn's middle, up the journal
 static const float kJBendR = 0.003f, kJThick = 0.0176f, kJRest = 0.002f;   // a bend's radius, the journal shut cover to cover, what the pages rest on
 
 float2 BendTwice(float d, float inward, float th, float flat, bool rigid, out float a)
@@ -158,17 +162,77 @@ float2 BendTwice(float d, float inward, float th, float flat, bool rigid, out fl
 	return at + float2(-sin(a), cos(a)) * inward;
 }
 
+)" R"(
+// The thong's way round the journal shut, from where it's tucked: across the front to the spine's wall, down it, along
+// the underside, up the fore-edge, and across the front again. The journal's surface so far round, and which way is out.
+float2 ThongOn(float d, out float2 outward)
+{
+	const float across = kJThongX0 - kJThongWall, up = kJThongTop, width = kJThongFore - kJThongWall;
+	if (d < across)
+	{
+		outward = float2(0, 1);
+		return float2(kJThongX0 - d, up);
+	}
+	if (d < across + up)
+	{
+		outward = float2(-1, 0);
+		return float2(kJThongWall, up - (d - across));
+	}
+	if (d < across + up + width)
+	{
+		outward = float2(0, -1);
+		return float2(kJThongWall + (d - across - up), 0);
+	}
+	if (d < across + 2.0f * up + width)
+	{
+		outward = float2(1, 0);
+		return float2(kJThongFore, d - across - up - width);
+	}
+	outward = float2(0, 1);
+	return float2(kJThongFore - (d - across - 2.0f * up - width), up);
+}
+
 // A journal's vertex, the journal shut.x shut: the front cover over on the spine first, the flap round the fore-edge
 // after, the pages flattening onto their covers. piece: export_journal.py's (1 round the spine, 2 the right pages, 3 the
-// left, 4 the flap, 6 only there shut).
+// left, 4 the flap, 6 the thong, 7 only there shut).
 void JournalPart(uint piece, float3 sp, inout float3 p, inout float3 n, inout float3 t)
 {
 	const float pi = 3.14159265f;
-	const float spine = pi * smoothstep(0.0f, 0.65f, shut.x), flap = pi * smoothstep(0.45f, 1.0f, shut.x), flat = smoothstep(0.0f, 0.6f, shut.x);
+	const float spine = pi * smoothstep(0.0f, 0.55f, shut.x), flap = pi * smoothstep(0.38f, 0.82f, shut.x), flat = smoothstep(0.0f, 0.5f, shut.x);
 	float a = 0;
 	if (piece == 6)
 	{
-		if (shut.x < 0.999f)
+		// The thong, made where it lies wound twice round the journal shut: wound on last, from where it's tucked. What
+		// isn't wound on yet (sp.x, how far along the winding a vertex is, past how far it's got) is drawn back to where
+		// the winding has got to, as far out from the journal as it was: so the strap ends square there, at its own
+		// width and thickness, and what's wholly to come is nothing at all. Its tuck (sp.x of 1) is there once it's wound.
+		const float wound = smoothstep(0.8f, 1.0f, shut.x);
+		const float round = 2.0f * ((kJThongFore - kJThongWall) + kJThongTop);
+		if (sp.x >= 0.999f)
+		{
+			if (wound < 0.9999f)
+				p = 0;
+		}
+		else if (sp.x > wound * 0.97f)
+		{
+			float2 outward, toward;
+			const float2 was = ThongOn(fmod(sp.x / 0.97f * 2.0f * round, round), outward);
+			float proud = dot(p.xz - was, outward);
+			// The second turn, while the first is still going on: nothing at all, not even its end's face beside the first's
+			if (sp.x > 0.486f && wound < 0.5f)
+			{
+				proud = 0;
+				p.y = kJThongY;
+			}
+			const float2 now = ThongOn(fmod(wound * 2.0f * round, round), toward);
+			p.x = now.x + toward.x * proud;
+			p.z = now.y + toward.y * proud;
+		}
+	}
+	else if (piece == 7)
+	{
+		// What lies between the pages (the marker, the slip): there once the cover's nearly down on them
+		if (shut.x < 0.45f)
 			p = 0;
 	}
 	else if (piece == 1)
@@ -224,6 +288,7 @@ void JournalPart(uint piece, float3 sp, inout float3 p, inout float3 n, inout fl
 	}
 }
 
+)" R"(
 void BookPart(uint role, float base, float3 sp, float3 sn, float3 st, float fold, inout float3 p, inout float3 n, inout float3 t)
 {
 	const float c = sheet2.x, s = sheet2.y;
@@ -268,7 +333,7 @@ void BookPart(uint role, float base, float3 sp, float3 sn, float3 st, float fold
 	if (shut.z < 0 && role != 3 && role != 4)
 	{
 		if (shut.x > 0 || role == 6)
-			JournalPart(role == 6 ? 6 : (uint)round(fold), sp, p, n, t);
+			JournalPart((uint)round(fold), sp, p, n, t);
 	}
 	else if (shut.x > 0 && role != 3 && role != 4)
 	{

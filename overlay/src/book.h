@@ -52,7 +52,7 @@ void BookTestTurn(float leaf);  // and its leaf held that far over, 0 to 1; belo
 
 // As it's made, metres: half the spine's width open, the covers' fore-edges, a bend's length (a quarter round of 3 mm on
 // the leather's outside), and the flats between the bends: the spine's, and the flap's up the fore-edge
-inline constexpr float kJournalXS = 0.0105124f, kJournalWO = 0.1308124f, kJournalBend = 0.0047124f;
+inline constexpr float kJournalXS = 0.0105124f, kJournalWO = 0.1278124f, kJournalBend = 0.0047124f;
 inline constexpr float kJournalSpineFlat = 0.0116f, kJournalFlapFlat = 0.0134f;
 
 // How far each part has gone, the journal that far shut (0 open to 1 shut): the front cover over first, the flap round

@@ -1173,10 +1173,13 @@ namespace
 		std::vector<float> spine;     // 1 on the spine, 0 on the boards
 	};
 
-	const Binding& BindingOf(int width, int height)
+	// journal: the journal's atlas (journal.mesh), its wrapper and lining as they lie open and flat, twice their size:
+	// a journal is half a tome each way, so the marks of age, which are sized for a tome's binding, are as fine on it
+	const Binding& BindingOf(int width, int height, bool journal = false)
 	{
 		static std::mutex lock;
-		static Binding binding;
+		static Binding bindings[2];
+		Binding& binding = bindings[journal ? 1 : 0];
 		std::lock_guard<std::mutex> hold(lock);
 		if (binding.width == width && binding.height == height)
 			return binding;
@@ -1187,7 +1190,7 @@ namespace
 		binding.w.assign(count, NAN);
 		binding.y.assign(count, NAN);
 		binding.spine.assign(count, 0.f);
-		const std::string_view data = EmbeddedFile(POTP_RES_BOOK_MESH);
+		const std::string_view data = EmbeddedFile(journal ? POTP_RES_JOURNAL_MESH : POTP_RES_BOOK_MESH);
 		if (data.size() < 8 || (memcmp(data.data(), "PBK2", 4) != 0 && memcmp(data.data(), "PBK3", 4) != 0))
 			return binding;
 		const size_t stride = memcmp(data.data(), "PBK3", 4) == 0 ? 23 : 13;   // floats a vertex
@@ -1211,13 +1214,19 @@ namespace
 				break;
 			const uint32_t* index = reinterpret_cast<const uint32_t*>(at);
 			at += static_cast<size_t>(indices) * 4;
-			if (material != 0)
+			if (material != 0 || (journal && name != "wrapper" && name != "lining"))
 				continue;
 			// The open book lies spread with its spine on x = 0, the front board at -x. The closed one lies shut, its spine
 			// at x = -0.13 and its front board on top: its boards unrolled about the spine, the spine itself across its height.
 			const bool closed = name.compare(0, 7, "closed_") == 0;
-			const auto unroll = [closed](const float* q, float& w, float& onSpine)
+			const auto unroll = [closed, journal](const float* q, float& w, float& onSpine)
 			{
+				if (journal)
+				{
+					w = q[0] * 2.f;
+					onSpine = Smooth(0.016f, 0.01f, std::abs(q[0]));
+					return;
+				}
 				if (!closed)
 				{
 					w = q[0];
@@ -1245,7 +1254,7 @@ namespace
 					px[k] = c[k][10] * width - 0.5f;
 					py[k] = c[k][11] * height - 0.5f;
 					unroll(c[k], ww[k], ss[k]);
-					yy[k] = c[k][1];
+					yy[k] = c[k][1] * (journal ? 2.f : 1.f);
 				}
 				const float area = (px[1] - px[0]) * (py[2] - py[0]) - (px[2] - px[0]) * (py[1] - py[0]);
 				if (std::abs(area) < 1e-8f)
@@ -1349,7 +1358,8 @@ namespace
 		out.rough = std::clamp(out.rough + look.finish * leather, 0.f, 1.f);
 	}
 
-	void Weather(const Look& look, float w, float y, float spine, float leather, Wear& out)
+	// edgeAt: how far in from the binding's edge this is, where the binding isn't the tome's rectangle (a journal's)
+	void Weather(const Look& look, float w, float y, float spine, float leather, Wear& out, float edgeAt = NAN)
 	{
 		Character(look, w, y, leather, out);
 		const uint32_t seed = look.seed;
@@ -1365,7 +1375,7 @@ namespace
 		}
 		// Handled: every edge and corner rubbed pale, more the older it is, and the grain scuffed through in small patches
 		// near them, where hands hold it; a paler shade of the leather itself with a little of the bare hide's brown
-		const float edge = std::min(kEdgeW - std::abs(w), kEdgeY - std::abs(y));
+		const float edge = std::isnan(edgeAt) ? std::min(kEdgeW - std::abs(w), kEdgeY - std::abs(y)) : edgeAt;
 		const float nearEdge = Smooth(0.07f, 0.f, edge);
 		const float scuffs = Smooth(0.7f, 0.8f, Fbm(w * 26.f, y * 26.f, seed + 1) + 0.12f * nearEdge * age);
 		const float worn = scuffs * age * leather * (0.35f + 0.65f * nearEdge);
@@ -2071,33 +2081,112 @@ namespace
 		return look;
 	}
 
-	// The atlas's colour in a journal's look: its leather  colour + a * (its dye - the dye it's baked with), in linear, a
-	// in the mask's red; its thong and its thread (the mask's green and blue) tinted to theirs
-	bool WriteJournalDiffuse(const std::string& uuid, uint32_t largestSide, GameTexture& out)
+	// How far in from the wrapper's edge a place on it is, as it lies open (build_journal.py's half_height): the covers'
+	// fore corners cut round, the flap narrowing to its tongue
+	float JournalEdge(float x, float y)
 	{
-		GameTexture mask;
-		if (!Decode(POTP_RES_JOURNAL_DIFFUSE, largestSide, out) || !Decode(POTP_RES_JOURNAL_MASK, largestSide, mask)
-			|| mask.width != out.width || mask.height != out.height)
-			return false;
-		const JournalLook look = JournalLookOf(uuid);
-		for (size_t i = 0; i + 3 < out.pixels.size(); i += 4)
+		constexpr float kHalf = 0.0855f, kCorner = 0.008f, kWrap = 0.0228248f, kFlap = 0.062f, kFlapHalf = 0.0775f, kTipR = 0.0279f;
+		constexpr float kEnd = kJournalWO + kWrap + kFlap - 0.0006f;
+		float reach;
+		if (x < -kJournalWO + kCorner)
+			reach = kHalf - kCorner + std::sqrt(std::max(0.f, kCorner * kCorner - (x + kJournalWO - kCorner) * (x + kJournalWO - kCorner)));
+		else if (x <= kJournalWO - kCorner)
+			reach = kHalf;
+		else if (x <= kJournalWO)
+			reach = kHalf - kCorner + std::sqrt(std::max(0.f, kCorner * kCorner - (x - kJournalWO + kCorner) * (x - kJournalWO + kCorner)));
+		else
 		{
-			uint8_t* const p = &out.pixels[i];
-			const uint8_t* const m = &mask.pixels[i];
+			const float d = x - kJournalWO - kWrap, run = kFlap - kTipR;
+			if (d <= 0.f)
+				reach = kFlapHalf;
+			else if (d < run)
+			{
+				const float t = d / run;
+				reach = kFlapHalf + (kTipR - kFlapHalf) * t * t * (3.f - 2.f * t);
+			}
+			else
+				reach = std::sqrt(std::max(0.f, kTipR * kTipR - (d - run) * (d - run)));
+		}
+		return std::min({ reach - std::abs(y), x + kJournalWO, kEnd - x });
+	}
+
+	// A journal's look on its atlas: its leather in its own dye, its thong and thread in theirs, and then the years, as the
+	// tome's has them (Weather): its hide's own character, its edges rubbed pale, grime, stains, a wetting, mildew or a
+	// scorch, each journal's its own and where its own are. Made together, the last few kept.
+	struct JournalMaps
+	{
+		std::string uuid;
+		GameTexture diffuse, normal;   // normal: roughness in its alpha
+	};
+
+	std::shared_ptr<const JournalMaps> MakeJournalMaps(const std::string& uuid)
+	{
+		static std::mutex lock;
+		static std::list<std::shared_ptr<const JournalMaps>> kept;
+		static GameTexture baseDiffuse, baseNormal, baseMask;
+		static bool tried = false, ok = false;
+		{
+			std::lock_guard<std::mutex> hold(lock);
+			for (const auto& k : kept)
+				if (k->uuid == uuid)
+					return k;
+			if (!tried)
+			{
+				tried = true;
+				GameTexture rough;
+				ok = Decode(POTP_RES_JOURNAL_DIFFUSE, 1024, baseDiffuse) && Decode(POTP_RES_JOURNAL_NORMAL, 1024, baseNormal)
+					&& Decode(POTP_RES_JOURNAL_ROUGHNESS, 1024, rough) && Decode(POTP_RES_JOURNAL_MASK, 1024, baseMask);
+				for (const GameTexture* t : { &baseNormal, &rough, &baseMask })
+					ok = ok && t->width == baseDiffuse.width && t->height == baseDiffuse.height;
+				if (ok)
+					for (size_t i = 3; i < baseNormal.pixels.size(); i += 4)
+						baseNormal.pixels[i] = rough.pixels[i - 3];
+			}
+			if (!ok)
+				return nullptr;
+		}
+		auto made = std::make_shared<JournalMaps>();
+		made->uuid = uuid;
+		made->diffuse = baseDiffuse;
+		made->normal = baseNormal;
+		const JournalLook journal = JournalLookOf(uuid);
+		// Its years are a book's (LookOf, as a journal: carried about and the worse for it), on its own dye
+		Look look = LookOf(uuid);
+		for (int k = 0; k < 3; ++k)
+			look.dye[k] = journal.dye[k];
+		const Binding& binding = BindingOf(static_cast<int>(baseDiffuse.width), static_cast<int>(baseDiffuse.height), true);
+		const size_t count = made->diffuse.pixels.size() / 4;
+		for (size_t i = 0; i < count; ++i)
+		{
+			uint8_t* const d = &made->diffuse.pixels[i * 4];
+			uint8_t* const n = &made->normal.pixels[i * 4];
+			const uint8_t* const m = &baseMask.pixels[i * 4];
 			const float a = m[0] / 255.f * kJournalDyeScale;
+			Wear wear{};
 			for (int k = 0; k < 3; ++k)
 			{
-				float v = ToLinear(p[k]);
+				float v = ToLinear(d[k]);
 				if (m[1] > 127)
-					v *= look.thong[k] / kJournalThong[k];
+					v *= journal.thong[k] / kJournalThong[k];
 				else if (m[2] > 127)
-					v *= look.thread[k] / kJournalThread[k];
+					v *= journal.thread[k] / kJournalThread[k];
 				else
-					v += a * (look.dye[k] - kJournalDye[k]);
-				p[k] = ToSrgb(v);
+					v += a * (journal.dye[k] - kJournalDye[k]);
+				wear.colour[k] = std::max(0.f, v);
 			}
+			wear.rough = n[3] / 255.f;
+			const float leather = m[1] > 127 || m[2] > 127 ? 0.f : std::clamp(a * 2.f, 0.f, 1.f);
+			if (leather > 0.f && !binding.w.empty() && !std::isnan(binding.w[i]))
+				Weather(look, binding.w[i], binding.y[i], binding.spine[i], leather, wear, 2.f * JournalEdge(binding.w[i] * 0.5f, binding.y[i] * 0.5f));
+			for (int k = 0; k < 3; ++k)
+				d[k] = ToSrgb(wear.colour[k]);
+			n[3] = static_cast<uint8_t>(std::clamp(wear.rough, 0.f, 1.f) * 255.f + 0.5f);
 		}
-		return true;
+		std::lock_guard<std::mutex> hold(lock);
+		kept.push_front(made);
+		while (kept.size() > 3)
+			kept.pop_back();
+		return made;
 	}
 
 	// The label on a journal's front: a slip of paper with its title written on it in ink, wrapped and centred
@@ -2274,24 +2363,20 @@ bool ReadBuiltinTexture(const std::string& name, uint32_t largestSide, GameTextu
 			AddMips(out);
 		return ok;
 	}
-	// The journal's: its atlas in a journal's look, its label with its title, and the maps every journal shares
-	if (key.compare(0, 10, "journal_d:") == 0)
-		ok = WriteJournalDiffuse(key.substr(10), largestSide, out);
+	// The journal's: its atlas in a journal's look and age (colour, and normal with its roughness), its label, its slip
+	if (key.compare(0, 10, "journal_d:") == 0 || key.compare(0, 10, "journal_n:") == 0)
+	{
+		const std::shared_ptr<const JournalMaps> maps = MakeJournalMaps(key.substr(10));
+		ok = maps != nullptr;
+		if (ok)
+			out = key[8] == 'd' ? maps->diffuse : maps->normal;
+	}
 	else if (key.compare(0, 6, "label:") == 0)
 		ok = WriteLabel(key.substr(6), out);
 	else if (key.compare(0, 5, "slip:") == 0)
 		ok = WriteSlip(key.substr(5), out);
 	else if (key == "journal_s")
 		ok = Decode(POTP_RES_JOURNAL_SPECULAR, largestSide, out);
-	else if (key == "journal_n")
-	{
-		GameTexture rough;
-		ok = Decode(POTP_RES_JOURNAL_NORMAL, largestSide, out) && Decode(POTP_RES_JOURNAL_ROUGHNESS, largestSide, rough)
-			&& rough.width == out.width && rough.height == out.height;
-		if (ok)
-			for (size_t i = 3; i < out.pixels.size(); i += 4)
-				out.pixels[i] = rough.pixels[i - 3];
-	}
 	else if (key == "book_d")
 		ok = Decode(POTP_RES_BOOK_DIFFUSE, largestSide, out);
 	else if (key == "book_s")
@@ -2503,8 +2588,8 @@ bool LoadBookModel(const std::string& which, ItemModel& out)
 		if (closedPart != (closed && !withShut))
 			continue;
 		const bool posed = closed && withShut;
-		// What's only there while a journal's shut (the thong, the marker, the slip): its piece is 6
-		const bool shutOnly = journal && withShut && !part.shut.empty() && static_cast<int>(part.shut[0].fold + 0.5f) == 6;
+		// What's only there while a journal's shut: its thong (piece 6), its marker and its slip (7)
+		const bool shutOnly = journal && withShut && !part.shut.empty() && static_cast<int>(part.shut[0].fold + 0.5f) >= 6;
 		if (posed && journal)
 			PoseJournalShut(part);
 		else if (posed)
@@ -2525,7 +2610,7 @@ bool LoadBookModel(const std::string& which, ItemModel& out)
 			if (material == 0)
 			{
 				part.diffuse = std::string(kBuiltinTexture) + "journal_d:" + uuid;
-				part.normal = std::string(kBuiltinTexture) + "journal_n";
+				part.normal = std::string(kBuiltinTexture) + "journal_n:" + uuid;
 				part.specular = std::string(kBuiltinTexture) + "journal_s";
 				finish(part, role);
 				continue;
@@ -2804,7 +2889,8 @@ JournalShut JournalShutAt(float shut)
 		return t * t * (3.f - 2.f * t);
 	};
 	constexpr float kPi = 3.14159265f;
-	return { kPi * ease(0.f, 0.65f, shut), kPi * ease(0.45f, 1.f, shut), ease(0.f, 0.6f, shut) };
+	// The last fifth is the thong's, wound on once the flap's down (modelview.cpp's JournalPart has the same)
+	return { kPi * ease(0.f, 0.55f, shut), kPi * ease(0.38f, 0.82f, shut), ease(0.f, 0.5f, shut) };
 }
 
 namespace
@@ -2917,6 +3003,7 @@ bool JournalFold(int piece, const float place[3], const JournalShut& at, float s
 		}
 		break;
 	case 6:
+	case 7:
 		return shut >= 0.999f;
 	}
 	return true;
@@ -2978,7 +3065,8 @@ void BookTick(float dt)
 	// book moved over so it stays in the middle (shut, it lies from its spine's back, kShutLeft, to its boards' edge)
 	if (g_shown.shutting != 0)
 	{
-		g_shown.shut = std::clamp(g_shown.shut + g_shown.shutting * dt / kShutSeconds, 0.f, 1.f);
+		// A journal takes longer: its cover, then its flap, then its thong wound on
+		g_shown.shut = std::clamp(g_shown.shut + g_shown.shutting * dt / (journal ? 1.9f : kShutSeconds), 0.f, 1.f);
 		if (g_shown.shut <= 0.f || g_shown.shut >= 1.f)
 			g_shown.shutting = 0;
 	}
