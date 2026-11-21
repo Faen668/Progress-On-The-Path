@@ -44,6 +44,14 @@ extern "C" void PotpOverlay_TestCardTurn(float degrees)
 void UiTestBookShut(float shut, float yaw, float pitch);
 void BookTestTurn(float leaf);
 
+void UiTestPadSheet(int on);
+
+// Every button prompt in every controller's style, on one sheet over the window: for the test harness's picture
+extern "C" void PotpOverlay_TestPadSheet(int on)
+{
+	UiTestPadSheet(on);
+}
+
 // The Library's book's leaf held that far over (0 on the right to 1 on the left, below 0 as the player has it)
 extern "C" void PotpOverlay_TestBookTurn(float leaf)
 {

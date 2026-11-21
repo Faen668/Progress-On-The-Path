@@ -10109,6 +10109,55 @@ static void WatchSounds()
 	was = now;
 }
 
+#ifdef POTP_OVERLAY_TEST
+namespace
+{
+	// The test harness's: every button prompt the window draws, in each controller's style, and the keycaps, on one
+	// sheet over the window (PotpOverlay_TestPadSheet)
+	bool g_testPadSheet = false;
+
+	void DrawPadSheet()
+	{
+		dl->AddRectFilled(ImVec2(0, 0), ImVec2(kW, kH), Rgb(14, 13, 11));
+		struct Button { unsigned mask; const char* what; };
+		static const Button kButtons[] = {
+			{ kPadLStick, "Left stick, moved" }, { kPadRStick, "Right stick, moved" }, { kPadL3, "Left stick, pressed" }, { kPadR3, "Right stick, pressed" },
+			{ kPadLB, "Left bumper" }, { kPadRB, "Right bumper" }, { kPadLT, "Left trigger" }, { kPadRT, "Right trigger" },
+			{ kPadBack, "Back" }, { kPadStart, "Start" }, { kPadA, "Accept (bottom)" }, { kPadB, "Back out (right)" }, { kPadX, "Left face button" }, { kPadY, "Top face button" },
+			{ kPadUp, "D-pad up" }, { kPadDown, "D-pad down" }, { kPadLeft, "D-pad left" }, { kPadRight, "D-pad right" },
+		};
+		static const char* const kStyleNames[4] = { "Xbox", "PlayStation", "Switch", "Steam Deck" };
+		static const int kStyleIds[4] = { kPadXbox, kPadPlayStation, kPadSwitch, kPadSteamDeck };
+		static const char* const kCaps[] = { "Q", "E", "R", "T", "A", "S", "D", "F", "G", "H", "Z", "X", "C", "Enter", "Esc", "F3", "Space", "Num 5" };
+		const float capH = 42.f, top = 96.f, rowH = (kH - top - 30.f) / 18.f;
+		const float label = 40.f, first = 400.f, step = (kW - first - 330.f) / 4.f, keys = kW - 290.f;
+		Text(kTitle, 26, label, 34.f, kHead, "BUTTON PROMPTS");
+		for (int s = 0; s < 4; ++s)
+			Text(kTitle, 24, first + s * step, 34.f, kGoldHi, kStyleNames[s]);
+		Text(kTitle, 24, keys, 34.f, kGoldHi, "Keyboard");
+		FadeLineH(label, kW - 40.f, 78.f, kGold);
+		for (int r = 0; r < 18; ++r)
+		{
+			const float y = top + r * rowH;
+			Text(kSerif, 26, label, y + 4.f, kText, kButtons[r].what);
+			for (int s = 0; s < 4; ++s)
+			{
+				const float x = first + s * step;
+				const float w = PadGlyph(x, y, capH, kButtons[r].mask, true, kStyleIds[s]);
+				// What it's called there, where it has a name of its own
+				if (kButtons[r].mask != kPadLStick && kButtons[r].mask != kPadRStick)
+					Text(kSans, 22, x + w + 16.f, y + 8.f, kDim, PadName(kButtons[r].mask, kStyleIds[s]));
+			}
+			KeyCap(keys, y, capH, kCaps[r], true, r == 13);
+		}
+	}
+}
+
+void UiTestPadSheet(int on) { g_testPadSheet = on != 0; }
+#else
+void UiTestPadSheet(int) {}
+#endif
+
 void DrawUi()
 {
 	ImGuiIO& io = ImGui::GetIO();
@@ -10405,6 +10454,10 @@ void DrawUi()
 		FadeLineH(kW * 0.3f, kW * 0.7f, kH * 0.5f + 60, kGold);
 	}
 	DrawHints(selected, state);
+#ifdef POTP_OVERLAY_TEST
+	if (g_testPadSheet)
+		DrawPadSheet();
+#endif
 	g_modalBlock = false;
 	if (g_statusOpen && !selected && !g_visibilityOpen)
 		g_statusOpen = false;
