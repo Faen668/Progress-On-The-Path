@@ -15,10 +15,10 @@ statemachine class CPotP_Main
 	var inventory_listener	: CPotP_InventoryListener;
 
 	var version_text		: string;
-		default version_text = "7.1.0.0";
+		default version_text = "8.0.0.0";
 
 	var version_number		: int;
-		default version_number = 7100;
+		default version_number = 8000;
 
 	var is_started			: bool;
 	var baseline_pending	: bool;
