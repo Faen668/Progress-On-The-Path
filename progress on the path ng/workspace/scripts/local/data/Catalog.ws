@@ -312,6 +312,7 @@ statemachine class CPotP_Catalog
 
 	//---------------------------------------------------
 
+	// The event added just before: the game's own facts that are set only once Geralt got involved, so it's done
 	public function AddEventFacts(optional fact_1: string, optional fact_2: string, optional fact_3: string, optional fact_4: string, optional fact_5: string, optional fact_6: string, optional fact_7: string, optional fact_8: string)
 	{
 		var tracked : CPotP_Entry = pending[pending.Size() - 1];
@@ -324,6 +325,40 @@ statemachine class CPotP_Catalog
 		tracked.AddFallbackFact(fact_6);
 		tracked.AddFallbackFact(fact_7);
 		tracked.AddFallbackFact(fact_8);
+	}
+
+	//---------------------------------------------------
+	// The event added just before: Brothers In Arms' facts, read once per save (PotP_ImportEventRecord).
+	// Involved: he got involved, so it's done. Ignored: he walked by, or it can't happen any more, so it's missed.
+	// Over: it ended either way, so done unless an ignored one is set too.
+
+	public function AddEventBiaFacts(fact_1: string, optional fact_2: string, optional fact_3: string, optional fact_4: string, optional fact_5: string)
+	{
+		var tracked : CPotP_Entry = pending[pending.Size() - 1];
+
+		tracked.AddImportFact(1, fact_1);
+		tracked.AddImportFact(1, fact_2);
+		tracked.AddImportFact(1, fact_3);
+		tracked.AddImportFact(1, fact_4);
+		tracked.AddImportFact(1, fact_5);
+	}
+
+	public function AddEventBiaIgnoredFacts(fact_1: string, optional fact_2: string, optional fact_3: string)
+	{
+		var tracked : CPotP_Entry = pending[pending.Size() - 1];
+
+		tracked.AddImportFact(2, fact_1);
+		tracked.AddImportFact(2, fact_2);
+		tracked.AddImportFact(2, fact_3);
+	}
+
+	public function AddEventBiaEndFacts(fact_1: string, optional fact_2: string, optional fact_3: string)
+	{
+		var tracked : CPotP_Entry = pending[pending.Size() - 1];
+
+		tracked.AddImportFact(3, fact_1);
+		tracked.AddImportFact(3, fact_2);
+		tracked.AddImportFact(3, fact_3);
 	}
 
 	//---------------------------------------------------
@@ -991,6 +1026,7 @@ state Building in CPotP_Catalog
 		PotP_DefineLibrary(parent);
 
 		parent.ApplyTracking();
+		PotP_ImportEventRecord(parent);
 		parent.is_ready = true;
 		PotP_Log("Catalog built: " + IntToString(parent.entries.Size()) + " entries in " + IntToString(parent.sections.Size()) + " sections", 'Catalog');
 

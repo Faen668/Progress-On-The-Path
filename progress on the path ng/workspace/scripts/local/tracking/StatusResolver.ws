@@ -232,8 +232,10 @@ class CPotP_StatusResolver
 		switch (tracked.category)
 		{
 		case PotP_A_Event:
+			// Done beats missed, whichever came first: he can walk by and come back to it
 			game_status = Done(IsEventDone(tracked));
-			if (game_status == PotP_S_Available && IsMissedByFacts(tracked))
+			if (game_status == PotP_S_Available
+				&& (FactsQuerySum(PotP_Fact_EventMissed(tracked.entry_name)) > 0 || IsMissedByFacts(tracked)))
 			{
 				return PotP_S_Missed;
 			}
@@ -296,27 +298,11 @@ class CPotP_StatusResolver
 
 	//---------------------------------------------------
 
+	// PotP's own fact, or the game's own that are only set once he got involved. Brothers In Arms' facts and journal
+	// were read once, into PotP's fact, by PotP_ImportEventRecord.
 	private function IsEventDone(tracked: CPotP_Entry) : bool
 	{
-		var journal_entry	: CJournalBase;
-		var journal_status	: EJournalStatus;
-		var Idx				: int;
-
-		if (FactsQuerySum(tracked.entry_name) > 0 || HasFallbackFact(tracked))
-		{
-			return true;
-		}
-
-		if (tracked.fallback_journal != '')
-		{
-			journal_entry = theGame.GetJournalManager().GetEntryByTag(tracked.fallback_journal);
-			if (journal_entry)
-			{
-				journal_status = theGame.GetJournalManager().GetEntryStatus(journal_entry);
-				return journal_status == JS_Success || journal_status == JS_Failed;
-			}
-		}
-		return false;
+		return FactsQuerySum(tracked.entry_name) > 0 || HasFallbackFact(tracked);
 	}
 
 	//---------------------------------------------------

@@ -37,6 +37,11 @@ class CPotP_Entry
 
 	var fallback_facts	: array<string>;
 	var fallback_journal	: name;
+	// An event's Brothers In Arms facts, read once per save by PotP_ImportEventRecord, for events played before PotP heard
+	// them. After that only PotP's own facts count, so BIA being there or not changes nothing.
+	var import_involved	: array<string>;	// he got involved: done
+	var import_ignored	: array<string>;	// he walked by, or it can't happen any more: missed
+	var import_over		: array<string>;	// it ended, either way: done unless an ignored one says otherwise
 	var lore_title		: int;		// an event's journal title in Brothers In Arms' Events, whose journal tells its story
 	var lore_outcomes	: array<int>;	// the BIA string ids of what can come of an event, in the order they're told
 	var lore_done		: int;			// what came of it once it's done, when no quest block tells it apart
@@ -133,6 +138,29 @@ class CPotP_Entry
 		if (fact_name != "" && !fallback_facts.Contains(fact_name))
 		{
 			fallback_facts.PushBack(fact_name);
+		}
+	}
+
+	//---------------------------------------------------
+
+	// kind: 1 involved, 2 ignored, 3 over (see import_involved)
+	public function AddImportFact(kind: int, fact_name: string)
+	{
+		if (fact_name == "")
+		{
+			return;
+		}
+		switch (kind)
+		{
+		case 1:
+			import_involved.PushBack(fact_name);
+			break;
+		case 2:
+			import_ignored.PushBack(fact_name);
+			break;
+		default:
+			import_over.PushBack(fact_name);
+			break;
 		}
 	}
 
