@@ -19,16 +19,28 @@ namespace
 
 	struct PatternDef { const char* name; Kind kind; const char* bytes; int at; int end; };
 
+	// A name can have a pattern per build, newest first: the first that works is used, and it fails only if none does
 	const PatternDef kPatterns[] = {
 #include "patterns.inc"
+#include "patterns_6ADFBD7A.inc"
 	};
 
-	constexpr DWORD kKnownTimestamp = 0x6ADFBD7A;
-	const GameAddresses kKnown = {
-		0x031F8D0, 0x031D510, 0x26B7A90, 0x26CB380, 0x26FBD80, 0x270C1D0, 0x0BCB6F0,
-		0x270CF60, 0x5A7BA70,
-		0x1E66B90, 0x3824480,
-		0x5C05BB0, 0x5C05BB4, 0x5C05BB8,
+	struct KnownGame { DWORD timestamp; GameAddresses addresses; };
+	const KnownGame kKnown[] = {
+		{ 0x6ADFBD7A, {
+			0x031F8D0, 0x031D510, 0x26B7A90, 0x26CB380, 0x26FBD80, 0x270C1D0, 0x0BCB6F0,
+			0x270CF60, 0x5A7BA70,
+			0x1E66B90, 0x3824480,
+			0x5C05BB0, 0x5C05BB4, 0x5C05BB8,
+		} },
+		// The 27 November 2026 patch. Native Quest Hook's own scan found the same GetRTTI, GetNames, AddName,
+		// FindGlobalFunction, CallDirect, Free and scripting pointer.
+		{ 0x6B070671, {
+			0x031DC30, 0x031B740, 0x26CC520, 0x26DFEE0, 0x27118D0, 0x2722A70, 0x0BCC4D0,
+			0x27237C0, 0x5AF8490,
+			0x1E74010, 0x389AA38,
+			0x5C82A70, 0x5C82A74, 0x5C82A78,
+		} },
 	};
 
 	constexpr int kFewestCallers = 1000;
@@ -140,7 +152,10 @@ namespace
 
 const GameAddresses* KnownBuild(DWORD timestamp)
 {
-	return timestamp == kKnownTimestamp ? &kKnown : nullptr;
+	for (const KnownGame& game : kKnown)
+		if (game.timestamp == timestamp)
+			return &game.addresses;
+	return nullptr;
 }
 
 bool ScanForAddresses(const uint8_t* image, GameAddresses& out, std::string& problem)
@@ -157,22 +172,18 @@ bool ScanForAddresses(const uint8_t* image, GameAddresses& out, std::string& pro
 		++frequency[text.data[i]];
 
 	std::map<std::string, uintptr_t> found;
-	std::string missing;
-	const auto fail = [&](const char* name, const char* why)
-	{
-		missing += missing.empty() ? "" : ", ";
-		missing += std::string(name) + " (" + why + ")";
-	};
+	std::map<std::string, std::string> failed;   // by name: why its newest pattern didn't work
+	std::vector<std::string> checked;            // kCheck and kInsideInputUpdate names one of whose patterns held
+	const auto fail = [&](const char* name, const char* why) { failed.try_emplace(name, why); };
+	const auto done = [&](const char* name) { return found.count(name) || std::find(checked.begin(), checked.end(), name) != checked.end(); };
 	const auto isOptional = [](const char* name) { return strncmp(name, "NamePs", 6) == 0 || strcmp(name, "NameXPad") == 0; };
 
 	// In the table's order, so what a later pattern needs is already known
 	for (const PatternDef& def : kPatterns)
 	{
+		if (def.kind == kInsideInputUpdate || def.kind == kMostUsedLookup || done(def.name))
+			continue;
 		const Compiled c = Compile(def.bytes, frequency);
-		if (def.kind == kInsideInputUpdate)
-			continue;
-		if (def.kind == kMostUsedLookup)
-			continue;
 		const std::vector<size_t> hits = Find(c, text.data, text.size, 2);
 		if (hits.size() != 1)
 		{
@@ -186,26 +197,42 @@ bool ScanForAddresses(const uint8_t* image, GameAddresses& out, std::string& pro
 		else if (def.kind == kCall)
 		{
 			const uintptr_t target = text.rva + hits[0] + def.at + 4 + Rel32(at + def.at);
-			// One of 24 copies, each for its own memory pool, so what it's reached through has to look right too
-			static const uint8_t kFreeOpening[7] = { 0x48, 0x83, 0xEC, 0x38, 0x4C, 0x8B, 0xC9 };
-			const bool inText = target >= text.rva && target + sizeof(kFreeOpening) <= text.rva + text.size;
-			if (!inText || memcmp(text.data + (target - text.rva), kFreeOpening, sizeof(kFreeOpening)) != 0)
+			// One of 24 copies, each for its own memory pool, so what it's reached through has to look right too.
+			// 0x6B070671 gave it a fast path for small blocks, which changed its opening.
+			static const uint8_t kFreeOpenings[][13] = {
+				{ 0x48, 0x83, 0xEC, 0x38, 0x4C, 0x8B, 0xC9 },                                        // 0x6ADFBD7A
+				{ 0x48, 0x89, 0x5C, 0x24, 0x08, 0x57, 0x48, 0x83, 0xEC, 0x30, 0x48, 0x8B, 0xD9 },  // 0x6B070671
+			};
+			static const size_t kFreeOpeningLengths[] = { 7, 13 };
+			bool looksRight = false;
+			for (size_t i = 0; i < std::size(kFreeOpenings); ++i)
+				looksRight |= target >= text.rva && target + kFreeOpeningLengths[i] <= text.rva + text.size
+					&& memcmp(text.data + (target - text.rva), kFreeOpenings[i], kFreeOpeningLengths[i]) == 0;
+			if (!looksRight)
 				fail(def.name, "the call goes somewhere else");
 			else
 				found[def.name] = target;
 		}
 		else if (def.kind == kGlobal)
 			found[def.name] = text.rva + hits[0] + def.end + Rel32(at + def.at);
+		else if (def.kind == kCheck)
+			checked.push_back(def.name);
 	}
 
 	for (const PatternDef& def : kPatterns)
 	{
+		if (done(def.name))
+			continue;
 		const Compiled c = Compile(def.bytes, frequency);
 		if (def.kind == kInsideInputUpdate)
 		{
 			const auto update = found.find("InputUpdate");
-			if (update != found.end() && Find(c, text.data + (update->second - text.rva), 512, 1).empty())
+			if (update == found.end())
+				continue;
+			if (Find(c, text.data + (update->second - text.rva), 512, 1).empty())
 				fail(def.name, "not in the function");
+			else
+				checked.push_back(def.name);
 		}
 		else if (def.kind == kMostUsedLookup)
 		{
@@ -266,6 +293,13 @@ bool ScanForAddresses(const uint8_t* image, GameAddresses& out, std::string& pro
 			fail("InputUpdateSlot", slots == 0 ? "no pointer to it" : "more than one pointer to it");
 	}
 
+	std::string missing;
+	for (const auto& [name, why] : failed)
+		if (!done(name.c_str()))
+		{
+			missing += missing.empty() ? "" : ", ";
+			missing += name + " (" + why + ")";
+		}
 	if (!missing.empty())
 	{
 		problem = missing;

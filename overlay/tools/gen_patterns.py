@@ -13,20 +13,20 @@ import pefile
 from capstone import CS_ARCH_X86, CS_MODE_64, Cs
 from capstone.x86 import X86_OP_IMM, X86_OP_MEM, X86_REG_RIP
 
-# Known addresses, for build 0x6ADFBD7A
+# Known addresses, for build 0x6B070671 (0x6ADFBD7A's are in src/scan.cpp's table)
 OWN_BYTES = {
-    "GetRTTI": 0x031F8D0,
-    "AddName": 0x26B7A90,
-    "FindGlobalFunction": 0x26CB380,
-    "CallDirect": 0x26FBD80,
-    "CallGlobalExec": 0x270C1D0,
-    "ScriptTick": 0x270CF60,
-    "InputUpdate": 0x1E66B90,
+    "GetRTTI": 0x031DC30,
+    "AddName": 0x26CC520,
+    "FindGlobalFunction": 0x26DFEE0,
+    "CallDirect": 0x27118D0,
+    "CallGlobalExec": 0x2722A70,
+    "ScriptTick": 0x27237C0,
+    "InputUpdate": 0x1E74010,
 }
-CALL_GLOBAL_EXEC = 0x270C1D0
-FREE = 0x0BCB6F0               # 24 copies of this exist, one per memory pool: only a real caller says which it is
-FREE_CALLS = (0x270C2CD, 0x270C519, 0x270C58A, 0x270C5B2, 0x270C5C4)   # inside CallGlobalExec
-READY_CHECK_SITE = 0x26DD002   # cmp byte ptr [reg + 0x174], 0: the flag that says scripts are ready
+CALL_GLOBAL_EXEC = 0x2722A70
+FREE = 0x0BCC4D0               # 24 copies of this exist, one per memory pool: only a real caller says which it is
+FREE_CALLS = (0x2722B6D, 0x2722DB9, 0x2722E2A, 0x2722E52, 0x2722E64)   # inside CallGlobalExec
+READY_CHECK_SITE = 0x26F2902   # cmp byte ptr [reg + 0x174], 0: the flag that says scripts are ready
 
 MAX_BYTES = 96
 MARGIN = 8   # bytes past the point of being unique, so a chance match elsewhere later doesn't make it ambiguous
@@ -131,7 +131,8 @@ def main():
 
     # Struct offsets that aren't in the patterns above have to be seen in use, or the link stays off
     add("ScriptsReadyFlag", "kCheck", grow(code, READY_CHECK_SITE - base, "ScriptsReadyFlag"))
-    add("InputLastDevice", "kInsideInputUpdate", [0x89, 0x8E, 0x9C, 0x04, 0x00, 0x00])
+    # mov [reg + 0x49C], ecx: the register is the compiler's choice, and changed between builds
+    add("InputLastDevice", "kInsideInputUpdate", [0x89, None, 0x9C, 0x04, 0x00, 0x00])
 
     # The name table's getter is one of many identical singletons, but nothing is looked up by a literal string more
     # often: call getter; lea rdx, [text]; mov rcx, rax; call. Only the type table's comes close, and that's known.
